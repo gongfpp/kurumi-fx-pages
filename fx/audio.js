@@ -1,4 +1,5 @@
-import {assetURL} from './assets.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {AudioEnvelope} from './audio-envelope.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {assetURL} from './assets.js?v=797e53ac924c141118b230657d77338630dabbd6';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 
@@ -9,7 +10,7 @@ const COOLDOWN={click:100,gain:350,loss:950,draw:650,win:900,defend:250,exhaust:
 
 export class FXAudio{
  constructor({createAudio=()=>document.createElement('audio'),hidden=()=>document.hidden,onError=()=>{},now=()=>performance.now()}={}){
-  this.createAudio=createAudio;this.hidden=hidden;this.onError=onError;this.now=now;this.pool=new Map();this.unlocked=false;this.prefs={sound:false};this.reported=new Set();this.lastPlayed=new Map();this.lastAny=-Infinity;
+  this.envelope=new AudioEnvelope({now});this.createAudio=createAudio;this.hidden=hidden;this.onError=onError;this.now=now;this.pool=new Map();this.unlocked=false;this.prefs={sound:false};this.reported=new Set();this.lastPlayed=new Map();this.lastAny=-Infinity;
  }
  make(file,label){
   const a=this.createAudio();a.src=assetURL(`./sfx/${file}.mp3`);a.preload='none';a.dataset.audio=`fx-${label}`;a.hidden=true;
@@ -31,12 +32,13 @@ export class FXAudio{
   // At most two short cues overlap, even when news and settlement arrive together.
   const active=[...this.pool.values()].flat().filter(x=>!x.paused&&!x.ended);
   if(active.length>=2)return false;
-  this.lastPlayed.set(file,time);this.lastAny=time;a.currentTime=0;a.volume=amplitude;
+  this.lastPlayed.set(file,time);this.lastAny=time;a.currentTime=0;
+  const envelope=this.envelope.prepare(a,{target:amplitude,leadInSeconds:.04,coldMs:180,warmMs:75});
   a.playbackRate=Math.max(.8,Math.min(1.25,Number.isFinite(rate)?rate:1));a.preservesPitch=stretch;a.webkitPreservesPitch=stretch;
-  try{a.play()?.catch(error=>{if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);});}
-  catch(error){if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);return false;}
+  try{const playing=a.play();if(playing?.then)playing.then(()=>this.envelope.start(a,envelope)).catch(error=>{if(this.envelope.records.get(a)!==envelope)return;this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);});else this.envelope.start(a,envelope);}
+  catch(error){this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);return false;}
   return true;
  }
- stopEffects(){for(const voices of this.pool.values())for(const a of voices)a.pause();}
+ stopEffects(){for(const voices of this.pool.values())for(const a of voices){this.envelope.stop(a);a.pause();}}
  pause(){this.stopEffects();}
 }

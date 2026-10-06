@@ -1,5 +1,5 @@
-import {formatQuote as quote,directionLabel} from './market.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
-import {TRANSITION_COPY} from './copy/transitions.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {formatQuote as quote,directionLabel} from './market.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {TRANSITION_COPY} from './copy/transitions.js?v=797e53ac924c141118b230657d77338630dabbd6';
 const yen=value=>`${value<0?'−':''}¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const signed=value=>`${value>0?'+':''}${yen(value)}`;
 export function buildFXReceipt(report){

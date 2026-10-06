@@ -2,9 +2,11 @@
 export const ITEM_EVENTS={fatherDiscover:['father'],friendStudy:['mochiko'],roommate:['energy']};
 // Kept as an empty compatibility export; unlock conditions are never player copy.
 export const UNLOCK_HINTS={};
-export {ITEM_SCENES} from './copy/scenes.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+export {ITEM_SCENES} from './copy/scenes.js?v=797e53ac924c141118b230657d77338630dabbd6';
 export function itemDiscovered(s,id){return !!s.itemDiscoveries?.[id]||itemUnlocked(s,id);}
-export function itemUnlocked(s,id){return id==='father'?!!s.family?.unlocked:!!s.itemUnlocks?.[id];}
+const PLAY_ITEMS=['takeaway','noodles','energy','celebration','father','mochiko'];
+export function itemUnlocked(s,id){return s.mode==='endless'&&PLAY_ITEMS.includes(id)|| (id==='father'?!!s.family?.unlocked:!!s.itemUnlocks?.[id]);}
+export function itemUnavailableReason(s,id){return s.mode==='endless'&&id==='noodles'?'已解锁 · 本模式无生活费，无需使用':s.mode==='endless'&&id==='energy'?'已解锁 · 本模式连续交易，无需使用':'';}
 export function discoverItems(s){
  s.itemDiscoveries ||= {};s.itemUnlocks ||= {};
  const profit=s.history?.filter(t=>t.type!=='open').reduce((n,t)=>n+(t.pnl||0),0)||0;

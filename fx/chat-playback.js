@@ -11,7 +11,7 @@ export class ChatPlayback{
  }
 }
 export class MessageChime{
- constructor(){this.context=null;}
- unlock(){const AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext;if(!AudioContext)return;this.context ||= new AudioContext();void this.context.resume().catch(()=>{});}
- play(enabled){const ctx=this.context;if(!enabled||!ctx||ctx.state!=='running'||document.hidden)return;const start=ctx.currentTime;for(const [frequency,offset] of [[660,0],[880,.09]]){const oscillator=ctx.createOscillator(),gain=ctx.createGain();oscillator.type='sine';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.0001,start+offset);gain.gain.exponentialRampToValueAtTime(.07,start+offset+.008);gain.gain.exponentialRampToValueAtTime(.0001,start+offset+.14);oscillator.connect(gain).connect(ctx.destination);oscillator.start(start+offset);oscillator.stop(start+offset+.16);}}
+ constructor(){this.context=null;this.lastPlayed=-Infinity;}
+ unlock(event){if(!event?.isTrusted)return;const AudioContext=globalThis.AudioContext||globalThis.webkitAudioContext;if(!AudioContext)return;this.context ||= new AudioContext();void this.context.resume().catch(()=>{});}
+ play(enabled){const ctx=this.context;if(!enabled||!ctx||ctx.state!=='running'||document.hidden)return;const start=ctx.currentTime,cold=start-this.lastPlayed>8;this.lastPlayed=start;for(const [frequency,offset] of [[660,0],[880,.09]]){const oscillator=ctx.createOscillator(),gain=ctx.createGain();oscillator.type='sine';oscillator.frequency.value=frequency;gain.gain.setValueAtTime(.0001,start+offset);gain.gain.exponentialRampToValueAtTime(cold?.025:.035,start+offset+(cold?.09:.045));gain.gain.exponentialRampToValueAtTime(.0001,start+offset+.14);oscillator.connect(gain).connect(ctx.destination);oscillator.start(start+offset);oscillator.stop(start+offset+.16);}}
 }

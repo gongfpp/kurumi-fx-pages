@@ -1,4 +1,4 @@
-import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=797e53ac924c141118b230657d77338630dabbd6';
 
 // Returns ratios as fractions (0.10 = 10%). Closed pnl already includes both fees;
 // external funding, consumption and open floating gains never count as returns.
@@ -12,7 +12,7 @@ export function runPerformance(state){
   if(summary){({totalProfit,maxLoss,maxProfit,maxDrawdown}=summary);}
   const partialCandle=(state.pending?.tick||0)/TICKS_PER_CANDLE;
   const completedCandles=state.completedCandles??Math.max(0,((state.day||1)-1)*16+(state.beat||0)*CANDLES_PER_BEAT+(state.pending?.candle||0));
-  const dayComplete=['day_end','resting','ending'].includes(state.phase)&&mode==='story'&&(state.beat||0)>=beatsPerDay(state);
+  const dayComplete=['day_end','resting','ending'].includes(state.phase)&&mode==='story'&&((state.beat||0)>=beatsPerDay(state)||state.dayReport?.earlyClose?.day===state.day);
   const elapsedSimulatedDays=mode==='endless'?(completedCandles+partialCandle)/(BEATS_PER_DAY*CANDLES_PER_BEAT)
     :Math.max(0,(state.day||1)-1)+(dayComplete?1:Math.min(1,((state.beat||0)*CANDLES_PER_BEAT+(state.pending?.candle||0)+partialCandle)/(beatsPerDay(state)*CANDLES_PER_BEAT)));
   const elapsedDays=Math.max(1,elapsedSimulatedDays);

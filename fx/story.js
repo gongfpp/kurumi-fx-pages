@@ -1,11 +1,16 @@
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
-import {STORIES,getStory} from './story-content.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {STORIES,getStory} from './story-content.js?v=797e53ac924c141118b230657d77338630dabbd6';
 export const DEBUFFS={guilt:{name:'父亲的存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
  s.family ||= {unlocked:!!s.fatherUsed,outstanding:s.fatherUsed?Math.max(0,s.externalFunding||0):0,borrowedAt:s.fatherUsed?(s.day-1)*4+s.beat:null,discovered:false,informed:false,repaid:0,trust:0};
  s.itemDiscoveries ||= {};s.loan ||= {discovered:false,unlocked:false,outstanding:0,borrowed:0,repaid:0,limit:300000,dailyRate:.0005,interestPaid:0};s.effects ||= [];s.expenses ||= 0;s.dayOpeningExpenses ||= 0;s.chat.campus ||= [];s.itemsUsed ||= {};
  if(!s.itemUnlocks){s.itemUnlocks={};for(const id of new Set([...Object.keys(s.itemsUsed).filter(id=>s.itemsUsed[id]),...Object.keys(s.skills||{}).filter(id=>s.skills[id])]))s.itemUnlocks[id]={event:'legacy-use',day:s.day};for(const key of s.story.seen)for(const id of ITEM_EVENTS[key]||[])s.itemUnlocks[id] ||= {event:key,day:0};}
+ // Existing borrowers keep access and every balance; an unused emotional unlock
+ // is not evidence of having completed the funding event.
+ if(s.loan.borrowed>0||s.loan.outstanding>0||s.loan.repaid>0)s.story.flags.networkLoanLegacy=true;
+ s.loan.unlocked=s.mode==='endless'||s.story.seen.includes('fatherUnlock')||!!s.family.unlocked||!!s.fatherUsed||!!s.story.flags.networkLoanLegacy;
+ s.loan.discovered=!!s.loan.discovered||s.loan.unlocked;
  if(s.family.outstanding>0&&!s.effects.some(e=>e.id==='guilt'))addEffect(s,'guilt',null);
  return s.story;
 }
@@ -18,10 +23,9 @@ export function restrictions(s){
 export function ageEffects(s){const expired=[];s.effects=(s.effects||[]).filter(e=>{if(!DEBUFFS[e.id])return false;if(e.remaining===null)return true;e.remaining--;if(e.remaining<=0){expired.push(e.id);return false;}return true;});return expired;}
 export function queueStory(s,id){ensureStory(s);if(s.mode==='endless'||!STORIES[id]||s.story.seen.includes(id)||s.story.queue.includes(id))return false;s.story.queue.push(id);return true;}
 export function checkStories(s,account,emotion){ensureStory(s);
- if(s.mode==='endless'){s.story.queue=[];if(['ecstatic','despair'].includes(emotion)){s.loan.discovered=true;s.loan.unlocked=true;}return;}
+ if(s.mode==='endless'){s.story.queue=[];return;}
  if(!s.family.unlocked&&!s.fatherUsed&&emotion==='despair'&&account<30000){s.itemDiscoveries.father ||= {day:s.day,event:'fatherUnlock'};queueStory(s,'fatherUnlock');}
  if(s.day>=2&&!s.story.seen.includes('fatherDiscover'))queueStory(s,'fatherDiscover');
- if(['ecstatic','despair'].includes(emotion)){s.loan.discovered=true;s.loan.unlocked=true;}
  const absolute=(s.day-1)*4+s.beat;
  if(s.family.outstanding>0&&!s.family.discovered&&!s.family.informed&&s.family.borrowedAt!==null&&absolute-s.family.borrowedAt>=2)queueStory(s,'fatherFound');
  if(s.phase==='resting'&&!s.story.queue.length){queueStory(s,s.day===1?'friendStudy':s.day===2?'roommate':'quietNight');}
@@ -29,7 +33,7 @@ export function checkStories(s,account,emotion){ensureStory(s);
 export function pendingStory(s){ensureStory(s);if(s.mode==='endless'||s.phase!=='resting'||s.story.presentedDay===s.day)return null;s.story.queue=s.story.queue.filter(id=>!!getStory(s,id));const family=s.story.queue.find(id=>['fatherUnlock','fatherFound','repayPartial','repayFull'].includes(id));const key=family||s.story.queue[0];if(key==='fatherUnlock')s.family.unlockedAtEquity=s.cash+s.reserve;return getStory(s,key);}
 export function chooseStory(s,choiceId){if(s.phase!=='resting')throw Error('人物事件只在休市后发生');const event=pendingStory(s);if(!event)throw Error('没有待处理的剧情');const choice=event.choices.find(c=>c.id===choiceId);if(!choice)throw Error('请选择一个回应');s.story.queue=s.story.queue.filter(id=>id!==event.key);s.story.presentedDay=s.day;s.story.seen.push(event.key);s.story.log.push({id:event.key,day:s.day,beat:s.beat,choice:choice.id});s.story.log=s.story.log.slice(-40);
  const unlocked=[];for(const id of ITEM_EVENTS[event.key]||[]){if(!itemUnlocked(s,id)){s.itemDiscoveries[id] ||= {event:event.key,day:s.day};if(id!=='father'){s.itemUnlocks[id]={event:event.key,day:s.day,choice:choice.id};unlocked.push(id);}}}
- if(event.key==='fatherUnlock'){unlocked.push('father');s.family.unlocked=true;s.family.lastAction=choice.id;s.family.viewed=choice.id==='look_at_savings';s.family.closed=choice.id==='leave_alone';choice.lines=getStory(s,event.key)?.choices.find(c=>c.id===choice.id)?.lines||[];}
+ if(event.key==='fatherUnlock'){s.loan.discovered=true;s.loan.unlocked=true;unlocked.push('networkLoan');unlocked.push('father');s.family.unlocked=true;s.family.lastAction=choice.id;s.family.viewed=choice.id==='look_at_savings';s.family.closed=choice.id==='leave_alone';choice.lines=getStory(s,event.key)?.choices.find(c=>c.id===choice.id)?.lines||[];}
  if(event.key==='fatherFound'){s.family.discovered=true;addEffect(s,'familyWatch',2);s.family.trust-=1;}
  s.stress=Math.max(0,(s.stress||0)+(choice.stress||0));s.family.trust+=choice.trust||0;
  if(choice.mood)s.emotionBias={mood:choice.mood,until:(s.day-1)*4+s.beat+2};
