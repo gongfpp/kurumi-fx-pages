@@ -22,7 +22,7 @@ export const VOICE_SCENE_RULES=Object.freeze({
 });
 export const voiceSceneRule=line=>line?.sceneRule||VOICE_SCENE_RULES[line?.id];
 export function voiceSceneMatches(line,context,{stage='start',now=0,lastPlayedAt=-Infinity}={}) {
-  const spec=voiceSceneRule(line);if(!spec||!context||!spec.scopes.includes(context.scope))return false;
+  const spec=voiceSceneRule(line);if(!spec||!context||context.suppressCommentary||!spec.scopes.includes(context.scope))return false;
   if(context.scope==='market'&&spec.polarity!=='neutral')return false;
   if(context.scope==='floating'&&!context.hasPositions)return false;
   if(spec.requiresPosition&&!context.hasPositions)return false;

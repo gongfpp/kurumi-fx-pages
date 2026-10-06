@@ -1,4 +1,4 @@
-import {PRESSURE_TAPS,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {PRESSURE_TAPS,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];

@@ -1,3 +1,4 @@
+import {tradingTrauma} from './trading-trauma.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 // Commentary follows observed/settled P&L. This gate never changes the market.
 export const VOICE_STABLE_MS=2500;
 export const VOICE_REVERSAL_MS=3500;
@@ -29,7 +30,8 @@ export function createVoiceContextSelector({now=()=>Date.now()}={}){
     const positions=state.positions||[],directions=new Set(positions.map(p=>p.direction));
     const positionDirection=!hasPositions?'flat':directions.size>1?'mixed':directions.has(-1)?'short':'long';
     const latest=state.recent?.[0],volatility=Math.abs(latest?.observedMove||0)>=.004||state.lastEvent?.swan?'spike':'normal';
-    const base={run:state.runId,mode:state.mode,hasPositions,positionDirection,volatility};
+    const trauma=tradingTrauma(state);
+    const base={run:state.runId,mode:state.mode,hasPositions,positionDirection,volatility,suppressCommentary:trauma.active,traumaLevel:trauma.level||null};
     const trade=state.lastTrade,closed=trade&&trade.type!=='open'&&trade.day===state.day&&Number.isFinite(trade.pnl);
     const closeKey=closed?`close:${trade.day}:${trade.beat}:${trade.positionId}:${trade.type}:${trade.pnl}:${trade.margin}:${state.performance?.closedTrades}`:null;
     if(closeKey!==lastClose){lastClose=closeKey;closeAt=first?-Infinity:time;}

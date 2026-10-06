@@ -1,0 +1,43 @@
+import {pendingStory,chooseStory} from './story.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+export function prepareDailyNarrative(state,{accountEquity}={}){
+ if(state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
+ applyFatherDiscovery(state,{type:'migrate'});
+ if(!state.settlementNarrative||state.settlementNarrative.day!==state.day){
+  const candidate=fatherDiscoveryCandidate(state,{accountEquity});
+  if(candidate?.canPresent)applyFatherDiscovery(state,{type:'start'},{accountEquity});
+ }
+ const saved=keepNarrativeSnapshot(state,pendingStory(state));
+ if(fatherDiscoveryPresentation(state)&&!saved.fatherFrames){saved.fatherFrames=fatherDiscoverySequence(state);saved.fatherDiscovery=true;}
+ return saved;
+}
+// Only narrative acknowledgements are automatic. This function has no item,
+// loan or payment API; financial actions remain their existing explicit buttons.
+export function finishDailyNarrative(state,{choiceId}={}){
+ const n=state.settlementNarrative;
+ if(!n||n.day!==state.day||state.phase!=='resting')return{ok:false,reason:'no-current-narrative',hooks:[]};
+ if(n.effectsApplied)return{ok:true,changed:false,hooks:[]};
+ let result=null,hooks=[];
+ if(n.fatherDiscovery){
+  for(let count=0;count<3;count++){
+   const current=fatherDiscoveryPresentation(state);if(!current)break;
+   result=applyFatherDiscovery(state,{type:'advance',eventId:current.eventId,expectedStep:current.step,expectedRevision:current.revision});
+   if(!result.ok)return{ok:false,reason:result.reason,hooks:[]};
+   hooks.push(...result.hooks.filter(h=>h.type==='item-revealed'||h.type==='item-reminded'));
+  }
+ }else{
+  const current=pendingStory(state);
+  if(current&&current.key!==n.event?.key)return{ok:false,reason:'narrative-changed',hooks:[]};
+  if(!current&&n.event&&!state.story.seen.includes(n.event.key))return{ok:false,reason:'narrative-changed',hooks:[]};
+  if(current&&current.key===n.event?.key){
+   const id=choiceId||automaticNarrativeChoice(n.event);
+   if(!id)return{ok:false,reason:'needs-explicit-choice',event:n.event,hooks:[]};
+   if(!current.choices.some(c=>c.id===id))return{ok:false,reason:'invalid-choice',hooks:[]};
+   result=chooseStory(state,id);
+  }
+ }
+ if(n.fatherDiscovery&&hooks.length){state.story.log ||= [];state.story.log.push({id:n.fatherFrames?.[0]?.purpose==='reminder'?'fatherCabinetReminder':'fatherDiscover',day:state.day,beat:state.beat,choice:'acknowledge-discovery'});state.story.log=state.story.log.slice(-40);}
+ state.story.presentedDay=state.day;n.effectsApplied=true;
+ return{ok:true,changed:true,result,hooks};
+}

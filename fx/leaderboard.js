@@ -1,6 +1,6 @@
-import {kurumiStorage} from './storage-namespace.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {runPerformance} from './performance.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {kurumiStorage} from './storage-namespace.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {runPerformance} from './performance.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const BACKEND = 'https://leek-spire.gongfpp.chatgpt.site';
@@ -21,6 +21,7 @@ export function completedLeaderboardScore(state) {
   if(!['story','endless'].includes(gameMode))throw new Error('游戏模式不正确');
   if(!Array.isArray(state?.history))throw new Error('本局成绩数据不完整');
   if(gameMode==='story'&&(!report||!Number.isInteger(report.day)||report.day<1||report.day>state.day||!Array.isArray(report.trades)||!report.trades.length))throw new Error('完成至少一笔交易并收盘后，可以提交成绩');
+  if(gameMode==='story'&&report.livingSettlement?.status==='pending')throw new Error('请先结清今日生活费，再提交完整成绩');
   const day=gameMode==='story'?report.day:state.day;
   const daily=gameMode==='story'?report.trades:state.history.filter(t=>t.day===day),all=state.history.filter(trade=>trade.day<=day);
   if([...daily,...all].some(trade=>!Number.isFinite(trade.pnl)))throw new Error('本局成绩数据不完整');

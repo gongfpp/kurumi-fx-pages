@@ -1,4 +1,5 @@
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,START,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {tradingTimestamp} from './trading-time.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,START,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -25,6 +26,8 @@ export function applyDeveloperPatch(current,patch){
   if(!v.debt)s.effects=s.effects.filter(e=>e.id!=='guilt');
   s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-100000-s.externalFunding+s.expenses-v.profit};
   s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
+  s.settlementPresentation=null;s.settlementNarrative=null;s.accountingJournal=null;s.recapChoiceLedger=[];delete s.nextDayLivingDiscount;
+  if(s.tradingClock)s.tradingClock={...s.tradingClock,lastQuoteAt:tradingTimestamp(s,{day:s.day,beat:s.beat}),lastQuoteDay:s.day};
   s.dayReport=null;s.ending=null;s.pending=null;s.phase='decision';s.lastEvent=null;s.swanSeen=false;s.lastTrade=null;s.recent=[];s.lastReaction=null;s.emotionBias=null;
   s.script=planDay(s.seed,s.day,s.price);
   s.candles.push({open:s.price,close:s.price,high:s.price,low:s.price,closed:true,day:s.day,beat:s.beat,developer:true});

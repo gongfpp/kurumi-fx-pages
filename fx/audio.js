@@ -1,5 +1,5 @@
-import {AudioEnvelope} from './audio-envelope.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {assetURL} from './assets.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {AudioEnvelope} from './audio-envelope.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {assetURL} from './assets.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 

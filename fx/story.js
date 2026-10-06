@@ -1,6 +1,7 @@
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {STORIES,getStory} from './story-content.js?v=797e53ac924c141118b230657d77338630dabbd6';
-export const DEBUFFS={guilt:{name:'父亲的存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
+import {isTraumaMood} from './trading-trauma.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {STORIES,getStory} from './story-content.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
  s.family ||= {unlocked:!!s.fatherUsed,outstanding:s.fatherUsed?Math.max(0,s.externalFunding||0):0,borrowedAt:s.fatherUsed?(s.day-1)*4+s.beat:null,discovered:false,informed:false,repaid:0,trust:0};
@@ -24,7 +25,7 @@ export function ageEffects(s){const expired=[];s.effects=(s.effects||[]).filter(
 export function queueStory(s,id){ensureStory(s);if(s.mode==='endless'||!STORIES[id]||s.story.seen.includes(id)||s.story.queue.includes(id))return false;s.story.queue.push(id);return true;}
 export function checkStories(s,account,emotion){ensureStory(s);
  if(s.mode==='endless'){s.story.queue=[];return;}
- if(!s.family.unlocked&&!s.fatherUsed&&emotion==='despair'&&account<30000){s.itemDiscoveries.father ||= {day:s.day,event:'fatherUnlock'};queueStory(s,'fatherUnlock');}
+ if(!s.family.unlocked&&!s.fatherUsed&&(emotion==='despair'||isTraumaMood(emotion))&&account<30000){s.itemDiscoveries.father ||= {day:s.day,event:'fatherUnlock'};queueStory(s,'fatherUnlock');}
  if(s.day>=2&&!s.story.seen.includes('fatherDiscover'))queueStory(s,'fatherDiscover');
  const absolute=(s.day-1)*4+s.beat;
  if(s.family.outstanding>0&&!s.family.discovered&&!s.family.informed&&s.family.borrowedAt!==null&&absolute-s.family.borrowedAt>=2)queueStory(s,'fatherFound');

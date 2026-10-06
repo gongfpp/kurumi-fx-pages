@@ -1,3 +1,25 @@
 {
-  "sourceCommit": "797e53ac924c141118b230657d77338630dabbd6"
+  "sourceCommit": "40fc0ad81f85a291b238bbc6b977a7dba778bb1f",
+  "manga": {
+    "scope": "approved-main-mode-panels",
+    "selectionSourceCommit": "37c41c1bfdc416efc06b85fb0ad1202c80ef7f80",
+    "panels": [
+      "accept-stop",
+      "calm",
+      "despair",
+      "family-loss",
+      "leverage",
+      "long-loss",
+      "long-profit",
+      "million-thirty",
+      "profit",
+      "ready",
+      "recovery-vow",
+      "retreat",
+      "rule",
+      "short-entry",
+      "stop-loss-uneasy"
+    ],
+    "independentChapterIncluded": false
+  }
 }

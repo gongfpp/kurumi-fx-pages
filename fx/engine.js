@@ -1,13 +1,24 @@
-import {creditTerms} from './credit-policy.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {NEWS_CHAINS,PROPS} from './content.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {BLACK_SWANS} from './story-content.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=797e53ac924c141118b230657d77338630dabbd6';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=797e53ac924c141118b230657d77338630dabbd6';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=797e53ac924c141118b230657d77338630dabbd6';
-export const VERSION = 6;
+import {dailyReturnMetrics} from './daily-performance.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+export {dailyReturnMetrics} from './daily-performance.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+
+import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {recapChoices} from './recap-choices.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+
+
+import {creditTerms} from './credit-policy.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {NEWS_CHAINS,PROPS} from './content.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {BLACK_SWANS} from './story-content.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+export const VERSION = 7;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;
 export const LIVING_DAILY = 2200;
@@ -102,13 +113,14 @@ export function createGame(seed = Date.now(), {mode = 'story'} = {}) {
   if(!['story','endless'].includes(mode))throw Error('未知游戏模式');
   seed = seed >>> 0;
   const state = {version: VERSION, mode, startEquity:START, completedCandles:0, completedDays:0, performance:{totalProfit:0,closedTrades:0,winningTrades:0,winRateTrades:0,maxLoss:0,maxProfit:0,peakEquity:START,maxDrawdown:0}, seed, day: 1, beat: 0, phase: 'decision', price: START_PRICE,
-    cash: mode==='endless'?START:START-LIVING_DAILY, reserve: mode==='endless'?0:LIVING_DAILY, positions: [], position: null, nextOrderId: 1, feesPaid: 0, feeLedger: [], sanity: 50, mentalBoost:0, bonusBeats:0, dayOpening: START, candles: historyCandles(seed),
+    cash: mode==='endless'?START:START-LIVING_DAILY, reserve: mode==='endless'?0:LIVING_DAILY, positions: [], position: null, nextOrderId: 1, feesPaid: 0, feeLedger: [], sanity: 50, mentalBoost:0, bonusBeats:0, dayOpening: START, dayOpeningNetAssets:START, dayOpeningDebt:0, candles: historyCandles(seed),
     script: null, pending: null, history: [], recent: [], chat: {group:[],friend:[]}, promise: null,
     relationship: 0, publicStance: null, promiseNoted:false, dinner:false, skills:{mochiko:false,yasuko:false},
     fatherUsed:false,externalFunding:0,dayOpeningFunding:0,stress:0,heat:0,peakPersonal:START,equityTrail:[START],nextStop:null,
     lastEvent:null, lastTrade:null, lastReaction:null, dayReport:null};
+  ensureRunStatistics(state);ensureTradingClock(state);ensureAccountingJournal(state);recordAccountingPoint(state,'opening');
   state.script = planDay(seed, 1, state.price);
-  chapterChat(state);ensureStory(state);updateSpeech(state,'hopeful');state.dayOpeningLine=state.speech.text;
+  chapterChat(state);ensureStory(state);observeTradingTrauma(state,{accountEquity:START});updateSpeech(state,'hopeful');state.dayOpeningLine=state.speech.text;
   return state;
 }
 // position remains a first-order view for older story/dialogue consumers.
@@ -177,8 +189,8 @@ export function positionStopLoss(p){
   return Object.hasOwn(p,'stopPips')?(Number.isFinite(p.stopPrice)?Math.max(0,-grossPnlAt(p,p.stopPrice)):null):p.stop<1?p.margin*p.stop:null;
 }
 export function restrictions(s){
-  const limits=baseRestrictions(s),emotion=mood(s),forceNoStop=['ecstatic','despair'].includes(emotion);
-  const pressured=!!pressureMood(s)&&!limits.noEntry;
+  const limits=baseRestrictions(s),emotion=mood(s),pressure=pressureMood(s),forceNoStop=['ecstatic','despair'].includes(emotion)||!!pressure;
+  const pressured=!!pressure&&!limits.noEntry;
   return {...limits,...(pressured?{leverage:100,stake:1}:{}),minLeverage:forceNoStop?25:5,forceNoStop,emotion};
 }
 export function tradingOpen(s){return s.phase==='decision'||s.realtime===true&&s.phase==='playing';}
@@ -212,7 +224,7 @@ export function orderPreview(s,action={}){
 }
 export function tradingProfit(s){return equity(s)-START-(s.externalFunding||0)+(s.expenses||0)-(s.developer?.profitOffset||0);}
 export function mentalState(s, sample=false){
-  ensureStory(s);const modifiers=restrictions(s);
+  ensureStory(s);observeTradingTrauma(s,{accountEquity:equity(s)});const modifiers=restrictions(s);
   const personal=Math.max(0,equity(s)-(s.externalFunding||0)+(s.expenses||0)-(s.developer?.profitOffset||0));
   s.peakPersonal=Math.max(START,s.peakPersonal||START,personal);
   s.equityTrail ||= [personal];
@@ -224,8 +236,10 @@ export function mentalState(s, sample=false){
   const earned=Math.max(0,Math.min(35,Math.log2(1+Math.max(0,personal-START)/1000)*5));
   s.sanity=Math.max(0,Math.min(100,Math.round(50+earned+(s.mentalBoost||0)+(s.restRecovery||0)-totalDrawdown*65-recentDrawdown*20-exposure*5-(s.stress||0)-modifiers.stress+modifiers.mental)));
   if((s.restRecovery||0)>0&&equity(s)>=5000)s.sanity=Math.max(6,s.sanity);
+  s.sanity=capTraumaSanity(s,s.sanity,equity(s));
   if(s.developer?.edited&&Number.isFinite(s.developer.sanityOverride))s.sanity=Math.max(0,Math.min(100,s.developer.sanityOverride));
   const emotion=mood(s);discoverItems(s);checkStories(s,equity(s),emotion);samplePerformance(s);updateSpeech(s,emotion);
+  recordAccountingPoint(s);
   return {value:s.sanity,totalDrawdown,recentDrawdown,exposure};
 }
 function experience(s, entry) {
@@ -249,7 +263,7 @@ function closePosition(s, fraction, reason, positionId){
   p.notional=(p.notional??p.margin*p.leverage)*(1-fraction);p.initialMargin=(p.initialMargin??p.margin)*(1-fraction);p.margin-=margin;p.maxUnrealized*=1-fraction;p.openFeeRemaining-=openFee;
   if(p.margin<.00001||fraction===1)s.positions=s.positions.filter(order=>order!==p);
   syncPosition(s);
-  s.lastTrade={type:reason,positionId:p.id,direction:p.direction,margin,leverage:p.leverage,entry:p.entry,exit:s.price,
+  s.lastTrade={type:reason,positionClosed:!s.positions.some(order=>order.id===p.id),timestamp:currentTradingTimestamp(s),positionId:p.id,direction:p.direction,margin,leverage:p.leverage,entry:p.entry,exit:s.price,
     pnlModel:p.pnlModel||'usd-jpy-v6',quantity,grossPnl:raw,lossReduction,protection:lossReduction>0,openFee,closeFee,fee:openFee+closeFee,feeAllocation:{open:openFee,close:closeFee},nearMiss:!!p.nearMiss,maxUnrealized:peakUnrealized,pnl,day:s.day,beat:Math.min(s.beat,beatsPerDay(s)-1)};
   s.history.push(s.lastTrade);
   const impact=pnl/Math.max(1000,before);
@@ -291,7 +305,7 @@ function protectBalance(s,trades){
   if(Math.abs(s.cash)<1e-8)s.cash=0;
   const stats=ensurePerformance(s);
   for(const t of trades)if(!t.performanceRecorded){stats.totalProfit+=t.pnl;stats.closedTrades++;stats.winRateTrades++;if(t.pnl>0)stats.winningTrades++;stats.maxLoss=Math.min(stats.maxLoss,t.pnl);stats.maxProfit=Math.max(stats.maxProfit,t.pnl);t.performanceRecorded=true;}
-  samplePerformance(s);trimEndlessLedgers(s);
+  recordOrderExits(s,trades);samplePerformance(s);trimEndlessLedgers(s);
 }
 function enforceMargin(s){
   const exits=[];
@@ -308,14 +322,17 @@ function closeOrders(s,fraction,reason,positionId){
   trades.push(...enforceMargin(s));protectBalance(s,trades);mentalState(s);return trades;
 }
 export function mood(s) {
-  const latest = s.recent[0];
-  const weighted = s.recent.reduce((sum,e,i)=>sum+e.impact*[1,.75,.5,.3,.15][i],0);
-  if (s.sanity<=5) return 'despair';
+  const trauma=tradingTrauma(s);if(trauma.active)return trauma.mood;
+  const current=s.recent.filter(entry=>entry.day===s.day||(entry.day===undefined&&s.developer?.edited));
+  const latest = current[0];
+  const weighted = current.reduce((sum,e,i)=>sum+e.impact*[1,.75,.5,.3,.15][i],0);
+  const panic=tradingCapitalSafety(s,{accountEquity:equity(s)}).principalIntact&&!s.developer?.edited?'regretful':'despair';
+  if (s.sanity<=5) return panic;
   const pressured=pressureMood(s);if(pressured)return pressured;
-  if (s.sanity<=15) return 'despair';
+  if (s.sanity<=15) return panic;
   if(s.sanity>=50&&s.day===1&&s.beat===0&&!s.position&&!latest&&Math.abs(tradingProfit(s))<.01)return 'hopeful';
-  if(latest?.day===s.day&&(latest.observedMove||latest.reversal))return latest.type;
-  if (latest?.type==='despair' || weighted<-.17) return 'despair';
+  if(latest?.day===s.day&&(latest.observedMove||latest.reversal))return latest.type==='despair'?panic:latest.type;
+  if (latest?.type==='despair' || weighted<-.17) return panic;
   if (s.sanity<25) return 'anxious';
   if (latest?.type==='ecstatic' && weighted>0 || tradingProfit(s)>START*.15&&s.heat>=3) return 'ecstatic';
   if(positionsOf(s).some(p=>p.risk>=20||positionNetUnrealized(s,p)<-p.margin*.22))return 'nervous';
@@ -362,9 +379,26 @@ export function useProp(s,id){
  }
  mentalState(s);return{id,cost,trade:null,trades:[],line:PROPS[id].copy};
 }
+// Explicit game-only after-close decisions. Merely showing/replaying a recap has no effect.
+export function chooseRecapAction(s,id){
+ ensureStory(s);
+ if(!['day_end','resting'].includes(s.phase)||s.dayReport?.day!==s.day||s.mode==='endless')throw Error('只有今天收盘后才能选择生活安排');
+ s.recapChoiceLedger ||= [];
+ if(s.recapChoiceLedger.some(e=>e.day===s.day&&e.id===id))throw Error('今天已经选择过了');
+ const r=s.dayReport,choices=recapChoices({sealed:true,mode:s.mode,daily:{tradingNet:r.net,openingNominal:r.opening},account:{netAssets:equity(s)-debtSummary(s).total}},{cash:accountMetrics(s).availableMargin});
+ const choice=choices.find(c=>c.id===id);if(!choice||choice.loan)throw Error('没有这个生活选项');
+ if(!choice.enabled)throw Error('可用资金不足');
+ if(choice.group&&s.recapChoiceLedger.some(e=>e.day===s.day&&e.group===choice.group))throw Error('今晚已经安排过这一类活动');
+ s.cash-=choice.cost;s.expenses+=choice.cost;
+ const receipt={day:s.day,id,group:choice.group,cost:choice.cost,timestamp:currentTradingTimestamp(s),label:choice.label};s.recapChoiceLedger.push(receipt);s.recapChoiceLedger=s.recapChoiceLedger.slice(-200);
+ if(id==='noodles-next-day')s.nextDayLivingDiscount=.4;
+ else if(id==='quiet-night')s.stress=Math.max(0,(s.stress||0)-3);
+ else s.mentalBoost=Math.min(50,(s.mentalBoost||0)+Math.min(20,4+Math.log10(1+choice.cost)*2));
+ mentalState(s);refreshReport(s);return receipt;
+}
 export function debtSummary(s){return{family:s.family?.outstanding||0,network:s.loan?.outstanding||0,total:(s.family?.outstanding||0)+(s.loan?.outstanding||0)};}
 // Shared game-only quote. Borrowed funds remain liabilities rather than profit.
-export function emotionIntensity(s){return pressureIntensity(s,mood(s));}
+export function emotionIntensity(s){return Math.max(tradingTrauma(s).intensity,pressureIntensity(s,mood(s)));}
 export function networkLoanTerms(s){
  const intensity=emotionIntensity(s);
  const availableCash=accountMetrics(s).availableMargin,networkDebt=s.loan?.outstanding||0;
@@ -412,7 +446,7 @@ export function livingCost(s){
  const base=wealth<20000?Math.max(100,wealth*.015):wealth<100000?500+(wealth-20000)*.02125:Math.min(50000,2200+(wealth-100000)*.002);
  return money(Math.min(wealth,base*(1-(s.livingDiscount||0))));
 }
-function refreshReport(s){if(!s.dayReport||s.dayReport.day!==s.day)return;const funding=s.externalFunding-s.dayOpeningFunding,costs=s.expenses-s.dayOpeningExpenses;s.dayReport.closing=equity(s);s.dayReport.funding=funding;s.dayReport.costs=costs;s.dayReport.net=equity(s)-s.dayOpening-funding+costs;s.dayReport.externalFunding=s.externalFunding;s.dayReport.tradeNet=s.dayReport.net;s.dayReport.netTradingProfit=s.dayReport.net;}
+function refreshReport(s){if(!s.dayReport||s.dayReport.day!==s.day)return;ensureReportLiving(s);const funding=s.externalFunding-s.dayOpeningFunding,costs=s.expenses-s.dayOpeningExpenses;s.dayReport.closing=equity(s);s.dayReport.funding=funding;s.dayReport.costs=costs;s.dayReport.net=Number.isFinite(s.dayReport.closedTradeNet)?s.dayReport.closedTradeNet:equity(s)-s.dayOpening-funding+costs;s.dayReport.externalFunding=s.externalFunding;s.dayReport.tradeNet=s.dayReport.net;s.dayReport.netTradingProfit=s.dayReport.net;sealAccountingDay(s);}
 export function repayFather(s,amount){ensureStory(s);if(!tradingOpen(s)&&!['day_end','resting'].includes(s.phase))throw Error('当前市场已休市');if(!Number.isFinite(amount)||amount<=0||amount>accountMetrics(s).availableMargin||amount>s.family.outstanding)throw Error('归还金额超过可用资金或欠款');const wasInformed=s.family.informed||s.family.discovered;s.cash-=amount;s.externalFunding-=amount;s.family.outstanding-=amount;s.family.repaid+=amount;s.family.lastRepayment={amount,outstanding:s.family.outstanding,wasInformed,day:s.day,beat:s.beat};s.family.informed=true;s.story.queue=s.story.queue.filter(id=>id!=='fatherFound');s.family.trust+=amount/FATHER_SAVINGS;
  const full=s.family.outstanding<.00001;if(full){s.family.outstanding=0;s.effects=s.effects.filter(e=>e.id!=='guilt');s.story.queue=s.story.queue.filter(id=>id!=='fatherFound'&&id!=='repayPartial');}
  queueStory(s,full?'repayFull':'repayPartial');s.emotionBias={mood:full?'determined':'guilty',until:(s.day-1)*4+s.beat+2};mentalState(s);refreshReport(s);return{amount,outstanding:s.family.outstanding,full};}
@@ -458,6 +492,7 @@ function validateAction(s,action){
   return null;
 }
 export function takeAction(s,action){
+  ensureRunStatistics(s);
   const preview=validateAction(s,action),live=s.realtime===true&&s.phase==='playing';ensureOrders(s);
   const before=equity(s);let trade=null,trades=[];
   if(action.type==='long'||action.type==='short'){
@@ -467,7 +502,7 @@ export function takeAction(s,action){
       openFee,openFeeRemaining:openFee,maxUnrealized:0,nearMiss:false,day:s.day,beat:s.beat};
     s.positions.push(p);syncPosition(s);s.nextStop=null;
     s.lastTrade={type:'open',positionId:p.id,direction:p.direction,margin,leverage:p.leverage,entry:p.entry,pnlModel:p.pnlModel,quantity:positionQuantity(p),openFee,fee:openFee,day:s.day,beat:s.beat};
-    trade=s.lastTrade;trades=[trade];
+    trade=s.lastTrade;trades=[trade];recordOrderOpened(s,trade);
     if(action.leverage>=50){s.stress+=action.leverage===100?8:4;s.restRecovery=Math.max(0,(s.restRecovery||0)-4);}
     s.heat=Math.min(5,s.heat+(action.leverage>=50?2:1));
   }else if(action.type==='half'||action.type==='close'){
@@ -523,7 +558,7 @@ export function finishTradingDay(s){
   if(s.mode==='endless')throw Error('操盘模式连续运行，不进行日结算');
   if(s.dayReport?.day===s.day&&['day_end','resting','ending'].includes(s.phase))return s.dayReport;
   if(!tradingOpen(s)&&s.phase!=='closing')throw Error('今天已经结束');
-  if(s.phase!=='closing')s.earlyClose={day:s.day,beat:s.beat,candle:s.pending?.candle||0,tick:s.pending?.tick||0,price:s.price};
+  if(s.phase!=='closing')s.earlyClose={day:s.day,beat:s.beat,candle:s.pending?.candle||0,tick:s.pending?.tick||0,price:s.price,timestamp:currentTradingTimestamp(s)};
   ensureOrders(s);enforceMargin(s);
   s.pending=null;s.phase='closing';
   return settleDay(s);
@@ -533,23 +568,74 @@ export function settleDay(s) {
   if(s.phase!=='closing')throw Error('请等待今日行情结束，再全平收盘');
   if(positionsOf(s).length)closeOrders(s,1,'closing');
   s.cash+=s.reserve;s.reserve=0;
-  const living=livingCost(s),{interest,interestPaid,interestAccrued,interestRate}=accrueLoanInterest(s,living);
-  s.cash-=living;s.expenses+=living;s.livingPaid=(s.livingPaid||0)+living;
-  s.expenseLedger ||= [];s.expenseLedger.push({day:s.day,living,interest,interestRate});
+  const livingEstimate=livingCost(s),{interest,interestPaid,interestAccrued,interestRate}=accrueLoanInterest(s,livingEstimate);
+  // Interest is accounted for now; living costs are a pending obligation until
+  // the narrative page has applied its non-financial effects.
+  s.expenseLedger ||= [];s.expenseLedger.push({day:s.day,living:0,interest,interestRate,livingStatus:'pending'});
   if(s.dinner)appendDialogue(s,'friend','friend.day.end');
   mentalState(s,true);
   const closing=equity(s),funding=s.externalFunding-s.dayOpeningFunding,costs=s.expenses-s.dayOpeningExpenses;
   s.dayReport={day:s.day,beat:s.beat,bonusBeats:s.bonusBeats||0,opening:s.dayOpening,closing,net:closing-s.dayOpening-funding+costs,funding,costs,
-    livingCost:living,interest,interestPaid,interestAccrued,interestRate,tradeNet:closing-s.dayOpening-funding+costs,netTradingProfit:closing-s.dayOpening-funding+costs,trades:s.history.filter(t=>t.day===s.day), mood:mood(s), promise:s.promise,externalFunding:s.externalFunding,
+    livingCost:0,pendingLivingCost:livingEstimate,openingNetAssets:dailyReturnMetrics(s,{report:null}).denominator,openingDebt:Number.isFinite(s.dayOpeningDebt)?s.dayOpeningDebt:null,interest,interestPaid,interestAccrued,interestRate,tradeNet:closing-s.dayOpening-funding+costs,netTradingProfit:closing-s.dayOpening-funding+costs,trades:s.history.filter(t=>t.day===s.day), mood:mood(s), promise:s.promise,externalFunding:s.externalFunding,
     openingLine:s.dayOpeningLine,closingLine:s.speech.text,fees:s.feeLedger.filter(t=>t.day===s.day).reduce((sum,t)=>sum+t.amount,0),feesPaid:s.feeLedger.filter(t=>t.day===s.day).reduce((sum,t)=>sum+t.amount,0),totalFeesPaid:s.feesPaid,
     moments:(s.dayMoments||[]).filter(t=>t.day===s.day),peak:s.history.filter(t=>t.day===s.day).reduce((a,t)=>!a||Math.abs(t.pnl||0)>Math.abs(a.pnl||0)?t:a,null)};
   if(s.earlyClose?.day===s.day)s.dayReport.earlyClose={...s.earlyClose};
-  s.completedDays=Math.max(s.completedDays||0,equity(s)>=MIN_EQUITY&&(s.beat>=beatsPerDay(s)||s.earlyClose?.day===s.day)?s.day:s.day-1);s.dayReport.performance={...s.performance};s.dayReport.completedCandles=s.completedCandles;s.dayReport.completedDays=s.completedDays;s.phase='day_end';return s.dayReport;
+  s.dayReport.closedTradeNet=s.dayReport.net;
+  const quote=dayLivingQuote(s,s.dayReport,livingDayRoll(s.seed,s.day));
+  s.dayReport.livingSettlement={version:1,day:s.day,status:'pending',quote};s.dayReport.pendingLivingCost=quote.amount;
+  s.completedDays=Math.max(s.completedDays||0,s.day-1);s.dayReport.performance={...s.performance};s.dayReport.completedCandles=s.completedCandles;s.dayReport.completedDays=s.completedDays;s.phase='day_end';sealAccountingDay(s);return s.dayReport;
+}
+function dayLivingQuote(s,report,roll){
+ const knowsFriend=s.story?.seen?.includes('friendStudy')||s.story?.log?.some(entry=>entry.id==='friendStudy')||s.itemUnlocks?.mochiko?.event==='friendStudy';
+ return quoteLivingMeal({seed:s.seed,day:report.day,baseAmount:livingCost(s),cash:Math.max(0,s.cash),openingNetAssets:dailyReturnMetrics(s,{report}).denominator,tradingNet:report.closedTradeNet??report.net,knowsFriend,lastSpecialDay:s.livingPolicy?.lastSpecialDay??null,discount:s.livingDiscount||0,roll});
+}
+function ensureReportLiving(s){
+ const report=s.dayReport;if(!report||!Number.isSafeInteger(report.day)||report.day<1)return null;
+ if(report.livingSettlement)return report.livingSettlement;
+ // Old closed statements already include their living cost. Annotate only;
+ // never refund them, reroll a meal, or reconstruct missing financial history.
+ const amount=Number.isFinite(report.livingCost)?Math.max(0,report.livingCost):0;
+ const receipt={id:`living:${s.seed}:${report.day}`,day:report.day,amount,kind:'legacy',label:'生活费（已结）',seedLocked:true,legacy:true,assetsBefore:null,assetsAfter:Number.isFinite(report.closing)?report.closing:null,netAssetsBefore:null,netAssetsAfter:null};
+ report.livingSettlement={version:1,day:report.day,status:'legacy-paid',quote:{version:1,day:report.day,amount,baseAmount:amount,kind:'legacy',label:receipt.label,seedLocked:true},receipt};report.pendingLivingCost=0;
+ return report.livingSettlement;
+}
+export function finalizeDayLiving(s){
+ if(s.mode==='endless')return{charged:false,amount:0,receipt:null};
+ if(!['day_end','resting','ending'].includes(s.phase))throw Error('先完成今日交易结算');
+ const report=s.dayReport;
+ if(!report||report.day!==s.day){if(s.livingLegacyCompletedDay===s.day)return{charged:false,amount:0,receipt:null};throw Error('没有今天的生活费结算');}
+ const settlement=ensureReportLiving(s);
+ if(!validLivingSettlement(settlement,s.day))throw Error('生活费账单损坏，未扣款');
+ if(settlement.status!=='pending')return{charged:false,amount:settlement.receipt.amount,receipt:settlement.receipt};
+ const ledger=s.expenseLedger?.findLast(row=>row.day===s.day&&row.livingStatus==='pending');
+ if(!ledger||ledger.living!==0)throw Error('生活费流水不一致，未重复扣款');
+ const quote=dayLivingQuote(s,report,settlement.quote.roll),amount=quote.amount,assetsBefore=equity(s),netAssetsBefore=assetsBefore-debtSummary(s).total;
+ // One synchronous state transition. Animation/playback never commits money.
+ s.cash-=amount;s.expenses+=amount;s.livingPaid=(s.livingPaid||0)+amount;
+ report.livingCost=amount;report.pendingLivingCost=0;settlement.status='finalized';settlement.quote=quote;
+ const receipt={id:`living:${s.seed}:${s.day}`,day:s.day,amount,baseAmount:quote.baseAmount,kind:quote.kind,label:quote.label,seedLocked:true,roll:quote.roll,assetsBefore,assetsAfter:equity(s),netAssetsBefore,netAssetsAfter:equity(s)-debtSummary(s).total,timestamp:currentTradingTimestamp(s)};
+ settlement.receipt=receipt;ledger.living=amount;ledger.livingStatus='finalized';ledger.livingReceipt=receipt.id;
+ if(['feast','friend-treat'].includes(quote.kind))s.livingPolicy={version:1,lastSpecialDay:s.day};
+ s.completedDays=Math.max(s.completedDays||0,equity(s)>=MIN_EQUITY&&(report.beat>=BEATS_PER_DAY+(report.bonusBeats||0)||report.earlyClose?.day===s.day)?s.day:s.day-1);report.completedDays=s.completedDays;
+ mentalState(s,true);refreshReport(s);return{charged:true,amount,receipt};
 }
 export function beginRest(s){if(s.phase!=='day_end')throw Error('先完成全平收盘');s.phase='resting';mentalState(s);return pendingStory(s);}
+export function finishEndlessCampaign(s){
+  if(s.mode!=='endless')throw Error('剧情模式先完成今晚结算');
+  if(s.phase==='ending'&&s.ending)return s.ending;
+  if(!['decision','playing'].includes(s.phase))throw Error('当前无法收手离场');
+  const timestamp=currentTradingTimestamp(s);
+  ensureOrders(s);enforceMargin(s);if(positionsOf(s).length)closeOrders(s,1,'closing');
+  // Exiting is not a new quote/day boundary: no invented candle, interest,
+  // recovery tick or completed survival day. Keep the run and its liabilities.
+  s.pending=null;s.marketPaused=true;s.phase='ending';mentalState(s);
+  s.ending={id:'walkaway',day:s.day,equity:equity(s),profit:tradingProfit(s),sanity:s.sanity,timestamp};
+  return s.ending;
+}
 export function finishCampaign(s,id='walkaway'){
   if(!['day_end','resting'].includes(s.phase)||pendingStory(s))throw Error('先完成今晚的休息事件');
   if(!['million','walkaway','broke','crisis'].includes(id))throw Error('未知结局');
+  finalizeDayLiving(s);
   s.ending={id,day:s.day,equity:equity(s),profit:tradingProfit(s),sanity:s.sanity};s.phase='ending';return s.ending;
 }
 export function endingCondition(s){if(s.mode==='endless')return equity(s)<MIN_EQUITY?'broke':null;return s.sanity<=5&&equity(s)<5000?'crisis':equity(s)<MIN_EQUITY?'broke':tradingProfit(s)>=TARGET_PROFIT?'million':null;}
@@ -558,8 +644,8 @@ export function advanceTick(s) {
   const p=s.pending,points=s.script.tracks[p.beat][p.candle];
   const price=points[p.tick];
   let candle=s.candles.at(-1);
-  if(p.tick===0){candle={open:s.price,close:s.price,high:s.price,low:s.price,closed:false,day:s.day,beat:p.beat};s.candles.push(candle);}
-  s.price=price;candle.close=price;candle.high=Math.max(candle.high,price);candle.low=Math.min(candle.low,price);
+  if(p.tick===0){candle={open:s.price,close:s.price,high:s.price,low:s.price,closed:false,day:s.day,beat:p.beat};stampCandleTime(s,candle,p);s.candles.push(candle);}
+  stampQuoteTime(s,p);s.price=price;candle.close=price;candle.high=Math.max(candle.high,price);candle.low=Math.min(candle.low,price);
   ensureOrders(s);const exits=[];
   for(const pos of s.positions){
    const unreal=positionNetUnrealized(s,pos),last=pos.lastDirectionalFloating??pos.lastFloating??0;pos.maxUnrealized=Math.max(pos.maxUnrealized,unreal);
@@ -581,7 +667,7 @@ export function advanceTick(s) {
   if(p.tick>=points.length){candle.closed=true;candleClosed=true;s.completedCandles=(s.completedCandles||0)+1;p.tick=0;p.candle++;trimEndlessLedgers(s);}
   if(p.candle>=CANDLES_PER_BEAT){
     if(p.flatAtStart&&!p.traded&&!s.position){const observedMove=s.price/(p.startPrice||s.price)-1;if(Math.abs(observedMove)>=.004)experience(s,{type:observedMove>0?'regretful':'relieved',impact:0,observedMove,day:s.day,beat:s.beat});}
-    if(s.realtime&&!s.position&&!p.traded){s.stress=Math.max(0,s.stress-1);s.heat=Math.max(0,s.heat-1);if(s.mode==='endless')s.restRecovery=Math.min(32,(s.restRecovery||0)+1);}
+    if(s.realtime&&!s.position&&!p.traded){if(s.mode==='endless')recoverTradingTrauma(s,{kind:'flat-segment',segment:(s.day-1)*4+s.beat});s.stress=Math.max(0,s.stress-1);s.heat=Math.max(0,s.heat-1);if(s.mode==='endless')s.restRecovery=Math.min(32,(s.restRecovery||0)+1);}
     s.beat++;s.pending=null;beatEnded=true;ageEffects(s);mentalState(s);appendChatAfterBeat(s);
     if(s.mode==='endless'){
       if(s.beat>=BEATS_PER_DAY){
@@ -593,7 +679,7 @@ export function advanceTick(s) {
         if(s.positions.length)closeOrders(s,1,'closing');
         s.ending={id:'broke',day:s.day,equity:equity(s),profit:tradingProfit(s),sanity:s.sanity};s.phase='ending';
       }else if(s.beat>=BEATS_PER_DAY){
-        s.completedDays=(s.completedDays||0)+1;s.day++;s.beat=0;s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
+        recordAccountingDay(s);s.completedDays=(s.completedDays||0)+1;s.day++;s.beat=0;s.dayOpening=equity(s);s.dayOpeningBasisUnknown=false;s.dayOpeningDebt=debtSummary(s).total;s.dayOpeningNetAssets=s.dayOpening-s.dayOpeningDebt;s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
         s.script=planDay(s.seed,s.day,s.price);s.lastEvent=null;s.swanSeen=false;s.itemsUsed={};s.skills={mochiko:false,yasuko:false};s.bonusBeats=0;s.phase='decision';mentalState(s);
       }else s.phase='decision';
     }else if(s.beat>=beatsPerDay(s)||equity(s)<MIN_EQUITY||s.sanity<=0){s.phase='closing';dayEnded=true;}
@@ -609,10 +695,13 @@ export function finishSegment(s) {
 export function nextDay(s) {
   if(s.phase!=='resting')throw Error('请先休市休息');
   if(pendingStory(s))throw Error('先回应今晚的事件');
+  finalizeDayLiving(s);
   mentalState(s);
   const ending=endingCondition(s);if(ending){finishCampaign(s,ending);return s;}
-  s.day++;s.beat=0;s.phase='decision';s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;s.stress=Math.max(0,s.stress-4);s.restRecovery=Math.min(32,(s.restRecovery||0)+8);s.heat=0;
-  s.bonusBeats=0;s.livingDiscount=0;delete s.earlyClose;
+  recoverTradingTrauma(s,{kind:'rest'});
+  s.day++;s.beat=0;s.phase='decision';s.dayOpening=equity(s);s.dayOpeningBasisUnknown=false;s.dayOpeningDebt=debtSummary(s).total;s.dayOpeningNetAssets=s.dayOpening-s.dayOpeningDebt;s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;s.stress=Math.max(0,s.stress-4);s.restRecovery=Math.min(32,(s.restRecovery||0)+8);s.heat=0;
+
+  s.bonusBeats=0;s.livingDiscount=s.nextDayLivingDiscount||0;delete s.nextDayLivingDiscount;delete s.earlyClose;
   const living=Math.min(livingCost(s),Math.max(0,s.cash));s.cash-=living;s.reserve=living;
   s.script=planDay(s.seed,s.day,s.price);s.skills={mochiko:false,yasuko:false};s.itemsUsed={};s.nextStop=null;
   s.dayMoments=[];s.lastEvent=null;s.swanSeen=false;s.lastReaction=null;s.pending=null;s.promise=null;s.promiseNoted=false;s.dinner=false;s.publicStance=null;
@@ -638,10 +727,10 @@ function refreshNewsCopy(s){
 }
 export function restoreGame(raw) {
   try {
-    let s=JSON.parse(raw);const oldVersion=s?.version;
+    let s=JSON.parse(raw);const oldVersion=s?.version,openingSnapshot=dailyReturnMetrics(s||{},{report:null});
     if(s&&[2,3].includes(s.version)&&Number.isFinite(s.cash)&&s.cash<0)return null;
     if(s&&Number.isFinite(s.cash)&&s.cash<0&&s.cash>=-1e-8)s.cash=0;
-    if(!s||![2,3,4,5,VERSION].includes(s.version)||!Number.isFinite(s.seed)||!Number.isFinite(s.price)||s.price<=0||!Number.isFinite(s.cash)||!Array.isArray(s.candles)||!s.script?.tracks||!['decision','playing','closing','day_end','resting','ending','bankrupt'].includes(s.phase))return null;
+    if(!s||![2,3,4,5,6,VERSION].includes(s.version)||!Number.isFinite(s.seed)||!Number.isFinite(s.price)||s.price<=0||!Number.isFinite(s.cash)||!Array.isArray(s.candles)||!s.script?.tracks||!['decision','playing','closing','day_end','resting','ending','bankrupt'].includes(s.phase))return null;
     if(s.phase==='playing'&&(!s.pending||!Number.isInteger(s.pending.beat)||!Number.isInteger(s.pending.candle)||!Number.isInteger(s.pending.tick)))return null;
     if(s.version===2){delete s.positions;s=migrateV2(s);}
     if(s.version<4){delete s.positions;s.version=VERSION;}
@@ -652,7 +741,7 @@ export function restoreGame(raw) {
     if(!Number.isSafeInteger(s.completedCandles)||s.completedCandles<0||!Number.isSafeInteger(s.completedDays)||s.completedDays<0)return null;
     if(s.mode==='endless'&&['closing','day_end','resting'].includes(s.phase))return null;
     if(s.mode==='endless'&&s.reserve){s.cash+=s.reserve;s.reserve=0;}
-    ensureOrders(s);ensurePerformance(s);
+    ensureOrders(s);ensureRunStatistics(s);ensurePerformance(s);
     if(!Number.isSafeInteger(s.performance.winRateTrades)||s.performance.winRateTrades<0||s.performance.winRateTrades>s.performance.closedTrades||!Number.isSafeInteger(s.performance.winningTrades)||s.performance.winningTrades<0||s.performance.winningTrades>s.performance.winRateTrades)return null;
     if(!Number.isFinite(s.performance.totalProfit)||!Number.isInteger(s.performance.closedTrades)||s.performance.closedTrades<0||!Number.isFinite(s.performance.maxLoss)||s.performance.maxLoss>0||!Number.isFinite(s.performance.maxProfit)||s.performance.maxProfit<0||!Number.isFinite(s.performance.peakEquity)||s.performance.peakEquity<START||!Number.isFinite(s.performance.maxDrawdown)||s.performance.maxDrawdown<0||s.performance.maxDrawdown>1)return null;
     const ids=new Set();
@@ -673,7 +762,18 @@ export function restoreGame(raw) {
     for(const [account,keys] of [[s.loan,['outstanding','borrowed','repaid','interestPaid','interestAccrued']],[s.family,['outstanding','repaid']]])for(const key of keys)if(account[key]!==undefined&&(!Number.isFinite(account[key])||account[key]<0))return null;
     if(['outstanding','borrowed','repaid','interestPaid'].some(key=>!Number.isFinite(s.loan[key])))return null;
     if(s.loan.borrowCount!==undefined&&(!Number.isSafeInteger(s.loan.borrowCount)||s.loan.borrowCount<0))return null;
-    ensureDialogue(s);mentalState(s);networkLoanTerms(s);s.dayOpeningLine ??= s.speech.text;
+    if(s.tradingTrauma!==undefined&&!validTradingTrauma(s.tradingTrauma))return null;
+    if(s.recapChoiceLedger!==undefined&&(!Array.isArray(s.recapChoiceLedger)||s.recapChoiceLedger.some(e=>!e||!Number.isSafeInteger(e.day)||e.day<1||typeof e.id!=='string'||!Number.isFinite(e.cost)||e.cost<0)))return null;
+    if(s.nextDayLivingDiscount!==undefined&&s.nextDayLivingDiscount!==.4)return null;
+    const living=ensureReportLiving(s);if(living&&!validLivingSettlement(living,s.dayReport.day))return null;
+    if(living?.status==='pending'&&(s.dayReport.day!==s.day||!['day_end','resting','ending'].includes(s.phase)||s.dayReport.livingCost!==0||!s.expenseLedger?.some(row=>row.day===s.dayReport.day&&row.livingStatus==='pending'&&row.living===0)))return null;
+    if(living?.status==='finalized'&&Math.abs(s.dayReport.livingCost-living.receipt.amount)>1e-6)return null;
+    if(s.livingPolicy!==undefined&&(s.livingPolicy.version!==1||!Number.isSafeInteger(s.livingPolicy.lastSpecialDay)||s.livingPolicy.lastSpecialDay<1))return null;
+    if(oldVersion<7&&!s.dayReport&&['day_end','resting','ending'].includes(s.phase))s.livingLegacyCompletedDay=s.day;
+    s.dayOpeningNetAssets??=openingSnapshot.denominator;if(openingSnapshot.denominator===null)s.dayOpeningBasisUnknown=true;s.version=VERSION;
+    ensureRunStatistics(s);ensureTradingClock(s);ensureAccountingJournal(s);ensureDialogue(s);mentalState(s);networkLoanTerms(s);s.dayOpeningLine ??= s.speech.text;
+
+
     return s;
   }catch{return null;}
 }

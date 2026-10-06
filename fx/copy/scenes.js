@@ -6,8 +6,8 @@ export const ITEM_SCENES={
 const choice=(id,label,mood,stress=0,trust=0)=>({id,label,lines:[],mood,stress,trust});
 // Static metadata is safe for journals; runtime text always comes from getStory.
 export const STORY_DEFINITIONS={
- fatherDiscover:{id:'father_discover',title:'父亲的存款',lines:[],choices:[choice('continue','继续','calm')]},
- fatherUnlock:{id:'father_unlock',title:'父亲的贵重存款',lines:[],choices:[choice('look_at_savings','继续','guilty',2)]},
+ fatherDiscover:{id:'father_discover',title:'父亲的柜中存款',lines:[],choices:[choice('continue','继续','calm')]},
+ fatherUnlock:{id:'father_unlock',title:'父亲的柜中存款',lines:[],choices:[choice('look_at_savings','继续','guilty',2)]},
  fatherFound:{id:'father_discovered',title:'父亲发现了',lines:[],choices:[choice('admit','继续','guilty',6,-2)]},
  repayPartial:{id:'father_repay_partial',title:'部分归还完成',lines:[],choices:[choice('record_payment','继续','determined',-4,1)]},
  repayFull:{id:'father_repay_full',title:'全部归还完成',lines:[],choices:[choice('close_envelope','继续','relieved',-6,2)]},

@@ -1,4 +1,4 @@
-import {EXTRA_NEWS_CHAINS} from './story-content.js?v=797e53ac924c141118b230657d77338630dabbd6';
+import {EXTRA_NEWS_CHAINS} from './story-content.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
 // Simulated market information and functional UI copy, separate from approved character dialogue.
 // Bias is the simulated USD/JPY quote tendency: +1 = USD stronger / JPY weaker.
 // Economic news can be priced in or overwhelmed by other flows; it never guarantees a trade.
@@ -37,10 +37,11 @@ const BASE_NEWS_CHAINS = [
 
 export const NEWS_CHAINS = [...BASE_NEWS_CHAINS,...EXTRA_NEWS_CHAINS];
 export const MOODS = {
+  'trauma-pain':['崩溃','shocked'],'trauma-frozen':['重创','blank'],numb:['麻木','blank'],recovering:['恢复中','blank'],
   hopeful:['期待','hopeful'],focused:['专注','focused'],irritated:['烦躁','irritated'],stunned:['震惊','stunned'],exhausted:['疲惫','exhausted'],guilty:['内疚','guilty'],embarrassed:['局促','embarrassed'],lonely:['落寞','lonely'],determined:['坚定','determined'],warm:['温暖','warm'],
   calm:['平静','calm'],smug:['得意','smug'],nervous:['紧张','nervous'],anxious:['焦虑','anxious'],
   ecstatic:['极度亢奋','exhilarated'],despair:['绝望','shocked'],regretful:['懊恼','regretful'],relieved:['如释重负','relieved']
 };
 
 export const CANON_QUOTE = {id:'V2-HOPE-01',text:'两千万而已，我会轻松赚回来的！',source:'用户附译；日语原句见动画官方简介',url:'https://fxkurumi-info.com/'};
-export {PROPS} from './copy/items.js?v=797e53ac924c141118b230657d77338630dabbd6';
+export {PROPS} from './copy/items.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
