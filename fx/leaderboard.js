@@ -1,6 +1,6 @@
-import {kurumiStorage} from './storage-namespace.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {runPerformance} from './performance.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=197d9948df8366400801871c883357d4007a8bfe';
+import {kurumiStorage} from './storage-namespace.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {runPerformance} from './performance.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const BACKEND = 'https://leek-spire.gongfpp.chatgpt.site';

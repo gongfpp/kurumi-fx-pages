@@ -1,10 +1,10 @@
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {itemUnlocked,discoverItems,itemDiscovered} from './item-events.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {NEWS_CHAINS,PROPS} from './content.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {BLACK_SWANS} from './story-content.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=197d9948df8366400801871c883357d4007a8bfe';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=197d9948df8366400801871c883357d4007a8bfe';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=197d9948df8366400801871c883357d4007a8bfe';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {itemUnlocked,discoverItems,itemDiscovered} from './item-events.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {NEWS_CHAINS,PROPS} from './content.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {BLACK_SWANS} from './story-content.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
 export const VERSION = 6;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;

@@ -1,4 +1,4 @@
-import {grossPnlAt} from './market.js?v=197d9948df8366400801871c883357d4007a8bfe';
+import {grossPnlAt} from './market.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
