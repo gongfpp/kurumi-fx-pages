@@ -1,10 +1,10 @@
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-import {itemUnlocked,discoverItems,itemDiscovered} from './item-events.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-import {NEWS_CHAINS,PROPS} from './content.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-import {BLACK_SWANS} from './story-content.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=52c07e3adf0b63806f49ee3fdcd4df83df85f1ee';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {itemUnlocked,discoverItems,itemDiscovered} from './item-events.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {NEWS_CHAINS,PROPS} from './content.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {BLACK_SWANS} from './story-content.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=3fb44b95c573d5eac847fcd9154f7aba88170212';
 export const VERSION = 6;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;
