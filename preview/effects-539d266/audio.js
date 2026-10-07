@@ -1,6 +1,6 @@
-import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {AudioEnvelope} from './audio-envelope.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {assetURL} from './assets.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
+import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {AudioEnvelope} from './audio-envelope.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {assetURL} from './assets.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 

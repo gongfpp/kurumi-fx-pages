@@ -1,12 +1,13 @@
-import {BASE_STATE} from './voice-fixture.js';
-import {VoicePlayer,VOICE_LINES} from './voice.js';
-import {createVoiceContextSelector} from './voice-timing.js';
-import {createFloatingReaction} from './floating-reaction.js';
-import {selectFinalPortrait} from './final-portrait.js';
-import {positionNetUnrealized} from './engine.js';
-import {assetURL} from './assets.js';
-import {unlockSafeAudio} from './audio-envelope.js';
-import {mountVoiceLibrary} from './voice-library.js';
+import {mountPreviewCapture} from './preview-capture.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {BASE_STATE} from './voice-fixture.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {VoicePlayer,VOICE_LINES} from './voice.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {createVoiceContextSelector} from './voice-timing.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {createFloatingReaction} from './floating-reaction.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {selectFinalPortrait} from './final-portrait.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {positionNetUnrealized} from './engine.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {assetURL} from './assets.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {unlockSafeAudio} from './audio-envelope.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {mountVoiceLibrary} from './voice-library.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
 const $=id=>document.getElementById(id),trace=[],reaction=createFloatingReaction(),select=createVoiceContextSelector();
 let state=structuredClone(BASE_STATE),generation=0,plays=0,dispose=null,lastPortrait;
 const record=(event,extra={})=>{trace.push({at:new Date().toISOString(),event,...extra});$('trace').textContent=trace.slice(-35).map(e=>JSON.stringify(e)).join('\n');};
@@ -40,3 +41,6 @@ for(const type of ['pointerdown','keydown'])document.addEventListener(type,event
 document.addEventListener('visibilitychange',()=>{if(document.hidden){voice.stop();for(const a of $('voice-list').querySelectorAll('audio'))a.pause();record('background-silenced');}render();});
 window.addEventListener('pagehide',()=>voice.stop());
 $('version').textContent='Source commit: ebe513d153a1219d73a65051f32fb508afce547c';render();setInterval(()=>{if(!document.hidden)render();},100);
+
+const capture=mountPreviewCapture($('capture-panel'),{name:'voice-ebe513d',allowedPaths:['./voice/kurumi-came.mp3', './voice/kurumi-cannot-lose.mp3', './voice/kurumi-check.mp3', './voice/kurumi-family-money.mp3', './voice/kurumi-gasp.mp3', './voice/kurumi-gone.mp3', './voice/kurumi-greedy.mp3', './voice/kurumi-human.mp3', './voice/kurumi-laugh.mp3', './voice/kurumi-profit-ten.mp3', './voice/kurumi-profit-twenty.mp3', './voice/kurumi-profit-vanished.mp3', './voice/kurumi-stop.mp3', './voice/mebuki-rich.mp3', './voice/mochiko-waste.mp3', './voice/yasuko-start.mp3'],beforeStart:()=>{voice.stop();for(const a of $('voice-list').querySelectorAll('audio'))a.pause();},onState:state=>{$('capture-stop-library').disabled=state!=='recording';}});
+$('capture-stop-library').onclick=()=>capture.stop();

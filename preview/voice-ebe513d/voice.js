@@ -1,7 +1,7 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js';
-import {VoiceTimingGate} from './voice-timing.js';
-import {AudioEnvelope} from './audio-envelope.js';
-import {assetURL} from './assets.js';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {VoiceTimingGate} from './voice-timing.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {AudioEnvelope} from './audio-envelope.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {assetURL} from './assets.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
@@ -25,7 +25,7 @@ export const VOICE_LINES=Object.freeze([
  clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
  clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
 // Gameplay voice is strictly manual. sync observes validity; it never starts audio.

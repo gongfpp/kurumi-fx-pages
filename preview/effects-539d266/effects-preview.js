@@ -1,10 +1,13 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {PRESSURE_CRACKS} from './pressure-visuals.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {GameMotion} from './motion.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {mountDailyRecap} from './recap-view.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {recapPresentation} from './recap-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
-import {FXAudio} from './audio.js?v=539d26616071e7036617b0b49726bd24af40ef2e';
+import {mountPreviewCapture} from './preview-capture.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {unlockSafeAudio} from './audio-envelope.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+for(const type of ['pointerdown','keydown','click'])document.addEventListener(type,event=>unlockSafeAudio(event),{capture:true});
+import {createPressurePresentation} from './pressure-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {PRESSURE_CRACKS} from './pressure-visuals.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {GameMotion} from './motion.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {mountDailyRecap} from './recap-view.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {recapPresentation} from './recap-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {FXAudio} from './audio.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
 const $=id=>document.getElementById(id),audio=new FXAudio({onError:()=>{$('sound-status').textContent='音频未能载入；视觉仍可检查。'}});let view=null,selected='small-profit',started=0,trace=[];
 function play(id){
  selected=id;view?.dispose();audio.stopEffects();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});started=performance.now();trace=[];
@@ -24,3 +27,5 @@ const pressureLabel=document.createElement('span'),fracture=document.createEleme
 $('pressure-demo').onclick=()=>{const now=performance.now();if(now-lastPressureAt<80||pressureTaps>=12)return;lastPressureAt=now;pressureTaps++;const unlocked=pressureTaps===12;for(const {path,at}of crackPaths)path.style.opacity=pressureTaps>=at?'1':'0';pressureLabel.textContent=unlocked?'限制已突破 · 演出示例':`100× · ${pressureTaps} / 12`;syncMotion();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});audio.effect(unlocked?'pressure-break':'pressure-hit',{level:.18+.32*pressureTaps/12,rate:.9+.35*pressureTaps/12});const plan=pressure.play($('pressure-demo'),{taps:pressureTaps,unlocked});$('pressure-demo').dataset.pageDisplacement=String(plan.pageDisplacement);};
 $('pressure-reset').onclick=()=>{pressure.clear();pressureTaps=0;lastPressureAt=-Infinity;pressureLabel.textContent='100× · 0 / 12';$('pressure-demo').dataset.pressureStage='strained';for(const {path}of crackPaths)path.style.opacity='0';};
 window.addEventListener('pagehide',()=>pressure.dispose());
+
+mountPreviewCapture($('capture-panel'),{name:'effects-539d266',allowedPaths:['./sfx/terminal-v2/breakthrough.mp3', './sfx/terminal-v2/close.mp3', './sfx/terminal-v2/fill.mp3', './sfx/terminal-v2/major-loss.mp3', './sfx/terminal-v2/major-profit.mp3', './sfx/terminal-v2/pressure.mp3', './sfx/terminal-v2/tap.mp3'],beforeStart:()=>{view?.finish();audio.pause();}});

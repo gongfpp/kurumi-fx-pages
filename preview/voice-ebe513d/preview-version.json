@@ -1,7 +1,7 @@
 {
   "sourceCommit": "ebe513d153a1219d73a65051f32fb508afce547c",
   "entry": "voice-review.html",
-  "purpose": "isolated fictional display and manual voice review",
+  "purpose": "isolated preview with manual own-page audio recording",
   "persistedGameWrites": false,
   "analytics": false,
   "modules": [
@@ -40,8 +40,19 @@
     "voice.js"
   ],
   "entryHashes": {
+    "voice-review.html": "4be0c70329db323ae245a5679d16c2210480b4cd7ddefa78e6fa0fb7d5e63c1c",
+    "voice-review.js": "fa5dbbc2f8da01786c320b4e6083ace40ee2117aabe21f4b84109c25dc9aa223",
+    "audio-envelope.js": "fd29a55ff87c74e89072fd10ad4f18819ebbee7a9d7713955aaef12e79f0d09e",
+    "preview-capture.js": "a077c3ff2cac22466d923ae2fd990d3910dbaa94de3af3519a1ae1ac61e4d69c",
+    "preview-capture.css": "3dc42f28808f488e41178390d4008ecd1742686be305cbf43f674175a742df87"
+  },
+  "captureRevision": "capture-v1-a1adafa57db2",
+  "assetVersion": "ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2",
+  "baselineEntryHashes": {
     "voice-review.html": "412fc541660198170941c484cf09287ab1603886c26bc7b418292edcbbd86e3e",
     "voice-review.js": "4080a31913afdf796d04f734370a40ae6f792cc0d6da1f51cb1d2052b1b21fad",
     "voice-fixture.js": "d23d022b1a47f66626278cf26d245c80a3c036f822a0e039c2bf4960e7ec0aa7"
-  }
+  },
+  "browserEncodingVerified": false,
+  "listeningVerified": false
 }
