@@ -1,13 +1,13 @@
-import {mountPreviewCapture} from './preview-capture.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {unlockSafeAudio} from './audio-envelope.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {mountPreviewCapture} from './preview-capture.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {unlockSafeAudio} from './audio-envelope.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
 for(const type of ['pointerdown','keydown','click'])document.addEventListener(type,event=>unlockSafeAudio(event),{capture:true});
-import {createPressurePresentation} from './pressure-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {PRESSURE_CRACKS} from './pressure-visuals.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {GameMotion} from './motion.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {mountDailyRecap} from './recap-view.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {recapPresentation} from './recap-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
-import {FXAudio} from './audio.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-a1adafa57db2';
+import {createPressurePresentation} from './pressure-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {PRESSURE_CRACKS} from './pressure-visuals.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {GameMotion} from './motion.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {mountDailyRecap} from './recap-view.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {recapPresentation} from './recap-presentation.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
+import {FXAudio} from './audio.js?v=539d26616071e7036617b0b49726bd24af40ef2e-capture-v1-1fbef814f493';
 const $=id=>document.getElementById(id),audio=new FXAudio({onError:()=>{$('sound-status').textContent='音频未能载入；视觉仍可检查。'}});let view=null,selected='small-profit',started=0,trace=[];
 function play(id){
  selected=id;view?.dispose();audio.stopEffects();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});started=performance.now();trace=[];

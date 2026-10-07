@@ -1,4 +1,4 @@
-import {createPreviewAudioTap,unlockSafeAudio} from './audio-envelope.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-a1adafa57db2';
+import {createPreviewAudioTap,unlockSafeAudio} from './audio-envelope.js?v=ebe513d153a1219d73a65051f32fb508afce547c-capture-v1-1fbef814f493';
 
 export const CAPTURE_REVISION='preview-capture-v1';
 export const CAPTURE_LIMIT_MS=60000;
@@ -18,7 +18,7 @@ export function allowedMedia(paths,base=import.meta.url){
 // No device, microphone, screen, tab, or system capture. This records only the
 // explicitly permitted gain outputs from this preview's original audio graph.
 export class PreviewRecorder {
-  constructor({acceptMedia,unlock=unlockSafeAudio,createTap=createPreviewAudioTap,Recorder=globalThis.MediaRecorder,beforeStart=()=>{},hidden=()=>document.hidden,onState=()=>{},onResult=()=>{},now=()=>Date.now(),schedule=setTimeout,cancel=clearTimeout}={}){
+  constructor({acceptMedia,unlock=unlockSafeAudio,createTap=createPreviewAudioTap,Recorder=globalThis.MediaRecorder,beforeStart=()=>{},hidden=()=>document.hidden,onState=()=>{},onResult=()=>{},now=()=>Date.now(),schedule=(callback,delay)=>globalThis.setTimeout(callback,delay),cancel=timer=>globalThis.clearTimeout(timer)}={}){
     Object.assign(this,{acceptMedia,unlock,createTap,Recorder,beforeStart,hidden,onState,onResult,now,schedule,cancel});
     this.state='idle';this.current=null;this.preparing=null;this.generation=0;
   }
