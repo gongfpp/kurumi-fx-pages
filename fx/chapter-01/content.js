@@ -1,5 +1,5 @@
-import {MANGA_PANELS} from '../manga-panels.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
-import {storyUnrealized,storyReview} from './engine.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {MANGA_PANELS} from '../manga-panels.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {storyUnrealized,storyReview} from './engine.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
 const scenes={
  opening:{page:40,kicker:'2014 · 成年后的第一笔交易',title:'三十万日元，和一个太大的目标。',body:'久留美为了赚回家中亏损而接触 FX。到了 20 岁，她终于准备入场。现在，账户里是 300,000 日元。你要替这一次交易做决定。',fact:'原作锚点：第 1 话第 11、36、40 页。背景与本金按原作节点整理。',panel:'ready'},
  plan:{page:40,kicker:'下单之前',title:'“不存在必胜法。”',body:'还没有仓位，也没有赚到一分钱。先决定：判断错了，要靠什么让自己离场？这一条计划会真的影响之后的成交。',fact:'原作锚点：第 1 话第 38 页。止损选项是游戏改编，不冒充原作操作。',panel:'rule'},
