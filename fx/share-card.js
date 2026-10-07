@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {runPerformance} from './performance.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {runPerformance} from './performance.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -76,7 +76,7 @@ export async function createShareCard(state,options={}) {
  const metrics=[['净交易总收益',knownSigned(p.realizedNetTradingPnl)],['完整平仓订单',Number.isFinite(p.closedOrders)?String(p.closedOrders):'—'],['最高使用杠杆',Number.isFinite(p.maxLeverage)?p.maxLeverage+'×':'—'],['最大整单盈利',knownSigned(p.maxOrderProfit)],['最大整单亏损',knownSigned(p.maxOrderLoss)],['最大交易回撤',knownPercent(p.maxDrawdown)],['欠父亲',knownAmount(a.fatherDebt)],['欠网贷',knownAmount(a.networkDebt)],['当前浮动盈亏',knownSigned(a.unrealized)]];
  metrics.forEach(([key,value],i)=>{const x=48+(i%3)*334,y=592+Math.floor(i/3)*102;label(key,x,y,21);num(value,x,y+42,30,ink,310);});
  ctx.save();ctx.translate(0,110);rule(758);
- for(const [scope,title,offset]of [['today','今日资金曲线',0],['cumulative','累计资金曲线',506]]){
+ for(const [scope,title,offset]of [['today',s.recap.curves.basis==='trading'?'今日交易资产曲线':'今日资金曲线',0],['cumulative',s.recap.curves.basis==='trading'?'累计交易资产曲线':'累计资金曲线',506]]){
   label(title,48+offset,800,22);label('日元 / 游戏时间 JST',48+offset,825,15);
   const points=s.recap.curves[scope],trail=points.map(p=>p.nominalAssets),scale=buildCurveScale(trail),plot={left:125+offset,right:514+offset,top:844,bottom:932};
   const start=points[0]?.timestamp||0,range=Math.max(1,(points.at(-1)?.timestamp||start)-start),plotX=p=>plot.left+(p.timestamp-start)/range*(plot.right-plot.left),plotY=value=>plot.bottom-(value-scale.min)/(scale.max-scale.min)*(plot.bottom-plot.top);
@@ -84,7 +84,7 @@ export async function createShareCard(state,options={}) {
   ctx.strokeStyle=darkPink;ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=plotX(p),y=plotY(p.nominalAssets);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
   for(const t of timeAxisTicks(points,{maxTicks:2})){ctx.textAlign=t.index===0?'left':'right';label(t.label,plotX(t),955,15);ctx.textAlign='left';}
  }
- label(s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'旧记录仅展示已知点；连线不是完整盘中路径':'名义资产曲线 · 借款可使资产增加，但不计入收益率',48,981,16);rule(1000);
+ label(s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'旧记录仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线（剔除借还与消费）':'名义资产曲线 · 借款可使资产增加，但不计入收益率',48,981,16);rule(1000);
  num('特别记录',48,1033,27);
  if(!report.specialRecords.length)label(p.complete?'这局还没有特别记录':'旧档订单记录不完整，未知项保留为空',48,1094,22);
  report.specialRecords.forEach((record,i)=>{const value=['negative-net-assets','loss-over-initial'].includes(record.id)?knownAmount(record.value):String(record.value)+(record.id==='max-leverage'?'×':'');label(record.label,48,1094+i*48,22,ink);ctx.textAlign='right';num(value,1032,1094+i*48,26,darkPink);ctx.textAlign='left';});

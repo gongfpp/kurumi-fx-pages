@@ -1,5 +1,5 @@
-import {grossPnlAt} from './market.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 export function accountingValues(state){
  const positions=state.positions?.length?state.positions:state.position?[state.position]:[];
@@ -7,7 +7,8 @@ export function accountingValues(state){
  const nominalAssets=Math.max(0,finite(state.cash)+margin+floating)+finite(state.reserve);
  const debt=finite(state.family?.outstanding)+finite(state.loan?.outstanding);
  const realized=finite(state.performance?.totalProfit,(state.history||[]).filter(t=>t.type!=='open').reduce((sum,t)=>sum+finite(t.pnl),0));
- return{nominalAssets,netAssets:nominalAssets-debt,debt,realizedProfit:realized,unrealized:floating,expenses:finite(state.expenses),netFunding:finite(state.externalFunding)};
+ const expenses=finite(state.expenses),netFunding=finite(state.externalFunding),tradingAssets=nominalAssets-netFunding+expenses-finite(state.developer?.profitOffset);
+ return{nominalAssets,netAssets:nominalAssets-debt,debt,realizedProfit:realized,unrealized:floating,expenses,netFunding,tradingAssets};
 }
 export function ensureAccountingJournal(state){
  ensureTradingClock(state);

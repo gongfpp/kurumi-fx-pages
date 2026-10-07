@@ -1,6 +1,7 @@
-import {isTraumaMood} from './trading-trauma.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {STORIES,getStory} from './story-content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {isTraumaMood} from './trading-trauma.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
@@ -26,12 +27,12 @@ export function queueStory(s,id){ensureStory(s);if(s.mode==='endless'||!STORIES[
 export function checkStories(s,account,emotion){ensureStory(s);
  if(s.mode==='endless'){s.story.queue=[];return;}
  if(!s.family.unlocked&&!s.fatherUsed&&(emotion==='despair'||isTraumaMood(emotion))&&account<30000){s.itemDiscoveries.father ||= {day:s.day,event:'fatherUnlock'};queueStory(s,'fatherUnlock');}
- if(s.day>=2&&!s.story.seen.includes('fatherDiscover'))queueStory(s,'fatherDiscover');
+ if(s.day>=FATHER_DISCOVERY_POLICY.scheduledDay&&!s.story.seen.includes('fatherDiscover')&&!s.fatherUsed)queueStory(s,'fatherDiscover');
  const absolute=(s.day-1)*4+s.beat;
  if(s.family.outstanding>0&&!s.family.discovered&&!s.family.informed&&s.family.borrowedAt!==null&&absolute-s.family.borrowedAt>=2)queueStory(s,'fatherFound');
  if(s.phase==='resting'&&!s.story.queue.length){queueStory(s,s.day===1?'friendStudy':s.day===2?'roommate':'quietNight');}
 }
-export function pendingStory(s){ensureStory(s);if(s.mode==='endless'||s.phase!=='resting'||s.story.presentedDay===s.day)return null;s.story.queue=s.story.queue.filter(id=>!!getStory(s,id));const family=s.story.queue.find(id=>['fatherUnlock','fatherFound','repayPartial','repayFull'].includes(id));const key=family||s.story.queue[0];if(key==='fatherUnlock')s.family.unlockedAtEquity=s.cash+s.reserve;return getStory(s,key);}
+export function pendingStory(s){ensureStory(s);if(s.mode==='endless'||s.phase!=='resting'||s.story.presentedDay===s.day)return null;s.story.queue=s.story.queue.filter(id=>!!getStory(s,id));const family=s.story.queue.find(id=>['fatherUnlock','fatherFound','repayPartial','repayFull'].includes(id));const key=family||s.story.queue.find(id=>id!=='fatherDiscover'||(!s.fatherUsed&&(s.day>=FATHER_DISCOVERY_POLICY.scheduledDay||s.settlementNarrative?.event?.key==='fatherDiscover')));if(key==='fatherUnlock')s.family.unlockedAtEquity=s.cash+s.reserve;return getStory(s,key);}
 export function chooseStory(s,choiceId){if(s.phase!=='resting')throw Error('人物事件只在休市后发生');const event=pendingStory(s);if(!event)throw Error('没有待处理的剧情');const choice=event.choices.find(c=>c.id===choiceId);if(!choice)throw Error('请选择一个回应');s.story.queue=s.story.queue.filter(id=>id!==event.key);s.story.presentedDay=s.day;s.story.seen.push(event.key);s.story.log.push({id:event.key,day:s.day,beat:s.beat,choice:choice.id});s.story.log=s.story.log.slice(-40);
  const unlocked=[];for(const id of ITEM_EVENTS[event.key]||[]){if(!itemUnlocked(s,id)){s.itemDiscoveries[id] ||= {event:event.key,day:s.day};if(id!=='father'){s.itemUnlocks[id]={event:event.key,day:s.day,choice:choice.id};unlocked.push(id);}}}
  if(event.key==='fatherUnlock'){s.loan.discovered=true;s.loan.unlocked=true;unlocked.push('networkLoan');unlocked.push('father');s.family.unlocked=true;s.family.lastAction=choice.id;s.family.viewed=choice.id==='look_at_savings';s.family.closed=choice.id==='leave_alone';choice.lines=getStory(s,event.key)?.choices.find(c=>c.id===choice.id)?.lines||[];}

@@ -1,8 +1,9 @@
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 // Discovery happens in play. Hidden future items never appear in inventory.
 export const ITEM_EVENTS={fatherDiscover:['father'],friendStudy:['mochiko'],roommate:['energy']};
 // Kept as an empty compatibility export; unlock conditions are never player copy.
 export const UNLOCK_HINTS={};
-export {ITEM_SCENES} from './copy/scenes.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+export {ITEM_SCENES} from './copy/scenes.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 export function itemDiscovered(s,id){return !!s.itemDiscoveries?.[id]||itemUnlocked(s,id);}
 const PLAY_ITEMS=['takeaway','noodles','energy','celebration','father','mochiko'];
 export function itemUnlocked(s,id){return s.mode==='endless'&&PLAY_ITEMS.includes(id)|| (id==='father'?!!s.family?.unlocked:!!s.itemUnlocks?.[id]);}
@@ -16,6 +17,6 @@ export function discoverItems(s){
  if(profit>=20000)discover('celebration',true);
  if(s.day>=2)discover('energy',true);
  if(s.day>=3)discover('mochiko',true);
- if(s.day>=2||s.family?.unlocked||s.fatherUsed)discover('father');
+ if(s.day>=FATHER_DISCOVERY_POLICY.scheduledDay||s.family?.unlocked||s.fatherUsed)discover('father');
  return s.itemDiscoveries;
 }

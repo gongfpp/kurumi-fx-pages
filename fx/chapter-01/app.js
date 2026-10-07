@@ -1,10 +1,10 @@
-import {chapterIllustration,chapterOriginalPortrait} from './art.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {setMangaImage} from '../manga-images.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {setImage} from '../assets.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {showChapterPortrait} from './portrait.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {storyChoices,storyEquity,storyUnrealized,storyMargin,storyAvailable} from './engine.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mangaStoryScene,ADAPTATION_RULES} from './content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createChapterProgress,chapterFrames,chapterStorageEvent} from './progress.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {chapterIllustration,chapterOriginalPortrait} from './art.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {setMangaImage} from '../manga-images.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {setImage} from '../assets.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {showChapterPortrait} from './portrait.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {storyChoices,storyEquity,storyUnrealized,storyMargin,storyAvailable} from './engine.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mangaStoryScene,ADAPTATION_RULES} from './content.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createChapterProgress,chapterFrames,chapterStorageEvent} from './progress.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 const $=id=>document.getElementById(id),progress=createChapterProgress(),session=progress.session;
 let state=progress.state,historyIndex=null;
 const yen=n=>`${n<0?'−':''}¥${Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;

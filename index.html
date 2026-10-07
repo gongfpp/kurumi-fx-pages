@@ -6,21 +6,21 @@
   <meta name="description" content="持仓穿过连续蜡烛图，读突发消息、管理多笔订单，和久留美一起经历外汇交易日。原创同人风模拟小游戏。">
   <title>FX韭留美 · 今天也要回本</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f16f9f'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-size='25' font-weight='bold' fill='%23231f2d'%3E¥%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./fx/style.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-<link rel="stylesheet" href="./fx/results-report.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/daily-recap.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/emotion-pressure.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/dialogs.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/opening-reader.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/numeric-layout.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-<link rel="stylesheet" href="./fx/chart-controls.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-<link rel="stylesheet" href="./fx/quote-packages.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-<link rel="stylesheet" href="./fx/moving-average.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/liquidation-meter.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/floating-risk.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
-  <link rel="stylesheet" href="./fx/emotion-overview.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/style.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+<link rel="stylesheet" href="./fx/results-report.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/daily-recap.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/emotion-pressure.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/dialogs.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/opening-reader.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/numeric-layout.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+<link rel="stylesheet" href="./fx/chart-controls.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+<link rel="stylesheet" href="./fx/quote-packages.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+<link rel="stylesheet" href="./fx/moving-average.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/liquidation-meter.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/floating-risk.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/emotion-overview.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
 
-  <link rel="stylesheet" href="./fx/bgm.css?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/bgm.css?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717">
 </head>
 <body>
 <header class="topbar">
@@ -34,11 +34,11 @@
   <button id="scene-resume" type="button" hidden>继续未完成的剧情／日结</button>
   <section class="game-grid" aria-label="外汇交易游戏">
     <aside class="character-card" id="character-card">
-      <div class="character-heading"><span>当前表情</span><b id="emotion-label">平静</b><button id="voice-toggle" aria-pressed="false">动画原声 · 开</button></div>
+      <div class="character-heading"><span>当前表情</span><b id="emotion-label">平静</b><button id="voice-toggle" aria-pressed="false">播放当前原声</button></div>
       <div class="portrait"><img id="portrait" hidden alt="等待当前情绪与仓位匹配"><span id="impact-stamp" class="impact-stamp" aria-hidden="true"></span><span class="portrait-name" id="portrait-source">原作漫画表情</span></div>
       <div class="manga-source-row"><p id="portrait-context"></p><button id="portrait-source-open">漫画来源</button></div>
       <div class="speech" id="speech" aria-live="polite"></div>
-      <div class="voice-caption-row"><p id="voice-state" role="status" hidden></p><p id="voice-caption" lang="ja" hidden></p><button id="voice-replay" aria-label="重播当前心情的日语原声" hidden>↻ 重播</button><button id="voice-library-open">原声目录</button></div>
+      <div class="voice-caption-row"><p id="voice-state" role="status" hidden></p><p id="voice-caption" lang="ja" hidden></p><button id="voice-replay" aria-label="播放当前适配的日语原声" hidden>↻ 重播</button><button id="voice-library-open">原声目录</button></div>
       <div class="sanity-label"><span>心理承受力 <button class="help-dot" data-help="mental" aria-label="了解心理承受力">?</button></span><b id="sanity-text">50 / 100</b></div><div class="sanity-meter"><span id="sanity-fill"></span></div>
       <p id="mental-detail" class="mental-detail" hidden></p>
     </aside>
@@ -81,7 +81,7 @@
     </aside>
   </section>
   <section class="tools inventory"><div class="lower-heading"><h2>发现的物品</h2><span id="inventory-count"></span></div><p id="inventory-empty">暂时没有物品</p><div class="tool-row" id="tool-list"></div><div id="effect-list" class="effect-list"></div><div id="family-panel" hidden><p id="family-debt"></p><button id="repay-open" class="inventory-action secondary">归还存款</button></div><div id="loan-panel" hidden><div><b>网络贷款</b><span id="loan-state"></span></div><p id="loan-effect"></p><button id="loan-open" class="inventory-action secondary">申请 / 还款</button></div></section>
-  <footer><span>原创同人小游戏 · 非官方作品 · 虚构行情 · 非投资建议</span><div><button id="day-review" hidden>查看今日结算</button><button id="restart">重新开始章节</button></div></footer>
+  <footer><span>原创同人小游戏 · 非官方作品 · 虚构行情 · 非投资建议</span><div><button id="day-review" hidden>查看今日结算</button><button id="restart">重开韭菜人生</button></div></footer>
 
 </main>
 <div id="news-flash" class="news-flash" role="status" aria-live="polite" hidden><b id="flash-title"></b><span id="flash-copy"></span></div>
@@ -92,13 +92,13 @@
 <dialog id="prop-dialog" class="prop-dialog"><span class="eyebrow">TURNING POINT / 这次的选择</span><h2 id="prop-title"></h2><div class="prop-visual" aria-hidden="true"><span class="prop-envelope">¥</span><span class="prop-spark">✦</span></div><strong id="prop-amount"></strong><div id="father-applied-art" hidden></div><div id="prop-comic-frame" class="food-comic" hidden><img id="prop-comic" alt="本次消费漫画"></div><p id="prop-line"></p><p id="prop-rule" class="small-print"></p><button id="prop-done" class="primary">回到交易室</button></dialog>
 <dialog id="day-dialog" class="day-dialog"><span id="day-stage-label" class="eyebrow">1 / 2 · 动态复盘</span><h2 id="day-title">今天先到这里。</h2><p id="day-subtitle"></p><section id="daily-recap"></section><section id="day-story-stage" hidden><div id="day-story-comic-frame" class="story-comic-frame" hidden></div><div id="day-story-lines"></div><div id="day-result-manga"></div><div id="day-story-fallback" hidden></div><div id="father-discovery-scene" hidden></div><div id="living-event-art" hidden></div><div id="living-receipt" hidden></div><div id="day-story-choices"></div><p id="day-story-status" role="status" hidden></p><button id="father-scene-use" class="secondary" hidden>取用父亲的柜中存款 ¥3,000,000</button><figure id="turnaround-panel" class="homage-panel" hidden><img id="turnaround-comic" alt="本日盈亏反转的原创漫画"><figcaption id="turnaround-caption"></figcaption></figure><figure id="homage-panel" class="homage-panel" hidden><img id="homage-image" alt="原作漫画单格致敬"><figcaption><span id="homage-caption"></span> <a id="homage-source" target="_blank" rel="noopener">原作漫画 ↗</a></figcaption></figure></section><div class="day-total"><span>收盘资产</span><strong id="day-total"></strong><small id="day-net"></small></div><button id="day-share" class="secondary">保存今日战报</button><button id="recap-next" class="primary">下一步 · 今日小剧场</button><button id="next-day" class="primary" hidden>明天开盘</button></dialog>
 
-<dialog id="bankrupt-dialog" class="day-dialog"><span class="eyebrow">MARGIN CALL / 章节结束</span><h2>人还在，钱先退场了。</h2><p>账户不足 ¥1,000。这一章先到这里。</p><div class="day-total"><span>最后的账户权益</span><strong id="bankrupt-money"></strong></div><button id="bankrupt-rescue" class="secondary" hidden>那把抽屉钥匙……</button><button id="new-chapter" class="primary">重新开始章节</button></dialog>
+<dialog id="bankrupt-dialog" class="day-dialog"><span class="eyebrow">MARGIN CALL / 章节结束</span><h2>人还在，钱先退场了。</h2><p>账户不足 ¥1,000。这一章先到这里。</p><div class="day-total"><span>最后的账户权益</span><strong id="bankrupt-money"></strong></div><button id="bankrupt-rescue" class="secondary" hidden>那把抽屉钥匙……</button><button id="new-chapter" class="primary">重开韭菜人生</button></dialog>
 <dialog id="walkaway-dialog"><h2 id="walkaway-title">收手离场，结束这一局？</h2><p id="walkaway-copy"></p><p id="walkaway-status" role="status"></p><button id="walkaway-confirm" class="primary">确认收手，结算并离场</button><button class="secondary" data-close="walkaway-dialog">取消，继续本局</button></dialog>
-<dialog id="ending-dialog" class="day-dialog"><span class="eyebrow">ENDING / 本局结局</span><h2 id="ending-title"></h2><p id="ending-summary"></p><p id="ending-before"></p><div id="ending-manga"></div><img id="ending-comic" class="four-comic" alt="结局四格漫画"><div id="ending-captions" class="comic-captions"></div><section id="ending-results" aria-label="完整战绩与导出"></section><p id="automatic-score-status" role="status"></p><button id="ending-restart" class="primary">重新开始</button><button id="ending-developer" class="secondary" disabled title="需在本人安全页输入密码验证">开发者编辑 · 密码验证</button></dialog>
+<dialog id="ending-dialog" class="day-dialog"><span class="eyebrow">ENDING / 本局结局</span><h2 id="ending-title"></h2><p id="ending-summary"></p><p id="ending-before"></p><div id="ending-manga"></div><img id="ending-comic" class="four-comic" alt="结局四格漫画"><div id="ending-captions" class="comic-captions"></div><section id="ending-results" aria-label="完整战绩与导出"></section><p id="automatic-score-status" role="status"></p><button id="ending-restart" class="primary">重开韭菜人生</button><button id="ending-developer" class="secondary" disabled title="需在本人安全页输入密码验证">开发者编辑 · 密码验证</button></dialog>
 <dialog id="save-conflict-dialog" aria-labelledby="save-conflict-title"><h2 id="save-conflict-title">先保护你的进度</h2><p id="save-conflict-copy" role="alert"></p><button type="button" class="secondary" data-save-backup>下载本页与当前存档备份</button><button type="button" id="save-load-latest" class="primary">放下本页进度，载入最新存档</button></dialog>
-<dialog id="restart-dialog"><h2>真的要重新开局吗？</h2><p>本机保存的进度会被新章节替换。</p><button id="confirm-restart" class="primary">重新开始</button><button class="secondary" data-close="restart-dialog">继续这一局</button></dialog>
+<dialog id="restart-dialog"><h2>真的要重新开局吗？</h2><p>本机保存的进度会被新章节替换。</p><button id="confirm-restart" class="primary">重开韭菜人生</button><button class="secondary" data-close="restart-dialog">继续这一局</button></dialog>
 <dialog id="story-dialog" class="story-dialog"><span class="eyebrow">LIFE BETWEEN CANDLES / 游戏人物事件</span><h2 id="story-title"></h2><div id="story-comic-frame" class="story-comic-frame" hidden><img id="story-comic" class="four-comic" alt="人物事件四格漫画"><span class="comic-cover cover-two" aria-hidden="true"></span><span class="comic-cover cover-three" aria-hidden="true"></span><span class="comic-cover cover-four" aria-hidden="true"></span></div><div id="story-captions" class="comic-captions"></div><div id="story-lines"></div><div id="story-choices"></div></dialog>
-<dialog id="father-take-dialog"><h2>取用父亲的柜中存款</h2><div id="father-confirm-art" hidden></div><p>取用 ¥3,000,000，将同时记入账户和父亲欠款。整章只能取一次。</p><button id="father-take-confirm" class="primary">取用三百万</button><button class="secondary" data-close="father-take-dialog">关上柜门</button></dialog>
+<dialog id="father-take-dialog"><h2>取用父亲的柜中存款</h2><div id="father-confirm-art" hidden></div><p>自行选择取用金额，不超过 ¥3,000,000。账户与父亲欠款增加相同金额；取多取少，整章都只能取一次。</p><label for="father-take-amount">取款金额（日元）</label><input id="father-take-amount" type="number" min="0.01" max="3000000" step="0.01" value="3000000" required><button id="father-take-confirm" class="primary">确认取用此金额</button><button class="secondary" data-close="father-take-dialog">关上柜门</button></dialog>
 <dialog id="repay-dialog"><h2>把钱放回抽屉</h2><p id="repay-limit"></p><label for="repay-amount">这次归还多少日元</label><input id="repay-amount" type="number" min="1" step="1"><button id="repay-all" class="secondary">归还当前能拿出的全部</button><button id="repay-confirm" class="primary">放回去</button><button class="secondary" data-close="repay-dialog">先等等</button></dialog>
 <dialog id="developer-dialog" class="developer-dialog"><button class="x-close" data-close="developer-dialog" aria-label="关闭开发者模式">×</button><h2>开发者模式</h2><p>仅本人密码验证后可修改本机游戏数据；会话最多 15 分钟，每次修改联网复核。本局永久退出排行榜，关闭或恢复备份也不撤销。首次应用前会备份当前存档；应用会重新生成所选日期的剩余行情，并清空当日交易记录。打开编辑器会暂停行情，持仓请先平掉再编辑。</p><form id="developer-form" class="developer-form">
 <label>可用资金（¥）<input id="dev-cash" name="cash" type="number" min="0" max="10000000000" step="any" required></label>
@@ -127,6 +127,6 @@
   <span class="eyebrow" id="opening-count" aria-live="polite">序章 · 01 / 05</span><h2 id="opening-title"></h2><p id="opening-copy"></p><div id="opening-manga"></div>
   <nav id="opening-nav" class="opening-nav" aria-label="序章翻页"><button id="opening-back" type="button" disabled>← 上一页</button><button id="opening-next" type="button" class="primary"><small id="opening-next-hint">下一页</small><span id="opening-next-label">那时的愿望 →</span></button><div class="opening-reader-meta"><small id="opening-save" role="status"></small><button id="opening-source" type="button">出处</button></div></nav>
 </dialog>
-<script type="module" src="./fx/app.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717"></script>
+<script type="module" src="./fx/app.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717"></script>
 </body>
 </html>

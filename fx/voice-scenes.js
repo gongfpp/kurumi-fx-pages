@@ -10,7 +10,7 @@ export const VOICE_SCENE_RULES=Object.freeze({
  'pv-human':rule('客串角色的风险台词，仅主动试听',[],'loss'),
  'pv-stop':rule('真实持仓净亏损时的惊慌',['floating'],'loss',{requiresPosition:true,minAbsPnl:50,priority:90,cooldownMs:30000}),
  'pv-profit-vanished':rule('玩家曾有的利润消失',['floating','realized','settlement'],'loss',{events:['profit-to-loss'],priority:85}),
- 'pv-gasp':rule('实际交易转好后的惊喜',['floating','realized','settlement'],'profit',{priority:65}),
+ 'pv-gasp':rule('实际交易转好后的惊喜',['floating','realized','settlement'],'profit',{priority:65,moods:['stunned','loss-to-profit','relieved']}),
  'pv-mebuki-rich':rule('客串角色自我介绍，仅主动试听',[],'neutral'),
  'pv-yasuko-start':rule('客串角色入场宣言，仅主动试听',[],'neutral'),
  'character-came':rule('实际持仓或结算盈利的兴奋',['floating','realized','settlement'],'profit',{priority:60}),

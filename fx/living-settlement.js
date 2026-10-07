@@ -4,16 +4,16 @@ export const LIVING_POLICY=Object.freeze({gainThreshold:20000,openingNetRatio:.2
 const finite=(value,fallback=0)=>Number.isFinite(value)?value:fallback;
 const money=value=>Math.round((value+Number.EPSILON*Math.abs(value)*2)*100)/100;
 export function livingDayRoll(seed,day){let x=((seed>>>0)^Math.imul(day,0x9e3779b9)^0x4c495649)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return((x^(x>>>16))>>>0)/4294967296;}
-export function quoteLivingMeal({seed,day,baseAmount,cash,openingNetAssets,tradingNet,knowsFriend=false,lastSpecialDay=null,discount=0,roll=livingDayRoll(seed,day)}={}){
+export function quoteLivingMeal({seed,day,baseAmount,cash,openingNetAssets,tradingNet,knowsFriend=false,lastSpecialDay=null,discount=0,lifestyleId='basic',allowFeast=false,roll=livingDayRoll(seed,day)}={}){
  const budget=Math.max(0,finite(cash)),base=Math.max(0,finite(baseAmount)),threshold=Math.max(LIVING_POLICY.gainThreshold,Math.max(0,finite(openingNetAssets))*LIVING_POLICY.openingNetRatio);
  const cooled=lastSpecialDay===null||!Number.isFinite(lastSpecialDay)||day-lastSpecialDay>LIVING_POLICY.cooldownDays;
  const draw=Number.isFinite(roll)&&roll>=0&&roll<1?roll:livingDayRoll(seed,day);
- let kind=discount>0?'thrifty':'ordinary',label=discount>0?'省钱生活费':'普通生活费',amount=Math.min(budget,base);
+ let kind=discount>0?'thrifty':'ordinary',label=discount>0?'日常开销（已减 40%）':'日常固定开销',amount=Math.min(budget,base);
  const feast=money(base*LIVING_POLICY.feastMultiplier);
- if(cooled&&finite(tradingNet)>=threshold&&draw<LIVING_POLICY.feastChance&&feast>0&&budget>=feast){kind='feast';label='难得吃顿大餐';amount=feast;}
+ if(allowFeast&&cooled&&finite(tradingNet)>=threshold&&draw<LIVING_POLICY.feastChance&&feast>0&&budget>=feast){kind='feast';label='难得吃顿大餐';amount=feast;}
  else if(cooled&&knowsFriend&&finite(tradingNet)<=-threshold&&draw<LIVING_POLICY.friendChance){kind='friend-treat';label='朋友请客';amount=0;}
  // Sub-cent legacy cash is an asset, not permission to charge beyond that cash.
- return{version:1,day,amount:Math.min(budget,money(amount)),baseAmount:base,kind,label,roll:draw,seedLocked:true,threshold,discount:Math.max(0,finite(discount)),cooldownDays:LIVING_POLICY.cooldownDays};
+ return{version:1,day,lifestyleId,amount:Math.min(budget,money(amount)),baseAmount:base,kind,label,roll:draw,seedLocked:true,threshold,discount:Math.max(0,finite(discount)),cooldownDays:LIVING_POLICY.cooldownDays};
 }
 export function validLivingSettlement(record,day){
  if(!record||record.version!==1||record.day!==day||!['pending','finalized','legacy-paid'].includes(record.status))return false;

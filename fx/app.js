@@ -1,82 +1,83 @@
-import {enterOriginalChapter} from './chapter-entry.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createCloseAllControl,closeAllToken,closeAllModalOpen} from './close-all-control.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createFloatingRisk} from './floating-risk.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {narrativeAudioContext,createNarrativeCueGate} from './narrative-audio.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {quoteStepMilliseconds,visibleQuoteStep,hasCanonicalGrid} from './quote-grid.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {quotePackageMarkup,quotePackagePresentation} from './quote-package-view.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {movingAverageSeries,movingAverageSettings,movingAveragePath} from './moving-average.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {settledComicArt} from './settled-comic-art.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {propEventArt,livingEventArt} from './prop-event-art.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {selectFinalPortrait} from './final-portrait.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {prepareDailyNarrative,finishDailyNarrative} from './day-narrative.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {fatherDiscoveryHint,fatherItemIllustration,applyFatherDiscovery} from './father-discovery.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {renderFatherIllustration,renderFatherSequence} from './father-view.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountLivingReceipt} from './living-view.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {canRequestWalkaway,walkawayConfirmation,requestWalkaway} from './walkaway.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {mountConsumptionStatement} from './consumption-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {enterOriginalChapter} from './chapter-entry.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createCloseAllControl,closeAllToken,closeAllModalOpen} from './close-all-control.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createFloatingRisk} from './floating-risk.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {narrativeAudioContext,createNarrativeCueGate} from './narrative-audio.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {quoteStepMilliseconds,visibleQuoteStep,hasCanonicalGrid} from './quote-grid.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {quotePackageMarkup,quotePackagePresentation} from './quote-package-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {movingAverageSeries,movingAverageSettings,movingAveragePath} from './moving-average.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {settledComicArt} from './settled-comic-art.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {propEventArt,livingEventArt} from './prop-event-art.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {selectFinalPortrait} from './final-portrait.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {prepareDailyNarrative,finishDailyNarrative} from './day-narrative.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {fatherDiscoveryHint,fatherItemIllustration,applyFatherDiscovery} from './father-discovery.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {renderFatherIllustration,renderFatherSequence} from './father-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountLivingReceipt} from './living-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {canRequestWalkaway,walkawayConfirmation,requestWalkaway} from './walkaway.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {buildResultsReport} from './results-report.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountResultsReport} from './results-view.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountResultsReport} from './results-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {settlementPresentation,enterSettlementStory,canConfirmSettlementStory,completeSettlementStory} from './settlement-stage.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountDailyRecap} from './recap-view.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {timedCandles,timeAxisTicks,formatTradingTime,currentTradingTimestamp,reportTradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {settlementPresentation,enterSettlementStory,canConfirmSettlementStory,completeSettlementStory} from './settlement-stage.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountDailyRecap} from './recap-view.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {timedCandles,timeAxisTicks,formatTradingTime,currentTradingTimestamp,reportTradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {BgmPlayer} from './bgm-player.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountBgmPanel} from './bgm-panel.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {selectBgmScene,voiceMixActive} from './bgm-scenes.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createEmotionOverview} from './emotion-overview.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {terminalCueForEvent} from './terminal-cues.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {BgmPlayer} from './bgm-player.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountBgmPanel} from './bgm-panel.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {selectBgmScene,voiceMixActive} from './bgm-scenes.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createEmotionOverview} from './emotion-overview.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {terminalCueForEvent} from './terminal-cues.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {renderLiquidationMeter} from './liquidation-meter.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {renderLiquidationMeter} from './liquidation-meter.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {investorMessages} from './npc-investors.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {investorMessages} from './npc-investors.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {observeNumericLayout} from './numeric-layout.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createVoiceContextSelector} from './voice-timing.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {observeNumericLayout} from './numeric-layout.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createVoiceContextSelector} from './voice-timing.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {unlockSafeAudio} from './audio-envelope.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {enhanceDialogs} from './dialogs.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createEmotionControls} from './emotion-controls.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {selectMangaPortrait,showMangaPortrait} from './manga-portraits.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {selectNarrativeManga,selectDailyManga,sealedDailyMangaOutcome} from './manga-context.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {renderMangaSelection} from './manga-render.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {ACHIEVEMENTS,evaluateAchievements,createAchievementToast,renderAchievementBook} from './achievements.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {selectDailyScene} from './daily-scene.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createShareCard} from './share-card.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {buildShareFile,canShareFile,shareReportFile} from './share-export.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createGameStorage} from './storage.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {kurumiStorage, storageEventMatches} from './storage-namespace.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createSaveSession} from './save-session.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {sliderOrderAmount,randomOrderAmount,normalizeOrderAmount,draftOrderAmount,orderAmountRatio,nearestOrderRatio,ratioOrderAmount} from './amount-controls.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {runPerformance} from './performance.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {TERMINAL_HELP} from './copy/terminal-help.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountOpeningReader} from './opening-reader.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {PROP_LINES} from './copy/items.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {UI_COPY} from './copy/ui.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {formatQuote as quote,formatQuantity,directionLabel,positionQuantity} from './market.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {TRANSITION_COPY,dailyContinueLabel} from './copy/transitions.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {FXLeaderboard} from './leaderboard.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {AutomaticLeaderboard} from './auto-leaderboard.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {RankingLifecycle} from './ranking-lifecycle.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {setImage,assetURL} from './assets.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {itemUnlocked,itemDiscovered,itemUnavailableReason} from './item-events.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {createGame, takeAction, advanceTick, nextDay, equity, unrealized, mood, currentEvent, useProp, mentalState, mentalReadout, purchaseQuoteRefresh, quotePackageState, tradingProfit, restoreGame, START, TARGET_PROFIT, settleDay, finishTradingDay, chooseRecapAction, finalizeDayLiving, dailyReturnMetrics, beginRest, finishCampaign, finishEndlessCampaign, endingCondition, pendingStory, chooseStory, restrictions, DEBUFFS, repayFather,beatsPerDay,nearStopOrders,topUpMargin,rescueClose,borrowNetwork,repayNetwork,networkLoanTerms,debtSummary,positionsOf,positionUnrealized,positionNetUnrealized,positionStopLoss,accountMetrics,orderPreview,accountLiquidationEstimate,enableRealtime,advanceMarket,advanceQuote,tradingOpen} from './engine.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {unlockSafeAudio} from './audio-envelope.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {enhanceDialogs} from './dialogs.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createEmotionControls} from './emotion-controls.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {selectMangaPortrait,showMangaPortrait} from './manga-portraits.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {selectNarrativeManga,selectDailyManga,sealedDailyMangaOutcome} from './manga-context.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {renderMangaSelection} from './manga-render.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {ACHIEVEMENTS,evaluateAchievements,createAchievementToast,renderAchievementBook} from './achievements.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {selectDailyScene} from './daily-scene.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createShareCard} from './share-card.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {buildShareFile,canShareFile,shareReportFile} from './share-export.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {kurumiStorage, storageEventMatches} from './storage-namespace.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createSaveSession} from './save-session.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {sliderOrderAmount,randomOrderAmount,normalizeOrderAmount,draftOrderAmount,orderAmountRatio,nearestOrderRatio,ratioOrderAmount,orderDraftIntent,orderIntentAction} from './amount-controls.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {runPerformance} from './performance.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {TERMINAL_HELP} from './copy/terminal-help.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountOpeningReader} from './opening-reader.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {PROP_LINES} from './copy/items.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {UI_COPY} from './copy/ui.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {formatQuote as quote,formatQuantity,directionLabel,positionQuantity} from './market.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {TRANSITION_COPY,dailyContinueLabel} from './copy/transitions.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {FXLeaderboard} from './leaderboard.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {AutomaticLeaderboard} from './auto-leaderboard.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {RankingLifecycle} from './ranking-lifecycle.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {setImage,assetURL} from './assets.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {itemUnlocked,itemDiscovered,itemUnavailableReason} from './item-events.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {createGame, takeAction, advanceTick, nextDay, equity, unrealized, mood, currentEvent, useProp, mentalState, mentalReadout, purchaseQuoteRefresh, quotePackageState, tradingProfit, restoreGame, START, TARGET_PROFIT, settleDay, finishTradingDay, chooseRecapAction, finalizeDayLiving, selectLifestyle, consumptionStatement, dailyReturnMetrics, beginRest, finishCampaign, finishEndlessCampaign, endingCondition, pendingStory, chooseStory, restrictions, DEBUFFS, repayFather,beatsPerDay,nearStopOrders,topUpMargin,rescueClose,borrowNetwork,repayNetwork,networkLoanTerms,debtSummary,positionsOf,positionUnrealized,positionNetUnrealized,positionStopLoss,accountMetrics,orderPreview,accountLiquidationEstimate,enableRealtime,advanceMarket,advanceQuote,tradingOpen} from './engine.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
-import {FXAudio} from './audio.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {MarketClock} from './market-clock.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {bindMarketLifecycle} from './page-lifecycle.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {GameMotion} from './motion.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {MOODS, PROPS} from './content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {VoicePlayer,availableVoices,VOICE_LINES} from './voice.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountVoiceLibrary} from './voice-library.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {FXTelemetry,capitalBucket,pnlBucket} from './telemetry.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {mountDeveloperUI} from './developer-ui.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {comicCaptions,approvedQuote} from './dialogue.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {FXAudio} from './audio.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {MarketClock} from './market-clock.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {bindMarketLifecycle} from './page-lifecycle.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {GameMotion} from './motion.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {MOODS, PROPS} from './content.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {VoicePlayer,VOICE_LINES} from './voice.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountVoiceLibrary} from './voice-library.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {FXTelemetry,capitalBucket,pnlBucket} from './telemetry.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {mountDeveloperUI} from './developer-ui.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {comicCaptions,approvedQuote} from './dialogue.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
 // Every edit is verified by the independent service; Pages never receives a password.
 const $ = id => document.getElementById(id);
@@ -104,7 +105,7 @@ let maSettings;try{maSettings=movingAverageSettings(JSON.parse(storage.getItem('
 let quoteBusyGeneration=-1;
 let leverage=25, stop=.5, stopPips=30, speed=1, actionBusy=false,  shownFlashTimer, toastTimer, propFrame,propPresentationRun=0;
 let sound = storage.getItem(settingsKey)!=='mute';
-let voiceEnabled=storage.getItem('fx-girl-voice')!=='off';
+// Original voice is silent until its own button is pressed; old autoplay settings are ignored.
 let fullMotion=storage.getItem('fx-girl-motion')!=='reduce';
 state.runId ||= crypto.randomUUID();
 // null means temporarily unreadable: pause dynamic telemetry, never mark permanent test mode.
@@ -194,7 +195,9 @@ function syncSceneMusic(){void bgm.setScene(selectBgmScene(state,{sceneCue:curre
 function syncVoiceDuck(){bgm.setVoiceActive(voiceMixActive(voice,$('voice-list').querySelectorAll('audio')));}
 function currentNetFloating(){return positionsOf(state).reduce((sum,position)=>sum+positionNetUnrealized(state,position),0);}
 function currentRisk(){return Math.round(accountMetrics(state).usedMargin/Math.max(accountMetrics(state).tradingEquity,1)*100);}
-function selectedOrder(type='long'){return {type,leverage,stop,stopPips,amount:orderAmount};}
+function selectedOrder(type='long'){return {type,leverage,stop,stopPips,...orderIntentAction(state,orderAmount)};}
+function refreshOrderIntent(){if(!orderDraftIntent(state))return;orderAmount=orderPreview(state,selectedOrder()).margin;$('order-amount').value=Number.isFinite(orderAmount)?orderAmount:'';}
+function renderLiveOrderTicket(){refreshOrderIntent();const long=orderPreview(state,selectedOrder('long')),short=orderPreview(state,selectedOrder('short')),blocked=!tradingOpen(state)||actionBusy||saveSession.blocked;$('long').disabled=blocked||!long.valid;$('short').disabled=blocked||!short.valid;setText('order-validation',!long.valid&&!short.valid?long.error:'');$('order-validation').hidden=long.valid||short.valid;setText('preview-margin',yen(long.margin||0));setText('preview-notional',yen(long.notional||0));setText('preview-quantity',`${formatQuantity(long.quantity||0)} USD`);setText('preview-fee',yen(long.openFee||0));setText('preview-debit',yen(long.totalDebit||0));setText('amount-selected',yen(orderAmount||0));}
 function selectedPercentage(){return (orderAmountRatio(orderAmount,accountMetrics(state).availableMargin)||0)*100;}
 function setText(id,value){if($(id))$(id).textContent=value;}
 function chart(){
@@ -224,7 +227,7 @@ function renderQuoteFrame(){
   setText('equity',yen(account));setText('net-assets',yen(account-debtSummary(state).total));setText('available-margin',yen(metrics.availableMargin));
   setText('floating',signed(metrics.unrealized));$('floating').className=metrics.unrealized>=0?'positive':'negative';
   setText('margin-level',orders.length?`${(metrics.marginLevel*100).toFixed(1)}%`:'— 无持仓');$('margin-meter').value=orders.length?Math.min(200,Math.max(0,metrics.marginLevel*100)):200;
-  const actualRatio=orderAmountRatio(orderAmount,metrics.availableMargin),highlightRatio=nearestOrderRatio(orderAmount,metrics.availableMargin);
+  renderLiveOrderTicket();const actualRatio=orderAmountRatio(orderAmount,metrics.availableMargin),highlightRatio=nearestOrderRatio(orderAmount,metrics.availableMargin);
   setText('stake-value',actualRatio===null?'—':`${Number((actualRatio*100).toFixed(2))}%`);for(const button of document.querySelectorAll('[data-stake]'))button.setAttribute('aria-pressed',String(Number(button.dataset.stake)===highlightRatio));
   renderPositions(orders,enabled);renderLiquidationMeter($('account-liquidation-value'),accountLiquidationEstimate(state));floatingRisk.update(accountLiquidationEstimate(state));renderRiskAlerts();chart();
 }
@@ -317,7 +320,7 @@ function syncDayReportPresentation(){
  dayRecapSnapshot=current?buildRecapSnapshot(state):null;
  const n=state.settlementNarrative,ready=state.mode==='story'&&n?.day===state.day&&n.fatherDiscovery&&n.effectsApplied&&state.family?.unlocked&&!state.fatherUsed;
  $('father-scene-use').hidden=!ready;$('father-scene-use').disabled=!ready;
- setText('father-scene-use','取用父亲的柜中存款 ¥3,000,000');
+ setText('father-scene-use','取用父亲的柜中存款 · 金额自选');
  if(dayRecapSnapshot){setText('day-total',yen(dayRecapSnapshot.account.nominalAssets));setText('day-net',`今日交易 ${signed(dayRecapSnapshot.daily.tradingNet)} · 累计已实现 ${signed(dayRecapSnapshot.cumulative.realizedProfit)}`);}
 }
 function render(){
@@ -329,7 +332,7 @@ function render(){
   const account=equity(state),event=currentEvent(state),em=mood(state),info=moodInfo[em]||['平静','calm'];
   const dayNet=account-state.dayOpening-(state.externalFunding-state.dayOpeningFunding)+(state.expenses-state.dayOpeningExpenses);
   const endless=state.mode==='endless',stats=runPerformance(state);
-  setText('mode-open',endless?'操盘模式 ▾':'剧情模式 ▾');setText('restart',endless?'重新操盘':'重新开始章节');
+  setText('mode-open',endless?'操盘模式 ▾':'剧情模式 ▾');setText('restart','重开韭菜人生');
   setText('stage-name',`${endless?'操盘':'剧情'} · 第 ${day} 天`);
   setText('mission-title',endless?`已存活 ${stats.daysSurvived} 天`:end?'今日结算':'今日开盘');
   setText('mission-copy',endless?`已平仓 ${stats.closedTrades} 笔`:end?`收盘资产 ${yen(state.dayReport?.day===day?state.dayReport.closing:account)}`:`本日开盘 ${yen(state.dayOpening)} · ${state.beat*4+(state.pending?.candle||0)} / ${beatsPerDay(state)*4} 根 K 线`);
@@ -343,11 +346,15 @@ function render(){
   else{$('portrait').removeAttribute('style');$('portrait').parentElement.classList.remove('manga-viewport');$('portrait').parentElement.style.aspectRatio='';delete $('portrait').dataset.manga;setImage($('portrait'),portrait.path);$('portrait').dataset.mood=portrait.emotion;$('portrait').alt=`久留美此刻${portrait.label}`;}
   const voiceContext=selectVoiceContext(state,{floating:currentNetFloating(),hasPositions:positionsOf(state).length>0});
   const voiceReversal=reversal==='profit-to-loss'&&voiceContext.pnl<0||reversal==='loss-to-profit'&&voiceContext.pnl>0?reversal:null;
-  const voiceEmotion=voiceReversal||(em==='stunned'?'blank':em);const voiced=$('voice-library-dialog').open?null:voice.sync({enabled:voiceEnabled,emotion:voiceEmotion,speechId:state.speech?.id,run:state.runId,context:voiceContext});
+  const voiceEmotion=voiceReversal||(em==='stunned'?'blank':em);const voiced=$('voice-library-dialog').open?null:voice.sync({enabled:!document.hidden&&!$('voice-library-dialog').open,emotion:voiceEmotion,speechId:state.speech?.id,run:state.runId,context:voiceContext});
   syncVoiceDuck();syncSceneMusic();
   setText('speech',trauma.active?trauma.line:voiced?.zh||state.speech?.text||'');setText('voice-caption',voiced?`PV 原声 · ${voiced.speaker||'久留美'} · ${voiced.ja||''}`:'');$('voice-caption').hidden=!voiced;
-  const voiceStatus=voiceEnabled?(voice.lastError?UI_COPY.voiceState[voice.lastError]:voice.loading?UI_COPY.voiceState.loading:voice.playing?UI_COPY.voiceState.playing:''):'';for(const id of ['voice-state','voice-library-status']){setText(id,voiceStatus);$(id).hidden=!voiceStatus;}
-  setText('voice-toggle',voiceEnabled?'动画原声 · 开':'动画原声 · 关');$('voice-toggle').disabled=false;$('voice-toggle').setAttribute('aria-pressed',String(voiceEnabled));$('voice-replay').hidden=!voiceEnabled||!voice.available(voiceEmotion).length;
+  const available=voice.available(voiceEmotion),active=voice.loading||voice.playing;
+  const voiceStatus=voice.lastError?UI_COPY.voiceState[voice.lastError]:voice.loading?UI_COPY.voiceState.loading:voice.playing?UI_COPY.voiceState.playing:available.length?'仅手动播放':'当前没有适配台词';
+  setText('voice-state',voiceStatus);$('voice-state').hidden=false;
+  setText('voice-toggle',active?'停止原声':available.length?'播放当前原声':'暂无适配台词');
+  $('voice-toggle').disabled=!active&&!available.length;$('voice-toggle').setAttribute('aria-pressed',String(active));
+  $('voice-toggle').title=active?'停止本段原声':available[0]?.zh||'当前情境没有匹配的原声';$('voice-replay').hidden=true;
 
   setText('mental-detail',`${trauma.active?trauma.explanation+' ':''}累计回撤 ${Math.round(mental.totalDrawdown*100)}% · 近期回撤 ${Math.round(mental.recentDrawdown*100)}% · ${limit.noEntry?'不能新开仓':`新单最多 ${limit.leverage}× · 合计保证金上限 ${Math.round(limit.stake*100)}%`}`);
   setText('sanity-text',`${Math.round(state.sanity)} / 100`);$('sanity-fill').style.width=state.sanity+'%';
@@ -365,7 +372,7 @@ function render(){
   $('margin-level').className=orders.length&&metrics.marginLevel<=1?'negative':'';
   const todayMetrics=dailyReturnMetrics(state),displayPnl=endless?stats.totalProfit:todayMetrics.tradingNet,displayRate=endless?stats.returnRate:todayMetrics.returnRate;setText('pnl-period',endless?'累计交易收益':todayMetrics.tradingNetPartial?'今日交易 · 留存样本':'今日交易净收益');setText('day-pnl',signed(displayPnl));setText('day-return',displayRate===null?'—':`${displayRate>0?'+':''}${(displayRate*100).toFixed(2)}%`);$('day-pnl').className=displayPnl>=0?'positive':'negative';
   $('position-card').hidden=false;$('position-empty').hidden=!!orders.length;for(const id of ['hold','half','close'])$(id).hidden=!orders.length;
-  const actualRatio=orderAmountRatio(orderAmount,metrics.availableMargin),highlightRatio=nearestOrderRatio(orderAmount,metrics.availableMargin);
+  renderLiveOrderTicket();const actualRatio=orderAmountRatio(orderAmount,metrics.availableMargin),highlightRatio=nearestOrderRatio(orderAmount,metrics.availableMargin);
   setText('stake-value',actualRatio===null?'—':`${Number((actualRatio*100).toFixed(2))}%`);setText('leverage-value',`${leverage}×`);setText('stop-value',stopPips===null?'不预设':`${stopPips} 点`);
   $('emotion-order-rule').hidden=!limit.forceNoStop;setText('emotion-order-rule',`${info[0]}：只能不设止损，杠杆至少 25×`);
   const preview=orderPreview(state,selectedOrder('long')),shortPreview=orderPreview(state,selectedOrder('short'));
@@ -394,7 +401,7 @@ function render(){
   for(const b of document.querySelectorAll('[data-amount-preset],#amount-max,#amount-random,#amount-slider')){b.disabled=!canPickAmount||(b.dataset.amountPreset&&Number(b.dataset.amountPreset)>amountCap);if(b.dataset.amountPreset)b.setAttribute('aria-pressed',String(Number(b.dataset.amountPreset)===orderAmount));}
   $('order-amount').disabled=!canPickAmount;
   $('amount-slider').max=Math.max(100,amountCap);$('amount-slider').value=Number.isFinite(orderAmount)?Math.max(100,Math.min(amountCap,orderAmount)):100;$('amount-slider').setAttribute('aria-valuetext',Number.isFinite(orderAmount)?yen(orderAmount):'请输入有效额度');
-  setText('amount-slider-max',yen(amountCap));setText('amount-selected',Number.isFinite(orderAmount)?yen(orderAmount):'—');setText('amount-limit',amountCap>=100?`最大 ${yen(amountCap)} · 比例以可用保证金 ${yen(metrics.availableMargin)} 为分母；高亮接近档位，不改金额`:'当前可开仓额度不足 ¥100');
+  setText('amount-slider-max',yen(amountCap));setText('amount-selected',Number.isFinite(orderAmount)?yen(orderAmount):'—');setText('amount-limit',amountCap>=100?`最大 ${yen(amountCap)} · 比例以可用保证金 ${yen(metrics.availableMargin)} 为分母；手填金额固定；比例与全仓按提交时重算`:'当前可开仓额度不足 ¥100');
   if(limits.noEntry){$('long').disabled=true;$('short').disabled=true;}
   $('effect-list').replaceChildren();for(const effect of state.effects){const def=DEBUFFS[effect.id]||{name:effect.id,copy:''},row=document.createElement('p');row.textContent=`${def.name}${effect.remaining===null?'':` · 剩 ${effect.remaining} 段`}：${def.copy}`;$('effect-list').append(row);}
   if(state.cash<100){$('long').disabled=true;$('short').disabled=true;}
@@ -496,7 +503,7 @@ let dayRecapView=null,dayRecapSnapshot=null,storyConfirmAfter=0,livingView=null,
 function cancelNarrativePresentation(){narrativeRun++;clearTimeout(narrativeTimer);narrativeTimer=null;livingView?.dispose();livingView=null;}
 const recapReducedMotion=matchMedia('(prefers-reduced-motion: reduce)');recapReducedMotion.addEventListener?.('change',e=>{if(e.matches)dayRecapView?.finish();});
 function renderDayRecap({animate=true}={}){
- dayRecapView?.dispose();dayRecapSnapshot=buildRecapSnapshot(state);setText('day-total',yen(dayRecapSnapshot.account.nominalAssets));setText('day-net',`今日交易 ${signed(dayRecapSnapshot.daily.tradingNet)} · 生活费 ${yen(dayRecapSnapshot.daily.costs.living)} · 累计已实现 ${signed(dayRecapSnapshot.cumulative.realizedProfit)}`);
+ dayRecapView?.dispose();dayRecapSnapshot=buildRecapSnapshot(state);setText('day-total',yen(dayRecapSnapshot.account.nominalAssets));setText('day-net',`今日交易 ${signed(dayRecapSnapshot.daily.tradingNet)} · 累计已实现 ${signed(dayRecapSnapshot.cumulative.realizedProfit)}`);
  dayRecapView=mountDailyRecap($('daily-recap'),dayRecapSnapshot,{motion:animate&&shouldAnimate(),reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,onSound:soundEffect,cash:accountMetrics(state).availableMargin,loanUnlocked:state.loan?.unlocked,loanTerms:networkLoanTerms(state),portraitUrl:$('portrait').src,portraitPanel:scenePortrait(state).kind==='manga'?scenePortrait(state).panel:null,moodLabel:$('emotion-label').textContent,usedGroups:(state.recapChoiceLedger||[]).filter(e=>e.day===state.day).map(e=>e.group),usedChoices:(state.recapChoiceLedger||[]).filter(e=>e.day===state.day).map(e=>e.id),onChoice:choice=>{
   if(actionBusy||!guardProgress())return;
   if(choice.loan){$('loan-open').click();return;}
@@ -534,6 +541,7 @@ function startNarrativeCompletion({choiceId}={}){
    render();dayRecapSnapshot=buildRecapSnapshot(state);
    const mealArt=livingEventArt({kind:living.receipt.kind==='friend-treat'?'friend':living.receipt.kind,applied:state.dayReport.livingSettlement?.status!=='pending',amount:living.receipt.amount,tradingNet:state.dayReport.net,knownFriend:state.story.seen.includes('friendStudy'),traumaActive:tradingTrauma(state).active});renderFatherIllustration($('living-event-art'),mealArt?{art:mealArt}:null);
    livingView=mountLivingReceipt($('living-receipt'),living.receipt,{motion:living.charged&&shouldAnimate(),reducedMotion:recapReducedMotion.matches,onSound:()=>narrativeCues.emit(currentNarrativeAudio(),{fresh:living.charged}),onReady:()=>{if(current()&&!saveSession.blocked){storyConfirmAfter=performance.now();$('next-day').disabled=false;}}});
+   mountConsumptionChoices();
    syncSceneMusic();syncDayReportPresentation();
    if(saved&&result.hooks.length)state.pendingFatherHint=true;
   }catch(error){track('error','daily-settlement',{kind:'settlement',reason:'failed'});setText('day-story-status',error.message);$('day-story-status').hidden=false;}
@@ -562,20 +570,21 @@ function showDayDialog(){
  if(!fallback.hidden){const p=scenePortrait(state),t=tradingTrauma(state),comicMood=['crushed','numb'].includes(t.level)&&['trauma-pain','trauma-frozen'].includes(p.emotion)?'devastated':p.emotion,comic=settledComicArt({net:r.net,settled:!!sealedDailyMangaOutcome(state),mood:comicMood,traumaActive:t.active}),view=document.createElement('div'),image=document.createElement('img'),source=document.createElement('button');view.className=comic?'settled-whole-sheet':'daily-fallback-portrait';view.append(image);if(comic){setImage(image,comic.path);image.alt=comic.alt;}else if(p.kind==='manga')showMangaPortrait(image,p.panel);else{setImage(image,p.path);image.alt='久留美';}source.type='button';source.className='secondary';source.textContent='素材出处';source.onclick=comic?()=>{const original=document.createElement('img');setImage(original,comic.path);original.style.width='100%';openDetails('素材出处',['原创同人','收盘小剧场'],null,original);}:showPortraitSource;fallback.append(view,source);}
  if(!frame.hidden)$('day-result-manga').hidden=true;
  if(narrative?.fatherFrames?.length){frame.hidden=true;$('day-story-lines').hidden=true;$('day-result-manga').hidden=true;}else $('day-story-lines').hidden=false;
- setText('day-total',yen(r.closing));setText('day-net',`今日交易 ${signed(r.net)} · 生活费 ${yen(r.livingCost||0)} · 累计已实现 ${signed(runPerformance(state).totalProfit)}`);
+ setText('day-total',yen(r.closing));setText('day-net',`今日交易 ${signed(r.net)} · 累计已实现 ${signed(runPerformance(state).totalProfit)}`);
  setText('next-day',state.walkawayRequested?'收手离场':'明天开盘');if(!storyVisible){cancelNarrativePresentation();renderDayRecap();}else dayRecapView?.finish();if(!$('day-dialog').open)$('day-dialog').showModal();track('screen_view',storyVisible?'daily-family':'daily-summary',{kind:'settlement',reason:storyVisible?'family':'summary'},`settlement-stage:${state.day}:${storyVisible?'story':'recap'}`);if(storyVisible&&narrative?.fatherFrames?.length)track('story_seen','father-discovery',{kind:'family-funds',reason:'discovered'},`father-discovery:${state.day}`);if(storyVisible){$('day-story-status').hidden=true;narrativeCues.emit(currentNarrativeAudio(),{fresh:!state.settlementNarrative?.effectsApplied});syncSceneMusic();startNarrativeCompletion();persist();}
 
 }
+function mountConsumptionChoices(){mountConsumptionStatement($('living-receipt'),consumptionStatement(state),{onLifestyle:plan=>{if(!guardProgress())return;try{selectLifestyle(state,plan.id);persist();$('living-receipt').querySelector('.consumption-statement')?.remove();mountConsumptionChoices();}catch(error){toast(error.message,'loss');}}});}
 function newChapter(){if(!guardProgress())return;stateGeneration++;rankingLifecycle.clear();actionBusy=false;marketClock.stop();state=enableRealtime(fresh());state.runId=crypto.randomUUID();telemetry.setTestMode(isDevelopmentRun());voice.stop();lastMood=null;orderAmount=draftOrderAmount(state);$('order-amount').value=orderAmount;leverage=25;stop=.5;stopPips=30;for(const d of document.querySelectorAll('dialog[open]'))d.close();$('last-trade').textContent='';render();if(state.mode==='story')showOpening();marketClock.start();scrollTo({top:0,behavior:fullMotion?'smooth':'instant'});}
-function showProp(id,confirmed=false){
-  if(actionBusy||!tradingOpen(state)&&!['day_end','resting'].includes(state.phase))return;
+async function showProp(id,confirmed=false){
+  if(actionBusy||!guardProgress()||!tradingOpen(state)&&!['day_end','resting'].includes(state.phase))return;
   if(id==='father'&&!confirmed){renderFatherIllustration($('father-confirm-art'),fatherItemIllustration(state,{stage:'confirm',accountEquity:equity(state)}));$('father-take-dialog').showModal();return;}
-  audio.unlock();let result;
-  try{result=useProp(state,id);if(id==='father')applyFatherDiscovery(state,{type:'sync-taken'});}catch(error){toast(error.message,'loss');return;}
+  audio.unlock();let result;const generation=stateGeneration;
+  try{result=useProp(state,id,id==='father'?{amount:Number($('father-take-amount').value)}:{});if(id==='father'){applyFatherDiscovery(state,{type:'sync-taken'});actionBusy=true;const saved=await persist();if(generation!==stateGeneration)return;actionBusy=false;if(saveSession.blocked)return;if(!saved){render();toast('取款已保留在本页，存档未成功。请先重试保存。','loss');return;}}}catch(error){if(generation!==stateGeneration)return;actionBusy=false;toast(error.message,'loss');return;}
   if(id==='father')track('item_used','father',{kind:'family-funds',reason:'taken'},'father-taken');else track('item_used',id,{itemId:id,mood:mood(state),equityBucket:capitalBucket(equity(state))});for(const t of result.trades||[result.trade])trackExit(t);for(const e of state.effects)track('debuff_applied',e.id,{debuffId:e.id,itemId:id,duration:e.remaining||0},`effect:${state.day}:${state.beat}:${id}:${e.id}`);
   const spec=PROPS[id];render();const propArt=propEventArt(id,{applied:true});renderFatherIllustration($('father-applied-art'),id==='father'?fatherItemIllustration(state,{stage:'applied',result}):propArt?{art:propArt}:null);$('prop-comic-frame').hidden=true;setText('prop-title',spec.name);setText('prop-line',id==='father'?approvedQuote('V2-E03-05',state)?.text||'':PROP_LINES[id]||'');setText('prop-rule',spec.copy);
   $('prop-dialog').dataset.kind=id;$('prop-dialog').showModal();narrativeCues.emit(currentNarrativeAudio());syncSceneMusic();
-  const propRun=++propPresentationRun,generation=stateGeneration;
+  const propRun=++propPresentationRun;
   const amount=result.amount||0,started=performance.now(),duration=shouldAnimate()?1500:0;
   if(amount){
     let soundStep=-1;
@@ -590,19 +599,20 @@ function showProp(id,confirmed=false){
   motion.animate($('prop-dialog'),[{opacity:0,transform:'translateY(30px) scale(.85) rotate(-3deg)'},{opacity:1,transform:'translateY(0) scale(1.03) rotate(1deg)'},{opacity:1,transform:'none'}],{duration:600});
   motion.animate(document.querySelector('.prop-envelope'),[{transform:'rotate(-12deg) scale(.6)'},{transform:'rotate(8deg) scale(1.12)'},{transform:'rotate(-5deg) scale(1)'}],{duration:800});
 }
-function selectOrderAmount(value,{writeInput=true}={}){
+function selectOrderAmount(value,{writeInput=true,intent=null}={}){
  if(actionBusy||!guardProgress())return;
  orderAmount=normalizeOrderAmount(value);
+ if(intent)state.orderDraftIntent=intent;else delete state.orderDraftIntent;
  if(Number.isFinite(orderAmount))state.orderDraftAmount=orderAmount;
  if(writeInput)$('order-amount').value=Number.isFinite(orderAmount)?orderAmount:'';
  render();
 }
 function maxOrderAmount(){return Math.max(orderPreview(state,selectedOrder('long')).maxMargin||0,orderPreview(state,selectedOrder('short')).maxMargin||0);}
 for(const b of document.querySelectorAll('[data-amount-preset]'))b.onclick=()=>selectOrderAmount(Number(b.dataset.amountPreset));
-$('amount-max').onclick=()=>selectOrderAmount(maxOrderAmount());
+$('amount-max').onclick=()=>selectOrderAmount(maxOrderAmount(),{intent:{mode:'max'}});
 $('amount-slider').oninput=()=>selectOrderAmount(sliderOrderAmount(Number($('amount-slider').value),maxOrderAmount()));
 $('amount-random').onclick=()=>{selectOrderAmount(randomOrderAmount(maxOrderAmount()));setText('amount-random-status',`随机选择 ${yen(orderAmount)}`);};
-for(const b of document.querySelectorAll('[data-stake],[data-leverage],[data-stop]'))b.addEventListener('click',()=>{if(b.dataset.stake){selectOrderAmount(ratioOrderAmount(Number(b.dataset.stake),accountMetrics(state).availableMargin,maxOrderAmount()));return;}if(b.dataset.leverage)leverage=Number(b.dataset.leverage);if(b.dataset.stop)stop=Number(b.dataset.stop);render();});
+for(const b of document.querySelectorAll('[data-stake],[data-leverage],[data-stop]'))b.addEventListener('click',()=>{if(b.dataset.stake){selectOrderAmount(ratioOrderAmount(Number(b.dataset.stake),accountMetrics(state).availableMargin,maxOrderAmount()),{intent:{mode:'ratio',ratio:Number(b.dataset.stake)}});return;}if(b.dataset.leverage)leverage=Number(b.dataset.leverage);if(b.dataset.stop)stop=Number(b.dataset.stop);render();});
 $('order-amount').oninput=()=>selectOrderAmount(Number($('order-amount').value),{writeInput:false});
 $('order-amount').onchange=()=>selectOrderAmount(Number($('order-amount').value));
 $('position-list').onclick=e=>{const detail=e.target.closest('[data-position-detail]');if(detail){openPositionDetail(detail.dataset.positionDetail);return;}const b=e.target.closest('[data-position-action]');if(b&&!b.disabled)sendAction(b.dataset.positionAction,b.dataset.positionId,b);};
@@ -743,7 +753,7 @@ $('ranking-share').onclick=()=>openShare('ranking');
 $('ranking-retry').onclick=()=>void readRanking();
 $('ranking-form').onsubmit=async e=>{e.preventDefault();if(rankingBusy||!rankingEligibility())return;rankingBusy=true;rankingEligibility();setText('ranking-status','正在更新显示姓名…');try{await leaderboard.rename(state.runId,$('ranking-name').value.trim());await readRanking();setText('ranking-status','显示姓名已更新，成绩与排名记录未重复创建。');}catch(error){setText('ranking-status',error.message);}finally{rankingBusy=false;rankingEligibility();}};
 
-for(const type of ['pointerdown','keydown'])document.addEventListener(type,event=>{if(!event.isTrusted)return;unlockSafeAudio(event);audio.unlock();voice.unlock();},{capture:true});
+for(const type of ['pointerdown','keydown'])document.addEventListener(type,event=>{if(!event.isTrusted)return;unlockSafeAudio(event);audio.unlock();},{capture:true});
 $('order-amount').value=orderAmount;
 setText('storage-warning',UI_COPY.storageWarning);setText('share-hint',UI_COPY.shareHint);
 for(const text of UI_COPY.help){const p=document.createElement('p');p.textContent=text;$('help-copy').append(p);}
@@ -798,9 +808,13 @@ $('repay-open').onclick=()=>{const max=Math.floor(Math.min(accountMetrics(state)
 $('repay-all').onclick=()=>{$('repay-amount').value=Math.floor(Math.min(accountMetrics(state).availableMargin,state.family.outstanding));};
 $('repay-confirm').onclick=()=>{try{const r=repayFather(state,Number($('repay-amount').value));track('story_choice','father-repay',{kind:'family-funds',reason:'repaid'});$('repay-dialog').close();toast(`归还 ${yen(r.amount)}`);render();continueScenes();}catch(e){setText('repay-limit',e.message);}};
 $('bankrupt-rescue').onclick=()=>{$('bankrupt-dialog').close();showProp('father');};
-$('voice-toggle').onclick=()=>{voiceEnabled=!voiceEnabled;storage.setItem('fx-girl-voice',voiceEnabled?'on':'off');if(voiceEnabled){voice.unlock?.();voice.lastMood=null;render();}else{voice.stop();render();}};
-$('father-take-confirm').onclick=()=>{$('father-take-dialog').close();showProp('father',true);};
-$('voice-replay').onclick=()=>{voice.unlock();void voice.play(voice.lastMood||(mood(state)==='stunned'?'blank':mood(state)),state.speech?.id);};
+$('voice-toggle').onclick=()=>{
+ if(document.hidden||document.querySelector('dialog[open]'))return;
+ if(voice.playing||voice.loading){voice.stop();render();return;}
+ pauseAuditions();render();voice.unlock();void voice.play(voice.lastMood,state.speech?.id);
+};
+$('father-take-confirm').onclick=()=>{if(!$('father-take-amount').reportValidity())return;$('father-take-dialog').close();void showProp('father',true);};
+
 
 function showEnding(){
  const e=state.ending,finalSnapshot=structuredClone(state),finalReport=buildResultsReport(finalSnapshot,{recap:buildRecapSnapshot(finalSnapshot)}),ending=finalReport.ending;

@@ -1,6 +1,6 @@
-import {grossPnlAt} from './market.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -10,9 +10,9 @@ export const ACHIEVEMENTS = Object.freeze([
   define('liquidated','祈祷没有成交价','第一次因保证金不足被强制平仓。','祈','游戏成就：真实保证金强平。已审核的大浮亏图不能证明已强平，因此不配。'),
   define('hold-loss','关掉屏幕仍在亏','选择继续持有后，实际播放至少一根 K 线，仍持有亏损超过保证金 25% 的订单。','暗','游戏成就：继续持亏并经历行情。已审核素材不能证明本局关掉屏幕，因此不配。'),
   define('hundred-times','杠杆把心跳放大','实际持有 100× 仓位经历一次行情变化。','100','借原作杠杆放大心跳的主题，100×门槛为游戏设计；不使用带原作10枚/固定金额的账单。'),
-  define('father-funds','柜子里的三百万','实际取用父亲的 ¥3,000,000 存款。','柜','家庭资金梗的游戏改编；现有审核图未证明本局取用300万，不强配。'),
+  define('father-funds','柜子里的存款','实际取用一笔父亲的柜中存款。','柜','家庭资金梗的游戏改编；现有审核图未证明本局实际取款金额，不强配。'),
   define('tell-everything','今晚把事情说清楚','实际向朋友披露欠款，或在父亲发现前主动归还一笔。','话','本作加入实际披露与还款；没有准确对应的原作完成截图。'),
-  define('fully-repaid','三百万，一分不少','取用父亲的柜中存款后，将欠款全部归还。','还','归还三百万是游戏账本中的实际行为；不是原作既成事实，没有对应完成图。'),
+  define('fully-repaid','借多少，还多少','取用父亲的柜中存款后，将欠款全部归还。','还','归还实际取用金额是游戏账本中的行为；不是原作既成事实，没有对应完成图。'),
   define('accept-stop','不顾一切，进行止损！','实际执行一次止损平仓。','止','原作第 4 话第 2 页的止损决心，由游戏真实止损成交践行。'),
   define('mochiko-warning','萌智子帮忙盯盘','实际使用萌智子的盯盘保护。','萌','萌智子保护及爆仓减免为游戏设计；现有审核素材没有精确对应截图。'),
   define('profit-receipt','利润换成热饭','赚到第一笔利润后，点一份外卖。','饭','真实盈利后点外卖是本作设计；现有审核素材没有对应热饭截图。'),
@@ -34,7 +34,7 @@ function evidence(s) {
     'hundred-times':s.phase==='playing'&&(s.pending?.candle>0||s.pending?.tick>0)&&active.some(p=>p.leverage===100)?1:0,
     'father-funds':s.fatherUsed&&s.family?.takenConfirmed?1:0,
     'tell-everything':s.disclosures?.debt||s.family?.repaid>0&&s.family?.informed&&!s.family?.discovered?1:0,
-    'fully-repaid':s.fatherUsed&&s.family?.repaid>=3000000&&finite(s.family?.outstanding)===0?1:0,
+    'fully-repaid':s.fatherUsed&&s.family?.repaid>0&&s.family.repaid>=(Number.isFinite(s.family?.withdrawal?.amount)?s.family.withdrawal.amount:3000000)&&finite(s.family?.outstanding)===0?1:0,
     'accept-stop':trades.some(t=>t.type==='stop')?1:0,
     'mochiko-warning':s.itemsUsed?.mochiko||s.skills?.mochiko?1:0,
     'profit-receipt':(s.itemsUsed?.takeaway&&realized>0)||trades.some(t=>t.type==='receipt'&&t.pnl>0)?1:0,

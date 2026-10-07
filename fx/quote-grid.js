@@ -3,9 +3,23 @@
 export const QUOTE_GRID_VERSION=2;
 export const QUOTE_SUBSTEPS=4;
 export const QUOTE_DT=1/QUOTE_SUBSTEPS;
-export const MARKET_BALANCE=Object.freeze({noise:.00058*.35,driftScale:.5,maxShock:.04,historyNoise:.002*.35});
+// A market day contains 96 logical seconds. Rare news can still gap, but daily
+// roulette and mandatory weekly shocks must not make consecutive days violent.
+export const MARKET_BALANCE=Object.freeze({noise:.00058*.28,driftScale:.5,maxShock:.012,shockScale:.3,shockChance:.12,shockCooldownDays:2,historyNoise:.002*.28});
+// Candidate rolls are a pure function of seed/day supplied by the engine. Looking
+// back at candidates (rather than mutable run state) gives a strict quiet period
+// and the same day schedule when loading, skipping days or changing display Hz.
+export function shouldScheduleShock(day,rollForDay){
+ if(!Number.isSafeInteger(day)||day<1||typeof rollForDay!=='function')throw Error('Invalid shock schedule input');
+ const candidate=d=>{const roll=rollForDay(d);if(!Number.isFinite(roll)||roll<0||roll>=1)throw Error('Invalid shock schedule roll');return roll<MARKET_BALANCE.shockChance;};
+ if(!candidate(day))return false;
+ for(let ago=1;ago<=MARKET_BALANCE.shockCooldownDays&&day>ago;ago++)if(candidate(day-ago))return false;
+ return true;
+}
 const price9=value=>Number(Math.max(.001,value).toFixed(9));
 export function boundedShock(value){return Number.isFinite(value)?Math.max(-MARKET_BALANCE.maxShock,Math.min(MARKET_BALANCE.maxShock,value)):0;}
+// Return the actual price jump so stored news metadata describes the new path.
+export function calibratedShock(value){return boundedShock(value*MARKET_BALANCE.shockScale);}
 export function generateQuoteGrid({startPrice,events,market,impactAt,swan=null,newsEffects=true,candlesPerBeat=4,ticksPerCandle=6}){
  if(!Number.isFinite(startPrice)||startPrice<=0||typeof market!=='function'||typeof impactAt!=='function'||!Array.isArray(events))throw Error('Invalid canonical quote input');
  let price=startPrice;

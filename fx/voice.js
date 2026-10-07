@@ -1,7 +1,7 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {VoiceTimingGate} from './voice-timing.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {assetURL} from './assets.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {VoiceTimingGate} from './voice-timing.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {assetURL} from './assets.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
@@ -25,54 +25,60 @@ export const VOICE_LINES=Object.freeze([
  clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
  clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
+// Gameplay voice is strictly manual. sync observes validity; it never starts audio.
 export class VoicePlayer{
- constructor({makeAudio=()=>new Audio(),onUpdate=()=>{},onPlay=()=>{},onReject=()=>{},lines=VOICE_LINES,now=()=>Date.now(),minGap=8000}={}){
+ constructor({makeAudio=()=>new Audio(),onUpdate=()=>{},onPlay=()=>{},onReject=()=>{},lines=VOICE_LINES,now=()=>Date.now(),maxLoadMs=3000}={}){
   this.lines=lines;this.audio=makeAudio();this.audio.preload='none';this.audio.volume=0;this.envelope=new AudioEnvelope({now});
-  this.onUpdate=onUpdate;this.onPlay=onPlay;this.onReject=onReject;this.now=now;this.minGap=minGap;
+  this.onUpdate=onUpdate;this.onPlay=onPlay;this.onReject=onReject;this.now=now;this.maxLoadMs=maxLoadMs;
   this.presentation=null;this.playing=false;this.loading=false;this.lastError=null;this.generation=0;this.sequence={};this.lastMood=null;this.lastRun=null;
-  this.unlocked=false;this.lastStarted=-Infinity;this.failed=new Set();this.timing=new VoiceTimingGate();this.hasContext=false;this.activeToken=null;this.lastAttempt=null;this.lastPlayed=new Map();
-  this.audio.addEventListener('ended',()=>{this.envelope.stop(this.audio);this.playing=false;this.loading=false;this.onUpdate();});
-  this.audio.addEventListener('error',()=>{const line=this.presentation;if(line)this.failed.add(line.id);this.stop();this.lastError='unavailable';if(line)this.onReject(line);this.onUpdate();});
+  this.unlocked=false;this.failed=new Set();this.timing=new VoiceTimingGate();this.hasContext=false;this.activeToken=null;
+  this.audio.addEventListener('ended',()=>{this.stop();this.onUpdate();});
+  this.audio.addEventListener('error',()=>{const line=this.presentation;if(!line)return;this.failed.add(line.id);this.stop();this.lastError='unavailable';this.onReject(line);this.onUpdate();});
  }
- // Call from an actual pointer/key/replay gesture. Before this, sync performs no play().
- unlock(){if(this.unlocked)return false;this.unlocked=true;this.lastMood=null;this.lastError=null;return true;}
- stop({fade=false}={}){const generation=++this.generation;if(fade)this.envelope.fadeOut(this.audio,{duration:100,onComplete:()=>{if(generation===this.generation)this.audio.pause();}});else{this.envelope.stop(this.audio);this.audio.pause();}this.playing=false;this.loading=false;this.lastError=null;this.presentation=null;this.activeToken=null;}
- accepts(line,token,stage='start'){if(!token)return true;const now=this.now(),context=stage==='continue'?this.timing.current:this.timing.token(now);return this.timing.valid(token)&&voiceSceneMatches(line,context,{stage,now,lastPlayedAt:this.lastPlayed.get(line?.id)??-Infinity});}
+ // Invoked by a dedicated play button, never by ordinary page gestures.
+ unlock(){this.unlocked=true;this.lastError=null;return true;}
+ stop(){++this.generation;this.envelope.stop(this.audio);this.audio.volume=0;this.audio.pause();this.playing=false;this.loading=false;this.lastError=null;this.presentation=null;this.activeToken=null;}
+ accepts(line,token){return !token||this.timing.valid(token)&&voiceSceneMatches(line,this.timing.manualToken(this.now()),{stage:'manual'});}
  async start(line,speechId,emotion,token=null){
-  if(!this.unlocked||!line||this.failed.has(line.id)||token&&!this.accepts(line,token))return false;
-  this.stop();const gen=this.generation;this.audio.src=line.file;this.audio.currentTime=0;
-  const envelope=this.envelope.prepare(this.audio,{target:.55,leadInSeconds:line.leadInSeconds??.4,coldMs:500,warmMs:220});
-  this.activeToken=token;this.presentation={...line,mood:emotion,speechId};this.loading=true;this.lastStarted=this.now();this.onUpdate();
-  try{if(gen!==this.generation||token&&!this.accepts(line,token))return false;await this.audio.play();if(gen!==this.generation)return false;if(token&&!this.accepts(line,token)){this.stop({fade:true});return false;}this.envelope.start(this.audio,envelope);this.loading=false;this.playing=true;this.lastPlayed.set(line.id,this.now());this.onPlay(line);this.onUpdate();return true;}
-  catch(error){if(gen===this.generation){this.envelope.stop(this.audio);this.playing=false;this.loading=false;this.presentation=null;this.activeToken=null;this.lastError=error?.name==='NotAllowedError'?'blocked':'unavailable';if(error?.name==='NotAllowedError')this.unlocked=false;this.onReject(line);this.onUpdate();}return false;}
+  if(!this.unlocked||!line||this.failed.has(line.id)||!this.accepts(line,token))return false;
+  this.stop();const gen=this.generation,requestedAt=this.now();this.audio.src=line.file;this.audio.currentTime=0;
+  const envelope=this.envelope.prepare(this.audio,{target:.5,leadInSeconds:line.leadInSeconds??.4,coldMs:500,warmMs:220});
+  this.activeToken=token;this.presentation={...line,mood:emotion,speechId};this.loading=true;this.onUpdate();
+  try{
+   if(gen!==this.generation||!this.accepts(line,token))return false;
+   await this.audio.play();
+   if(gen!==this.generation){if(!this.presentation){this.audio.pause();this.audio.volume=0;}return false;}
+   if(!this.accepts(line,token)||this.now()-requestedAt>this.maxLoadMs){this.stop();this.lastError='stale';this.onUpdate();return false;}
+   this.envelope.start(this.audio,envelope);this.loading=false;this.playing=true;this.onPlay(line);this.onUpdate();return true;
+  }catch(error){
+   if(gen===this.generation){this.stop();this.lastError=error?.name==='NotAllowedError'?'blocked':'unavailable';if(error?.name==='NotAllowedError')this.unlocked=false;this.onReject(line);this.onUpdate();}
+   return false;
+  }
  }
- available(emotion){if(!this.hasContext)return this.lines.filter(line=>line.moods.includes(emotion)&&!this.failed.has(line.id));const token=this.timing.token(this.now());if(!token)return [];return sceneVoiceCandidates(this.lines.filter(line=>!this.failed.has(line.id)),emotion,token,{now:this.now(),lastPlayed:this.lastPlayed});}
- async play(emotion,speechId){
+ available(emotion=this.lastMood){
+  const lines=this.lines.filter(line=>!this.failed.has(line.id));
+  if(!this.hasContext)return lines.filter(line=>line.moods.includes(emotion));
+  const token=this.timing.manualToken(this.now());
+  return token?sceneVoiceCandidates(lines,emotion,token,{stage:'manual'}):[];
+ }
+ async play(emotion=this.lastMood,speechId){
   if(!this.unlocked)return false;
-  const token=this.hasContext?this.timing.token(this.now()):null;if(this.hasContext&&!token)return false;
-  const pool=this.available(emotion);if(!pool.length)return false;
+  const token=this.hasContext?this.timing.manualToken(this.now()):null;
+  const pool=this.available(emotion);
+  if(!pool.length){this.stop();this.lastError='no-match';this.onUpdate();return false;}
   const turn=this.sequence[emotion]||0,line=pool[turn%pool.length];this.sequence[emotion]=turn+1;
   return this.start(line,speechId,emotion,token);
  }
- // Optional gallery/audition: guest lines retain their original speaker label.
+ // Optional gallery playback is also an explicit action and retains its speaker.
  async playLine(id,speechId='audition'){return this.start(this.lines.find(line=>line.id===id),speechId,'audition');}
- sync({enabled,emotion,speechId,run,context}){
-  if(context){this.hasContext=true;this.timing.observe(context,this.now());if(this.activeToken&&!this.accepts(this.presentation,this.activeToken,this.loading?'start':'continue'))this.stop({fade:true});}
+ sync({enabled=true,emotion,speechId,run,context}){
+  if(context){this.hasContext=true;this.timing.observe(context,this.now());}
   const runChanged=this.lastRun!==null&&this.lastRun!==run;
-  const changed=this.lastMood!==emotion||this.lastRun!==run;this.lastMood=emotion;this.lastRun=run;
-  if(!enabled){if(this.presentation||this.playing)this.stop();return null;}
-  // A new expression must not amputate the last syllable of an active clip.
-  // Explicit mute, replay, audition, navigation and a new run can still stop it.
-  if(runChanged)this.stop();
-  if(this.presentation&&(this.playing||this.loading))return this.presentation;
-  if(this.hasContext){
-    const token=this.timing.token(this.now()),attempt=token?`${token.revision}:${token.settled?'confirmed':emotion}`:null;
-    if(token&&attempt!==this.lastAttempt&&this.unlocked&&this.now()-this.lastStarted>=this.minGap&&this.available(emotion).length){this.lastAttempt=attempt;void this.play(emotion,speechId);}
-  }else if(changed){this.stop();if(this.unlocked&&this.now()-this.lastStarted>=this.minGap&&this.lines.some(line=>line.moods.includes(emotion)))void this.play(emotion,speechId);}
-  if(this.presentation&&this.presentation.mood===emotion&&(this.presentation.speechId===speechId||this.playing||this.loading))return this.presentation;
-  return null;
+  this.lastMood=emotion;this.lastRun=run;
+  if(!enabled||runChanged||this.activeToken&&!this.accepts(this.presentation,this.activeToken)){if(this.presentation||this.playing||this.loading)this.stop();}
+  return this.presentation&&(this.playing||this.loading)?this.presentation:null;
  }
 }

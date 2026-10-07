@@ -1,11 +1,11 @@
-import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
 // Returns ratios as fractions (0.10 = 10%). Closed pnl already includes both fees;
 // external funding, consumption and open floating gains never count as returns.
 export function runPerformance(state){
   const mode=state.mode==='endless'?'endless':'story';
-  const startEquity=Number.isFinite(state.startEquity)&&state.startEquity>0?state.startEquity:START;
+  const startEquity=Number.isFinite(state.startEquity)?state.startEquity:START;
   const trades=(state.history||[]).filter(t=>t.type!=='open'&&Number.isFinite(t.pnl));
   const summary=state.performance;
   let totalProfit=0,maxLoss=0,maxProfit=0,peak=startEquity,maxDrawdown=0;
@@ -18,9 +18,9 @@ export function runPerformance(state){
     :Math.max(0,(state.day||1)-1)+(dayComplete?1:Math.min(1,((state.beat||0)*CANDLES_PER_BEAT+(state.pending?.candle||0)+partialCandle)/(beatsPerDay(state)*CANDLES_PER_BEAT)));
   const elapsedDays=Math.max(1,elapsedSimulatedDays);
   const completedDays=state.completedDays??Math.max(0,(state.day||1)-1+(dayComplete&&state.ending?.id!=='broke'?1:0));
-  const returnRate=totalProfit/startEquity;
+  const rawReturn=startEquity>0?totalProfit/startEquity:null,returnRate=Number.isFinite(rawReturn)?rawReturn:null;
   const winRateTrades=summary?.winRateTrades??trades.length,winningTrades=summary?.winningTrades??trades.filter(t=>t.pnl>0).length;
   return {mode,startEquity,initialEquity:startEquity,elapsedDays,elapsedSimulatedDays,completedCandles,completedDays,daysSurvived:completedDays,
-    totalProfit,returnRate,totalReturnRate:returnRate,dailyReturnRate:returnRate/elapsedDays,maxLoss,maxProfit,maxDrawdown,
+    totalProfit,returnRate,totalReturnRate:returnRate,dailyReturnRate:returnRate===null?null:returnRate/elapsedDays,maxLoss,maxProfit,maxDrawdown,
     closedTrades:summary?.closedTrades??trades.length,winningTrades,winRateTrades,winRate:winRateTrades?winningTrades/winRateTrades:null};
 }

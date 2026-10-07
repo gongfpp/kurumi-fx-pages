@@ -1,5 +1,5 @@
-import {accountingValues} from './accounting-journal.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({
@@ -14,7 +14,7 @@ export const ENDING_VARIANTS=Object.freeze({
  'gave-it-back':{title:'又还回去了',description:'曾经落袋的一大段利润，又在后面的交易里退了回去。账本保留着那个盈利高点。'},
  'back-to-even':{title:'回本就走',description:'经历过明显的已实现亏损后，净交易盈亏和扣债净资产都重新过了回本线。你这次真的停下来了。'},
  'debt-free':{title:'无债一身轻',description:'曾经借过的钱已经还清，父亲欠款与网贷余额都归零。这一局不再带着欠款离场。'},
- 'returned-savings':{title:'把钱放回去',description:'确实取用过的三百万父亲存款已经归还。柜子里的账先被补齐了。'}
+ 'returned-savings':{title:'把钱放回去',description:'实际取用的父亲存款已经归还。柜子里的账先被补齐了。'}
 });
 
 // Classification is read-only and only runs for an already sealed terminal state.
@@ -27,8 +27,9 @@ export function classifyEnding(state={}){
  const debtsKnown=fatherDebt!==null&&networkDebt!==null,totalDebt=debtsKnown?fatherDebt+networkDebt:null;
  const netAssets=debtsKnown?values.nominalAssets-totalDebt:null,realizedNetTradingPnl=Number.isFinite(state.performance?.totalProfit)?state.performance.totalProfit:null;
  const fatherRepaid=Number.isFinite(state.family?.repaid)?state.family.repaid:null,networkBorrowed=Number.isFinite(state.loan?.borrowed)?state.loan.borrowed:null,networkRepaid=Number.isFinite(state.loan?.repaid)?state.loan.repaid:null;
+ const fatherPrincipal=Number.isFinite(state.family?.withdrawal?.amount)?state.family.withdrawal.amount:3000000;
  const fatherBorrowed=state.fatherUsed===true,networkUsed=networkBorrowed>0||networkRepaid>0;
- const evidence={baseId,initialCapital,nominalAssets:values.nominalAssets,netAssets,fatherDebt,networkDebt,totalDebt,fatherBorrowed,fatherRepaid,networkBorrowed,networkRepaid,realizedNetTradingPnl,realizedPeak:p.realizedPeak,realizedTrough:p.realizedTrough,realizedPathComplete:p.realizedPathComplete};
+ const evidence={baseId,initialCapital,nominalAssets:values.nominalAssets,netAssets,fatherDebt,networkDebt,totalDebt,fatherBorrowed,fatherPrincipal,fatherRepaid,networkBorrowed,networkRepaid,realizedNetTradingPnl,realizedPeak:p.realizedPeak,realizedTrough:p.realizedTrough,realizedPathComplete:p.realizedPathComplete};
  let variant=null,matchedRule=null;
  if(totalDebt>.005&&(baseId==='broke'||values.nominalAssets<1000)){
   variant='debt-exit';matchedRule='未还债务 > 0，且基础结局为 broke 或名义资产 < ¥1,000';
@@ -40,8 +41,8 @@ export function classifyEnding(state={}){
   variant='back-to-even';matchedRule='主动离场；历史已实现亏损 ≥ 初始本金的 50%；当前净交易盈亏 ≥ 0 且扣债净资产 ≥ 初始本金';
  }else if(baseId==='walkaway'&&debtsKnown&&totalDebt<=.005&&networkUsed&&networkRepaid>0){
   variant='debt-free';matchedRule='主动离场；有实际网贷借还记录；父亲欠款与网贷欠款均已清零';
- }else if(baseId==='walkaway'&&fatherBorrowed&&fatherDebt!==null&&fatherDebt<=.005&&fatherRepaid>=3000000-.005){
-  variant='returned-savings';matchedRule='主动离场；实际取用过父亲存款，累计归还 ≥ ¥3,000,000，父亲欠款清零';
+ }else if(baseId==='walkaway'&&fatherBorrowed&&fatherDebt!==null&&fatherDebt<=.005&&fatherPrincipal>0&&fatherRepaid>=fatherPrincipal-.005){
+  variant='returned-savings';matchedRule='主动离场；实际取用过父亲存款，累计归还达到实际取用金额，父亲欠款清零';
  }else if(baseId==='walkaway'&&debtsKnown&&totalDebt<=.005&&fatherRepaid>0){
   variant='debt-free';matchedRule='主动离场；有实际父亲借款归还记录，父亲欠款与网贷欠款均已清零';
  }

@@ -2,7 +2,7 @@
 // No DOM, timers, RNG, audio playback, storage writes or account transfers.
 export const FATHER_DISCOVERY_POLICY = Object.freeze({
   version: 1, itemId: 'father', name: '父亲的柜中存款', amount: 3000000,
-  scheduledDay: 2, crisisEquityCeiling: 30000, severeLossFraction: .8,
+  scheduledDay: 12, crisisEquityCeiling: 30000, severeLossFraction: .8,
 });
 export const FATHER_DISCOVERY_ART = Object.freeze({
   calm: {kind:'existing-game-art',path:'./comics/event-father.webp',grid:[0,0,2,2],note:'现有同人四格左上格；平静发现柜中信封。'},
@@ -160,8 +160,8 @@ export function fatherItemIllustration(s,{stage='confirm',result,accountEquity}=
    const crisis=d.route==='crisis'||fatherDiscoveryFacts(s,{accountEquity})?.severe;
    return {itemId:'father',stage:'confirm',title:FATHER_DISCOVERY_POLICY.name,art:crisis?FATHER_DISCOVERY_ART.discover:FATHER_DISCOVERY_ART.calm,caption:'存款仍在柜中。确认取用后，才会增加账户与父亲欠款；不是交易盈利。',financialMeaning:'not-taken',autoActivate:false};
  }
- if(stage==='applied'&&hasTaken(s)&&result?.id==='father'&&result.amount===FATHER_DISCOVERY_POLICY.amount){
-   return {itemId:'father',stage:'applied',title:FATHER_DISCOVERY_POLICY.name,art:{kind:'existing-game-art',path:'./comics/event-father.webp',grid:[1,0,2,2],note:'已查看既有同人四格右上：双手持封闭信封，确为取用后。'},caption:'已取用 ¥3,000,000，同时记为父亲欠款，不计交易利润。',financialMeaning:'borrowed-principal',autoActivate:false};
+ if(stage==='applied'&&hasTaken(s)&&result?.id==='father'&&Number.isFinite(result.amount)&&result.amount>0&&result.amount<=FATHER_DISCOVERY_POLICY.amount&&result.amount===(s.family?.withdrawal?.amount??((s.family?.outstanding||0)+(s.family?.repaid||0)))){
+   return {itemId:'father',stage:'applied',title:FATHER_DISCOVERY_POLICY.name,art:{kind:'existing-game-art',path:'./comics/event-father.webp',grid:[1,0,2,2],note:'已查看既有同人四格右上：双手持封闭信封，确为取用后。'},caption:`已取用 ${money(result.amount)}，同时记为父亲欠款；无论金额多少，本章取款机会已用完。`,financialMeaning:'borrowed-principal',autoActivate:false};
  }
  return null;
 }

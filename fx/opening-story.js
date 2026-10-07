@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 
 // Four already-reviewed excerpts, in chapter-one order. The last page belongs
 // to this game's run; none of the manga's trades or balances are imported.

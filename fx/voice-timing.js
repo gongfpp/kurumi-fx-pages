@@ -1,4 +1,4 @@
-import {tradingTrauma} from './trading-trauma.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=26fc4a9d3550c0bd8ae9423227a4b22ae5a8b775-23f2a20b7717';
 // Commentary follows observed/settled P&L. This gate never changes the market.
 export const VOICE_STABLE_MS=2500;
 export const VOICE_REVERSAL_MS=3500;
@@ -17,6 +17,7 @@ export class VoiceTimingGate {
     return this.token(now);
   }
   token(now){return this.current&&now>=this.current.readyAt?{...this.current,stableForMs:Math.max(0,now-this.current.since),eventAgeMs:(this.current.eventAgeMs||0)+Math.max(0,now-this.current.observedAt)}:null;}
+  manualToken(now){return this.current?{...this.current,stableForMs:Math.max(0,now-this.current.since),eventAgeMs:(this.current.eventAgeMs||0)+Math.max(0,now-this.current.observedAt)}:null;}
   valid(token){return !!token&&!!this.current&&token.revision===this.current.revision&&token.session===this.current.session&&token.direction===this.current.direction;}
 }
 
@@ -41,7 +42,7 @@ export function createVoiceContextSelector({now=()=>Date.now()}={}){
       const reversal=report.net<0&&report.moments?.some(m=>m.reversal==='profit-to-loss');
       return {...base,scope:'settlement',pnl:report.net,eventKey:key,eventKind:reversal?'profit-to-loss':'day-settled',settled:true,eventAgeMs:time-dayAt};
     }
-    if(closed&&time-closeAt<8000){
+    if(closed&&!hasPositions&&time-closeAt<8000){
       return {...base,scope:'realized',pnl:trade.pnl,eventKey:closeKey,eventKind:trade.pnl<0&&trade.maxUnrealized>1?'profit-to-loss':'position-closed',settled:true,eventAgeMs:time-closeAt};
     }
     if(hasPositions){

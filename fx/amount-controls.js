@@ -34,5 +34,18 @@ export function nearestOrderRatio(amount,availableMargin,{ratios=ORDER_RATIOS,to
 }
 export function ratioOrderAmount(ratio,availableMargin,cap){
  if(!ORDER_RATIOS.includes(ratio)||!Number.isFinite(availableMargin)||availableMargin<=0||!Number.isFinite(cap)||cap<100)return 0;
- return normalizeOrderAmount(Math.min(cap,availableMargin*ratio));
+ return Math.max(0,Math.floor((Math.min(cap,availableMargin*ratio)+1e-8)*100)/100);
+}
+
+// Keep user intent, rather than freezing a rounded amount at an old quote.
+// Explicit typed amounts remain fixed. Ratio/max tickets re-quote on execution.
+export function orderDraftIntent(state={}){
+ const intent=state.orderDraftIntent;
+ return intent?.mode==='max'?{mode:'max'}:intent?.mode==='ratio'&&ORDER_RATIOS.includes(intent.ratio)?{mode:'ratio',ratio:intent.ratio}:null;
+}
+export function orderIntentAction(state,amount){const intent=orderDraftIntent(state);return intent?.mode==='max'?{amountMode:'max'}:intent?.mode==='ratio'?{ratio:intent.ratio}:{amount};}
+export function quoteOrderIntent(action,availableMargin,maxMargin){
+ if(action?.amountMode==='max')return maxMargin;
+ if(Object.hasOwn(action||{},'ratio'))return ratioOrderAmount(action.ratio,availableMargin,maxMargin);
+ return null;
 }

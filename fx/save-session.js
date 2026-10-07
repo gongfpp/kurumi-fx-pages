@@ -43,6 +43,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
             if(generation!==epoch||!check())return false;
             const latest=read();
             if(!available(latest))return fail('memory','storage');
+            // Preserve the exact pre-v9 bytes once before replacing an older schema.
+            // Backups stay in this mode's namespace and are never overwritten.
+            let previousVersion;try{previousVersion=JSON.parse(baseline.raw)?.version;}catch{}
+            if(Number.isInteger(previousVersion)&&previousVersion<9&&state.version>=9){
+              const backupKey=key+':pre-v9',backup=storage.readItem(backupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup');
+            }
             if(!storage.setItem(key,text))return fail('memory','storage');
             // After migration, the current slot is authoritative. Never delete
             // the legacy slot, which is still a recovery source for the user.

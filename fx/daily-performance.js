@@ -7,7 +7,8 @@ export function dailyReturnMetrics(state={}, {report}={}) {
  const opening=state.accountingJournal?.dayOpening,liveTotal=opening?.day===day&&!opening.partial&&Number.isFinite(opening.realizedProfit)&&Number.isFinite(state.performance?.totalProfit)&&(state.performance?.closedTrades||0)>=trades.length?state.performance.totalProfit-opening.realizedProfit:trades.reduce((sum,t)=>sum+t.pnl,0);
  const tradingNet=Number.isFinite(r?.closedTradeNet)?r.closedTradeNet:Number.isFinite(r?.net)?r.net:liveTotal;
  let denominator=null,source='unavailable';
- if(Number.isFinite(r?.openingNetAssets)){denominator=r.openingNetAssets;source='report-opening-net';}
+ if(r&&Object.hasOwn(r,'openingNetAssets')&&!Number.isFinite(r.openingNetAssets)){source='report-opening-net-unavailable';}
+ else if(Number.isFinite(r?.openingNetAssets)){denominator=r.openingNetAssets;source='report-opening-net';}
  else if(r&&Number.isFinite(r.opening)&&Number.isFinite(r.openingDebt)){denominator=r.opening-r.openingDebt;source='report-opening-debt';}
  else if(r&&Number.isFinite(r.opening)&&Number.isFinite(r.externalFunding)&&Number.isFinite(r.funding)){denominator=r.opening-(r.externalFunding-r.funding);source='legacy-report-funding-snapshot';}
  else if(day===state.day&&!state.dayOpeningBasisUnknown&&Number.isFinite(state.dayOpeningNetAssets)){denominator=state.dayOpeningNetAssets;source='opening-net-snapshot';}
