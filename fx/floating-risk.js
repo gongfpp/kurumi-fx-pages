@@ -1,6 +1,7 @@
-import {liquidationMeter,renderLiquidationMeter} from './liquidation-meter.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {liquidationMeter,renderLiquidationMeter} from './liquidation-meter.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
 
-// A presentation-only mirror: the original account meter stays in the document.
+// The account meter stays in the document; optional close uses a shared action gate.
 // Block complete trading panels as well as controls, so click-through is only a
 // second safeguard, never a reason to draw on top of a button or a position.
 export const FLOATING_RISK_OBSTACLES=[
@@ -47,13 +48,23 @@ export function findFloatingRiskPlacement({viewport,width,height,obstacles=[],ga
   return null;
 }
 
-export function createFloatingRisk({root=document}={}) {
+export function createFloatingRisk({root=document,closeControl=null}={}) {
   const win=root.defaultView,panel=root.createElement('aside'),heading=root.createElement('span'),value=root.createElement('p');
   panel.className='floating-risk';panel.hidden=true;panel.style.pointerEvents='none';
-  // This duplicates the accessible inline meter, so it must not add live chatter.
-  panel.setAttribute('aria-hidden','true');panel.dataset.mode='inline';
+  // Duplicate meter text stays silent; the optional native button is accessible.
+  if(!closeControl)panel.setAttribute('aria-hidden','true');
+  else {panel.setAttribute('aria-label','持仓强平风险');heading.setAttribute('aria-hidden','true');value.setAttribute('aria-hidden','true');}
+  panel.dataset.mode='inline';
   heading.className='floating-risk-heading';heading.textContent='持仓强平距离';
   panel.append(heading,value);root.body.append(panel);
+  let unbindClose=null;
+  if(closeControl){
+    const button=root.createElement('button');button.type='button';button.className='floating-risk-close';
+    button.textContent='提前全部平仓';button.setAttribute('aria-label','按当前报价提前平掉全部持仓');
+    button.title='按当前报价平掉全部持仓，成交结果与仓位区全部平仓相同';
+    panel.append(button);
+    unbindClose=closeControl.bind(button,{canInteract:()=>!disposed&&active&&!panel.hidden&&panel.dataset.mode==='floating'&&!root.hidden&&!closeAllModalOpen(root)});
+  }
   let active=false,disposed=false,frame=null,signature='',previous=null;
   const listeners=[];
   const listen=(target,type,callback,options)=>{
@@ -61,25 +72,22 @@ export function createFloatingRisk({root=document}={}) {
     listeners.push(()=>target?.removeEventListener?.(type,callback,options));
   };
   const hide=()=>{panel.hidden=true;panel.style.visibility='hidden';panel.dataset.mode='inline';};
-  const modalOpen=()=>root.documentElement.classList.contains('dialog-active')||root.querySelector('dialog[open]')||
-    [...root.querySelectorAll('[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]')]
-      .some(node=>!node.hidden&&node.getAttribute('aria-hidden')!=='true'&&node.getClientRects().length>0);
   function layout(){
     if(disposed)return;
-    hide();
-    if(!active||root.hidden||modalOpen()||!win?.getComputedStyle)return;
+    closeControl?.refresh();
+    if(!active||root.hidden||closeAllModalOpen(root)||!win?.getComputedStyle){hide();return;}
     const visual=win.visualViewport;
     // Pinch zoom / the on-screen keyboard have no dependable blank gutter.
-    if(visual&&visual.scale!==1)return;
+    if(visual&&visual.scale!==1){hide();return;}
     const width=Math.min(root.documentElement.clientWidth||win.innerWidth,visual?.width??win.innerWidth);
     const height=Math.min(root.documentElement.clientHeight||win.innerHeight,visual?.height??win.innerHeight);
-    if(width<700||height<240)return;
+    if(width<700||height<240){hide();return;}
     const viewport={left:visual?.offsetLeft??0,top:visual?.offsetTop??0,width,height};
     try {
       const obstacles=[];
       for(const node of root.querySelectorAll(FLOATING_RISK_OBSTACLES)){
         if(node===panel||panel.contains(node)||!node.getClientRects().length)continue;
-        const box=rect(node.getBoundingClientRect());if(!box)return;
+        const box=rect(node.getBoundingClientRect());if(!box){hide();return;}
         obstacles.push(box);
       }
       panel.hidden=false;panel.style.left=`${viewport.left+12}px`;panel.style.top=`${viewport.top+12}px`;
@@ -109,7 +117,9 @@ export function createFloatingRisk({root=document}={}) {
   // Geometry is rechecked before another paint after scrolling or DOM changes.
   for(const type of ['scroll','resize','orientationchange'])listen(win,type,invalidate,{passive:true});
   listen(root,'scroll',invalidate,{capture:true,passive:true});
-  for(const type of ['visibilitychange','beforetoggle','toggle','close','focusin','transitionend','animationend'])listen(root,type,invalidate,true);
+  for(const type of ['visibilitychange','beforetoggle','toggle','close','transitionend','animationend'])listen(root,type,invalidate,true);
+  // A focus event must not transiently hide its own button and discard focus.
+  listen(root,'focusin',layout,true);
   listen(win?.visualViewport,'resize',invalidate,{passive:true});
   listen(win?.visualViewport,'scroll',invalidate,{passive:true});
   listen(root.fonts,'loadingdone',invalidate);
@@ -130,14 +140,14 @@ export function createFloatingRisk({root=document}={}) {
       const next=JSON.stringify(view);
       if(next!==signature){renderLiquidationMeter(value,estimate);signature=next;}
       if(!active){previous=null;hide();return;}
-      // Called alongside the existing inline render, never reads or writes state.
+      // Rendering stays read-only; only the native close click requests a transaction.
       layout();
     },
     refresh:layout,
     destroy(){
       if(disposed)return;disposed=true;hide();
       if(frame!==null)win?.cancelAnimationFrame?.(frame);
-      mutations?.disconnect();resize?.disconnect();listeners.forEach(remove=>remove());panel.remove();
+      mutations?.disconnect();resize?.disconnect();listeners.forEach(remove=>remove());unbindClose?.();panel.remove();
     }
   };
 }

@@ -1,8 +1,8 @@
-import {tradingTrauma} from './trading-trauma.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {positionNetUnrealized,mood} from './engine.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {MOODS} from './content.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {positionNetUnrealized,mood} from './engine.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {MOODS} from './content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
 
 const positive=new Set(['hopeful','ecstatic','smug','relieved','warm','exhilarated','loss-to-profit']);
 const negative=new Set(['despair','anxious','nervous','regretful','stunned','profit-to-loss']);

@@ -1,26 +1,26 @@
-import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE} from './quote-grid.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-export {quotePackageState} from './quote-packages.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-export {dailyReturnMetrics} from './daily-performance.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE} from './quote-grid.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+export {quotePackageState} from './quote-packages.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+export {dailyReturnMetrics} from './daily-performance.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
 
-import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {recapChoices} from './recap-choices.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {recapChoices} from './recap-choices.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
 
 
-import {creditTerms} from './credit-policy.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {NEWS_CHAINS,PROPS} from './content.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {BLACK_SWANS} from './story-content.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {creditTerms} from './credit-policy.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {NEWS_CHAINS,PROPS} from './content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {BLACK_SWANS} from './story-content.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=8959fa01c393e05a661e624b1d19ad4ce1f33273-23f2a20b7717';
 export const VERSION = 8;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;
