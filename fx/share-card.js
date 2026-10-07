@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {buildRecapSnapshot} from './daily-recap.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {grossPnlAt} from './market.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {runPerformance} from './performance.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {buildResultsReport} from './results-report.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {runPerformance} from './performance.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -26,7 +26,7 @@ export function buildShareSummary(state={},options={}) {
     feesPaid:totalFees, debt:Math.max(0,finite(state.family?.outstanding)+finite(state.loan?.outstanding)),livingCost:finite(report?.livingCost),funding:finite(state.externalFunding),
     tradeCount:performance.closedTrades,winRate:performance.winRate===null?null:performance.winRate*100,
     positionCount:positions.length,completedAchievements,achievementCount:options.achievementProfile?completedAchievements.length:Math.max(0,Math.floor(finite(options.achievementCount))),
-    moodLabel:options.moodLabel||'今日心情',sanity:Math.round(finite(state.sanity,50)),edited:!!state.developer?.edited,
+    moodLabel:options.moodLabel||'今日心情',sanity:Math.round(finite(state.sanity,50)),edited:!!(state.developmentTaint||state.developer?.edited),
     gameUrl:String(options.gameUrl||globalThis.location?.href||''),
     equityTrail:(state.equityTrail||[]).filter(Number.isFinite).slice(-48),
     trailLabel:'交易本金趋势 · 已扣净借入，加回道具支出',

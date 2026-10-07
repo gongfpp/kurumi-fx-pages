@@ -1,4 +1,4 @@
-import {recapSegments,recapIntensity} from './daily-recap.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {recapSegments,recapIntensity} from './daily-recap.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 // A cancellable presentation clock; it has no game state or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const segments=recapSegments(snapshot),intensity=recapIntensity(snapshot),duration=enabled&&!reducedMotion?Math.min(7200,2800+intensity*4400):0;

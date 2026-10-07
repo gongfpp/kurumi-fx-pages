@@ -1,6 +1,6 @@
-import {isTraumaMood} from './trading-trauma.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {STORIES,getStory} from './story-content.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {isTraumaMood} from './trading-trauma.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;

@@ -1,6 +1,6 @@
-import {grossPnlAt} from './market.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {achievementManga} from './manga-achievements.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {setMangaImage} from './manga-images.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {grossPnlAt} from './market.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -49,13 +49,13 @@ export function normalizeAchievementProfile(profile={}) {
   return {version:1,unlocked};
 }
 export function achievementProgress(state={},profile={}) {
-  const saved=normalizeAchievementProfile(profile), values=state.developer?.edited?{}:evidence(state);
+  const saved=normalizeAchievementProfile(profile), values=(state.developmentTaint||state.developer?.edited)?{}:evidence(state);
   return ACHIEVEMENTS.map(def=>({...def,unlocked:!!saved.unlocked[def.id],unlockedAt:saved.unlocked[def.id]?.at,legacyUnlocked:def.id==='twenty-million'&&!!saved.unlocked[def.id]&&saved.unlocked[def.id].ruleVersion!==2,
     progress:Math.max(0,Math.min(def.goal,finite(values[def.id])))}));
 }
 export function evaluateAchievements(state,profile={}, {now=Date.now()}={}) {
   const saved=normalizeAchievementProfile(profile), newlyUnlocked=[];
-  if(state?.developer?.edited)return {profile:saved,newlyUnlocked};
+  if(state?.developmentTaint||state?.developer?.edited)return {profile:saved,newlyUnlocked};
   for(const def of achievementProgress(state,saved))if(!def.unlocked&&def.progress>=def.goal){
     saved.unlocked[def.id]={at:finite(now,Date.now()),day:Math.max(1,Math.floor(finite(state.day,1))),...(def.id==='twenty-million'?{ruleVersion:2}:{})};
     newlyUnlocked.push(ACHIEVEMENTS.find(a=>a.id===def.id));

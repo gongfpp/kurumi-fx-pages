@@ -1,4 +1,4 @@
-import {currentTradingTimestamp} from './trading-time.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {currentTradingTimestamp} from './trading-time.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals

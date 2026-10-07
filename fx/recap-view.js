@@ -1,8 +1,9 @@
-import {showMangaPortrait} from './manga-portraits.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {buildCurveScale} from './share-card.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {recapChoices,recapIntensity} from './daily-recap.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {createRecapPlayer} from './recap-player.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {movingAveragePath} from './moving-average.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {showMangaPortrait} from './manga-portraits.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {recapChoices,recapIntensity} from './daily-recap.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const pct=n=>n===null?'—':(n>0?'+':'')+(n*100).toFixed(2)+'%';
@@ -18,10 +19,11 @@ export function drawRecapCurve(doc,points,{label='资金曲线',partial=false}={
  for(const t of timeAxisTicks(series,{maxTicks:4})){const text=svgEl(doc,'text',{x:x(t),y:188,'text-anchor':t.index===0?'start':t.index===series.length-1?'end':'middle','font-size':11,fill:'#755e70'});text.textContent=t.label;chart.append(text);}
  const caption=svgEl(doc,'text',{x:left,y:210,'font-size':11,fill:'#755e70'});caption.textContent=partial?'部分历史未记录，仅展示已知点；连线不代表完整盘中路径':'名义资产（粉） / 扣债净资产（蓝虚线） · 日元 / JST';chart.append(caption);return chart;
 }
-function candleReplay(doc,candles){
+function candleReplay(doc,candles,averages=[]){
  const box=el(doc,'div','recap-candles');if(!candles.length){box.textContent='今天未生成 K 线，按实际早收结果结算。';return box;}
- const svg=svgEl(doc,'svg',{viewBox:'0 0 620 110',role:'img','aria-label':'今日已发生K线回放，横轴游戏时间 JST'}),lo=Math.min(...candles.map(c=>c.low)),hi=Math.max(...candles.map(c=>c.high)),spread=Math.max(.01,hi-lo),y=v=>12+(hi-v)/spread*62;
+ const svg=svgEl(doc,'svg',{viewBox:'0 0 620 110',role:'img','aria-label':'今日已发生K线回放，横轴游戏时间 JST'}),lo=Math.min(...candles.map(c=>c.low),...averages.flatMap(a=>a.values.filter(Number.isFinite))),hi=Math.max(...candles.map(c=>c.high),...averages.flatMap(a=>a.values.filter(Number.isFinite))),spread=Math.max(.01,hi-lo),y=v=>12+(hi-v)/spread*62;
  candles.forEach((c,i)=>{const group=svgEl(doc,'g',{'data-recap-candle':i}),x=20+i/Math.max(1,candles.length-1)*580,color=c.close>=c.open?'#248b68':'#bc4276';group.append(svgEl(doc,'line',{x1:x,x2:x,y1:y(c.high),y2:y(c.low),stroke:color}),svgEl(doc,'rect',{x:x-4,y:Math.min(y(c.open),y(c.close)),width:8,height:Math.max(2,Math.abs(y(c.open)-y(c.close))),fill:color}));const title=svgEl(doc,'title');title.textContent=formatTradingTime(c.timestamp,{full:true});group.append(title);svg.append(group);});
+ const maLegend=el(doc,'div','recap-ma-legend');for(const average of averages){const color=({5:'#92630d',10:'#137488',20:'#8054ac'})[average.period]||average.color,path=svgEl(doc,'path',{d:movingAveragePath(average.values,{x:i=>20+i/Math.max(1,candles.length-1)*580,y}),fill:'none',stroke:color,'stroke-width':1.5,'data-recap-ma':average.period}),button=el(doc,'button','',`MA${average.period} ${average.latest===null?'—':average.latest.toFixed(3)}`);button.type='button';button.style.color=color;button.setAttribute('aria-pressed','true');button.onclick=()=>{const on=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(on));path.style.display=on?'':'none';};maLegend.append(button);svg.append(path);}box.append(maLegend);
  for(const t of timeAxisTicks(candles,{maxTicks:4})){const text=svgEl(doc,'text',{x:20+t.index/Math.max(1,candles.length-1)*580,y:102,'font-size':11,'text-anchor':t.index===0?'start':t.index===candles.length-1?'end':'middle',fill:'#755e70'});text.textContent=t.label;svg.append(text);}box.append(svg);return box;
 }
 export function mountDailyRecap(container,snapshot,{motion=true,reducedMotion=false,onSound=()=>{},onChoice=()=>{},cash=0,loanUnlocked=false,loanTerms=null,usedChoices=[],usedGroups=[],portraitUrl='',portraitPanel=null,moodLabel='今日心情'}={}){
@@ -30,7 +32,7 @@ export function mountDailyRecap(container,snapshot,{motion=true,reducedMotion=fa
  const total=el(doc,'p','recap-cumulative',`累计已实现交易 ${signed(snapshot.cumulative.realizedProfit)} · ${pct(snapshot.cumulative.returnRate)}`);container.append(total);
  const stats=el(doc,'dl','recap-stats');for(const [label,value]of [['名义资产',money(snapshot.account.nominalAssets)],['扣债净资产',money(snapshot.account.netAssets)],['未还债务',money(snapshot.account.debt)],['今日费用后收支',signed(snapshot.daily.netResult)]]){stats.append(el(doc,'dt','',label),el(doc,'dd','',value));}container.append(stats);
  if(snapshot.note)container.append(el(doc,'p','recap-note',snapshot.note));
- const playback=el(doc,'section','recap-playback'),running=el(doc,'strong','recap-counter',money(snapshot.daily.openingNominal)),step=el(doc,'span','recap-step','开盘名义资产'),skip=el(doc,'button','recap-skip','跳过动画');skip.type='button';playback.append(step,running,skip);const candles=candleReplay(doc,snapshot.candles);playback.append(candles);container.append(playback);
+ const playback=el(doc,'section','recap-playback'),running=el(doc,'strong','recap-counter',money(snapshot.daily.openingNominal)),step=el(doc,'span','recap-step','开盘名义资产'),skip=el(doc,'button','recap-skip','跳过动画');skip.type='button';playback.append(step,running,skip);const candles=candleReplay(doc,snapshot.candles,snapshot.candleMovingAverages||[]);playback.append(candles);container.append(playback);
  const fees=el(doc,'p','recap-costs',`${snapshot.daily.livingStatus==='pending'?'生活费待剧情结束后结算':'生活费 '+money(snapshot.daily.costs.living)} · 利息 ${money(snapshot.daily.costs.interest)} · 可选消费 ${money(snapshot.daily.costs.consumption)} · 借还本金 ${signed(snapshot.daily.fundingPrincipal)}`);container.append(fees);
  if(snapshot.daily.interestAccrued)container.append(el(doc,'p','recap-note',`利息中 ${money(snapshot.daily.interestAccrued)} 尚未支付，已计入债务；没有把它当交易收入。`));
  const tabs=el(doc,'div','recap-tabs'),curve=el(doc,'div','recap-curve');for(const [scope,label]of [['today','今日资金曲线'],['cumulative','累计资金曲线']]){const b=el(doc,'button','',label);b.type='button';b.onclick=()=>{for(const child of tabs.children)child.setAttribute('aria-pressed',String(child===b));curve.replaceChildren(drawRecapCurve(doc,snapshot.curves[scope],{label,partial:snapshot.curves[scope+'Partial']}));};tabs.append(b);}container.append(tabs,curve);tabs.firstElementChild.click();

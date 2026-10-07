@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {MANGA_PANELS} from './manga-panels.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 
 // Card matching is intentionally independent of the portrait's emotion rules.
 // An illustration is evidence for a scene, never the ledger for this account.

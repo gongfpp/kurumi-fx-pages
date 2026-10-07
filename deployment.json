@@ -1,5 +1,14 @@
 {
-  "sourceCommit": "40fc0ad81f85a291b238bbc6b977a7dba778bb1f",
+  "sourceCommit": "e05776abaf267608486a0e2fc93b7207885abc5f",
+  "assetVersion": "e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717",
+  "buildMode": "production",
+  "productionReady": true,
+  "backend": {
+    "status": "configured",
+    "origin": "https://kurumi-fx-api.gongfpp.chatgpt.site",
+    "clientPath": "/fx.html",
+    "pagesPath": "/kurumi-fx-pages/"
+  },
   "manga": {
     "scope": "approved-main-mode-panels",
     "selectionSourceCommit": "37c41c1bfdc416efc06b85fb0ad1202c80ef7f80",

@@ -1,9 +1,11 @@
-import {kurumiStorage} from './storage-namespace.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {runPerformance} from './performance.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=40fc0ad81f85a291b238bbc6b977a7dba778bb1f';
+import {finishedLeaderboardScore} from './finished-score.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {runPerformance} from './performance.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=e05776abaf267608486a0e2fc93b7207885abc5f-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
-const BACKEND = 'https://leek-spire.gongfpp.chatgpt.site';
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
 const defaultStorage = () => {try{return kurumiStorage();}catch{return null;}};
 const get = (storage,key) => {try{return storage?.getItem(key);}catch{return null;}};
@@ -57,13 +59,17 @@ export class FXLeaderboard {
     this.storage=options.storage??defaultStorage();
     this.crypto=options.crypto??globalThis.crypto;
     this.navigator=options.navigator??globalThis.navigator;
+    this.locks=options.locks??this.navigator?.locks;
     const location=options.location??globalThis.location;
-    this.endpoint=options.endpoint??(location?.origin==='https://gongfpp.github.io'?BACKEND:'')+'/api/fx/leaderboard';
+    this.configuration=serviceConfiguration({serviceOrigin:options.serviceOrigin,location});
+    this.endpoint=this.configuration.leaderboardEndpoint;
     this.onStatus=options.onStatus??(()=>{});this.timeout=options.timeout??10000;
     this.pending=false;this.capabilities=new Map();this.session=null;
   }
   status(value){try{this.onStatus(value);}catch{}}
+  assertConfigured() {if(!this.configuration.configured)throw new LeaderboardError(SERVICE_UNCONFIGURED_MESSAGE,'service-unconfigured');}
   async request(path,{method='GET',data}={}) {
+    this.assertConfigured();
     if(!this.fetch||this.navigator?.onLine===false)throw new LeaderboardError('当前离线，联网后可查看或提交排行榜','offline');
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),this.timeout);
     try{
@@ -75,21 +81,70 @@ export class FXLeaderboard {
     finally{clearTimeout(timer);}
   }
   async read({mode='daily',gameMode,sort,limit=20}={}) {
-    if(!['daily','total'].includes(mode)||(gameMode!==undefined&&!['story','endless'].includes(gameMode))||(sort!==undefined&&!['survival','returnRate','dailyReturnRate','totalProfit','maxProfit'].includes(sort))||!Number.isInteger(limit)||limit<1||limit>50)throw new LeaderboardError('排行榜参数不正确','input');
+    if(!['daily','total'].includes(mode)||(gameMode!==undefined&&!['story','endless'].includes(gameMode))||(sort!==undefined&&!['survival','returnRate','dailyReturnRate','totalProfit','maxProfit','winRate','maxOrderLoss'].includes(sort))||!Number.isInteger(limit)||limit<1||limit>50)throw new LeaderboardError('排行榜参数不正确','input');
     this.status({state:'loading',mode,gameMode});
     const query=new URLSearchParams({mode,limit:String(limit)});if(gameMode!==undefined)query.set('gameMode',gameMode);if(sort!==undefined)query.set('sort',sort);
     try{const result=await this.request(`?${query}`);if(!Array.isArray(result?.rows)||result.verification!=='client-submitted'||(gameMode!==undefined&&result.gameMode!==gameMode))throw new LeaderboardError('排行榜响应不完整，请稍后重试','response');this.status({state:result.rows.length?'ready':'empty',mode,gameMode});return result;}
     catch(error){this.status({state:'error',code:error.code,message:error.message});throw error;}
   }
+  storedToken(campaign) {
+    if(!ID.test(campaign||''))throw new LeaderboardError('本局标识无效','input');
+    const key='fx-api-v1-leaderboard-capability-'+campaign;
+    try{
+      if(!this.storage?.getItem)throw Error('storage');
+      let value;if(typeof this.storage.readItem==='function'){const result=this.storage.readItem(key);if(result?.available!==true)throw Error('storage');value=result.value;}else value=this.storage.getItem(key);
+      if(value!==null&&!/^[a-f0-9]{64}$/.test(value||''))throw new LeaderboardError('本局凭证损坏，请保留存档后重试','capability');
+      return value;
+    }catch(error){if(error instanceof LeaderboardError)throw error;throw new LeaderboardError('无法读取本局凭证，暂不提交或修改成绩','storage-unavailable');}
+  }
   tokenFor(campaign) {
-    const key='fx-leaderboard-capability-'+campaign;
-    let token=this.capabilities.get(campaign)||get(this.storage,key);
-    if(!/^[a-f0-9]{64}$/.test(token||'')){const bytes=new Uint8Array(32);this.crypto.getRandomValues(bytes);token=[...bytes].map(byte=>byte.toString(16).padStart(2,'0')).join('');put(this.storage,key,token);}
+    const key='fx-api-v1-leaderboard-capability-'+campaign,stored=this.storedToken(campaign),cached=this.capabilities.get(campaign);
+    if(stored&&cached&&stored!==cached)throw new LeaderboardError('本局凭证已被其他页面修改，请重新载入','capability-conflict');
+    let token=stored||cached;
+    if(!token){const bytes=new Uint8Array(32);this.crypto.getRandomValues(bytes);token=[...bytes].map(byte=>byte.toString(16).padStart(2,'0')).join('');}
+    if(stored!==token){
+      try{if(!this.storage?.setItem||this.storage.setItem(key,token)===false||this.storedToken(campaign)!==token)throw Error('storage');}
+      catch{throw new LeaderboardError('无法可靠保存本局凭证，暂不提交或修改成绩','storage-unavailable');}
+    }
     this.capabilities.set(campaign,token);return token;
   }
+  async ensureToken(campaign) {
+    if(!ID.test(campaign||''))throw new LeaderboardError('本局标识无效','input');
+    if(!this.locks?.request)throw new LeaderboardError('浏览器暂不支持安全的跨页凭证保存，暂不提交成绩','coordination');
+    try{return await this.locks.request('kurumi-fx:score-capability:'+campaign,{mode:'exclusive'},()=>this.tokenFor(campaign));}
+    catch(error){if(error instanceof LeaderboardError)throw error;throw new LeaderboardError('本局凭证保存未获确认，请稍后重试','coordination');}
+  }
   sessionFor() {
-    if(this.session)return this.session;const key='fx-leaderboard-submit-session';let session=get(this.storage,key);
+    if(this.session)return this.session;const key='fx-api-v1-leaderboard-submit-session';let session=get(this.storage,key);
     if(!ID.test(session||'')){session=this.crypto.randomUUID();put(this.storage,key,session);}return this.session=session;
+  }
+  async publishFinished(state,report,{alias='',campaign=state?.runId}={}) {
+    const score=finishedLeaderboardScore(state,report,{storage:this.storage}),name=normalizeLeaderboardAlias(alias);
+    if(campaign!==state.runId)throw new LeaderboardError('成绩必须属于当前终局','input');
+    this.assertConfigured();
+    if(this.pending)throw new LeaderboardError('成绩正在处理，请稍候','pending');
+    this.pending=true;this.status({state:'publishing'});
+    try{
+      const token=await this.ensureToken(campaign);
+      await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode}});
+      if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
+      const result=await this.request('',{method:'POST',data:{campaign,token,...score,alias:name}});
+      if(result?.ok!==true)throw new LeaderboardError('成绩未获确认，请稍后重试','response');
+      this.status({state:'published',duplicate:!!result.duplicate});return result;
+    }finally{this.pending=false;}
+  }
+  async rename(campaign,alias='') {
+    const name=normalizeLeaderboardAlias(alias);
+    if(!ID.test(campaign||''))throw new LeaderboardError('本局标识无效','input');
+    this.assertConfigured();
+    if(hasDevelopmentTaint({runId:campaign},this.storage))throw new LeaderboardError('开发测试局不能改名上榜','developer');
+    const existing=this.storedToken(campaign)||this.capabilities.get(campaign);
+    if(!existing)throw new LeaderboardError('没有本局成绩的修改凭证','capability');
+    const token=await this.ensureToken(campaign);
+    if(!/^[a-f0-9]{64}$/.test(token||''))throw new LeaderboardError('没有本局成绩的修改凭证','capability');
+    if(this.pending)throw new LeaderboardError('成绩正在处理，请稍候','pending');
+    this.pending=true;
+    try{const result=await this.request('/name',{method:'POST',data:{campaign,token,alias:name}});if(result?.ok!==true)throw new LeaderboardError('显示名未获确认','response');return result;}finally{this.pending=false;}
   }
   async publish(state,{alias='',campaign=state?.runId}={}) {
     // Validate locally before creating any publishing identity or making a call.
@@ -98,7 +153,8 @@ export class FXLeaderboard {
     if(this.pending)throw new LeaderboardError('成绩正在提交，请稍候','pending');
     this.pending=true;this.status({state:'publishing'});
     try{
-      const token=this.tokenFor(campaign),submission=buildLeaderboardSubmission(state,{campaign,token,alias});
+      this.assertConfigured();
+      const token=await this.ensureToken(campaign),submission=buildLeaderboardSubmission(state,{campaign,token,alias});
       await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:state?.mode??'story'}});
       const result=await this.request('',{method:'POST',data:submission});this.status({state:'published',duplicate:result.duplicate});return result;
     }catch(error){this.status({state:'error',code:error.code||'input',message:error.message});throw error;}

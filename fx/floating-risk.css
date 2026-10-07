@@ -1,0 +1,10 @@
+/* Only the read-only mirror floats. The inline account meter is never moved. */
+.floating-risk{position:fixed;z-index:3;box-sizing:border-box;width:248px;padding:10px 12px;border:1px solid #d4b3c5;border-radius:8px;background:#fff8fc;color:#684154;pointer-events:none!important;user-select:none;contain:layout style;visibility:hidden;margin:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.floating-risk,.floating-risk *{pointer-events:none!important}
+.floating-risk[hidden],html.dialog-active .floating-risk,body:has(dialog[open])>.floating-risk{display:none!important}
+.floating-risk-heading{display:block;margin:0 0 5px;font-size:11px;font-weight:700;color:#927487;letter-spacing:.04em}
+.floating-risk .liquidation-meter-value{font-size:12px;line-height:1.5;gap:6px}
+.floating-risk .liquidation-meter-track{height:6px}
+/* Narrow layouts keep the original meter in the position card. */
+@media(max-width:699px){.floating-risk{display:none!important}}
+@media print{.floating-risk{display:none!important}}

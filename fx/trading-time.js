@@ -40,7 +40,7 @@ export function reportTradingTimestamp(state,report=state.dayReport){
  if(report?.earlyClose)return Number.isFinite(report.earlyClose.timestamp)?report.earlyClose.timestamp:lastObservedTimestamp(state,report.day,report.earlyClose)??tradingTimestamp(state,report.earlyClose);
  return tradingTimestamp(state,{day:report?.day||state.day||1,beat:Math.max(0,(report?.beat||4)-1),candle:3,tick:6});
 }
-export function stampQuoteTime(state,cursor){const clock=ensureTradingClock(state);clock.lastQuoteAt=tradingTimestamp(state,{day:state.day,beat:cursor.beat,candle:cursor.candle,tick:cursor.tick+1});clock.lastQuoteDay=state.day;return clock.lastQuoteAt;}
+export function stampQuoteTime(state,cursor,fraction=1){const clock=ensureTradingClock(state);clock.lastQuoteAt=tradingTimestamp(state,{day:state.day,beat:cursor.beat,candle:cursor.candle,tick:cursor.tick})+fraction*CANDLE_MINUTES/6*MINUTE;clock.lastQuoteDay=state.day;return clock.lastQuoteAt;}
 export function stampCandleTime(state,candle,cursor){
  if(!Number.isFinite(candle.timestamp))candle.timestamp=tradingTimestamp(state,{day:candle.day||state.day,beat:cursor?.beat??candle.beat??0,candle:cursor?.candle||0});
  candle.timeSource='game-clock';return candle;
