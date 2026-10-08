@@ -1,0 +1,53 @@
+// Fixed manga chronology. This module never reads prices or changes a game.
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+export const CHARACTER_STORY_ASSETS=freeze({"89": {"record": 89, "path": "./manga/characters-v1/89.jpg", "sha256": "1ed11cca29b5f7ddcafc0817673b128958aaee097c33b6c8bcd7870e449fbf12", "dimensions": [786, 433]}, "95": {"record": 95, "path": "./manga/characters-v1/95.jpg", "sha256": "809bc596574817852c991deb94d8a244e77a1bff732fe0a27e6086438b4fa8ca", "dimensions": [786, 228]}, "175": {"record": 175, "path": "./manga/characters-v1/175.jpg", "sha256": "c4b09262c97b2a479dc06551b7fd6e48259175a19f532bf9764d96631549a92f", "dimensions": [568, 339]}, "178": {"record": 178, "path": "./manga/characters-v1/178.jpg", "sha256": "9039b3afdbcbd60e4dbcbae117e65d11dd592bb7e0693a5165a59bd803576153", "dimensions": [543, 450]}, "186": {"record": 186, "path": "./manga/characters-v1/186.jpg", "sha256": "40c63a4d72d5bb88e6a6e9cce6914cc3477b6bc969c1c11f25b066b03e4f897e", "dimensions": [661, 611]}, "185": {"record": 185, "path": "./manga/characters-v1/185.jpg", "sha256": "af18905df2c173a06742621099e61fc4edec2f849a84a8d4ac6306f54adf886e", "dimensions": [996, 288]}, "207": {"record": 207, "path": "./manga/characters-v1/207.jpg", "sha256": "091eda2055ad3db561dd173a80b0efffd9e1c62718b417a0741e9158bb64dd9a", "dimensions": [555, 358]}, "206": {"record": 206, "path": "./manga/characters-v1/206.jpg", "sha256": "52112bac2c953e50b175a36b9c6c19119f432d030c76dd44252951f44645f173", "dimensions": [904, 443]}, "45": {"record": 45, "path": "./manga/characters-v1/45.jpg", "sha256": "f519d3a918dadf9a1442de3d9b97f057a69f7a77f4568fe8ada49b1c0c1055c9", "dimensions": [452, 870]}, "172": {"record": 172, "path": "./manga/characters-v1/172.jpg", "sha256": "0689ce751c795eb7cd56b82c0792d24e24c5e4f5a856007c91fab590e7a62da2", "dimensions": [613, 414]}});
+export const CHARACTER_STORY_NODES=freeze([
+ {id:'unrealized-fear',chapter:3,title:'不想看见的数字',people:'久留美',pages:[20],positionOwner:'久留美（持仓损益评估；方向未确认）',
+  before:'久留美看着账户里的负损益评估，慌了。',
+  panels:[{record:45,alt:'久留美惊恐地喊着不要；账户余额与负损益评估分别列出'}],
+  after:'她一遍遍喊着：不要。'},
+ {id:'entrusted',chapter:7,title:'萌智子的托付',people:'久留美、萌智子与芽吹',pages:[10,11,12,15],positionOwner:null,
+  before:'萌智子请久留美教芽吹做FX。久留美有些犹豫，觉得自己还教不了别人。',
+  panels:[{record:89,alt:'久留美回想读过的FX书籍，讲述自己的知识观'}],
+  after:'萌智子又劝了劝。久留美答应，先教自己会的。'},
+ {id:'first-lesson',chapter:7,title:'她想直接知道涨跌',people:'久留美与芽吹',pages:[16,20,24,25,26,27],positionOwner:'芽吹（入金；未在本段确认真实订单）',
+  before:'芽吹不想工作，把助学贷款拿来入金。她更想知道的，是接下来到底会涨还是会跌。',
+  panels:[{record:95,alt:'久留美向芽吹强调，投资决定的后果需要自己承担'}],
+  after:'久留美先说清：最后要由芽吹自己决定，也要承担后果。芽吹答应后，两人才开始看英镑兑日元。'},
+ {id:'balance-delight',chapter:13,title:'这次赚了好多',people:'久留美',pages:[22],positionOwner:'久留美（阶段账户余额；交易方向未确认）',
+  before:'久留美举起双手，比出两个V。起始资金涨了超过七成，她高兴得直笑。',
+  panels:[{record:172,alt:'久留美笑着比出双V，账户框标出余额及73.5%的增长'}],
+  after:'“这次赚了好多啊！”'},
+ {id:'tuition',chapter:13,title:'追加进去的学费',people:'芽吹与萌智子',pages:[29,30,31,32],positionOwner:'芽吹',
+  before:'后来，芽吹向萌智子诉苦：之前赚的钱亏光了，追加的次年学费也快保不住。',
+  panels:[{record:175,alt:'芽吹背对镜头向萌智子诉说次年学费的困境'},
+   {record:178,alt:'萌智子用行情可能一夜反转的话安抚芽吹',before:'萌智子却说，追加学费没有错，家里和学校总能想办法。她说美日迟早会跌，只是不知道要等多久。'}],
+  after:'芽吹接受了她的说法，继续听她讲。'},
+ {id:'held-short',chapter:15,title:'你早就持有空单了？',people:'康子与芽吹',pages:[2,3,4,5],positionOwner:'芽吹 · USD/JPY空头',
+  before:'久留美发来美日做多的消息，芽吹却依然看跌。她告诉正在画画的康子，自己手里早有美日空单。',
+  panels:[{record:186,alt:'芽吹站在康子的椅子后，明确说自己手上已有美日空单'},
+   {record:185,alt:'康子惊讶地发现芽吹原来已经持有空头仓位'}],
+  after:'康子这才发现，芽吹可能从上涨前就一直扛着空单。她劝芽吹止损，芽吹不肯。'},
+ {id:'help-a-friend',chapter:17,title:'朋友能不能帮一把',people:'康子、萌智子与久留美',pages:[16,17,18,19],positionOwner:'芽吹（朋友讨论其处境，结果未确认）',
+  before:'三人在街边谈起芽吹。康子担心，芽吹那笔空单可能已经出事。久留美也放心不下。',
+  panels:[{record:206,alt:'康子站在街边向萌智子和久留美说起芽吹，担心她可能已经被强平'},
+   {record:207,alt:'萌智子在街边以自负盈亏为由，表示她们帮不了芽吹'}],
+  after:'康子不认同：朋友遇到困难，还是该帮忙。久留美也仍担心芽吹。'}
+]);
+// Evidence of an event, not mere discovery, item availability, age of a run, or debt.
+export function characterStoriesAvailable(state={}){
+ return state.story?.seen?.includes('friendStudy')===true || state.story?.log?.some(row=>row?.id==='friendStudy')===true || state.itemsUsed?.mochiko===true || state.consumptionLedger?.some(row=>row?.kind==='item'&&/^item:[1-9]\d*:mochiko$/.test(row.id||''))===true;
+}
+export function createCharacterStorySession({getState,getContext,canOpen=()=>true,onPage=()=>{},onClose=()=>{}}){
+ let context=null,index=0,active=false;
+ const valid=()=>context===getContext()&&characterStoriesAvailable(getState());
+ const paint=()=>onPage({index,node:CHARACTER_STORY_NODES[index],total:CHARACTER_STORY_NODES.length});
+ function close(){if(!active)return false;active=false;onClose();return true;}
+ return {
+  open(){if(active||!canOpen()||!characterStoriesAvailable(getState()))return false;const next=getContext();if(next!==context){context=next;index=0;}active=true;paint();return true;},
+  move(delta){if(!active)return false;if(!valid()){close();return false;}const next=Math.max(0,Math.min(CHARACTER_STORY_NODES.length-1,index+Math.sign(delta)));if(next===index)return false;index=next;paint();return true;},
+  close,
+  refresh(){if(active&&!valid())close();if(context!==getContext()){context=null;index=0;}return characterStoriesAvailable(getState());},
+  get active(){return active;},get index(){return index;}
+ };
+}

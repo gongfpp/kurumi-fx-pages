@@ -1,11 +1,28 @@
-import {kurumiStorage} from './storage-namespace.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
 const numbers = new Set(['leverage','sizePct','durationMs','drawdownPct','tolerance','stress','turn','count','day','beat','stake','stop','duration','threshold']);
 const booleans = new Set(['success','returning','muted']);
+// The events service currently exposes fixed error strings, not machine codes.
+// This is contract compatibility, not an authenticated response signature.
+// Unknown gateways (even JSON ones) must never make queued activity disposable.
+const permanentEventErrors = new Map([
+  [400, new Set(['请求格式或大小不正确','每批最多 40 条','事件无效：仅接受固定事件与匿名参数'])],
+  [403, new Set(['来源不匹配','服务来源不匹配'])],
+]);
+async function permanentEventRejection(response, status) {
+  const allowed=permanentEventErrors.get(status);
+  if(!allowed || response.headers?.get?.('content-type')?.split(';')[0].trim().toLowerCase()!=='application/json')return false;
+  try {
+    const body=await response.json();
+    return !!body && typeof body==='object' && !Array.isArray(body) &&
+      Object.keys(body).length===1 && allowed.has(body.error);
+  } catch {return false;}
+}
+
 const uid = () => crypto.randomUUID();
 const defaultStorage = name => { try { return kurumiStorage(name); } catch { return null; } };
 const token = value => typeof value === 'string' && /^[a-zA-Z0-9_:.-]{0,80}$/.test(value);
@@ -59,7 +76,7 @@ export class FXTelemetry {
     this.onVisibility = () => { this.clock(); if (this.document?.hidden) { this.beat(); this.flush(true); } this.last = this.monotonic(); };
     this.onHide = () => { this.clock(); if (!this.ended) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('session_end', '', {detail: {reason: 'pagehide'}}); this.ended = true; } this.beat(); this.pageTime = 0; this.flush(true); };
     this.onShow = event => { this.ended = false; this.last = this.monotonic(); this.visible = !this.document?.hidden; if(event.persisted) this.emit('screen_view'); };
-    this.onOnline = () => { this.retryAt = 0; this.flush(); };
+    this.onOnline = () => { if(this.diagnostics.lastStatus!==403)this.retryAt = 0; this.flush(); };
     // Read current values, never event.newValue: storage events may arrive late.
     this.onStorage = () => { const before=this.blockReason(),reason=this.syncPrivacy();if(reason!==before)this.report(reason || 'ready'); };
     this.window?.addEventListener('storage', this.onStorage);
@@ -233,13 +250,13 @@ export class FXTelemetry {
         if(this.syncPrivacy() || generation!==this.generation)return {ok:false};
         const response=await this.fetch(this.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',referrerPolicy:'no-referrer',body:data,keepalive:lifecycle,signal:controller.signal});
         status=Number.isInteger(response?.status)&&response.status>=100&&response.status<=599?response.status:0;
-        if(!response?.ok)return {ok:false};
+        if(!response?.ok)return {ok:false,permanent:await permanentEventRejection(response,status)};
         failure='invalid-ack';
         const body=await response.json();return {ok:true,body};
       })()]);
       if(this.syncPrivacy() || generation!==this.generation)return false;
       this.diagnostics.lastStatus=status;
-      if(status===400 || status===403){
+      if(result.permanent===true){
         this.diagnostics.failed++;this.diagnostics.rejectedBatches++;this.diagnostics.dropped+=rows.length;
         this.queue=this.queue.filter(e=>!ids.has(e.id));this.attempts=0;this.retryAt=0;this.persist();this.report('batch-rejected');return false;
       }

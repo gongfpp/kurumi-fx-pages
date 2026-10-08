@@ -1,5 +1,5 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 
 export function mountOpeningReader({root=document,frame,getState,guard,save,onFinish,openSource,startingCapital=100000,targetProfit=20000000}){
   const $=id=>root.getElementById(id),dialog=$('opening-dialog'),footer=$('opening-nav');

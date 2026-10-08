@@ -1,5 +1,5 @@
-import {MANGA_PANELS} from '../manga-panels.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {storyUnrealized,storyReview} from './engine.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {MANGA_PANELS} from '../manga-panels.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {storyUnrealized,storyReview} from './engine.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 const scenes={
  opening:{page:40,kicker:'2014年2月14日',title:'先从三十万开始。',body:'20岁的久留美打开了 FX 账户。她要赚回家里失去的两千万日元。',fact:'原作锚点：第 1 话第 11、36、40 页。背景与本金按原作节点整理。',panel:'ready'},
  plan:{page:40,kicker:'下单之前',title:'“不存在必胜法。”',body:'下单前，先想好亏到哪里就走。',fact:'原作锚点：第 1 话第 38 页。止损选项是游戏改编，不冒充原作操作。',panel:'rule'},

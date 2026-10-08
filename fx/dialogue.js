@@ -1,6 +1,6 @@
-import {DIALOGUE_BANK} from './dialogue-bank.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {DIALOGUE_BANK} from './dialogue-bank.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 
 export const DIALOGUE_VERSION=7;
 const quotes=new Map(DIALOGUE_BANK.flatMap(q=>[[q.id,q],[q.alias,q]]));

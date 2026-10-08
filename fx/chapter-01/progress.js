@@ -1,6 +1,6 @@
-import {createGameStorage} from '../storage.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {createSaveSession} from '../save-session.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
-import {createMangaStory,restoreMangaStory,chooseMangaStory,STORY_KEY as LEGACY_KEY} from './engine.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {createGameStorage} from '../storage.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {createSaveSession} from '../save-session.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {createMangaStory,restoreMangaStory,chooseMangaStory,STORY_KEY as LEGACY_KEY} from './engine.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 export {LEGACY_KEY};
 export const CHAPTER_KEY='fx-original-chapter-01-v1';
 const PREFIX='kurumi-fx:';

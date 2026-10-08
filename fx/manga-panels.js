@@ -1,7 +1,99 @@
-import {CONTEXT_PANELS} from './manga-context-panels.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {CONTEXT_PANELS} from './manga-context-panels.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
 // Original first-chapter references plus individually reviewed context assets.
 export const MANGA_PANELS = Object.freeze({
  ...CONTEXT_PANELS,
+ "after-loss": {
+  "id": "after-loss",
+  "chapter": 1,
+  "page": 32,
+  "character": "久留美",
+  "context": "童年回忆",
+  "scene": "丧母后的发泄",
+  "meaning": "丧母后的发泄",
+  "sourceFile": "久留美_入门_房间_自嘲大哭_连好好学习都做不到就去碰FX.jpg",
+  "sourceCommit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59",
+  "sourceURL": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E5%85%A5%E9%97%A8_%E6%88%BF%E9%97%B4_%E8%87%AA%E5%98%B2%E5%A4%A7%E5%93%AD_%E8%BF%9E%E5%A5%BD%E5%A5%BD%E5%AD%A6%E4%B9%A0%E9%83%BD%E5%81%9A%E4%B8%8D%E5%88%B0%E5%B0%B1%E5%8E%BB%E7%A2%B0FX.jpg",
+  "sourceBlob": "3af10de2a06f883492283107680a60e23d79c186",
+  "original": "./manga/context-after-loss.jpg",
+  "imageSize": [
+    770,
+    506
+  ],
+  "sha256": "68a6fd7f062a2c9b41a4ab717f0040cda9a8dda2b4bb6e43b07ea3d8fada2493",
+  "paginationEvidence": "索引页号对应网站阅读位置；完整上下文经原站阅读复核，印刷页号另记。",
+  "usage": "background-only",
+  "publicationStatus": "local-candidate-only",
+  "correction": "裁图可见枕头与动作线，无完整人脸。相邻完整页核实是久留美丧母后的愤怒与想要长大的遗憾，不是她学习不好的自述。"
+},
+ "mothers-diary": {
+  "id": "mothers-diary",
+  "chapter": 1,
+  "page": 34,
+  "character": "久留美",
+  "context": "童年回忆",
+  "scene": "发现母亲的交易日记",
+  "meaning": "发现母亲的交易日记",
+  "sourceFile": "久留美_入门_家中_瞳孔震动_发现FX传单.jpg",
+  "sourceCommit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59",
+  "sourceURL": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E5%85%A5%E9%97%A8_%E5%AE%B6%E4%B8%AD_%E7%9E%B3%E5%AD%94%E9%9C%87%E5%8A%A8_%E5%8F%91%E7%8E%B0FX%E4%BC%A0%E5%8D%95.jpg",
+  "sourceBlob": "e4c4c26005b6e2c5748f604b44461e82bdef7f62",
+  "original": "./manga/context-mothers-diary.jpg",
+  "imageSize": [
+    295,
+    682
+  ],
+  "sha256": "cf248aade162cc321fd5d8be5f7fef7ff598d33931c7a819404a3f48ec016b74",
+  "paginationEvidence": "索引页号对应网站阅读位置；完整上下文经原站阅读复核，印刷页号另记。",
+  "usage": "background-only",
+  "publicationStatus": "local-candidate-only",
+  "correction": "裁图仅可见久留美眼部惊讶，不显示发现对象。完整网站34/46页支持2009年4月及母亲FX交易日记，原文件名中的传单不准确。"
+},
+ "quiet-reply": {
+  "id": "quiet-reply",
+  "chapter": 1,
+  "page": 34,
+  "character": "久留美",
+  "context": "童年回忆",
+  "scene": "向父亲含糊回应",
+  "meaning": "向父亲含糊回应",
+  "sourceFile": "久留美_入门_家中_眯眼装傻_没有没什么.jpg",
+  "sourceCommit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59",
+  "sourceURL": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E5%85%A5%E9%97%A8_%E5%AE%B6%E4%B8%AD_%E7%9C%AF%E7%9C%BC%E8%A3%85%E5%82%BB_%E6%B2%A1%E6%9C%89%E6%B2%A1%E4%BB%80%E4%B9%88.jpg",
+  "sourceBlob": "2f2656f77ef5c20ccec35bc60e5b4af529fc4f78",
+  "original": "./manga/context-quiet-reply.jpg",
+  "imageSize": [
+    216,
+    486
+  ],
+  "sha256": "4f33883e69eead6e9d23af3b23c240eb30f0ca719454ca6e24e502a0f1898e22",
+  "paginationEvidence": "索引页号对应网站阅读位置；完整上下文经原站阅读复核，印刷页号另记。",
+  "usage": "background-only",
+  "publicationStatus": "local-candidate-only",
+  "correction": "裁图只见久留美含糊回应，不显示父亲、交易日记或藏本动作。网站34/46页支持父亲在旁询问，35/46页才有藏日记动作；本页不描绘该动作。"
+},
+ "fx-question": {
+  "id": "fx-question",
+  "chapter": 1,
+  "page": 14,
+  "character": "久留美",
+  "context": "入门回忆",
+  "scene": "幼年时的疑问",
+  "expression": "困惑好奇",
+  "meaning": "尚不理解FX是什么",
+  "sourceFile": "久留美_入门_书桌_困惑好奇_说到底FX是什么东西.jpg",
+  "sourceCommit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59",
+  "sourceURL": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E5%85%A5%E9%97%A8_%E4%B9%A6%E6%A1%8C_%E5%9B%B0%E6%83%91%E5%A5%BD%E5%A5%87_%E8%AF%B4%E5%88%B0%E5%BA%95FX%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF.jpg",
+  "sourceBlob": "ea618658b27459fb53d50b69cfa1c75a08275c77",
+  "original": "./manga/context-fx-question.jpg",
+  "imageSize": [
+    790,
+    349
+  ],
+  "sha256": "fa559e08155bb1b3c84f279bf0c42d61da99157423bc7078c11988edbd559d83",
+  "paginationEvidence": "网站阅读帧14/46；印刷章页12；杂志页286。",
+  "usage": "background-only",
+  "publicationStatus": "local-candidate-only"
+},
   "ready": {
     "id": "ready",
     "chapter": 1,
