@@ -1,4 +1,4 @@
-import {tradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {tradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
 const narrative=Object.freeze({'father-crisis':'crisis','father-discovery':'tension','father-relief':'relief','living-pressure':'tension','living-relief':'relief'});
 export function voiceMixActive(voice,auditions=[]){
  return Boolean(voice?.playing||Array.from(auditions).some(player=>!player.paused&&!player.ended&&!player.error));

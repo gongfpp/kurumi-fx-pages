@@ -1,4 +1,4 @@
-import {settlementPresentation} from './settlement-stage.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {settlementPresentation} from './settlement-stage.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
 
 const FATHER_EVENTS=Object.freeze({fatherUnlock:'father-discovery',fatherDiscover:'father-discovery',fatherFound:'father-crisis',repayPartial:'father-relief',repayFull:'father-relief'});
 const SOUND=Object.freeze({'father-crisis':['terminal-risk',.16],'father-discovery':['terminal-tap',.14],'father-relief':['terminal-fill',.16],'living-pressure':['terminal-close',.18],'living-relief':['terminal-fill',.14]});

@@ -1,10 +1,10 @@
-import {setImage} from './assets.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {buildCurveScale} from './share-card.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {recapChoices} from './daily-recap.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {createRecapPlayer} from './recap-player.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {setImage} from './assets.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {recapChoices} from './daily-recap.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const pct=n=>n===null?'—':(n>0?'+':'')+(n*100).toFixed(2)+'%';

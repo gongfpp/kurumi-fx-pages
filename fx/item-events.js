@@ -1,9 +1,9 @@
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
 // Discovery happens in play. Hidden future items never appear in inventory.
 export const ITEM_EVENTS={fatherDiscover:['father'],friendStudy:['mochiko'],roommate:['energy']};
 // Kept as an empty compatibility export; unlock conditions are never player copy.
 export const UNLOCK_HINTS={};
-export {ITEM_SCENES} from './copy/scenes.js?v=5f36db450e91bcef48186500ae2230f1fef62b94-23f2a20b7717';
+export {ITEM_SCENES} from './copy/scenes.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
 export function itemDiscovered(s,id){return !!s.itemDiscoveries?.[id]||itemUnlocked(s,id);}
 const PLAY_ITEMS=['takeaway','noodles','energy','celebration','father','mochiko'];
 export function itemUnlocked(s,id){return s.mode==='endless'&&PLAY_ITEMS.includes(id)|| (id==='father'?!!s.family?.unlocked:!!s.itemUnlocks?.[id]);}

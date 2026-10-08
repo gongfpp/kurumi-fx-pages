@@ -99,3 +99,6 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 .manga-image-fallback{position:relative;z-index:1;padding:12px;margin:0;background:#fff3f8;color:#684154;font-size:13px;line-height:1.6;white-space:normal}.manga-viewport:has(.manga-image-fallback){min-height:120px}.manga-viewport>.image-unavailable{opacity:0}
 
 #privacy-diagnostics{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;font-size:12px;line-height:1.6}
+
+/* Cross-game navigation leaves the active session open. */
+.top-right .stock-game-link{color:inherit;font:inherit;text-decoration:none;border:1px solid currentColor;border-radius:7px;padding:7px 10px;white-space:nowrap}.top-right .stock-game-link:focus-visible{outline:2px solid currentColor;outline-offset:3px}
