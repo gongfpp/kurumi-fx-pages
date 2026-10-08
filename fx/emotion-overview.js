@@ -1,6 +1,6 @@
-import {MOODS} from './content.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {MOODS} from './content.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
 const order=['numb','pressure-despair','despair','trauma-pain','trauma-frozen','anxious','nervous','regretful','stunned','exhausted','guilty','lonely','embarrassed','irritated','calm','focused','determined','warm','hopeful','smug','relieved','ecstatic','recovering'];
 export const EMOTION_OVERVIEW=Object.freeze([...new Set([...order,...Object.keys(MOODS)])].map(id=>Object.freeze({id,label:id==='pressure-despair'?'极度绝望':id==='trauma-pain'?'痛苦':MOODS[id]?.[0]||id})));
 export function currentEmotionChip(state,emotion){const trauma=tradingTrauma(state);if(trauma.active)return trauma.mood;return pressureMood(state)==='despair'?'pressure-despair':emotion;}

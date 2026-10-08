@@ -1,9 +1,9 @@
-import {finishedLeaderboardScore} from './finished-score.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {runPerformance} from './performance.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {finishedLeaderboardScore} from './finished-score.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {runPerformance} from './performance.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=91c199507858a651e9282627ac1f5e50e6fc76ba-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
