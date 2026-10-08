@@ -1,4 +1,4 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {MARKET_COMMENTS} from './market-comments.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 // Activity is derived only from revealed candles and completed/recorded actions.

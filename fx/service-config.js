@@ -1,7 +1,7 @@
 // The sole public service-origin value. Production is intentionally unconfigured.
 // tools/build-fx.mjs writes the explicitly supplied KURUMI_SERVICE_ORIGIN into
 // the exported bundle only; tests can inject serviceOrigin without editing it.
-export const KURUMI_SERVICE_ORIGIN = "";
+export const KURUMI_SERVICE_ORIGIN = "https://kurumi-fx-api.gongfpp.chatgpt.site";
 export const KURUMI_CLIENT_PATH = '/fx.html';
 export const KURUMI_PAGES_ORIGIN = 'https://gongfpp.github.io';
 export const KURUMI_PAGES_PATH = '/kurumi-fx-pages/';
