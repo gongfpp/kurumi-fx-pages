@@ -1,7 +1,7 @@
-import {ACTION_SCENES} from './copy/action-scenes.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {tradingTrauma} from './trading-trauma.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.

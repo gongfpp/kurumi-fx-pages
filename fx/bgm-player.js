@@ -1,6 +1,6 @@
-import {AudioEnvelope,unlockSafeAudio} from './audio-envelope.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {assetURL} from './assets.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {assetURL} from './assets.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 
 const clamp=(value,min,max,fallback)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
 const gesture=event=>event?.isTrusted===true&&!event.repeat&&['click','pointerdown','keydown'].includes(event.type);
@@ -11,20 +11,24 @@ const progress=(now,start,duration)=>Math.min(1,Math.max(0,(now-start)/duration)
 export class BgmPlayer {
   constructor({tracks=BGM_CATALOG,makeAudio=()=>new Audio(),now=()=>performance.now(),
     schedule=(fn,ms)=>{const id=setTimeout(fn,ms);id.unref?.();return id;},cancel=id=>clearTimeout(id),
-    envelope,unlockAudio=unlockSafeAudio,resolveSrc=src=>assetURL(src),onUpdate=()=>{},
+    envelope,unlockAudio=()=>true,resolveSrc=src=>assetURL(src),onUpdate=()=>{},
     volume=.35,crossfadeMs=1200,duckFactor=.28,loadTimeoutMs=15000}={}) {
     this.tracks=validateBgmCatalog(tracks);this.now=now;this.schedule=schedule;this.cancel=cancel;
-    this.envelope=envelope||new AudioEnvelope({now,schedule,cancel});this.unlockAudio=unlockAudio;this.resolveSrc=resolveSrc;
+    // BGM uses the native media-volume envelope: never attach it to a suspended
+    // shared voice/SFX AudioContext. Native play() remains subject to browser policy.
+    this.envelope=envelope||new AudioEnvelope({now,schedule,cancel,getGraph:()=>null});this.unlockAudio=unlockAudio;this.resolveSrc=resolveSrc;
     this.volume=clamp(volume,0,.65,.35);this.crossfadeMs=clamp(crossfadeMs,100,5000,1200);
     this.duckFactor=clamp(duckFactor,.05,1,.28);this.loadTimeoutMs=clamp(loadTimeoutMs,1000,60000,15000);
     this.mode='follow';this.scene='neutral';this.selectedId=this.tracks.find(t=>t.sceneTags.includes(this.scene))?.id||this.tracks[0]?.id||null;
-    this.muted=true;this.wanted=false;this.unlocked=false;this.hidden=false;this.destroyed=false;
+    this.onPreference=()=>{};this.muted=true;this.wanted=false;this.unlocked=false;this.hidden=false;this.destroyed=false;
     this.voiceActive=false;this.duckLevel=1;this.generation=0;this.error=null;this.fade=null;this.duck=null;this.timers=new Set();this.frame=null;
     this.listeners=new Set([onUpdate]);this.decks=Array.from({length:2},()=>{
       const media=makeAudio();media.preload='none';media.volume=0;media.loop=true;
       const deck={media,track:null,record:null,weight:0,playing:false,pending:false,token:0};
       deck.onError=()=>{if(deck.pending||deck.playing)this._failed(deck,deck.token,new Error('Media unavailable'));};
-      media.addEventListener('error',deck.onError);return deck;
+      // Some browsers accept a zero-volume play(), then pause when its fade becomes audible.
+      deck.onPause=()=>{if(deck.playing&&media.paused&&this._allowed())this._failed(deck,deck.token,{name:'NotAllowedError'});};
+      media.addEventListener('error',deck.onError);media.addEventListener('pause',deck.onPause);return deck;
     });
   }
   getState() {
@@ -82,7 +86,8 @@ export class BgmPlayer {
     if(this.destroyed||deck.token!==token||(!deck.pending&&!deck.playing))return false;
     const blocked=error?.name==='NotAllowedError';this._invalidate();this._release(deck,{unload:true});
     this.error=blocked?'blocked':'unavailable';
-    if(blocked){this.unlocked=false;this.wanted=false;this.muted=true;this._silence();}
+    // Browser policy is not a user mute preference. Keep intent for a real gesture.
+    if(blocked){this.unlocked=false;this._silence();}
     else{
       const fallback=this.decks.find(item=>item.playing);
       if(fallback){this.selectedId=fallback.track.id;this._fadeTo(fallback);}
@@ -126,26 +131,33 @@ export class BgmPlayer {
     if(!gesture(event))return false;
     this.unlockAudio(event);this.unlocked=true;return true;
   }
-  play(event) {
-    if(this.destroyed||!this.tracks.length||!this._unlock(event))return Promise.resolve(false);
-    this.wanted=true;this.muted=false;this.error=null;this._emit();
+  // One ordinary autoplay attempt. Never wake/resume an AudioContext without a gesture.
+  startAutomatically() {
+    if(this.destroyed||!this.tracks.length)return Promise.resolve(false);
+    this.wanted=true;this.muted=false;this.unlocked=true;this.error=null;this._emit();
     return this._begin(this.tracks.find(track=>track.id===this.selectedId));
   }
-  pause() {if(this.destroyed)return;this.wanted=false;this._silence();this.error=null;this._emit();}
-  stop() {if(this.destroyed)return;this.wanted=false;this._silence({unload:true});this.error=null;this._emit();}
+  _remember() {this.onPreference(this.getState());}
+  play(event) {
+    if(this.destroyed||!this.tracks.length||!this._unlock(event))return Promise.resolve(false);
+    this.wanted=true;this.muted=false;this.error=null;this._remember();this._emit();
+    return this._begin(this.tracks.find(track=>track.id===this.selectedId));
+  }
+  pause({remember=true}={}) {if(this.destroyed)return;this.wanted=false;this._silence();this.error=null;if(remember)this._remember();this._emit();}
+  stop() {if(this.destroyed)return;this.wanted=false;this._silence({unload:true});this.error=null;this._remember();this._emit();}
   setMuted(value,event) {
     if(this.destroyed)return Promise.resolve(false);
-    if(value){this.muted=true;this._silence();this.error=null;this._emit();return Promise.resolve(true);}
+    if(value){this.muted=true;this._silence();this.error=null;this._remember();this._emit();return Promise.resolve(true);}
     // Unmute is an explicit playback action; the first one needs a real gesture.
     return this.play(event);
   }
   setVolume(value) {
-    if(this.destroyed)return;this.volume=clamp(value,0,.65,this.volume);this._animate();this._emit();
+    if(this.destroyed)return;this.volume=clamp(value,0,.65,this.volume);this._animate();this._remember();this._emit();
   }
   selectTrack(id,{manual=true,event}={}) {
     if(this.destroyed)return Promise.resolve(false);
     const track=this.tracks.find(item=>item.id===id);if(!track)return Promise.resolve(false);
-    if(manual)this.mode='manual';this.selectedId=id;this.error=null;
+    if(manual)this.mode='manual';this.selectedId=id;this.error=null;if(manual)this._remember();
     // Selecting a track while muted/paused only selects; it does not opt into sound.
     this._emit();return this._allowed()?this._begin(track):Promise.resolve(true);
   }
@@ -155,7 +167,7 @@ export class BgmPlayer {
   }
   setMode(mode) {
     if(this.destroyed||!['manual','follow'].includes(mode))return Promise.resolve(false);
-    this.mode=mode;this._emit();return mode==='follow'?this.setScene(this.scene):Promise.resolve(true);
+    this.mode=mode;this._remember();this._emit();return mode==='follow'?this.setScene(this.scene):Promise.resolve(true);
   }
   setScene(tag) {
     if(this.destroyed||!BGM_SCENE_TAGS.includes(tag))return Promise.resolve(false);
@@ -181,7 +193,7 @@ export class BgmPlayer {
   }
   destroy() {
     if(this.destroyed)return;this.wanted=false;this.muted=true;this._silence({unload:true});this.destroyed=true;
-    for(const deck of this.decks){deck.media.removeEventListener('error',deck.onError);deck.graph?.source?.disconnect();deck.graph?.gain?.disconnect();deck.graph=null;}
+    for(const deck of this.decks){deck.media.removeEventListener('error',deck.onError);deck.media.removeEventListener('pause',deck.onPause);deck.graph?.source?.disconnect();deck.graph?.gain?.disconnect();deck.graph=null;}
     this._emit();this.listeners.clear();
   }
 }

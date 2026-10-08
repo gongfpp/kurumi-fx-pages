@@ -1,28 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#24232b"><meta name="robots" content="noindex,nofollow"><title>久留美 · 原作首章 / 第一笔交易</title><link rel="stylesheet" href="./fx/chapter-01/style.css?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717"></head>
-<body>
-<header class="bookbar"><a href="./fx.html" id="return-free">← 返回交易室</a><span>FX韭留美 <b>原作首章</b></span><button id="rules-open">玩法</button></header>
-<main>
- <div class="chapter-heading"><div><p class="eyebrow">CHAPTER 01 / FIRST TRADE</p><h1>第一笔交易<span>今天，在哪一格停下？</span></h1></div><div class="chapter-state"><b id="chapter-label">第 1 话</b><span id="save-state" role="status">正在读取进度</span></div></div>
- <p class="private-note">原作首章 · 30 万日元课例账户 · 与交易室分开保存 · 后续章节尚未开放</p>
- <section class="manga-reading-entry"><span>漫画剧情</span><button id="manga-reading-open" aria-haspopup="dialog" aria-controls="manga-reader">久留美的第一笔交易 →</button></section>
- <section id="save-warning" class="warning" hidden><h2>先保护你的剧情进度</h2><p id="save-warning-copy" role="alert"></p><button id="backup">下载剧情进度备份</button><button id="reload-save">载入最新剧情存档</button><button id="retry-save">重试保存</button><button id="recover-open" hidden>备份旧档，重开韭菜人生</button></section>
- <section id="legacy-notice" class="warning" hidden><h2>找到你以前的首章进度</h2><p>目前只是只读预览。选择沿用后，会复制到本章独立存档；旧首章与交易室的原档均不更改。</p><button id="legacy-accept">沿用这份首章进度</button><button id="legacy-restart">重开韭菜人生</button></section><div class="history-controls"><button id="history-open" hidden>回看已走过的剧情</button><section id="history-banner" hidden><p id="history-status" role="status"></p><button id="history-prev">← 上一格</button><button id="history-next">下一格 →</button><button id="history-exit">回到当前进度</button></section></div><div class="story-layout">
-  <aside class="comic-card"><div class="comic-label"><span>福贺久留美</span><b id="expression-label"></b></div><div class="story-portrait" id="portrait-frame"><img id="story-portrait" alt="久留美的当前表情"></div><p id="panel-fallback" class="panel-fallback" hidden></p></aside>
-  <article class="scene-card"><div class="scene-kicker" id="scene-kicker"></div><h2 id="scene-title" tabindex="-1"></h2><figure id="scene-art-frame" class="scene-art" hidden><img id="scene-art" alt=""><figcaption id="scene-art-caption"></figcaption></figure><p class="narration" id="scene-body"></p><div class="quote-row"><div><small>USD/JPY · 日元 / 1 美元</small><strong id="story-price"></strong></div><span id="route-label"></span></div><div id="story-chart" class="story-chart" role="img" aria-label="仅显示已经发生的教学行情"></div><p class="chart-note">点击选择才推进行情 · 未发生的报价不会显示</p><section id="review" hidden><h3 id="review-title"></h3><p id="review-lesson"></p><div id="review-comparison"></div><p class="canon-note">本章只保留这笔交易的选择与账单，不计入交易室资产或排行榜。</p><button id="replay" class="primary">重开韭菜人生</button></section></article>
-  <aside class="decision-card"><div class="account"><span>本章账户权益</span><strong id="story-equity"></strong><dl><div><dt>已实现盈亏</dt><dd id="story-realized"></dd></div><div><dt>浮动盈亏</dt><dd id="story-floating"></dd></div><div><dt>占用保证金</dt><dd id="story-margin"></dd></div><div><dt>可用保证金</dt><dd id="story-available"></dd></div></dl><p id="story-position"></p><p id="risk-plan"></p></div><h3 id="choice-heading">这一格，你怎么选？</h3><div id="choices" class="choices"></div><p id="action-status" role="status" aria-live="polite"></p><details><summary>本章成交记录</summary><ol id="ledger"></ol></details></aside>
- </div>
- <footer><p>非官方同人改编 · 虚构教学行情 · 非投资建议</p></footer>
-</main>
-<dialog id="rules-dialog"><button class="close" data-close="rules-dialog" aria-label="关闭规则">×</button><h2>把一笔交易走完</h2><p>选择撤退计划 → 选择方向与仓位 → 在每格决定兑现、减半或等待 → 结算与复盘。不同选择会改变资金、风险暴露和结局；观望也是完整路线。</p><p>账户权益 = 300,000 + 已实现盈亏 + 浮动盈亏。多单收益 = 美元数量 ×（当前价 − 开仓价）；空单取反。保证金只作占用，不重复扣款。</p></dialog>
-<dialog id="replay-dialog"><h2>重开韭菜人生？</h2><p>先在本机保留当前完整进度，再重新走一遍这笔交易。初始权益仍为本章的 30 万日元，不会给交易室增加资金。</p><button id="confirm-replay" class="primary">保留上一轮，重开韭菜人生</button><button data-close="replay-dialog">留在复盘</button></dialog>
-<dialog id="recover-dialog"><h2>保留旧数据，再重开韭菜人生？</h2><p>先在本机独立备份槽保留原始存档，成功后才建立新的首章进度。旧首章档与交易室存档均不会被覆盖。</p><button id="confirm-recover" class="primary">另存旧档，重开韭菜人生</button><button data-close="recover-dialog">暂时不动</button></dialog>
-<dialog id="leave-dialog"><h2>这页还有未保存的进度</h2><p>可以先关闭此窗口并重试保存，或下载备份后返回交易室。</p><button id="leave-backup">下载当前进度备份</button><button id="leave-confirm">仍然返回交易室</button><button data-close="leave-dialog">留在本章</button></dialog>
-<dialog id="manga-reader" class="manga-reader" aria-labelledby="manga-reader-heading">
- <header class="manga-reader-header"><h2 id="manga-reader-heading">久留美的第一笔交易</h2><button id="manga-reader-close" aria-label="关闭漫画，回到交易">关闭</button></header>
- <div id="manga-reader-body" class="manga-reader-body"><p class="eyebrow">漫画剧情 · <span id="manga-reader-count"></span></p><h3 id="manga-reader-title"></h3><img id="manga-reader-image" alt=""><p id="manga-reader-copy"></p></div>
- <nav class="manga-reader-nav" aria-label="漫画翻页"><button id="manga-reader-prev">← 上一页</button><button id="manga-reader-next">下一页 →</button></nav>
-</dialog>
-<script type="module" src="./fx/chapter-01/app.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717"></script>
-</body></html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>返回交易室</title><style>
+:root{font-family:'Noto Sans SC','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;color:#28232e;background:#fbf8f8;line-height:1.6}*{box-sizing:border-box}body{margin:0;padding:24px 16px}main{max-width:560px;margin:8vh auto;padding:24px;border:1px solid #e7dfe4;border-radius:12px;background:#fff}h1{margin:0 0 12px;font-size:clamp(22px,5vw,28px);line-height:1.35}p{margin:0 0 20px;color:#625966}a{display:inline-block;padding:10px 18px;border:1px solid #ba3e78;border-radius:6px;color:#722046;background:#fff0f6;font-weight:600;text-decoration:none}a:hover{background:#fce0ec}a:focus-visible{outline:3px solid #ba3e78;outline-offset:3px}
+</style></head>
+<body><main><h1>此独立课例已停用</h1><p>旧进度保持原样。</p><a href="./fx.html">返回主游戏</a></main></body></html>

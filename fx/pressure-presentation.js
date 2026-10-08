@@ -1,23 +1,23 @@
-import {pressureVisual} from './pressure-visuals.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {pressureVisual} from './pressure-visuals.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 // Only rendering. This module cannot unlock a control, place an order, or save.
-export function pressureMotionPlan(taps,{reduced=false,unlocked=false}={}){
- const visual=pressureVisual(taps,{reduced,unlocked}),pageDisplacement=reduced?0:unlocked?9:taps<4?0:1+Math.floor((Math.min(12,taps)-4)*.65);
+export function pressureMotionPlan(taps,{reduced=false,unlocked=false,target=5}={}){
+ const visual=pressureVisual(taps,{reduced,unlocked,target}),pageDisplacement=reduced?0:unlocked?9:taps===0?0:1+Math.floor(visual.intensity*5);
  return{...visual,displacement:reduced?0:unlocked?11:2+8*visual.intensity,pageDisplacement,duration:reduced?0:unlocked?620:160+visual.intensity*130};
 }
 export function createPressurePresentation({root=document,motion,enabled=()=>true}={}){
  let pageAnimation=null,buttonAnimation=null,timer=null,activeButton=null,disposed=false;
  const flare=root.createElement('div');flare.className='pressure-page-flare';flare.setAttribute('aria-hidden','true');root.body.append(flare);
  function clear(){pageAnimation?.cancel();buttonAnimation?.cancel();clearTimeout(timer);activeButton?.classList.remove('pressure-breaking');flare.dataset.active='false';delete root.body.dataset.pressureImpact;}
- function play(button,{taps,unlocked=false}={}){
+ function play(button,{taps,unlocked=false,target=5}={}){
   if(disposed)return;clear();activeButton=button;
-  const reduced=!enabled()||!!root.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches,plan=pressureMotionPlan(taps,{reduced,unlocked});
+  const reduced=!enabled()||!!root.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches,plan=pressureMotionPlan(taps,{reduced,unlocked,target});
   button.dataset.pressureStage=plan.stage;
   if(reduced)return plan;
   const x=plan.displacement,page=root.querySelector('main'),p=plan.pageDisplacement;
   // Page translate is independent of existing trade-feedback transform effects.
   buttonAnimation=motion?.animate(button,[{transform:'none'},{transform:`translate(${-x}px,2px) rotate(-1.2deg)`},{transform:`translate(${x}px,-2px) rotate(1.2deg)`},{transform:`translate(${-x*.55}px,1px)`},{transform:'none'}],{duration:plan.duration,easing:'ease-out'});
   if(page&&p>0)pageAnimation=motion?.animate(page,[{translate:'0px 0px'},{translate:`${-p}px ${p*.35}px`},{translate:`${p}px ${-p*.25}px`},{translate:`${-p*.6}px 0px`},{translate:`${p*.3}px 0px`},{translate:'0px 0px'}],{duration:plan.duration,easing:'ease-out'});
-  root.body.dataset.pressureImpact=unlocked?'break':plan.stage;flare.dataset.active=String(taps>=7);flare.style.setProperty('--pressure-edge',String(.08+plan.intensity*.18));
+  root.body.dataset.pressureImpact=unlocked?'break':plan.stage;flare.dataset.active=String(plan.intensity>=.5);flare.style.setProperty('--pressure-edge',String(.08+plan.intensity*.18));
   if(unlocked)button.classList.add('pressure-breaking');
   timer=setTimeout(()=>{activeButton?.classList.remove('pressure-breaking');flare.dataset.active='false';delete root.body.dataset.pressureImpact;},unlocked?900:650);
   return plan;

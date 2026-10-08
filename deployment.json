@@ -1,16 +1,16 @@
 {
-  "sourceCommit": "295e20358213d4ea13e57d98c0bfc3b6ffe341ec",
-  "assetVersion": "295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717",
-  "buildMode": "production",
-  "productionReady": true,
+  "sourceCommit": "8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5",
+  "assetVersion": "8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49",
+  "buildMode": "local-only",
+  "productionReady": false,
   "backend": {
-    "status": "configured",
-    "origin": "https://kurumi-fx-api.gongfpp.chatgpt.site",
+    "status": "unconfigured",
+    "origin": null,
     "clientPath": "/fx.html",
     "pagesPath": "/kurumi-fx-pages/"
   },
   "manga": {
-    "scope": "approved-panels-and-isolated-chapter",
+    "scope": "approved-panels-chapter-disabled",
     "selectionSourceCommit": "37c41c1bfdc416efc06b85fb0ad1202c80ef7f80",
     "panels": [
       "accept-stop",
@@ -33,28 +33,14 @@
       "short-entry",
       "stop-loss-uneasy"
     ],
-    "independentChapterIncluded": true,
+    "independentChapterIncluded": false,
+    "independentChapterArchived": true,
     "chapter": {
       "id": "original-chapter-01",
-      "version": 1,
       "entry": "chapter-01.html",
-      "initialCapital": 300000,
-      "saveKey": "kurumi-fx:fx-original-chapter-01-v1",
-      "economics": "preserved-first-trade-v1",
-      "mainAccountImport": false,
-      "rankingEligible": false,
-      "originalSceneArt": [
-        {
-          "path": "fx/generated/chapter-01/preparation-original.webp",
-          "sha256": "49a4bbb2529cff70b96ff0b5d50799791e81ac4c066b91e171903c6be7a28ff1",
-          "origin": "original-fan-art"
-        },
-        {
-          "path": "fx/generated/chapter-01/exit-plan-original.webp",
-          "sha256": "185e0311985285229ed5db6df61ad1da365a581a6f252cfa81ae614201716c72",
-          "origin": "original-fan-art"
-        }
-      ]
+      "status": "retired",
+      "compatibilityOnly": true,
+      "activeModuleFiles": 0
     }
   }
 }

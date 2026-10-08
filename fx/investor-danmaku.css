@@ -8,5 +8,5 @@
 @keyframes investor-comment-right-to-left{from{transform:translateX(0)}to{transform:translateX(calc(-100% - var(--comment-travel)))}}
 #investor-danmaku[data-reduced="true"] .investor-danmaku-line{position:static;width:auto;max-width:100%;animation:none;transform:none;white-space:normal;overflow-wrap:anywhere;will-change:auto}
 .comment-credits section{border-top:1px solid #eadce5;padding:12px 0}.comment-credits h3{font-size:15px}.comment-credits p{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
-@media(prefers-reduced-motion:reduce){#investor-danmaku .investor-danmaku-line{position:static;width:auto;max-width:100%;animation:none;transform:none;white-space:normal;overflow-wrap:anywhere;will-change:auto}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) #investor-danmaku .investor-danmaku-line{position:static;width:auto;max-width:100%;animation:none;transform:none;white-space:normal;overflow-wrap:anywhere;will-change:auto}}
 @media(max-width:390px){.investor-comments{padding:8px 10px}#investor-danmaku{height:64px}}

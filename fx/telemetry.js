@@ -1,6 +1,6 @@
-import {kurumiStorage} from './storage-namespace.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {serviceConfiguration} from './service-config.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
@@ -60,12 +60,19 @@ export class FXTelemetry {
     this.serverPrivacy = false; this.destroyed = false;
     this.requestTimeoutMs = Number.isFinite(options.requestTimeoutMs) ? Math.max(100,Math.min(30000,options.requestTimeoutMs)) : 10000;
     this.configuration = serviceConfiguration({serviceOrigin:options.serviceOrigin,location:this.location});
+    this.requireExplicitConsent = options.requireExplicitConsent === true;
+    this.explicitConsent = false;
+    this.chapterConsent = null; this.globalPreferenceOff = false;
+    this.chapterOffLatched = false; this.chapterChoiceUnsaved = false; this.chapterStorageVerified = false; this.chapterTrackingFailed = false;
+    this.surface = options.initialContext?.screen === 'chapter-01' ? 'chapter-01' : '';
+    this.trackingKey = key => 'fx-api-v1-' + (this.surface ? this.surface + '-' : '') + key;
+    this.initialContext = {screen: token(options.initialContext?.screen) && options.initialContext.screen.length <= 40 ? options.initialContext.screen : 'boot', run: '', day: 0};
     this.preferenceEnabled = options.enabled !== false;
     this.enabled = this.preferenceEnabled && !this.dnt && this.configuration.configured;
     this.channel = this.configuration.channel;
     this.path = this.configuration.path;
     this.endpoint = this.configuration.eventsEndpoint;
-    this.context = {screen: 'boot', run: '', day: 0};
+    this.context = {...this.initialContext};
     this.build = token(options.build || '') ? options.build || '' : '';
     this.queue = []; this.seen = new Set(); this.pending = false; this.active = 0; this.pageTime = 0; this.decision = 0; this.last = this.monotonic(); this.visible = !this.document?.hidden; this.lastScreen = ''; this.attempts = 0; this.retryAt = 0; this.ended = false; this.diagnostics = {sent: 0, failed: 0, filteredCount: 0, lastFilterReason: null, lastSent: null, dropped: 0, rejectedBatches: 0, retries: 0, lastStatus: 0}; this.lastReason = 'ready'; this.onStatus = typeof options.onStatus === 'function' ? options.onStatus : () => {};
     this.visitor = ''; this.session = ''; this.generation = 0; this.controller = null;this.privacyCleanupPending=false;this.taintedRuns=new Set();this.inflightIDs=null;
@@ -97,8 +104,8 @@ export class FXTelemetry {
     return this.serverPrivacy ? 'server-privacy' : this.browserPrivacyReason;
   }
   blockReason() {
-    return this.privacyReason() || (!this.preferenceEnabled ? 'statistics-disabled' : (this.preferencesUnavailable || this.testModeUnavailable) ? 'privacy-storage-unavailable' : this.suspended ? 'developer-test' :
-      !this.configuration.configured ? 'service-unconfigured' : this.destroyed ? 'destroyed' : !this.enabled ? 'statistics-disabled' : null);
+    return this.privacyReason() || (!this.preferenceEnabled ? 'statistics-disabled' : this.chapterChoiceUnsaved ? 'privacy-choice-unsaved' : this.chapterConsent==='off' ? 'statistics-disabled' : (this.preferencesUnavailable || this.testModeUnavailable) ? 'privacy-storage-unavailable' : this.suspended ? 'developer-test' :
+      this.requireExplicitConsent && !this.explicitConsent ? 'consent-required' : !this.configuration.configured ? 'service-unconfigured' : this.destroyed ? 'destroyed' : !this.enabled ? 'statistics-disabled' : null);
   }
   readPrivacyItem(key) {
     if(!this.storage?.getItem)throw new Error('privacy-unavailable');
@@ -123,26 +130,54 @@ export class FXTelemetry {
     // A failed read is unknown consent, never an implicit opt-in. An observed
     // opt-out stays off until this page receives an explicit setEnabled(true).
     try {
-      if(this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off')this.preferenceEnabled=false;
+      if(this.chapterTrackingFailed)throw new Error('privacy-unavailable');
+      this.globalPreferenceOff=this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off';
+      if(this.surface)this.preferenceEnabled=!this.globalPreferenceOff;
+      else if(this.globalPreferenceOff)this.preferenceEnabled=false;
+      this.chapterConsent=this.surface ? this.readPrivacyItem('fx-api-v1-chapter-01-consent') : null;
+      const storedChapterConsent=this.chapterConsent;
+      if(this.surface && this.sessionStorage?.getItem('fx-api-v1-chapter-01-consent')==='off'){
+        this.chapterConsent='off';
+        if(storedChapterConsent!=='off')this.chapterChoiceUnsaved=true;
+      }
+      if(this.chapterOffLatched)this.chapterConsent='off';
+      const sharedConsent=this.readPrivacyItem('fx-api-v1-telemetry-consent')==='on';
+      this.explicitConsent=this.chapterConsent==='on' || this.chapterConsent!=='off' && sharedConsent;
+      if(this.requireExplicitConsent){
+        if(!this.sessionStorage?.getItem)throw new Error('privacy-unavailable');
+        this.sessionStorage.getItem(this.trackingKey('anon-session'));
+      }
+      if(this.surface && this.preferenceEnabled && this.explicitConsent && !this.chapterChoiceUnsaved && !this.chapterStorageVerified){
+        // A fixed non-identifying probe catches throws, silent no-op writes and
+        // silent removal failures without rewriting either page's consent.
+        const key='fx-api-v1-chapter-01-storage-check';
+        for(const storage of [this.storage,this.sessionStorage]){
+          if(!remove(storage,key))throw new Error('privacy-unavailable');
+          storage.setItem(key,'1');
+          if(storage.getItem(key)!=='1' || !remove(storage,key))throw new Error('privacy-unavailable');
+        }
+        this.chapterStorageVerified=true;
+      }
       this.preferencesUnavailable=false;
       if(this.preferenceEnabled)this.pruneTaintedRuns();
-    } catch {this.preferencesUnavailable=true;}
+    } catch {this.preferencesUnavailable=true;this.chapterStorageVerified=false;}
     let dynamicTestMode=false;this.testModeUnavailable=false;
     try {if(this.getTestMode){const value=this.getTestMode();this.testModeUnavailable=value!==true && value!==false;dynamicTestMode=value!==false;}} catch {dynamicTestMode=true;this.testModeUnavailable=true;}
     this.suspended=this.manualTestMode || dynamicTestMode;
     const privacy=this.privacyReason();
     if(privacy && privacy!=='server-privacy')this.browserPrivacyReason=privacy;
     this.dnt=!!this.browserPrivacyReason;
-    this.enabled=this.preferenceEnabled && !privacy && !this.preferencesUnavailable && !this.testModeUnavailable && this.configuration.configured && !this.destroyed;
+    this.enabled=this.preferenceEnabled && !this.chapterChoiceUnsaved && this.chapterConsent!=='off' && (!this.requireExplicitConsent || this.explicitConsent) && !privacy && !this.preferencesUnavailable && !this.testModeUnavailable && this.configuration.configured && !this.destroyed;
     let reason=this.blockReason();
     if(this.privacyCleanupPending || reason && (this.queue.length || this.visitor || this.session || this.controller && !this.controller.signal.aborted))this.clearTracking(reason || 'privacy-storage-unavailable');
     if(this.privacyCleanupPending){this.preferencesUnavailable=true;this.enabled=false;reason=this.blockReason();}
-    if((wasAllowed && reason) || wasSuspended!==this.suspended || wasUnavailable!==(this.preferencesUnavailable || this.testModeUnavailable)){
+    // Resume starts a fresh timing interval: never backfill time spent without consent.
+    if((wasAllowed && reason) || (!wasAllowed && !reason) || wasSuspended!==this.suspended || wasUnavailable!==(this.preferencesUnavailable || this.testModeUnavailable)){
       this.active=this.pageTime=this.decision=0;this.last=this.monotonic();
     }
     if(!reason && (wasSuspended || wasUnavailable)){
       // A resumed/new run must not attach its bootstrap visit to the old run.
-      this.context={screen:'boot',run:'',day:0};this.lastScreen='';this.start();
+      this.context={...this.initialContext};this.lastScreen='';this.start();
     }
     return reason;
   }
@@ -164,19 +199,43 @@ export class FXTelemetry {
   }
   start() {
     if (this.syncPrivacy()) return;
-    this.visitor = stableID(this.storage, 'fx-api-v1-anon-visitor'); this.session = stableID(this.sessionStorage, 'fx-api-v1-anon-session');
-    try { this.seen = new Set(JSON.parse(get(this.sessionStorage, 'fx-api-v1-telemetry-seen') || '[]').filter(k => typeof k === 'string').slice(-1200)); } catch { this.seen = new Set(); }
-    try { const saved = JSON.parse(get(this.storage, 'fx-api-v1-telemetry-outbox') || '[]'); this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),queuedAt:e.queuedAt})); } catch { this.queue = []; }
-    const previous = Number(get(this.storage, 'fx-api-v1-last-visit') || 0), gap = this.now() - previous;
-    put(this.storage, 'fx-api-v1-last-visit', String(this.now()));
+    if(this.surface){
+      try {
+        const strictID=(storage,key)=>{let value=storage.getItem(key);if(!value || !/^[a-zA-Z0-9_-]{8,80}$/.test(value)){value=uid();storage.setItem(key,value);if(storage.getItem(key)!==value)throw new Error('identity-unsaved');}return value;};
+        const session=strictID(this.sessionStorage,this.trackingKey('anon-session')),visitor=strictID(this.storage,'fx-api-v1-anon-visitor');
+        this.visitor=visitor;this.session=session;
+      }catch{this.chapterTrackingFailed=true;this.preferencesUnavailable=true;this.enabled=false;this.clearTracking('privacy-storage-unavailable');return;}
+    }else{
+      this.visitor = stableID(this.storage, 'fx-api-v1-anon-visitor'); this.session = stableID(this.sessionStorage, this.trackingKey('anon-session'));
+    }
+    try { this.seen = new Set(JSON.parse(get(this.sessionStorage, this.trackingKey('telemetry-seen')) || '[]').filter(k => typeof k === 'string').slice(-1200)); } catch { this.seen = new Set(); }
+    try { const saved = JSON.parse(get(this.storage, this.trackingKey('telemetry-outbox')) || '[]'); this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),queuedAt:e.queuedAt})); } catch { this.queue = []; }
+    const previous = Number(get(this.storage, this.trackingKey('last-visit')) || 0), gap = this.now() - previous;
+    put(this.storage, this.trackingKey('last-visit'), String(this.now()));
     const mobile = (this.window?.innerWidth || 1024) < 640;
     this.emit('visit', '', {detail: {returning: previous > 0, returnGap: previous ? gap < 3600000 ? 'under-hour' : gap < 86400000 ? 'same-day' : gap < 604800000 ? 'under-week' : 'over-week' : 'first', device: mobile ? 'mobile' : 'desktop'}});
   }
-  persist() { if (this.enabled && !this.suspended) put(this.storage, 'fx-api-v1-telemetry-outbox', JSON.stringify(this.queue)); }
+  persist() {
+    if(!this.enabled || this.suspended)return;
+    if(!this.surface){put(this.storage,this.trackingKey('telemetry-outbox'),JSON.stringify(this.queue));return;}
+    try {const key=this.trackingKey('telemetry-outbox'),value=JSON.stringify(this.queue);this.storage.setItem(key,value);if(this.storage.getItem(key)!==value)throw new Error('outbox-unsaved');}
+    catch {this.chapterStorageVerified=false;this.chapterTrackingFailed=true;this.preferencesUnavailable=true;this.enabled=false;this.clearTracking('privacy-storage-unavailable');}
+  }
   clearTracking(reason = this.blockReason() || 'statistics-disabled') {
     this.generation++; this.controller?.abort(); this.filtered(reason,this.queue.length); this.queue=[]; this.seen.clear();
     this.attempts=0; this.retryAt=0;
-    const cleared=[...['fx-api-v1-telemetry-outbox','fx-api-v1-anon-visitor','fx-api-v1-last-visit'].map(key=>remove(this.storage,key)),...['fx-api-v1-anon-session','fx-api-v1-telemetry-seen'].map(key=>remove(this.sessionStorage,key))];
+    // Merely opening an unchosen chapter must not erase the main game's state.
+    if(reason==='consent-required'){
+      this.visitor='';this.session='';
+      if(this.surface){remove(this.storage,this.trackingKey('telemetry-outbox'));remove(this.sessionStorage,this.trackingKey('anon-session'));remove(this.sessionStorage,this.trackingKey('telemetry-seen'));}
+      return;
+    }
+    const globalOptOut=reason==='statistics-disabled' && (!this.surface || this.globalPreferenceOff) || reason==='privacy-dnt' || reason==='privacy-gpc' || reason==='server-privacy';
+    const shared=globalOptOut || !this.surface ? ['fx-api-v1-anon-visitor'] : [];
+    if(reason==='statistics-disabled' && globalOptOut)remove(this.storage,'fx-api-v1-telemetry-consent');
+    const localKeys=['telemetry-outbox','last-visit'],sessionKeys=['anon-session','telemetry-seen'];
+    const allKeys=keys=>(globalOptOut ? ['','chapter-01-'] : [this.surface ? this.surface+'-' : '']).flatMap(surface=>keys.map(key=>'fx-api-v1-'+surface+key));
+    const cleared=[...shared.concat(allKeys(localKeys)).map(key=>remove(this.storage,key)),...allKeys(sessionKeys).map(key=>remove(this.sessionStorage,key))];
     this.privacyCleanupPending=cleared.some(ok=>!ok);
     this.visitor = ''; this.session = '';
   }
@@ -185,9 +244,34 @@ export class FXTelemetry {
     this.report(this.syncPrivacy() || 'ready');
   }
   setEnabled(value) {
+    if(value===true && this.requireExplicitConsent){
+      try {if(this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off'){this.report(this.syncPrivacy() || 'statistics-disabled');return false;}}
+      catch {this.report(this.syncPrivacy() || 'privacy-storage-unavailable');return false;}
+    }
     const was=this.enabled;
     this.preferenceEnabled=value===true;
-    put(this.storage,'fx-telemetry-enabled',value===true?'true':'false');
+    if(this.surface){
+      // Chapter choices are independent; opting out must never rewrite main consent.
+      // Latch the local stop before attempting storage. A quota/write failure
+      // must never turn an explicit opt-out back into persisted stale consent.
+      this.chapterOffLatched=true;this.chapterStorageVerified=false;
+      // Best-effort same-tab reload guard if localStorage cannot save the choice.
+      put(this.sessionStorage,'fx-api-v1-chapter-01-consent','off');
+      const choice=value===true?'on':'off';
+      try {
+        if(!this.storage?.setItem)throw new Error('privacy-unavailable');
+        this.storage.setItem('fx-api-v1-chapter-01-consent',choice);
+        if(this.readPrivacyItem('fx-api-v1-chapter-01-consent')!==choice)throw new Error('privacy-unsaved');
+        const guardCleared=remove(this.sessionStorage,'fx-api-v1-chapter-01-consent');
+        if(choice==='on' && !guardCleared)throw new Error('privacy-unsaved');
+        this.chapterChoiceUnsaved=false;this.chapterOffLatched=false;this.chapterTrackingFailed=false;
+      }catch{this.chapterChoiceUnsaved=true;}
+    }else{
+      put(this.storage,'fx-telemetry-enabled',value===true?'true':'false');
+      // Only a deliberate main enable writes shared consent.
+      if(value===true)put(this.storage,'fx-api-v1-telemetry-consent','on');
+      else remove(this.storage,'fx-api-v1-telemetry-consent');
+    }
     const blocked=this.syncPrivacy();
     if(!blocked && !was && !this.visitor){this.lastScreen='';this.start();this.view(this.context);}
     this.report(blocked || 'ready');
@@ -199,15 +283,17 @@ export class FXTelemetry {
     if (blocked) return this.filtered(blocked);
     if(this.taintedRuns.has(this.context.run))return this.filtered('developer-test');
     if (!names.has(name)) return this.filtered('invalid-event');
+    if(!this.visitor || !this.session)this.start();
+    if(this.blockReason() || !this.visitor || !this.session)return this.filtered(this.blockReason() || 'privacy-storage-unavailable');
     if (!token(target)) return this.filtered('invalid-target');
-    if (extra.dedupeKey) { const key = `${name}:${extra.dedupeKey}`; if (this.seen.has(key)) return this.filtered('duplicate-event'); this.seen.add(key); if (this.seen.size > 1200) this.seen.delete(this.seen.values().next().value); put(this.sessionStorage, 'fx-api-v1-telemetry-seen', JSON.stringify([...this.seen])); }
+    if (extra.dedupeKey) { const key = `${name}:${extra.dedupeKey}`; if (this.seen.has(key)) return this.filtered('duplicate-event'); this.seen.add(key); if (this.seen.size > 1200) this.seen.delete(this.seen.values().next().value); put(this.sessionStorage, this.trackingKey('telemetry-seen'), JSON.stringify([...this.seen])); }
     this.queue.push({id: uid(), visitor: this.visitor, session: this.session, game: 'fx', site: 'fx', channel: this.channel, path: this.path, ...this.context, name, target, stage: 0, activeMs: Math.round(Math.max(0, Math.min(3600000, extra.activeMs || 0))), detail: {...sanitizeDetail(extra.detail), build: this.build}, queuedAt: this.now()});
     if (this.queue.length > 240) {const count=this.queue.splice(0,this.queue.length-240).length;this.diagnostics.dropped+=count;this.filtered('buffer-limit',count);}
     this.persist(); return true;
   }
   beat() { if (this.active > 0) this.emit('heartbeat', '', {activeMs: this.active}); this.active = 0; }
   view(context = {}) {
-    this.clock(); const next = {screen: token(context.screen) && context.screen.length <= 40 ? context.screen : this.context.screen, run: token(context.run) ? context.run : this.context.run, day: Math.max(0, Math.min(10000, Math.floor(Number.isFinite(context.day) ? context.day : this.context.day)))};
+    this.clock(); const next = {screen: this.surface ? (token(context.screen) && context.screen.length <= 40 && (context.screen===this.surface || context.screen.startsWith(this.surface+':')) ? context.screen : this.surface) : (token(context.screen) && context.screen.length <= 40 ? context.screen : this.context.screen), run: token(context.run) ? context.run : this.context.run, day: Math.max(0, Math.min(10000, Math.floor(Number.isFinite(context.day) ? context.day : this.context.day)))};
     if (next.screen !== this.lastScreen) {
       if (this.lastScreen) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('transition', '', {detail: {from: this.lastScreen, to: next.screen}}); }
       this.context = next; this.emit('screen_view'); this.pageTime = 0; this.lastScreen = next.screen;

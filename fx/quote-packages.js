@@ -15,6 +15,8 @@ export function quotePackageState(state={}){
  const p=state.quotePackage;
  if(!Object.hasOwn(state,'quotePackage'))return empty();
  if(!p||typeof p!=='object'||Array.isArray(p)||![1,2].includes(p.version)||!tier(p.ownedHz)||!tier(p.selectedHz)||p.selectedHz>p.ownedHz||!Array.isArray(p.receipts)||!Number.isFinite(p.paid)||p.paid<0)invalid();
+ if(p.renewalBlocked!==undefined&&typeof p.renewalBlocked!=='boolean')invalid();
+ if(p.renewal!==undefined&&(!p.renewal||!validDay(p.renewal.day)||p.renewal.day>state.day||!tier(p.renewal.hz)||!['renewed','failed'].includes(p.renewal.status)||p.renewal.status==='failed'&&!['可用资金不足','当前金额精度不足，无法安全扣款','当前不能租用行情套餐'].includes(p.renewal.reason)))invalid();
  const seen=new Set();let paid=0,legacy=1,rentalDay=null,rented=1,hasRental=false;
  for(const r of p.receipts){
   if(!r||!tier(r.hz)||seen.has(r.id)||r.currency!=='game-JPY'||!validDay(r.day)||validDay(state.day)&&r.day>state.day)invalid();
@@ -57,7 +59,7 @@ export function planQuotePackagePurchase(state,hz,{availableCash=state.cash,canP
  const p=quotePackageState(state),offer=quotePackageOffer(state,hz,{availableCash,canPurchase});if(!offer.valid)throw Error(offer.reason);
  // Keep the last paid day in the archive, even when using the free fallback.
  const storedOwned=Math.max(p.legacyOwnedHz,p.rentedHz);
- if(offer.owned)return{charged:false,amount:0,receipt:null,package:{...p,ownedHz:storedOwned,selectedHz:hz,preferredHz:hz}};
+ if(offer.owned)return{charged:false,amount:0,receipt:null,package:{...p,ownedHz:storedOwned,selectedHz:hz,preferredHz:hz,renewalBlocked:false}};
  const receipt={id:receiptId(state,hz,state.day),kind:'daily-rental',hz,amount:offer.price,totalPaid:p.paid+offer.price,day:state.day,timestamp,currency:'game-JPY',label:`${quotePackageName(hz)} · 第 ${state.day} 日`};
- return{charged:true,amount:offer.price,receipt,package:{...p,version:2,rentalDay:state.day,rentedHz:hz,ownedHz:hz,selectedHz:hz,preferredHz:hz,paid:p.paid+offer.price,receipts:[...p.receipts,receipt]}};
+ return{charged:true,amount:offer.price,receipt,package:{...p,version:2,rentalDay:state.day,rentedHz:hz,ownedHz:hz,selectedHz:hz,preferredHz:hz,renewalBlocked:false,paid:p.paid+offer.price,receipts:[...p.receipts,receipt]}};
 }

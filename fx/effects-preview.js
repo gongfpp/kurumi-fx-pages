@@ -1,11 +1,11 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {PRESSURE_CRACKS} from './pressure-visuals.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {GameMotion} from './motion.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {mountDailyRecap} from './recap-view.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {FXAudio} from './audio.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {unlockSafeAudio} from './audio-envelope.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {PRESSURE_CRACKS} from './pressure-visuals.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {GameMotion} from './motion.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {mountDailyRecap} from './recap-view.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {recapPresentation} from './recap-presentation.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {FXAudio} from './audio.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {unlockSafeAudio} from './audio-envelope.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 for(const type of ['pointerdown','keydown'])document.addEventListener(type,event=>{if(event.isTrusted){unlockSafeAudio(event);audio.unlock();}},{capture:true});
 const $=id=>document.getElementById(id),audio=new FXAudio({onError:()=>{$('sound-status').textContent='音频未能载入；视觉仍可检查。'}});let view=null,selected='small-profit',started=0,trace=[];
 function play(id){
@@ -23,7 +23,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){view?.fini
 
 const motion=new GameMotion(),pressure=createPressurePresentation({root:document,motion,enabled:()=>!$('preview-reduce').checked});let pressureTaps=0,lastPressureAt=-Infinity;
 function syncMotion(){const on=!$('preview-reduce').checked;motion.configure(on);document.body.classList.toggle('motion-full',on);}syncMotion();$('preview-reduce').addEventListener('change',()=>{syncMotion();pressure.clear();});
-const pressureLabel=document.createElement('span'),fracture=document.createElementNS('http://www.w3.org/2000/svg','svg');pressureLabel.textContent='100× · 0 / 12';fracture.setAttribute('viewBox','0 0 200 64');fracture.setAttribute('preserveAspectRatio','none');fracture.setAttribute('aria-hidden','true');fracture.classList.add('pressure-fracture');const crackPaths=PRESSURE_CRACKS.map(spec=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);path.style.opacity='0';fracture.append(path);return{path,at:spec.at};});$('pressure-demo').replaceChildren(pressureLabel,fracture);
-$('pressure-demo').onclick=()=>{const now=performance.now();if(now-lastPressureAt<80||pressureTaps>=12)return;lastPressureAt=now;pressureTaps++;const unlocked=pressureTaps===12;for(const {path,at}of crackPaths)path.style.opacity=pressureTaps>=at?'1':'0';pressureLabel.textContent=unlocked?'限制已突破 · 演出示例':`100× · ${pressureTaps} / 12`;syncMotion();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});audio.effect(unlocked?'pressure-break':'pressure-hit',{level:.18+.32*pressureTaps/12,rate:.9+.35*pressureTaps/12});const plan=pressure.play($('pressure-demo'),{taps:pressureTaps,unlocked});$('pressure-demo').dataset.pageDisplacement=String(plan.pageDisplacement);};
-$('pressure-reset').onclick=()=>{pressure.clear();pressureTaps=0;lastPressureAt=-Infinity;pressureLabel.textContent='100× · 0 / 12';$('pressure-demo').dataset.pressureStage='strained';for(const {path}of crackPaths)path.style.opacity='0';};
+const pressureLabel=document.createElement('span'),fracture=document.createElementNS('http://www.w3.org/2000/svg','svg');pressureLabel.textContent='100× · 0 / 5';fracture.setAttribute('viewBox','0 0 200 64');fracture.setAttribute('preserveAspectRatio','none');fracture.setAttribute('aria-hidden','true');fracture.classList.add('pressure-fracture');const crackPaths=PRESSURE_CRACKS.map(spec=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);path.style.opacity='0';fracture.append(path);return{path,at:spec.at};});$('pressure-demo').replaceChildren(pressureLabel,fracture);
+$('pressure-demo').onclick=()=>{const now=performance.now();if(now-lastPressureAt<80||pressureTaps>=5)return;lastPressureAt=now;pressureTaps++;const unlocked=pressureTaps===5;for(const {path,at}of crackPaths)path.style.opacity=pressureTaps/5*12>=at?'1':'0';pressureLabel.textContent=unlocked?'限制已突破 · 演出示例':`100× · ${pressureTaps} / 5`;syncMotion();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});audio.effect(unlocked?'pressure-break':'pressure-hit',{level:.18+.32*pressureTaps/5,rate:.9+.35*pressureTaps/5});const plan=pressure.play($('pressure-demo'),{taps:pressureTaps,unlocked});$('pressure-demo').dataset.pageDisplacement=String(plan.pageDisplacement);};
+$('pressure-reset').onclick=()=>{pressure.clear();pressureTaps=0;lastPressureAt=-Infinity;pressureLabel.textContent='100× · 0 / 5';$('pressure-demo').dataset.pressureStage='strained';for(const {path}of crackPaths)path.style.opacity='0';};
 window.addEventListener('pagehide',()=>pressure.dispose());

@@ -1,6 +1,6 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
-export const COMMENT_REPEAT_GAP=120000;
+export const COMMENT_REPEAT_GAP=30000;
 // Activity is derived only from revealed candles and completed/recorded actions.
 // Never read a planned quote track, reroll RNG, write a save, or affect execution.
 export function marketCommentActivity(state={}){
@@ -9,7 +9,7 @@ export function marketCommentActivity(state={}){
  const movement=candles.length?candles.reduce((sum,c)=>sum+Math.abs(c.close/c.open-1),0)/candles.length:0;
  const trades=(state.runStatistics?.trades||state.history||[]).filter(t=>t?.day===day&&t.beat>=Math.max(0,beat-1)&&t.beat<=beat).length;
  const event=state.lastEvent,revealedShock=state.swanSeen===true&&event?.swan===true&&event.day===day&&event.beat>=beat-1&&event.beat<=beat;
- const score=clamp(Math.max(movement/.0015,trades/5,revealedShock?1:0));
+ const score=clamp(Math.max(movement/.0015,trades/5,(state.heat||0)/5,revealedShock?1:0));
  return score>=.66?{level:'hot',interval:6000,pixelsPerSecond:100,lanes:2}:score>=.25?{level:'active',interval:12000,pixelsPerSecond:72,lanes:2}:{level:'quiet',interval:22000,pixelsPerSecond:48,lanes:1};
 }
 export function eligibleMarketComments(comments=MARKET_COMMENTS){

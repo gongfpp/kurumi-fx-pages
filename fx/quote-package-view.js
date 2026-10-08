@@ -1,14 +1,14 @@
-import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {hasCanonicalGrid} from './quote-grid.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {hasCanonicalGrid} from './quote-grid.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 const yen=value=>`¥${value.toLocaleString('zh-CN',{maximumFractionDigits:0})}`;
 export function quotePackagePresentation(state,{availableCash=state.cash,canPurchase=true}={}){
  const p=quotePackageState(state),legacy=!hasCanonicalGrid(state.script),effectiveHz=legacy?1:p.selectedHz;
  const expired=p.rentalDay!==null&&p.rentalDay<state.day&&p.preferredHz>p.ownedHz;
- return {selectedHz:p.selectedHz,effectiveHz,legacy,expired,buttonLabel:quotePackageName(effectiveHz),paid:p.paid,
-  renewalNote:p.legacyOwnedHz>1?'原已购档位继续可用。更高档位按日补差价，次日点续租才扣款。':'按交易日租用，当天升级补差价。次日保留上次选择，点续租才扣款；未续租时用免费档。',
-  note:legacy?'本日沿用旧存档行情，下一交易日可租用。':expired?`上次选择：${quotePackageName(p.preferredHz)}。今天要继续用吗？`:`第 ${state.day} 日 · 用到今日收盘`,
-  cards:QUOTE_PACKAGES.map(option=>{const offer=quotePackageOffer(state,option.hz,{availableCash,canPurchase:canPurchase&&!legacy}),selected=p.selectedHz===option.hz;
-   return {...option,...offer,selected,disabled:selected||!offer.valid,actionLabel:selected?'使用中':offer.owned?'切换使用':`${expired&&p.preferredHz===option.hz?'今天续租':p.ownedHz>1?'今日升级':'今天租用'} · ${yen(offer.price)}`,costLabel:option.hz>1&&option.hz<=p.legacyOwnedHz?'原已购 · 持续可用':option.dailyPrice?`${yen(option.dailyPrice)} / 日`:'免费'};
+ return {selectedHz:p.selectedHz,effectiveHz,legacy,expired,buttonLabel:p.renewalBlocked?'续租已暂停 · 调整看盘':quotePackageName(effectiveHz),paid:p.paid,
+  renewalNote:p.legacyOwnedHz>1?'原已购档位继续可用。更高档位按交易日自动续租，当天升级补差价。可随时降档。':'沿用你的选择，按交易日自动续租；当天升级补差价，降档不退当日费用。可随时选免费档停止续租。',
+  note:p.renewalBlocked?`${p.renewal?.reason||'可用资金不足'}，${quotePackageName(p.preferredHz)}续租已暂停。当前使用${quotePackageName(effectiveHz)}，不会自动重试扣款。请选择免费档或手动重新租用。`:legacy?'本日沿用旧存档行情，下一交易日可租用。':expired?`上次选择：${quotePackageName(p.preferredHz)}。旧档本日未续租，不补扣历史费用。手动租用后或下一交易日起自动沿用。`:`第 ${state.day} 日 · 用到今日收盘`,
+  cards:QUOTE_PACKAGES.map(option=>{const offer=quotePackageOffer(state,option.hz,{availableCash,canPurchase:canPurchase&&!legacy}),selected=p.selectedHz===option.hz&&(!(p.renewalBlocked||expired)||p.preferredHz===option.hz);
+   return {...option,...offer,selected,disabled:selected||!offer.valid,actionLabel:selected?'使用中':offer.owned?'切换使用':`${p.renewalBlocked&&p.preferredHz===option.hz?'重新租用':expired&&p.preferredHz===option.hz?'今天续租':p.ownedHz>1?'今日升级':'今天租用'} · ${yen(offer.price)}`,costLabel:option.hz>1&&option.hz<=p.legacyOwnedHz?'原已购 · 持续可用':option.dailyPrice?`${yen(option.dailyPrice)} / 日`:'免费'};
   }),receipts:p.receipts.map(r=>({day:r.day,hz:r.hz,amount:r.amount,label:`第 ${r.day} 日 · ${quotePackageName(r.hz)} · ${yen(r.amount)}${r.kind==='daily-rental'?'':' · 原已购权益'}`}))};
 }
 export function quotePackageMarkup(state,options){

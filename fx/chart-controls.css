@@ -25,6 +25,9 @@
 .candle-view-controls button{font:inherit;border:1px solid #817186;border-radius:5px;background:#3d3445;color:#f8edf5;padding:6px 8px;min-height:32px;white-space:nowrap}
 .candle-view-controls button[aria-pressed=true]{background:#f1b2d0;color:#322337}.candle-view-controls button:disabled{opacity:.45}.candle-view-controls button:focus-visible{outline:2px solid #c56c99;outline-offset:2px}
 .candle-history{display:flex;align-items:center;gap:8px;flex:1 0 100%;color:inherit}.candle-history[hidden]{display:none}.candle-history input{flex:1;min-width:0;accent-color:#b74f80}
-#chart{min-height:220px;max-height:580px;resize:vertical;overflow:auto}#chart svg{height:100%;min-height:220px}
+/* Block SVGs avoid the inline baseline gap that caused a native scrollbar.
+   Height is controlled by the existing chart button; axes stay fully visible. */
+#chart,.recap-candle-plot{min-height:220px;max-height:580px;resize:none;overflow:visible}
+#chart svg,.recap-candle-plot svg{display:block;width:100%;height:100%;min-height:220px}
 .daily-recap .candle-view-controls button{background:#fff7fb;color:#813e62;border-color:#c994b0;font-size:11px!important;padding:6px 8px!important}.daily-recap .candle-view-controls button[aria-pressed=true]{background:#b14679;color:white}
-.candle-view-notice{font-size:11px;line-height:1.6;margin:5px 0;color:#8a5e77;overflow-wrap:anywhere}.recap-candle-plot{height:280px;min-height:220px;max-height:580px;resize:vertical;overflow:auto}.recap-candle-plot svg{height:100%;min-height:220px}
+.candle-view-notice{font-size:11px;line-height:1.6;margin:5px 0;color:#8a5e77;overflow-wrap:anywhere}.recap-candle-plot{height:280px}

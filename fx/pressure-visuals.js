@@ -6,10 +6,10 @@ export const PRESSURE_CRACKS=Object.freeze([
  {at:8,path:'M131 38 L118 31 L105 49 L88 43 L73 64'},
  {at:10,path:'M70 12 L75 34 L63 45 M164 39 L161 55 L174 64 M118 31 L128 16 L151 10'},
 ]);
-export function pressureVisual(taps,{reduced=false,unlocked=false}={}){
- const value=Math.max(0,Math.min(12,Number.isFinite(taps)?taps:0)),intensity=value/12;
- return {taps:value,intensity,stage:unlocked?'broken':value>=10?'rupture':value>=7?'fracture':value>=3?'crack':'strained',
-  visibleBranches:PRESSURE_CRACKS.filter(p=>value>=p.at).length,displacement:reduced?0:1+6*intensity,
-  duration:reduced?0:unlocked?460:120+140*intensity,rift:!reduced&&value>=8,
-  hint:unlocked?'已突破，再选一次。至少 25×，新单不设止损。':`${PRESSURE_TOOLTIP} · ${value}/12`};
+export function pressureVisual(taps,{reduced=false,unlocked=false,target=5}={}){
+ const value=Math.max(0,Math.min(target,Number.isFinite(taps)?taps:0)),intensity=target?value/target:0,progress=intensity*12;
+ return {taps:value,intensity,stage:unlocked?'broken':progress>=10?'rupture':progress>=7?'fracture':progress>=3?'crack':'strained',
+  visibleBranches:PRESSURE_CRACKS.filter(p=>progress>=p.at).length,displacement:reduced?0:1+6*intensity,
+  duration:reduced?0:unlocked?460:120+140*intensity,rift:!reduced&&progress>=8,
+  hint:unlocked?'已突破，再选一次。至少 25×，新单不设止损。':`${PRESSURE_TOOLTIP} · ${value}/${target}`};
 }

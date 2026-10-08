@@ -65,3 +65,19 @@
 /* A body-hosted manual popover stays viewport-sized above native dialogs. */
 .recap-screen[popover]{border:0;margin:0;padding:0;width:100vw;height:100vh;max-width:none;max-height:none;background:transparent;color:inherit}
 .recap-screen[popover]::backdrop{background:transparent;pointer-events:none}
+
+/* Daily living stays a compact paid receipt; changing plans is opt-in. */
+.living-receipt{margin:12px 0;padding:11px 13px}
+.living-receipt-summary{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 14px;min-width:0}
+.living-receipt-summary>h3,.living-receipt-summary>p{margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.living-receipt-summary>h3{font-size:14px;line-height:1.6}
+.consumption-statement>h3{margin:10px 0 3px;font-size:12px}
+.consumption-statement>p{margin:3px 0}
+.living-adjustment{margin-top:5px;min-width:0}
+.living-adjustment>summary{width:fit-content;max-width:100%;box-sizing:border-box;min-height:36px;padding:8px 0;font-size:12px;line-height:20px;color:#8e3a62;cursor:pointer}
+.living-adjustment>summary:focus-visible{outline:2px solid #a34670;outline-offset:3px;border-radius:3px}
+.living-adjustment[open]>summary{margin-bottom:3px}
+.living-adjustment>p{margin:0 0 5px}
+.living-plan-choices{display:grid;gap:7px;min-width:0}
+.living-plan-choices>.secondary{margin:0;min-height:44px;padding:9px 10px;font-size:12px;line-height:1.6;white-space:normal;overflow-wrap:anywhere;text-align:left}
+.living-adjustment>small{display:block;margin-top:8px}

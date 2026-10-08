@@ -1,9 +1,9 @@
-import {selectComicScene} from './comic-scenes.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {recordedComicEvents,createComicReceiptGate} from './event-comic-events.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {setImage} from './assets.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
-import {settlementPresentation} from './settlement-stage.js?v=295e20358213d4ea13e57d98c0bfc3b6ffe341ec-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {createEventComicQueue} from './event-comic-queue.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {setImage} from './assets.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
+import {settlementPresentation} from './settlement-stage.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-fc3a14bb1c49';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -55,10 +55,10 @@ export function createEventComicPresenter({root=document,initialState,getContext
   queue.enqueue(incoming.filter(item=>item.context===getContext()).flatMap(item=>item.scenes));
  }
  function scheduleDelivery(){if(deliveryTimer===null&&deliveries.length&&safe())deliveryTimer=setTimeout(flushDeliveries,0);}
- const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{deliveries.push({context:getContext(),scenes});scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];queue.reset();}});
+ const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes.filter(scene=>scene.manualOnly));const automatic=scenes.filter(scene=>!scene.manualOnly);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];queue.reset();}});
  // A loaded save is already durable. Rebuild read-only scenes from its own
  // current-day receipts, but never autoplay them or call economic handlers.
- savedReplay=structuredClone(recordedComicEvents(initialState).map(event=>selectComicScene(initialState,event,{assets:COMIC_PRESENTATION_ASSETS})).filter(Boolean));
+ savedReplay=structuredClone(recordedComicScenes(initialState,(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS})));
  paint(queue.state);
  function dismiss(){queue.dismiss();if(opener?.isConnected&&!opener.disabled)opener.focus?.({preventScroll:true});onIdle();}
  close.addEventListener('click',dismiss);
@@ -80,7 +80,7 @@ export function createEventComicPresenter({root=document,initialState,getContext
   commit:(ticket,saved)=>gate.commit(ticket,{saved,context:getContext(),blocked:!valid()}),
   invalidate:()=>gate.invalidate(),
   refresh:refreshPresentation,
-  presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0||(restoredDayBoundary&&savedReplay.length>0);},
+  presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0||(restoredDayBoundary&&savedReplay.some(scene=>!scene.manualOnly));},
   dispose(){disposed=true;gate.invalidate();root.removeEventListener?.('close',afterOtherDialogClose,true);win?.removeEventListener('popstate',dismissNavigation);win?.removeEventListener('pagehide',dismissNavigation);dialog.remove();launcher.remove();},
   get state(){return queue.state;},
  };

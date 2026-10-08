@@ -1,5 +1,5 @@
 // A saved, bounded impulse. This never edits an order, cash, debt or unlock flag.
-export const PRESSURE_TAPS = 12;
+export const PRESSURE_TAPS = 5;
 export const PRESSURE_GRACE_MS = 8000;
 export const PRESSURE_DECAY_MS = 2000;
 export const PRESSURE_TAP_INTERVAL_MS = 80;
@@ -7,16 +7,25 @@ const finite = (value, fallback=0) => Number.isFinite(value) ? value : fallback;
 const clamp = (value, low=0, high=1) => Math.max(low, Math.min(high, finite(value)));
 const context = s => `${s.mode || 'story'}:${s.runId || s.seed}:${s.day}`;
 
+// Match the existing psychological risk caps (40 / 65), for either mood.
+export function pressureTarget(s,{kind,value,limits,hardBlocked=false}={}) {
+ if(emotionControlState({kind,value,limits,hardBlocked})!=='soft')return 0;
+ const threshold=kind==='leverage'?(value>50?65:40):(value>.5?65:40);
+ const gap=Math.max(0,threshold-finite(s.sanity,50));
+ return gap<=10?3:gap<=25?4:5;
+}
 export function pressureStatus(s, now=Date.now()) {
   const p=s?.emotionPressure;
+  // Old saved bursts retain their original denominator; no financial migration.
+  const target=p?.target??12;
   if (!p || p.context!==context(s) || !['ecstatic','despair'].includes(p.direction)
-      || !Number.isInteger(p.taps) || p.taps<1 || p.taps>PRESSURE_TAPS
+      || !Number.isInteger(p.taps) || p.taps<1 || p.taps>target || ![3,4,5,12].includes(target)
       || !Number.isFinite(p.lastAt) || !Number.isFinite(now) || p.lastAt>now+1000)
-    return {taps:0, intensity:0, extreme:false, direction:null, remainingMs:0};
+    return {taps:0, target:0, intensity:0, extreme:false, direction:null, remainingMs:0};
   const elapsed=Math.max(0,now-p.lastAt);
   const cooled=Math.floor(Math.max(0,elapsed-PRESSURE_GRACE_MS)/PRESSURE_DECAY_MS);
   const taps=Math.max(0,p.taps-cooled);
-  return {taps,intensity:taps/PRESSURE_TAPS,extreme:taps===PRESSURE_TAPS,
+  return {taps,target:taps?target:0,intensity:taps/target,extreme:taps===target,
     direction:taps?p.direction:null,remainingMs:Math.max(0,PRESSURE_GRACE_MS+PRESSURE_DECAY_MS-elapsed)};
 }
 
@@ -57,12 +66,14 @@ export function pressEmotion(s,{kind,value,limits,hardBlocked=false,emotion,prof
   if (previous.taps && now-s.emotionPressure.lastAt<PRESSURE_TAP_INTERVAL_MS)
     return {accepted:false,reason:'too-fast',...previous};
   const direction=previous.direction || pressureDirection({emotion,sanity:s.sanity,profit,unrealized});
-  const taps=Math.min(PRESSURE_TAPS,previous.taps+1);
-  s.emotionPressure={context:context(s),direction,taps,lastAt:now};
+  const target=previous.taps && previous.target!==12?previous.target:pressureTarget(s,{kind,value,limits,hardBlocked});
+  const priorTaps=previous.target===12?Math.floor(previous.intensity*target):previous.taps;
+  const taps=Math.min(target,priorTaps+1);
+  s.emotionPressure={context:context(s),direction,taps,target,lastAt:now};
   // The existing psychological system bears the cost and recovers normally.
   s.stress=Math.max(0,finite(s.stress))+.5;
   if (taps%3===0) s.heat=clamp(finite(s.heat)+1,0,5);
-  return {accepted:true,unlocked:taps===PRESSURE_TAPS,...pressureStatus(s,now)};
+  return {accepted:true,unlocked:taps===target,...pressureStatus(s,now)};
 }
 
 export function pressureFeedback(intensity) {

@@ -15,18 +15,20 @@ export function recordedComicEvents(state) {
  if(state.fatherDiscovery?.eventId)events.push({type:'father-discovery',eventId:state.fatherDiscovery.eventId});
  events.push({type:'father-found'});
  for(const [type,field] of [['loan-borrow','lastBorrow'],['loan-repayment','lastRepayment']])if(state.loan?.[field])events.push({type,result:state.loan[field]});
- const living=state.dayReport?.livingSettlement?.receipt;if(living)events.push({type:'living',receipt:living});
- for(const receipt of state.quotePackage?.receipts||[])if(today(receipt))events.push({type:'quote-package',receipt});
+ const living=state.dayReport?.livingSettlement?.receipt;if(living)events.push({type:'living',receipt:living,manualOnly:living.kind==='ordinary'});
+ for(const receipt of state.quotePackage?.receipts||[])if(today(receipt))events.push({type:'quote-package',receipt,manualOnly:state.quotePackage.renewal?.status==='renewed'&&state.quotePackage.renewal.day===receipt.day&&state.quotePackage.renewal.hz===receipt.hz});
  for(const receipt of state.history||[])if(today(receipt)&&receipt.type!=='open')events.push({type:'trade',receipt});
  events.push({type:'day-close'},{type:'walkaway'});
  return events;
 }
 
+export function recordedComicScenes(state,select){return recordedComicEvents(state).map(event=>{const scene=select(state,event);return scene?{...scene,manualOnly:event.manualOnly===true}:null;}).filter(Boolean);}
+
 // Only the context owner may certify the save. A returned ticket contains frozen
 // presentation data selected BEFORE an asynchronous save, never future state.
 export function createComicReceiptGate({initialState,context,select,onScenes=()=>{},onReset=()=>{}}) {
  let currentContext=context,revision=0,seen=new Set();
- const scenes=state=>recordedComicEvents(state).map(event=>select(state,event)).filter(Boolean);
+ const scenes=state=>recordedComicScenes(state,select);
  function rebase(state,nextContext){currentContext=nextContext;revision++;seen=new Set(scenes(state).map(scene=>scene.receiptKey));onReset();}
  rebase(initialState,context);
  return {
