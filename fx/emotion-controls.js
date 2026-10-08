@@ -1,5 +1,6 @@
-import {PRESSURE_TAPS,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {PRESSURE_TAPS,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];
@@ -13,6 +14,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     const paths=PRESSURE_CRACKS.map(spec=>{const path=root.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);svg.append(path);return {path,at:spec.at};});
     const count=root.createElement('span');count.className='pressure-count';count.setAttribute('aria-hidden','true');count.hidden=true;button.append(svg,count);button.dataset.pressureLabel=original.get(button).text;decorations.set(button,{svg,paths,count});
   }
+  const presentation=createPressurePresentation({root,motion,enabled:motionEnabled});
   let animation=null,lastSignature='',lastStateKey='',disposed=false,hintTimer,breakTimer;
   const target=button=>({kind:button.hasAttribute('data-stake')?'stake':'leverage',value:Number(button.dataset.stake??button.dataset.leverage)});
   const classify=button=>emotionControlState({...target(button),limits:getLimits(),hardBlocked:getContext(button).hardBlocked});
@@ -28,7 +30,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   }
   function render() {
     const state=getState(),stateKey=`${state.mode}:${state.runId||state.seed}`;
-    if(lastStateKey&&lastStateKey!==stateKey){animation?.cancel();hideHint();clearTimeout(breakTimer);for(const b of buttons)b.classList.remove('pressure-breaking');}
+    if(lastStateKey&&lastStateKey!==stateKey){presentation.clear();animation?.cancel();hideHint();clearTimeout(breakTimer);for(const b of buttons)b.classList.remove('pressure-breaking');}
     lastStateKey=stateKey;
     const p=pressureStatus(state),visual=pressureVisual(p.taps,{reduced:reduced(),unlocked:p.extreme});
     for(const button of buttons){
@@ -46,7 +48,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
       }
     }
     panel.hidden=true;meter.value=p.taps;meter.setAttribute('aria-valuetext',`${p.taps} / ${PRESSURE_TAPS}`);
-    const next=p.extreme?'已突破，请再选一次。不会自动下单；至少25倍，新单不能设止损。':p.taps?`突破进度 ${p.taps}/${PRESSURE_TAPS}。${p.direction==='despair'?'绝望':'亢奋'}压力正在积累。`:'连续点击可突破限制。';
+    const next=p.extreme?'已突破，再选一次。至少25×，新单不设止损。':p.taps?`突破进度 ${p.taps}/${PRESSURE_TAPS}。${p.direction==='despair'?'绝望':'亢奋'}压力正在积累。`:'连续点击可突破限制。';
     if(status.textContent!==next)status.textContent=next;
     lastSignature=`${stateKey}:${p.taps}:${p.direction}`;
   }
@@ -57,15 +59,11 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     const feedback=pressureFeedback(result.intensity),visual=pressureVisual(result.taps,{reduced:reduced(),unlocked:result.unlocked});
     audio?.unlock();audio?.effect(result.unlocked?'pressure-break':'pressure-hit',feedback);animation?.cancel();
     onChange(result);render();showHint(button,visual.hint,result.unlocked?3200:2600);
-    if(!reduced()){
-      const x=visual.displacement;
-      animation=motion?.animate(button,[{transform:'none'},{transform:`translate(${-x}px,1px) rotate(-.6deg)`},{transform:`translate(${x}px,-1px) rotate(.6deg)`},{transform:`translate(${-x*.4}px,0)`},{transform:'none'}],{duration:visual.duration});
-      if(result.unlocked){button.classList.add('pressure-breaking');clearTimeout(breakTimer);breakTimer=setTimeout(()=>button.classList.remove('pressure-breaking'),550);}
-    }
+    presentation.play(button,{taps:result.taps,unlocked:result.unlocked});
   }
   function onKey(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(event.repeat&&buttons.includes(button)&&classify(button)==='soft'&&['Enter',' '].includes(event.key))event.preventDefault();}
   function onHint(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(button&&buttons.includes(button)&&classify(button)==='soft')showHint(button,pressureVisual(pressureStatus(getState()).taps).hint,5000);}
   root.addEventListener('click',onClick,true);root.addEventListener('keydown',onKey,true);root.addEventListener('pointerover',onHint);root.addEventListener('focusin',onHint);root.addEventListener('scroll',hideHint,true);
   const interval=setInterval(()=>{if(disposed||root.hidden)return;const state=getState(),p=pressureStatus(state),signature=`${state.mode}:${state.runId||state.seed}:${p.taps}:${p.direction}`;if(signature!==lastSignature){onChange({cooled:true,...p});render();}},500);
-  return {render,dispose(){disposed=true;clearInterval(interval);clearTimeout(breakTimer);hideHint();animation?.cancel();tooltip.remove();root.removeEventListener('click',onClick,true);root.removeEventListener('keydown',onKey,true);root.removeEventListener('pointerover',onHint);root.removeEventListener('focusin',onHint);root.removeEventListener('scroll',hideHint,true);}};
+  return {render,dispose(){disposed=true;presentation.dispose();clearInterval(interval);clearTimeout(breakTimer);hideHint();animation?.cancel();tooltip.remove();root.removeEventListener('click',onClick,true);root.removeEventListener('keydown',onKey,true);root.removeEventListener('pointerover',onHint);root.removeEventListener('focusin',onHint);root.removeEventListener('scroll',hideHint,true);}};
 }

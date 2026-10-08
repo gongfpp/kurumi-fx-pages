@@ -1,9 +1,9 @@
-import {consumptionStatement} from './consumption-ledger.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {runPerformance} from './performance.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {runPerformance} from './performance.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -38,8 +38,8 @@ export function buildRecapSnapshot(state={},options={}){
  const primary=state.mode==='endless'?{scope:'cumulative',label:'累计已实现交易收益',profit:totalProfit,returnRate:totalReturn}:{scope:'today',label:dayMetrics.tradingNetPartial?'今日交易盈亏 · 留存样本':report?'今日交易净盈亏':'今日已实现交易盈亏',profit:tradingNet,returnRate:dayReturn};
  const allCandles=timedCandles(state),dayCandleStart=allCandles.findIndex(c=>c.day===state.day),dayCandleEnd=allCandles.findLastIndex(c=>c.day===state.day)+1,candleMovingAverages=dayCandleStart<0?[]:movingAverageSeries(state.candles,{start:dayCandleStart,end:dayCandleEnd});
  const snapshot={version:1,id:`${state.runId||state.seed||0}:${state.day}:${closeTime}:${tradingNet}:${costs}`,day:state.day||1,mode:state.mode||'story',sealed:!!report,timestamp:closeTime,
-  primary,daily:{tradingNet,tradingNetPartial:dayMetrics.tradingNetPartial,returnRate:dayReturn,returnDenominator:dayMetrics.denominator,returnDenominatorSource:dayMetrics.source,returnBasis:'今日已实现净交易盈亏 ÷ 开盘扣债净资产；借入本金不计分子，日内借还不改变开盘分母',openingNominal:opening,closingNominal:closing,nominalChange:amount(closing-opening),costs:{total:costs,living,interest,consumption},netResult:amount(tradingNet-costs),fundingIncludingAccruedInterest:funding,fundingPrincipal:amount(funding-interestAccrued),interestAccrued,returnUnavailable:dayMetrics.returnUnavailable,noodlesUsed:!!state.itemsUsed?.noodles,livingStatus:report?.livingSettlement?.status||(report?'legacy-paid':'not-due'),pendingLivingCost:finite(report?.pendingLivingCost)},
-  cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计已实现净交易盈亏 ÷ 初始游戏本金；借款、消费与浮盈不计入收益率'},
+  primary,daily:{tradingNet,tradingNetPartial:dayMetrics.tradingNetPartial,returnRate:dayReturn,returnDenominator:dayMetrics.denominator,returnDenominatorSource:dayMetrics.source,returnBasis:'今日收益率 = 今日已实现净盈亏 ÷ 开盘净资产',openingNominal:opening,closingNominal:closing,nominalChange:amount(closing-opening),costs:{total:costs,living,interest,consumption},netResult:amount(tradingNet-costs),fundingIncludingAccruedInterest:funding,fundingPrincipal:amount(funding-interestAccrued),interestAccrued,returnUnavailable:dayMetrics.returnUnavailable,noodlesUsed:!!state.itemsUsed?.noodles,livingStatus:report?.livingSettlement?.status||(report?'legacy-paid':'not-due'),pendingLivingCost:finite(report?.pendingLivingCost)},
+  cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计收益率 = 累计已实现净盈亏 ÷ 初始本金'},
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
   curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial:recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||state.accountingJournal?.truncatedDays?.includes(state.day),cumulativePartial:!!state.accountingJournal?.legacyPartial||!state.accountingJournal||hasEarlierGap,unit:'日元 / ¥',timeUnit:'游戏交易时间 · JST'},
@@ -51,10 +51,10 @@ export function recapSegments(snapshot){
  const d=snapshot.daily,opening=d.openingNominal,closing=amount(opening+d.tradingNet);
  return [{id:'opening',label:'开盘交易资产',delta:0,from:opening,to:opening},
  {id:'trading',label:'已实现交易净盈亏',delta:d.tradingNet,from:opening,to:closing},
- {id:'closing',label:'交易收盘资产（剔除借还与消费）',delta:0,from:closing,to:closing}];
+ {id:'closing',label:'交易收盘资产',delta:0,from:closing,to:closing}];
 }
 export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';

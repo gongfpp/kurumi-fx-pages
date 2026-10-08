@@ -1,5 +1,5 @@
-import {accountingValues} from './accounting-journal.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({
@@ -32,9 +32,9 @@ export function classifyEnding(state={}){
  const evidence={baseId,initialCapital,nominalAssets:values.nominalAssets,netAssets,fatherDebt,networkDebt,totalDebt,fatherBorrowed,fatherPrincipal,fatherRepaid,networkBorrowed,networkRepaid,realizedNetTradingPnl,realizedPeak:p.realizedPeak,realizedTrough:p.realizedTrough,realizedPathComplete:p.realizedPathComplete};
  let variant=null,matchedRule=null;
  if(totalDebt>.005&&(baseId==='broke'||values.nominalAssets<1000)){
-  variant='debt-exit';matchedRule='未还债务 > 0，且基础结局为 broke 或名义资产 < ¥1,000';
+  variant='debt-exit';matchedRule='未还债务 > 0，且基础结局为 broke 或账户总资产 < ¥1,000';
  }else if(totalDebt>.005&&values.nominalAssets>=1000000&&netAssets<=values.nominalAssets*.1){
-  variant='paper-millionaire';matchedRule='名义资产 ≥ ¥1,000,000，且扣债净资产不超过名义资产的 10%';
+  variant='paper-millionaire';matchedRule='账户总资产 ≥ ¥1,000,000，且扣债净资产不超过账户总资产的 10%';
  }else if(p.realizedPathComplete&&p.realizedPeak>=initialCapital&&realizedNetTradingPnl!==null&&realizedNetTradingPnl<=p.realizedPeak*.1&&p.realizedPeak-realizedNetTradingPnl>=initialCapital){
   variant='gave-it-back';matchedRule='已实现利润峰值 ≥ 初始本金，利润回吐 ≥ 初始本金，剩余利润 ≤ 峰值的 10%';
  }else if(baseId==='walkaway'&&p.realizedPathComplete&&p.realizedTrough<=-initialCapital*.5&&realizedNetTradingPnl>=-.005&&netAssets>=initialCapital-.005){

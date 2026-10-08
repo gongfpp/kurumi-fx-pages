@@ -1,15 +1,21 @@
-import {recapSegments,recapIntensity} from './daily-recap.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-// A cancellable presentation clock; it has no game state or economic callbacks.
-export function createRecapPlayer(snapshot,{render,onCue=()=>{},enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
- const segments=recapSegments(snapshot),intensity=recapIntensity(snapshot),duration=enabled&&!reducedMotion?Math.min(7200,2800+intensity*4400):0;
- let frame=null,stopped=false,lastSegment=-1,started=now();
- const draw=progress=>{const position=progress*(segments.length-1),index=Math.min(segments.length-1,Math.floor(position)),segment=segments[index],local=progress===1?1:position-index,eased=1-(1-local)**3;
-  render({progress,segment,index,value:segment.from+(segment.to-segment.from)*eased,intensity,complete:progress===1,candleCount:Math.ceil(progress*snapshot.candles.length)});
-  if(index!==lastSegment){lastSegment=index;if(duration&&index>0)onCue({segment,intensity,rate:.9+index*.08});}
+import {recapSegments} from './daily-recap.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+// Cancellable, repeatable presentation. No game state, save or economic callbacks.
+export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
+ const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;
+ let frame=null,stopped=false,lastBeat=-1,finalCued=false,started=now();
+ const cues=Object.freeze(presentation.beatTimes.map((atMs,beat)=>Object.freeze({...recapBeatCue(presentation,beat),atMs,beat,final:false})).concat(presentation.direction==='flat'?[]:[Object.freeze({...recapBeatCue(presentation,presentation.beats-1,{final:true}),atMs:presentation.countDuration,beat:presentation.beats-1,final:true})]));
+ const timeline=duration&&typeof onTimeline==='function'?onTimeline(cues,{startedAt:started}):null;
+ const draw=(elapsed,{silent=false}={})=>{
+  const counting=duration?Math.min(1,Math.max(0,elapsed/presentation.countDuration)):1,progress=duration?recapProgress(presentation,elapsed):1,index=progress===0?0:progress<1?1:segments.length-1,segment=segments[index];
+  const beat=duration?presentation.beatTimes.filter(t=>t<=elapsed).length-1:-1,complete=!duration||elapsed>=duration,stage=complete?'complete':counting>=1?'landing':counting>=.93?'anticipation':counting<.09?'opening':'counting';
+  render({progress,segment,index,value:snapshot.daily.openingNominal+snapshot.daily.tradingNet*progress,intensity:presentation.intensity,complete,candleCount:Math.ceil(progress*snapshot.candles.length),stage,beat,presentation});
+  if(!silent&&!timeline&&duration&&counting<1&&beat>lastBeat){lastBeat=beat;if(elapsed-presentation.beatTimes[beat]<=65)onCue({...recapBeatCue(presentation,beat),segment,intensity:presentation.intensity,beat,final:false});}
+  if(!silent&&!timeline&&duration&&counting===1&&!finalCued&&presentation.direction!=='flat'){finalCued=true;onCue({...recapBeatCue(presentation,presentation.beats-1,{final:true}),segment,intensity:presentation.intensity,beat,final:true});}
  };
- const tick=time=>{frame=null;if(stopped)return;const progress=duration?Math.min(1,Math.max(0,(time-started)/duration)):1;draw(progress);if(progress<1)frame=requestFrame(tick);};
- const cancel=()=>{stopped=true;if(frame!==null){cancelFrame(frame);frame=null;}};
- const finish=()=>{cancel();draw(1);};
- if(duration){draw(0);frame=requestFrame(tick);}else draw(1);
- return{cancel,finish,duration,snapshot};
+ const tick=time=>{frame=null;if(stopped)return;const elapsed=Math.max(0,time-started);draw(elapsed);if(elapsed<duration)frame=requestFrame(tick);};
+ const cancel=()=>{stopped=true;timeline?.cancel?.();if(frame!==null){cancelFrame(frame);frame=null;}};
+ const finish=()=>{cancel();draw(duration,{silent:true});};
+ if(duration){draw(0);frame=requestFrame(tick);}else draw(0,{silent:true});
+ return{cancel,finish,duration,snapshot,presentation,cues};
 }

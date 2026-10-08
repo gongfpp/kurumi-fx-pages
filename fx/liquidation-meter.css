@@ -15,3 +15,7 @@
 .position-close-all{appearance:none;border:1px solid #b34d79;border-radius:7px;background:#fff0f6;color:#863655;font:inherit;font-size:12px;font-weight:750;padding:7px 12px;min-height:36px;white-space:nowrap;box-shadow:0 2px 0 #c28b9e;cursor:pointer}
 .position-close-all:not(:disabled):hover{background:#f9dbe9}.position-close-all:not(:disabled):active{transform:translateY(2px);box-shadow:none}
 .position-close-all:focus-visible{outline:3px solid #705fba;outline-offset:3px}.position-close-all:disabled{opacity:.45;cursor:default;box-shadow:none}
+
+.liquidation-meter-legend{font-size:11px;font-weight:500;color:#8a6d7f}.liquidation-meter-track{height:9px;background:linear-gradient(90deg,#dcebe1,#f2e6ce 65%,#f4d6e2);border:1px solid #d2bcc9}.liquidation-meter-fill{min-width:0}.liquidation-meter-value.is-critical .liquidation-meter-legend{color:#a93669}
+
+.risk-progress{height:7px;margin-top:11px;background:#ece1df}.risk-progress i{background:#c4a567}.risk-progress.is-warning i{background:#dc9b28}.risk-progress.is-critical i{background:#d14861}.risk-progress.is-unknown{background:repeating-linear-gradient(135deg,#eee6e7 0 5px,#faf7f7 5px 10px)}.position-risk-label{font-size:11px;line-height:1.5;margin:5px 0 0;color:#886744}.position-risk-label[data-tone=critical]{color:#b4324e;font-weight:750}.position-risk-label[data-tone=unknown]{color:#8c7d88}@media(prefers-reduced-motion:reduce){.risk-progress i{transition:none}}

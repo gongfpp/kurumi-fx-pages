@@ -24,21 +24,22 @@ export function liquidationMeter(estimate) {
   return {...common,label,percent:absolute === 0 ? 0 : percent,tone:absolute === 0 ? 'critical' : common.tone};
 }
 
-export function renderLiquidationMeter(box,estimate) {
+export function renderLiquidationMeter(box,estimate,{showBar=true}={}) {
   const view=liquidationMeter(estimate);
   box.replaceChildren();box.hidden=Boolean(view.hidden);
   if(view.hidden)return;
-  const doc=box.ownerDocument,label=doc.createElement('span'),track=doc.createElement('span'),fill=doc.createElement('span');
+  const doc=box.ownerDocument,label=doc.createElement('span'),track=doc.createElement('span'),fill=doc.createElement('span'),legend=doc.createElement('span');
+  const consumed=view.percent===null?null:100-view.percent;legend.className='liquidation-meter-legend';legend.textContent=consumed===null?'缓冲暂不可估算':`亏损缓冲已消耗 ${Math.round(consumed)}% · 满格触发强平`;
   box.className=`liquidation-meter-value is-${view.tone}`;
   label.className='liquidation-meter-label';label.textContent=view.label;
   track.className='liquidation-meter-track';fill.className='liquidation-meter-fill';
   if(view.percent!==null){
-    track.setAttribute('role','progressbar');track.setAttribute('aria-label','距强平的剩余亏损缓冲');
+    track.setAttribute('role','progressbar');track.setAttribute('aria-label','亏损缓冲消耗，越满越接近强平');
     track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
-    track.setAttribute('aria-valuenow',String(Math.round(view.percent)));
+    track.setAttribute('aria-valuenow',String(Math.round(consumed)));
     track.setAttribute('aria-valuetext',view.label);
-    fill.style.width=`${view.percent}%`;
+    fill.style.width=`${consumed}%`;
   }else{track.setAttribute('aria-hidden','true');fill.style.width='0%';}
-  track.title='横条表示剩余可承受亏损占本仓零浮盈时缓冲的比例；上方文字按当前价计算。';
-  track.append(fill);box.append(label,track);
+  track.title='横条表示零浮盈时的亏损缓冲已消耗比例；0%为未消耗，100%为已触及强平，不是发生概率。上方距离按当前报价计算。';
+  track.append(fill);box.append(label);if(showBar)box.append(track,legend);
 }

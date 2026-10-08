@@ -1,5 +1,5 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
 export function mountOpeningReader({root=document,frame,getState,guard,save,onFinish,openSource,startingCapital=100000,targetProfit=20000000}){
   const $=id=>root.getElementById(id),dialog=$('opening-dialog'),footer=$('opening-nav');
@@ -15,7 +15,6 @@ export function mountOpeningReader({root=document,frame,getState,guard,save,onFi
     $('opening-next-label').textContent=index===OPENING_PAGES.length-1&&replay?'回到交易室 →':page.next;
     $('opening-next-hint').textContent=index===OPENING_PAGES.length-1?(replay?'返回':'开始'):'下一页';
     $('opening-next').setAttribute('aria-label',index===OPENING_PAGES.length-1?(replay?'结束重看，回到交易室':'读完序章，进入交易室'):`下一页：${OPENING_PAGES[index+1].title}`);
-    $('opening-source').textContent=page.panelId?'出处':'关于这一页';
     $('opening-save').textContent=replay?'重看中':'正在保存阅读进度…';
     frame.replaceChildren();
     const panel=openingPanel(page);
@@ -48,7 +47,6 @@ export function mountOpeningReader({root=document,frame,getState,guard,save,onFi
   $('opening-back').onclick=event=>move(-1,event);
   $('opening-next').onclick=event=>move(1,event);
   $('opening-skip').onclick=()=>session.skip();
-  $('opening-source').onclick=()=>openSource(openingPanel(sourcePage),sourcePage.sourceNote);
   dialog.addEventListener('cancel',event=>{event.preventDefault();session.skip();});
   dialog.addEventListener('close',()=>{saveRevision++;session.dismiss();});
   dialog.addEventListener('keydown',event=>{

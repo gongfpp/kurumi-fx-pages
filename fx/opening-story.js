@@ -1,15 +1,15 @@
-import {MANGA_PANELS} from './manga-panels.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
 // Four already-reviewed excerpts, in chapter-one order. The last page belongs
 // to this game's run; none of the manga's trades or balances are imported.
 export const OPENING_VERSION=1;
 export const OPENING_PAGES=Object.freeze([
-  Object.freeze({id:'family-loss',panelId:'family-loss',title:'童年的记忆',
-    text:'妈妈在 FX 中亏掉了两千万日元。',next:'那时的愿望 →',
+  Object.freeze({id:'family-loss',panelId:'family-loss',title:'2008年秋',
+    text:'妈妈在 FX 中亏掉了两千万日元。四个月后，她自杀了。',next:'那时的愿望 →',
     alt:'年幼的久留美受到惊吓，画面周围传来要求归还两千万日元的喊声。',
-    sourceNote:'第1话第8页。画面中的年幼久留美不是喊话者的可靠依据；母亲亏损2000万的背景由官方简介交叉核实。标题、摘要与翻页按钮为游戏编排。'}),
+    sourceNote:'第1话第8页。画面中的年幼久留美不是喊话者的可靠依据。官方简介（https://www.kadokawa.co.jp/topics/6121）核实：母亲在2008年秋因FX亏损2000万日元，四个月后自杀；此句交代后续背景，不声称画面正在描绘死亡。标题、摘要与翻页按钮为游戏编排。'}),
   Object.freeze({id:'recovery-vow',panelId:'recovery-vow',title:'那时的愿望',
-    text:'她把挽回家庭的希望，放在了“赚回来”上。',next:'长大以后 →',
+    text:'那时，久留美只想赚回两千万，让爸爸妈妈不要离婚。',next:'长大以后 →',
     alt:'年幼的久留美在书桌前立下愿望，希望赚回两千万日元，让父母不再离婚。',
     sourceNote:'第1话第11页。图中文字是在表达赚回2000万、阻止父母离婚的愿望，不是已经实现的收益或结局。摘要与翻页按钮为游戏编排。'}),
   Object.freeze({id:'ready',panelId:'ready',title:'2014年2月14日',
@@ -17,7 +17,7 @@ export const OPENING_PAGES=Object.freeze([
     alt:'成年的久留美面对屏幕，原图标注2014年2月14日、20岁、大学二年级，并写着“我準備好了”。',
     sourceNote:'第1话第36页。日期、年龄、年级均可从原图直接读到；按钮“我準備好了”沿用图中短句，其余界面为游戏编排。'}),
   Object.freeze({id:'rule',panelId:'rule',title:'第一笔交易之前',
-    text:'决心已经有了。市场却没有必胜法。',next:'打开交易软件 →',
+    text:'不存在必胜法。她还是打开了账户。',next:'打开交易软件 →',
     alt:'久留美闭眼思考，原图说明FX不存在必胜法。',
     sourceNote:'第1话第38页。原图说明FX不存在必胜法；标题、摘要与按钮为游戏衔接文案，不是漫画对白。'}),
   Object.freeze({id:'first-trade',panelId:null,title:'你的这一局',

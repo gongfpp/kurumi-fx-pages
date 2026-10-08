@@ -1,6 +1,6 @@
-import {grossPnlAt} from './market.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -67,7 +67,7 @@ const UI_STYLES=`
 .fx-ach-toast{width:340px;max-width:100%;box-sizing:border-box;display:grid;grid-template-columns:52px 1fr 24px;gap:12px;padding:16px;background:linear-gradient(115deg,#24303a,#151e25);color:#f5f7f9;border:1px solid #617481;border-top:3px solid #a4c967;box-shadow:0 8px 30px #0007;border-radius:5px;pointer-events:auto;font:14px/1.45 system-ui,sans-serif;animation:fx-ach-enter .28s ease-out}
 .fx-ach-badge{display:grid;place-items:center;width:48px;height:48px;background:#344743;border:1px solid #7d9b70;color:#c4e18e;border-radius:4px;font-weight:800;font-size:18px}
 .fx-ach-label{font-size:11px;color:#b5ca99;letter-spacing:.08em}.fx-ach-name{font-weight:750;font-size:16px;margin:3px 0}.fx-ach-copy{font-size:12px;color:#c5cfd6}.fx-ach-close{color:#bfcbd1;border:0;background:none;cursor:pointer;font-size:20px;align-self:start;padding:0;min-width:24px;min-height:24px}
-.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-manga summary{cursor:pointer}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-manga a{color:inherit}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}.fx-ach-hint{font-size:11px;margin-top:5px;opacity:.65}
+.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
 @keyframes fx-ach-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.fx-ach-host{right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.fx-ach-toast{width:310px;padding:12px;gap:9px}}
 @media(prefers-reduced-motion:reduce){.fx-ach-toast{animation:none}}
@@ -92,6 +92,14 @@ export function renderAchievementBook(container,profile={},state={}) {
     const text=el(doc,'div','fx-ach-content');text.append(el(doc,'div','fx-ach-name',def.name),el(doc,'div','fx-ach-copy',def.description));
     const status=def.unlocked?`已解锁 · ${new Date(def.unlockedAt).toLocaleDateString('zh-CN')}`:def.goal>1?`未解锁 · ${Math.floor(def.progress).toLocaleString('zh-CN')} / ${def.goal.toLocaleString('zh-CN')}`:'未解锁';
     if(def.legacyUnlocked)text.append(el(doc,'small','fx-ach-meta','旧版已解锁记录保留；未重新计算当时账单，新规则仅用于今后的解锁。'));
-    text.append(el(doc,'small','fx-ach-meta',status),el(doc,'div','fx-ach-hint',def.sourceNote));card.append(text);const source=achievementManga(def.id);if(source){const details=el(doc,'details','fx-ach-manga'),summary=el(doc,'summary','',`原作梗 · 第 ${source.panel.chapter} 话第 ${source.panel.page} 页`),image=el(doc,'img','fx-ach-source-image');setMangaImage(image,source.panel.original);image.alt=`原作参考 · ${source.panel.character} · ${source.panel.meaning}`;image.loading='lazy';const link=el(doc,'a','','固定版本原图 ↗');link.href=source.panel.sourceURL;link.target='_blank';link.rel='noopener';details.append(summary,el(doc,'p','fx-ach-copy',source.note),image,link);card.append(details);}container.append(card);
+    text.append(el(doc,'small','fx-ach-meta',status));card.append(text);
+    // Keep provenance in the catalog; the book shows only the achievement and its art.
+    const source=achievementManga(def.id);
+    if(source){
+      const art=el(doc,'div','fx-ach-manga'),image=el(doc,'img','fx-ach-source-image');
+      setMangaImage(image,source.panel.original);image.alt=`${def.name} · 成就插图`;
+      art.append(image);card.append(art);
+    }
+    container.append(card);
   }
 }

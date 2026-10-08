@@ -1,25 +1,21 @@
-import {tradingTrauma} from './trading-trauma.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {positionNetUnrealized,mood} from './engine.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {MOODS} from './content.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {positionNetUnrealized,mood} from './engine.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {MOODS} from './content.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {floatingReactionSnapshot} from './floating-reaction.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
-const positive=new Set(['hopeful','ecstatic','smug','relieved','warm','exhilarated','loss-to-profit']);
-const negative=new Set(['despair','anxious','nervous','regretful','stunned','profit-to-loss']);
 const generated=(path,emotion,label,scope,evidence)=>({kind:'generated',path,emotion,label,scope,evidence,sourceLabel:'原创同人',origin:'generated-game-art'});
 const plain=(emotion,scope,evidence)=>generated(`./expressions/kurumi-${MOODS[emotion]?.[1]||'calm'}.webp`,emotion,MOODS[emotion]?.[0]||'平静',scope,evidence);
 const art=(key,emotion,label,scope,evidence)=>generated(GENERATED_EXTREME_EXPRESSIONS[key].path,emotion,label,scope,evidence);
 
-// manga must be the result of the strict original-panel matcher; this function
-// never widens that match. Sealed daily net, not cumulative profit, anchors recap.
-export function selectFinalPortrait(state,{manga=null,sealedOutcome=null}={}){
+// Character portraits use authored fan-art only. Story panels keep their own
+// exact narrative matcher elsewhere; a panel cannot become the avatar.
+export function selectFinalPortrait(state,{sealedOutcome=null,floatingReaction=null}={}){
   const sealed=sealedOutcome&&Number.isFinite(sealedOutcome.net)&&Number.isInteger(sealedOutcome.day)
     ?{...sealedOutcome,kind:sealedOutcome.net<0?'loss':sealedOutcome.net>0?'profit':'flat'}:null;
   const trauma=tradingTrauma(state),sameDay=!sealed||sealed.day===state.day;
   if(trauma.active&&sameDay)return art(trauma.art,trauma.mood,trauma.label,'trauma',{level:trauma.level,cap:trauma.cap});
-  const panel=manga?.panel,verified=!!panel?.original&&!!panel?.sha256&&!!panel?.sourceCommit;
-  const incompatible=sealed&&(manga?.scope==='intraday'||sealed.net<=0&&(positive.has(manga?.emotion)||panel?.id==='profit'||panel?.id==='long-profit')||sealed.net>=0&&negative.has(manga?.emotion));
-  if(verified&&!incompatible)return {kind:'manga',panel,emotion:manga.emotion||null,label:MOODS[manga.emotion]?.[0]||'',scope:sealed?'sealed-day':'live',evidence:sealed||manga.reason,sourceLabel:'原作漫画',origin:'original-manga'};
   if(sealed){
     const report=state.dayReport?.day===sealed.day?state.dayReport:null,opening=Math.max(1,Number.isFinite(report?.opening)?report.opening:state.startEquity||100000);
     if(sealed.net<0){
@@ -37,11 +33,14 @@ export function selectFinalPortrait(state,{manga=null,sealedOutcome=null}={}){
   const natural=Array.isArray(state.recent)?mood(state):'calm';
   if(orders.length){
     const net=orders.reduce((sum,p)=>sum+positionNetUnrealized(state,p),0);
-    return plain(net>0?(positive.has(natural)?natural:'smug'):net<0?(negative.has(natural)?natural:'anxious'):'focused','floating',{net});
+    const reaction=floatingReaction||floatingReactionSnapshot(state);
+    if(reaction){const portrait=plain(reaction.emotion,'floating',reaction.evidence);return {...portrait,label:reaction.label||portrait.label,line:reaction.line};}
+    return plain(net>0?'smug':net<0?'anxious':'focused','floating',{net});
   }
   const last=state.lastTrade;
   if(last&&last.type!=='open'&&last.day===state.day&&last.beat===state.beat&&Number.isFinite(last.pnl))
     return plain(last.pnl>0?'relieved':last.pnl<0?'regretful':'calm','realized',{net:last.pnl,positionId:last.positionId});
   const pressure=pressureMood(state);if(pressure)return plain(pressure,'pressure',{pressure:true});
-  return plain(['calm','focused','determined','guilty','warm','lonely','exhausted'].includes(natural)?natural:'calm','market',{hasPositions:false});
+  const market=plain(['calm','focused','determined','guilty','warm','lonely','exhausted'].includes(natural)?natural:'calm','market',{hasPositions:false});
+  return {...market,line:'先看看行情……'};
 }

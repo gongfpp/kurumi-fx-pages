@@ -1,4 +1,4 @@
-import {AI_REVIEW_PROMPT,downloadResults} from './results-report.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {AI_REVIEW_PROMPT,downloadResults} from './results-report.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';
@@ -12,10 +12,9 @@ export function mountResultsReport(root,report,options={}){
  rate.append(make('span','累计已实现交易收益率'),make('strong',percent(p.returnRate),p.returnRate<0?'negative':'positive'));
  net.append(make('span','扣债净资产'),make('strong',amount(a.netAssets),a.netAssets<0?'negative':'positive'));hero.append(rate,net);root.append(hero);
  const grid=make('dl',undefined,'results-grid');
- const entries=[['初始本金',amount(p.initialCapital)],['净交易盈亏',signed(p.realizedNetTradingPnl)],['名义资产',amount(a.nominalAssets)],['欠父亲',amount(a.fatherDebt)],['欠网贷（含未付利息）',amount(a.networkDebt)],['未还债务合计',amount(a.totalDebt)],['已完整平仓订单',count(p.closedOrders)],['完整订单胜率',percent(p.winRate)],['最大整单盈利',signed(p.maxOrderProfit)],['最大整单亏损',signed(p.maxOrderLoss)],['最大交易权益回撤',percent(p.maxDrawdown)],['强平订单',count(p.liquidatedOrders)],['止损订单',count(p.stopLossOrders)],['最高使用杠杆',p.maxLeverage===null?'未知':`${p.maxLeverage}×`],['当前浮动盈亏',signed(a.unrealized)],['已存活交易日',count(p.daysSurvived)]];
+ const entries=[['初始本金',amount(p.initialCapital)],['净交易盈亏',signed(p.realizedNetTradingPnl)],['账户总资产',amount(a.nominalAssets)],['欠父亲',amount(a.fatherDebt)],['欠网贷（含未付利息）',amount(a.networkDebt)],['未还债务合计',amount(a.totalDebt)],['已完整平仓订单',count(p.closedOrders)],['完整订单胜率',percent(p.winRate)],['最大整单盈利',signed(p.maxOrderProfit)],['最大整单亏损',signed(p.maxOrderLoss)],['最大交易权益回撤',percent(p.maxDrawdown)],['强平订单',count(p.liquidatedOrders)],['止损订单',count(p.stopLossOrders)],['最高使用杠杆',p.maxLeverage===null?'未知':`${p.maxLeverage}×`],['当前浮动盈亏',signed(a.unrealized)],['已存活交易日',count(p.daysSurvived)]];
  for(const [label,value] of entries){const cell=make('div');cell.append(make('dt',label),make('dd',value));grid.append(cell);}root.append(grid);
- root.append(make('p','收益率按初始本金计算。借来的钱也可能亏掉，因此亏损可超过 100%；借款不算收益。半平先并入原订单，全部平仓才计胜负。','results-note'));
- const fees=make('details',undefined,'results-details');fees.append(make('summary','费用与统计口径'));
+ const fees=make('details',undefined,'results-details');fees.append(make('summary','费用与统计口径'),make('p','收益率按初始本金计算，使用借款后亏损可能超过 100%。胜率按完整平仓订单计算。'));
  for(const [label,value] of [['累计交易手续费（已计入净盈亏）',f.trading],['已付网贷利息',f.interestPaid],['累计未付、计入债务利息',f.interestAccrued],['已付生活费',f.living],['可选消费',f.consumption]])fees.append(make('p',`${label}：${amount(value)}`));
  fees.append(make('p',report.definitions.maxOrderLoss),make('p',report.definitions.maxDrawdown));root.append(fees);
  if(report.specialRecords.length){const section=make('section',undefined,'results-special');section.append(make('h4','特别记录'));const list=make('ul');for(const record of report.specialRecords)list.append(make('li',`${record.label}：${['negative-net-assets','loss-over-initial'].includes(record.id)?amount(record.value):record.value+(record.id==='max-leverage'?'×':'')}`));section.append(list);root.append(section);}

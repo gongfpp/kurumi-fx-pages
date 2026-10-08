@@ -1,6 +1,7 @@
-import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {assetURL} from './assets.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {scheduleAudioTimeline} from './audio-timeline.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {AudioEnvelope,getSafeAudioContext,connectScheduledAudio} from './audio-envelope.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {assetURL} from './assets.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 
@@ -11,7 +12,7 @@ const COOLDOWN={click:100,gain:350,loss:950,draw:650,win:900,defend:250,exhaust:
 
 export class FXAudio{
  constructor({createAudio=()=>document.createElement('audio'),hidden=()=>document.hidden,onError=()=>{},now=()=>performance.now()}={}){
-  this.envelope=new AudioEnvelope({now});this.createAudio=createAudio;this.hidden=hidden;this.onError=onError;this.now=now;this.pool=new Map();this.unlocked=false;this.prefs={sound:false};this.reported=new Set();this.lastPlayed=new Map();this.lastAny=-Infinity;
+  this.envelope=new AudioEnvelope({now});this.createAudio=createAudio;this.hidden=hidden;this.onError=onError;this.now=now;this.pool=new Map();this.unlocked=false;this.prefs={sound:false};this.reported=new Set();this.lastPlayed=new Map();this.lastAny=-Infinity;this.timelines=new Set();this.buffers=new Map();this.visibility=()=>this.sync();globalThis.document?.addEventListener('visibilitychange',this.visibility);
  }
  make(file,label){
   const a=this.createAudio();a.src=assetURL(`./sfx/${file}.mp3`);a.preload='none';a.dataset.audio=`fx-${label}`;a.hidden=true;
@@ -20,7 +21,15 @@ export class FXAudio{
  }
  report(label){if(!this.reported.has(label)){this.reported.add(label);this.onError(label);}}
  configure(prefs){this.prefs={...this.prefs,...prefs};this.sync();if(!this.prefs.sound)this.stopEffects();}
- unlock(){this.unlocked=true;}
+ unlock(){this.unlocked=true;this.preloadTimeline();}
+ preloadTimeline(){if(getSafeAudioContext())for(const kind of ['terminal-tap','terminal-fill','terminal-close','outcome-profit','outcome-loss'])void this.loadBuffer(kind).catch(()=>{});}
+ loadBuffer(kind){const spec=TERMINAL_SOUND_CUES[kind];if(!spec)return Promise.reject(new Error('Unknown sample'));const file=spec.file;if(!this.buffers.has(file)){const context=getSafeAudioContext();const pending=fetch(assetURL(`./sfx/${file}.mp3`)).then(r=>{if(!r.ok)throw new Error('Sample unavailable');return r.arrayBuffer();}).then(bytes=>context.decodeAudioData(bytes));this.buffers.set(file,pending);pending.catch(()=>this.buffers.delete(file));}return this.buffers.get(file);}
+ scheduleTimeline(cues,{startedAt=this.now(),onTrace=()=>{}}={}){
+  if(!this.unlocked||!this.prefs.sound||this.hidden())return {cancel(){},ready:Promise.resolve(),receipts:[]};
+  for(const previous of [...this.timelines])previous.cancel();
+  const handle=scheduleAudioTimeline(cues,{context:getSafeAudioContext(),load:kind=>this.loadBuffer(kind),connect:entry=>connectScheduledAudio(entry,assetURL(`./sfx/${TERMINAL_SOUND_CUES[entry.cue.kind].file}.mp3`)),startedAt,now:this.now,hidden:this.hidden,allowed:()=>this.unlocked&&this.prefs.sound,level:volume(this.prefs.soundVolume,.5),fallback:cue=>this.effect(cue.kind,cue),onTrace});
+  this.timelines.add(handle);const cancel=handle.cancel.bind(handle);handle.cancel=()=>{cancel();this.timelines.delete(handle);};return handle;
+ }
  sync(){if(this.hidden())this.stopEffects();}
  effect(kind,{rate=1,stretch=false,level=1,preview=false}={}){
   // Continuous prices stay quiet. quote-tick exists only for explicit audition.
@@ -35,12 +44,13 @@ export class FXAudio{
   const active=[...this.pool.values()].flat().filter(x=>!x.paused&&!x.ended);
   if(active.length>=2)return false;
   this.lastPlayed.set(file,time);this.lastAny=time;a.currentTime=0;
-  const envelope=this.envelope.prepare(a,{target:amplitude,leadInSeconds:spec?.leadInSeconds??.04,coldMs:spec?100:180,warmMs:spec?45:75});
+  const envelope=this.envelope.prepare(a,{target:amplitude,leadInSeconds:spec?0:.04,coldMs:spec?8:180,warmMs:spec?8:75,tailMs:spec?20:120});
   a.playbackRate=Math.max(.8,Math.min(1.25,Number.isFinite(rate)?rate:1));a.preservesPitch=stretch;a.webkitPreservesPitch=stretch;
   try{const playing=a.play();if(playing?.then)playing.then(()=>this.envelope.start(a,envelope)).catch(error=>{if(this.envelope.records.get(a)!==envelope)return;this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);});else this.envelope.start(a,envelope);}
   catch(error){this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);return false;}
   return true;
  }
- stopEffects(){for(const voices of this.pool.values())for(const a of voices){this.envelope.stop(a);a.pause();}}
+ stopEffects(){for(const timeline of [...this.timelines])timeline.cancel();for(const voices of this.pool.values())for(const a of voices){this.envelope.stop(a);a.pause();}}
  pause(){this.stopEffects();}
+ dispose(){this.stopEffects();globalThis.document?.removeEventListener('visibilitychange',this.visibility);for(const voices of this.pool.values())for(const a of voices){this.envelope.dispose(a);a.remove?.();}this.pool.clear();this.buffers.clear();}
 }

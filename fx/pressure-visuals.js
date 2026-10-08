@@ -11,5 +11,5 @@ export function pressureVisual(taps,{reduced=false,unlocked=false}={}){
  return {taps:value,intensity,stage:unlocked?'broken':value>=10?'rupture':value>=7?'fracture':value>=3?'crack':'strained',
   visibleBranches:PRESSURE_CRACKS.filter(p=>value>=p.at).length,displacement:reduced?0:1+6*intensity,
   duration:reduced?0:unlocked?460:120+140*intensity,rift:!reduced&&value>=8,
-  hint:unlocked?'已突破，请再选一次。不会自动下单；至少 25×，新单不能设置止损。':`${PRESSURE_TOOLTIP} · ${value}/12`};
+  hint:unlocked?'已突破，再选一次。至少 25×，新单不设止损。':`${PRESSURE_TOOLTIP} · ${value}/12`};
 }

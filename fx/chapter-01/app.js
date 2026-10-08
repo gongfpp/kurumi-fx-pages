@@ -1,10 +1,8 @@
-import {chapterIllustration,chapterOriginalPortrait} from './art.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {setMangaImage} from '../manga-images.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {setImage} from '../assets.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {showChapterPortrait} from './portrait.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {storyChoices,storyEquity,storyUnrealized,storyMargin,storyAvailable} from './engine.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {mangaStoryScene,ADAPTATION_RULES} from './content.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {createChapterProgress,chapterFrames,chapterStorageEvent} from './progress.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {chapterIllustration,chapterOriginalPortrait} from './art.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {setMangaImage} from '../manga-images.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {storyChoices,storyEquity,storyUnrealized,storyMargin,storyAvailable} from './engine.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {mangaStoryScene,FIRST_TRADE_PAGES} from './content.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {createChapterProgress,chapterFrames,chapterStorageEvent} from './progress.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 const $=id=>document.getElementById(id),progress=createChapterProgress(),session=progress.session;
 let state=progress.state,historyIndex=null;
 const yen=n=>`${n<0?'−':''}¥${Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
@@ -37,14 +35,12 @@ function render(){
  const scene=mangaStoryScene(state),panel=scene.panel;
  document.body.dataset.stage=state.stage;
  text('chapter-label',state.stage==='review'?'第 1 话 · 完成':`第 1 话 · 第 ${state.scene+1} 格`);
- text('scene-kicker',scene.kicker);text('scene-title',scene.title);text('scene-body',scene.body);text('scene-fact',scene.fact);
+ text('scene-kicker',scene.kicker);text('scene-title',scene.title);text('scene-body',scene.body);
  const illustration=chapterIllustration(state),original=chapterOriginalPortrait(state);
  $('scene-art-frame').hidden=!illustration;
- if(illustration){setMangaImage($('scene-art'),illustration.path,{loading:'eager'});$('scene-art').alt=illustration.alt;text('scene-art-caption',illustration.caption+' · 原创同人场景');}
- $('portrait-frame').hidden=false;$('source-open').hidden=false;$('panel-fallback').hidden=true;
- if(panel){showChapterPortrait($('story-portrait'),panel);text('expression-label',panel.expression);text('panel-source',`第 ${panel.chapter} 话 · 第 ${panel.page} 页`);}
- else {const image=$('story-portrait');image.style.cssText='display:block;position:static;width:100%;height:auto;max-width:100%;transform:none';image.parentElement.style.aspectRatio='3 / 4';setMangaImage(image,original.path,{loading:'eager'});image.alt=`久留美 · ${original.label} · 原创同人立绘`;text('expression-label',original.label);text('panel-source',original.origin);}
- text('portrait-context',!panel?'按本章当前仓位和实际损益呈现原创表情。':state.position?`本局${state.position.direction===-1?'美元空单':'美元多单'} · ${signed(storyUnrealized(state))} 浮动盈亏。表情取自当前已揭示页。`:state.stage==='review'?'按本章实际结算匹配表情，漫画原图数值不代表本局。':'本局空仓。使用当前已揭示的中性画面。');
+ if(illustration){setMangaImage($('scene-art'),illustration.path,{loading:'eager'});$('scene-art').alt=illustration.alt;text('scene-art-caption',illustration.caption);}
+ $('portrait-frame').hidden=false;$('panel-fallback').hidden=true;
+ const image=$('story-portrait');image.style.cssText='display:block;position:static;width:100%;height:auto;max-width:100%';setMangaImage(image,original.path,{loading:'eager'});image.alt='久留美 · '+original.label;text('expression-label',original.label);
  text('story-price',state.price.toFixed(3));text('route-label',state.stage==='extension'?'IF 压力测试':state.branch==='if'?'IF 选择路线':'原作节点改编');
  text('story-equity',yen(storyEquity(state)));text('story-realized',signed(state.realized));text('story-floating',signed(storyUnrealized(state)));text('story-margin',yen(storyMargin(state)));text('story-available',yen(storyAvailable(state)));
  $('story-realized').className=state.realized<0?'loss':'profit';$('story-floating').className=storyUnrealized(state)<0?'loss':'profit';
@@ -57,7 +53,7 @@ function render(){
  }
  $('choice-heading').hidden=state.stage==='review';
  $('review').hidden=!scene.review;
- if(scene.review){const r=scene.review;text('review-title',r.title);text('review-lesson',r.discipline+' '+r.lesson);text('review-comparison',`你的结果：${signed(r.profit)}，账户 ${yen(r.equity)}；最大已观测回撤 ${yen(r.maxDrawdown)}。原作首单：做空 10 枚，反弹时平仓，索引损益 +24,000 日元。模型只重现有依据的决策节点，未声称逐 tick 还原。`);}
+ if(scene.review){const r=scene.review;text('review-title',r.title);text('review-lesson',r.discipline+' '+r.lesson);text('review-comparison',`你的结果：${signed(r.profit)}，账户 ${yen(r.equity)}；最大回撤 ${yen(r.maxDrawdown)}。`);}
  const ledger=$('ledger');ledger.replaceChildren();
  for(const t of state.ledger){const li=document.createElement('li');li.textContent=t.type==='observe'?'选择空仓观望':`${t.type==='open'?'开仓':'平仓'} · ${t.direction===1?'美元多单':'美元空单'} ${t.quantity/10000} 枚 @ ${t.price.toFixed(3)}${t.type==='close'?` · ${signed(t.pnl)} · ${{stop:'预设止损',half:'减半',manual:'主动平仓','chapter-end':'测试终点结算'}[t.reason]}`:''}`;ledger.append(li);}
  if(!state.ledger.length){const li=document.createElement('li');li.textContent='还没有下单。';ledger.append(li);}
@@ -91,13 +87,7 @@ $('reload-save').onclick=()=>{const loaded=progress.reload();if(loaded.ok){histo
 $('retry-save').onclick=async()=>{const pending=progress.retry();saveStatus();await pending;render();};
 window.addEventListener('storage',event=>{if(chapterStorageEvent(event.key)){session.check();saveStatus();}});
 window.addEventListener('pageshow',()=>{session.check();saveStatus();});
-$('source-open').onclick=()=>{
- const {panel}=mangaStoryScene(state);$('source-link').hidden=!panel;
- if(panel){text('source-title',`${panel.character} · 第 ${panel.chapter} 话第 ${panel.page} 页`);text('source-copy',`${panel.scene} / ${panel.expression}。${panel.meaning}。${panel.correction||''}`);setImage($('source-original'),panel.original);$('source-original').alt='未经修改的原作来源图';$('source-link').href=panel.sourceURL;}
- else {const original=chapterOriginalPortrait(state);text('source-title','久留美 · 原创同人立绘');text('source-copy','当前表情：'+original.label+'。这是本作原创同人画面，不是原作漫画截图。');setImage($('source-original'),original.path);$('source-original').alt='本作原创同人立绘';$('source-link').removeAttribute('href');}
- $('source-dialog').showModal();
-};
-$('rules-open').onclick=()=>$('rules-dialog').showModal();text('adaptation-rules',ADAPTATION_RULES);
+$('rules-open').onclick=()=>$('rules-dialog').showModal();
 for(const button of document.querySelectorAll('[data-close]'))button.onclick=()=>$(button.dataset.close).close();
 $('replay').onclick=()=>$('replay-dialog').showModal();
 $('confirm-replay').onclick=async()=>{
@@ -114,3 +104,28 @@ $('leave-backup').onclick=backup;
 $('leave-confirm').onclick=()=>{window.location.assign(new URL('./fx.html',document.baseURI).href);};
 window.addEventListener('beforeunload',event=>{if(progress.unsafeToLeave){event.preventDefault();event.returnValue='';}});
 render();
+
+// The reader never reads or mutates progress, account state, or storage.
+let mangaReadingPage=0;
+const mangaReader=$('manga-reader');
+function renderMangaReading(){
+ const page=FIRST_TRADE_PAGES[mangaReadingPage];
+ text('manga-reader-count',`${mangaReadingPage+1} / ${FIRST_TRADE_PAGES.length}`);
+ text('manga-reader-title',page.title);text('manga-reader-copy',page.body);
+ const img=$('manga-reader-image');setMangaImage(img,page.panel.original,{loading:'eager'});
+ img.alt=`久留美的第一笔交易 · ${page.title}`;
+ $('manga-reader-prev').disabled=mangaReadingPage===0;
+ text('manga-reader-next',mangaReadingPage===FIRST_TRADE_PAGES.length-1?'回到交易':'下一页 →');
+ $('manga-reader-body').scrollTop=0;
+}
+$('manga-reading-open').onclick=()=>{
+ if(mangaReader.open)return;
+ mangaReadingPage=0;renderMangaReading();mangaReader.showModal();$('manga-reader-close').focus();
+};
+$('manga-reader-close').onclick=()=>mangaReader.close();
+$('manga-reader-prev').onclick=()=>{if(mangaReadingPage>0){mangaReadingPage--;renderMangaReading();}};
+$('manga-reader-next').onclick=()=>{
+ if(mangaReadingPage===FIRST_TRADE_PAGES.length-1)mangaReader.close();
+ else {mangaReadingPage++;renderMangaReading();}
+};
+mangaReader.onclose=()=>$('manga-reading-open').focus({preventScroll:true});

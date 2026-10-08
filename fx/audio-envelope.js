@@ -1,6 +1,34 @@
 // One opt-in audio graph; constructing a player never wakes audio hardware.
 let context=null;
 const mediaGraphs=new WeakMap();
+// Preview-only capture branch. The original speaker chain and envelope are untouched.
+const liveGraphs=new Set();
+let previewTap=null;
+export function createPreviewAudioTap({acceptMedia=()=>false}={}) {
+  if(!context||typeof context.createMediaStreamDestination!=='function')throw new Error('当前浏览器不支持本页音频导出');
+  if(previewTap)throw new Error('已有录制正在进行');
+  const destination=context.createMediaStreamDestination(),connected=new Set(),sources=new Set(),events=[];
+  const tap={
+    connect(entry){
+      if(!acceptMedia(entry.media)){if(connected.delete(entry))entry.gain.disconnect(destination);return;}
+      if(!connected.has(entry)){entry.gain.connect(destination);connected.add(entry);}
+      sources.add(entry.media.currentSrc||entry.media.src);
+    },
+    played(entry,details={}){
+      this.connect(entry);
+      if(connected.has(entry))events.push({at:new Date().toISOString(),source:entry.media.currentSrc||entry.media.src,volume:entry.media.volume,playbackRate:entry.media.playbackRate||1,...details});
+    },
+    remove(entry){if(connected.delete(entry))entry.gain.disconnect(destination);},
+  };
+  previewTap=tap;
+  try{for(const entry of liveGraphs)tap.connect(entry);}catch(error){previewTap=null;for(const entry of connected)entry.gain.disconnect(destination);for(const track of destination.stream.getTracks())track.stop();throw error;}
+  let released=false;
+  return {
+    context,stream:destination.stream,
+    sources:()=>[...sources],events:()=>events.slice(),
+    release(){if(released)return;released=true;if(previewTap===tap)previewTap=null;for(const entry of connected){try{entry.gain.disconnect(destination);}catch{}}connected.clear();for(const track of destination.stream.getTracks())track.stop();},
+  };
+}
 const bounded=(n,fallback=.5)=>Number.isFinite(n)?Math.max(0,Math.min(.65,n)):fallback;
 export function unlockSafeAudio(event) {
   if(!event?.isTrusted||!['pointerdown','keydown','click'].includes(event.type))return false;
@@ -10,8 +38,8 @@ export function unlockSafeAudio(event) {
 }
 function graph(media) {
   if(!context)return null;
-  if(mediaGraphs.has(media))return mediaGraphs.get(media);
-  try{const source=context.createMediaElementSource(media),gain=context.createGain();gain.gain.value=0;source.connect(gain).connect(context.destination);const result={source,gain,context};mediaGraphs.set(media,result);return result;}catch{return null;}
+  if(mediaGraphs.has(media)){const existing=mediaGraphs.get(media);previewTap?.connect(existing);return existing;}
+  try{const source=context.createMediaElementSource(media),gain=context.createGain();gain.gain.value=0;source.connect(gain).connect(context.destination);const result={source,gain,context,media};mediaGraphs.set(media,result);liveGraphs.add(result);result.capturePlay=()=>previewTap?.played(result);media.addEventListener('play',result.capturePlay);previewTap?.connect(result);return result;}catch{return null;}
 }
 
 export class AudioEnvelope {
@@ -27,9 +55,9 @@ export class AudioEnvelope {
       record.lastVolume=record.target;media.volume=record.target;
     } else {record.lastVolume=record.target*level;media.volume=record.lastVolume;}
   }
-  prepare(media,{target=.5,leadInSeconds=0,coldMs=450,warmMs=180}={}) {
+  prepare(media,{target=.5,leadInSeconds=0,coldMs=450,warmMs=180,tailMs=120}={}) {
     this.stop(media);
-    const time=this.now(),offset=Number.isFinite(media.currentTime)?media.currentTime:0,record={target:bounded(target),offset,lead:Math.max(0,leadInSeconds-offset),duration:time-this.lastStarted>=this.idleMs?coldMs:warmMs,graph:this.getGraph(media),timer:null,started:null};
+    const time=this.now(),offset=Number.isFinite(media.currentTime)?media.currentTime:0,record={target:bounded(target),tailMs:Math.max(1,tailMs),offset,lead:Math.max(0,leadInSeconds-offset),duration:time-this.lastStarted>=this.idleMs?coldMs:warmMs,graph:this.getGraph(media),timer:null,started:null};
     this.records.set(media,record);this.setLevel(media,record,0);
     return record;
   }
@@ -42,7 +70,7 @@ export class AudioEnvelope {
       const position=Number.isFinite(media.currentTime)?media.currentTime:record.offset+Math.max(0,this.now()-record.started)/1000;
       const elapsed=Math.max(0,position-record.offset);
       const fade=Math.min(1,Math.max(0,(elapsed-record.lead)/(record.duration/1000)));
-      const tail=Number.isFinite(media.duration)?Math.max(0,Math.min(1,(media.duration-position)/.12)):1;
+      const tail=Number.isFinite(media.duration)?Math.max(0,Math.min(1,(media.duration-position)/(record.tailMs/1000))):1;
       this.setLevel(media,record,fade*tail);
       if(fade<1||Number.isFinite(media.duration))record.timer=this.schedule(step);
     };
@@ -61,6 +89,7 @@ export class AudioEnvelope {
     };
     step();
   }
+  dispose(media){this.stop(media);const entry=mediaGraphs.get(media);if(!entry)return;previewTap?.remove(entry);liveGraphs.delete(entry);media.removeEventListener('play',entry.capturePlay);entry.source.disconnect();entry.gain.disconnect();mediaGraphs.delete(media);}
   stop(media) {
     const record=this.records.get(media);if(!record)return;
     if(record.timer!==null)this.cancel(record.timer);this.setLevel(media,record,0);this.records.delete(media);
@@ -77,5 +106,13 @@ export function bindAuditionEnvelope(media,{leadInSeconds=.4,envelope=new AudioE
     target=bounded(media.volume,target);if(record){record.target=target;record.lastVolume=media.volume;}
   };
   media.addEventListener('play',play);media.addEventListener('pause',stop);media.addEventListener('ended',stop);media.addEventListener('volumechange',volume);
-  return ()=>{stop();for(const [type,fn] of [['play',play],['pause',stop],['ended',stop],['volumechange',volume]])media.removeEventListener(type,fn);const connected=mediaGraphs.get(media);connected?.source.disconnect();connected?.gain.disconnect();mediaGraphs.delete(media);};
+  return ()=>{stop();for(const [type,fn] of [['play',play],['pause',stop],['ended',stop],['volumechange',volume]])media.removeEventListener(type,fn);const connected=mediaGraphs.get(media);if(connected){previewTap?.remove(connected);liveGraphs.delete(connected);media.removeEventListener('play',connected.capturePlay);}connected?.source.disconnect();connected?.gain.disconnect();mediaGraphs.delete(media);};
+}
+
+// Scheduled samples share the post-gain preview tap and opt-in context with media voices.
+export function getSafeAudioContext(){return context;}
+export function connectScheduledAudio({source,gain,cue,when,target,rate},src){
+ const media={src,currentSrc:src,volume:target,playbackRate:rate},entry={source,gain,context,media};
+ gain.connect(context.destination);liveGraphs.add(entry);previewTap?.connect(entry);previewTap?.played(entry,{scheduledAudioTime:when});
+ return ()=>{previewTap?.remove(entry);liveGraphs.delete(entry);};
 }

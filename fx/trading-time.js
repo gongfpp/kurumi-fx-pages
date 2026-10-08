@@ -3,14 +3,15 @@ const MINUTE=60000,DAY=86400000;
 export const TRADING_CLOCK_VERSION=1;
 export const GAME_TIME_ZONE='Asia/Tokyo';
 export const CANDLE_MINUTES=15;
-const FIRST_DAY=Date.UTC(2026,0,5)-9*60*MINUTE;
+// Chapter 1 p36 explicitly shows Friday, 2014-02-14. Existing epochs stay intact.
+const FIRST_DAY=Date.UTC(2014,1,14)-9*60*MINUTE;
 const SESSION_MINUTES=[550,690,900,1290,1410];
 const integer=(n,fallback=0)=>Number.isSafeInteger(n)&&n>=0?n:fallback;
 function businessDate(epoch,days){let offset=Math.floor(days/5)*7,remainder=days%5;const weekday=new Date(epoch+9*60*MINUTE).getUTCDay();while(remainder){offset++;const dow=(weekday+offset)%7;if(dow!==0&&dow!==6)remainder--;}return epoch+offset*DAY;}
 export function tradingClock(state={}){
  const existing=state.tradingClock;
  if(existing?.version===1&&Number.isFinite(existing.epochMs)&&Math.abs(existing.epochMs)<8e15)return{...existing,timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES};
- return{version:1,epochMs:businessDate(FIRST_DAY,integer(state.seed)%120),timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES,source:'game-calendar'};
+ return{version:1,epochMs:FIRST_DAY,timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES,source:'game-calendar'};
 }
 export function ensureTradingClock(state){state.tradingClock=tradingClock(state);return state.tradingClock;}
 export function tradingTimestamp(state,{day=state.day||1,beat=0,candle=0,tick=0}={}){
@@ -66,11 +67,11 @@ export function timedCandles(state,candles=state.candles||[]){
 export function formatTradingTime(timestamp,{date=false,full=false}={}){
  if(!Number.isFinite(timestamp))return '—';
  const iso=new Date(timestamp+9*60*MINUTE).toISOString(),day=iso.slice(0,10),time=iso.slice(11,16);
- return full?`${day} ${iso.slice(11,19)} JST · 游戏交易钟`:date?`${day.slice(5)} ${time}`:time;
+ return full?`${day} ${iso.slice(11,19)} JST`:date?`${day.slice(5)} ${time}`:time;
 }
 export function timeAxisTicks(points,{maxTicks=5,showDate=false}={}){
  if(!points.length)return[];const count=Math.max(1,Math.min(Math.floor(maxTicks)||1,points.length)),indices=new Set();
  for(let i=0;i<count;i++)indices.add(count===1?0:Math.round(i*(points.length-1)/(count-1)));
  let priorDate='';return [...indices].map(index=>{const timestamp=points[index].timestamp,full=formatTradingTime(timestamp,{full:true}),date=full.slice(0,10),label=formatTradingTime(timestamp,{date:showDate||date!==priorDate});priorDate=date;return{index,timestamp,label,title:full};});
 }
-export const TRADING_TIME_NOTICE='游戏交易钟 · JST · 每根 K 线 15 分钟 · 时段间跳时；播放速度不改变市场时间';
+export const TRADING_TIME_NOTICE='JST · 15分钟 K线';

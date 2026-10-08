@@ -1,9 +1,14 @@
-import {setImage} from './assets.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {setImage} from './assets.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 const el=(doc,tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderFatherIllustration(container,description){
  container.replaceChildren();container.hidden=!description;if(!description)return;
  const doc=container.ownerDocument,figure=el(doc,'figure','father-item-figure'),view=el(doc,'div','father-art-view'),image=el(doc,'img','');image.alt=description.caption||description.text||description.art.alt||description.art.note||'';setImage(image,description.art.path);view.append(image);
- if(description.art.grid){const [x,y,columns,rows]=description.art.grid;view.classList.add('father-art-crop');image.style.width=columns*100+'%';image.style.left=-x*100+'%';image.style.top=-y*100+'%';}
+ if(description.art.grid){const [x,y,columns,rows]=description.art.grid;view.classList.add('father-art-crop');image.style.width=columns*100+'%';image.style.left=-x*100+'%';image.style.top=-y*100+'%';
+  // A cell inherits the sheet's actual aspect ratio, not an assumed square.
+  // Otherwise a portrait sheet exposes part of the row above the chosen cell.
+  const resize=()=>{if(image.naturalWidth>0&&image.naturalHeight>0)view.style.aspectRatio=String((image.naturalWidth/columns)/(image.naturalHeight/rows));};
+  const loaded=image.onload;image.onload=event=>{loaded?.call(image,event);resize();};resize();
+ }
  figure.append(view,el(doc,'figcaption','',description.caption||description.text||''));container.append(figure);
 }
 export function renderFatherSequence(container,frames){

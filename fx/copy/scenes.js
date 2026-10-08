@@ -9,8 +9,8 @@ export const STORY_DEFINITIONS={
  fatherDiscover:{id:'father_discover',title:'父亲的柜中存款',lines:[],choices:[choice('continue','继续','calm')]},
  fatherUnlock:{id:'father_unlock',title:'父亲的柜中存款',lines:[],choices:[choice('look_at_savings','继续','guilty',2)]},
  fatherFound:{id:'father_discovered',title:'父亲发现了',lines:[],choices:[choice('admit','继续','guilty',6,-2)]},
- repayPartial:{id:'father_repay_partial',title:'部分归还完成',lines:[],choices:[choice('record_payment','继续','determined',-4,1)]},
- repayFull:{id:'father_repay_full',title:'全部归还完成',lines:[],choices:[choice('close_envelope','继续','relieved',-6,2)]},
+ repayPartial:{id:'father_repay_partial',title:'先还一部分',lines:[],choices:[choice('record_payment','继续','determined',-4,1)]},
+ repayFull:{id:'father_repay_full',title:'还清了',lines:[],choices:[choice('close_envelope','继续','relieved',-6,2)]},
  friendStudy:{id:'friend_study',title:'休市后的消息',lines:[],choices:[choice('continue','继续','warm',-3,1)]},
  roommate:{id:'roommate',title:'休市后的消息',lines:[],choices:[choice('continue','继续','warm',-3,1)]},
  quietNight:{id:'quiet_night',title:'休市了',lines:[],choices:[choice('continue','继续','calm',-3)]}

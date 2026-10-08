@@ -3,8 +3,8 @@ export const TRANSITION_COPY = {
   positive:'FX 简单！',negative:'盈利…都去哪里了',
   neutral:'明天开盘',
   dayTitle:'今日结算',noTrade:'本日未成交',
-  profitToLoss:'刚才还在盈利，现在已经亏了。',
-  lossToProfit:'从亏损转成盈利，终于松了一口气。',
+  profitToLoss:'刚才还赚着呢……',
+  lossToProfit:'回来了！',
   restContinue:'明天开盘',
   homage:{
     'first-day':'“还在发抖……但勉强撑住了，得救了！”',

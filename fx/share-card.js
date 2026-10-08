@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {runPerformance} from './performance.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=0b2e40405ee7fcd62ef27e0e253be40d5f854740-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {runPerformance} from './performance.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=de121dd0edf28d5961cd0eba458fe8bc2b0f2bcd-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -70,7 +70,7 @@ export async function createShareCard(state,options={}) {
  if(image){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const crop=options.portraitCrop||[0,0,image.naturalWidth,image.naturalHeight],cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else num('久留美',66,266,28,darkPink);
  label(`${s.moodLabel} · ${s.recap.primary.label}`,252,196,22,darkPink);num(signed(s.recap.primary.profit),252,253,52,s.recap.primary.profit>=0?green:red,780);label(`收益率 ${s.recap.primary.returnRate===null?'—':(s.recap.primary.returnRate>=0?'+':'')+(s.recap.primary.returnRate*100).toFixed(2)+'%'}`,252,291,26,s.recap.primary.profit>=0?green:red);label(`第 ${s.day} 个游戏交易日 · 心理承受力 ${s.sanity} / 100`,252,329,20); 
  rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red);
- label('名义资产 / 扣债净资产',660,429,21);num(knownAmount(a.nominalAssets),660,474,34);num(knownAmount(a.netAssets),660,516,29);
+ label('账户总资产 / 净资产',660,429,21);num(knownAmount(a.nominalAssets),660,474,34);num(knownAmount(a.netAssets),660,516,29);
  label('完整订单胜率 '+knownPercent(p.winRate),660,557,21);
  label(`初始 ${knownAmount(p.initialCapital)} · 已存活 ${p.daysSurvived} 天`,48,558,20);
  const metrics=[['净交易总收益',knownSigned(p.realizedNetTradingPnl)],['完整平仓订单',Number.isFinite(p.closedOrders)?String(p.closedOrders):'—'],['最高使用杠杆',Number.isFinite(p.maxLeverage)?p.maxLeverage+'×':'—'],['最大整单盈利',knownSigned(p.maxOrderProfit)],['最大整单亏损',knownSigned(p.maxOrderLoss)],['最大交易回撤',knownPercent(p.maxDrawdown)],['欠父亲',knownAmount(a.fatherDebt)],['欠网贷',knownAmount(a.networkDebt)],['当前浮动盈亏',knownSigned(a.unrealized)]];
@@ -84,7 +84,7 @@ export async function createShareCard(state,options={}) {
   ctx.strokeStyle=darkPink;ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=plotX(p),y=plotY(p.nominalAssets);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
   for(const t of timeAxisTicks(points,{maxTicks:2})){ctx.textAlign=t.index===0?'left':'right';label(t.label,plotX(t),955,15);ctx.textAlign='left';}
  }
- label(s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'旧记录仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线（剔除借还与消费）':'名义资产曲线 · 借款可使资产增加，但不计入收益率',48,981,16);rule(1000);
+ label(s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'旧记录仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线':'账户总资产曲线',48,981,16);rule(1000);
  num('特别记录',48,1033,27);
  if(!report.specialRecords.length)label(p.complete?'这局还没有特别记录':'旧档订单记录不完整，未知项保留为空',48,1094,22);
  report.specialRecords.forEach((record,i)=>{const value=['negative-net-assets','loss-over-initial'].includes(record.id)?knownAmount(record.value):String(record.value)+(record.id==='max-leverage'?'×':'');label(record.label,48,1094+i*48,22,ink);ctx.textAlign='right';num(value,1032,1094+i*48,26,darkPink);ctx.textAlign='left';});
@@ -96,7 +96,7 @@ export async function createShareCard(state,options={}) {
  rule(1346);num('已完成成就',48,1394,27);label(`${s.completedAchievements.length} / ${ACHIEVEMENTS.length}`,930,1394,22,darkPink);
  if(!s.completedAchievements.length)label('暂无已完成成就',48,1468,23);
  s.completedAchievements.forEach((a,i)=>{const x=48+(i%2)*502,y=1430+Math.floor(i/2)*80;ctx.fillStyle='#ffe4ef';ctx.fillRect(x,y,482,64);ctx.fillStyle=darkPink;ctx.fillRect(x,y,64,64);ctx.textAlign='center';num(a.badge,x+32,y+42,22,'#fff7fb',56);ctx.textAlign='left';num(a.name,x+82,y+41,24,ink,384);});
- rule(footerY);label('模拟交易游戏',48,footerY+48,20);label(formatTradingTime(s.recap.timestamp,{full:true}),48,footerY+82,16);font(18);ctx.fillStyle=muted;wrap(ctx,s.gameUrl,320,footerY+48,710,25,2);
+ rule(footerY);label('FX韭留美 · 交易战报',48,footerY+48,20);label(formatTradingTime(s.recap.timestamp,{full:true}),48,footerY+82,16);font(18);ctx.fillStyle=muted;wrap(ctx,s.gameUrl,320,footerY+48,710,25,2);
  ctx.restore();
  const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('战报图片生成失败')),'image/png'));return{blob,url:URL.createObjectURL(blob),filename:`FX韭留美-${s.mode==='endless'?'操盘':'剧情'}-第${s.day}天-${s.kind}${s.edited?'-测试':''}.png`,summary:s};
 }
