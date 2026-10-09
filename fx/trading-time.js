@@ -10,7 +10,7 @@ const integer=(n,fallback=0)=>Number.isSafeInteger(n)&&n>=0?n:fallback;
 function businessDate(epoch,days){let offset=Math.floor(days/5)*7,remainder=days%5;const weekday=new Date(epoch+9*60*MINUTE).getUTCDay();while(remainder){offset++;const dow=(weekday+offset)%7;if(dow!==0&&dow!==6)remainder--;}return epoch+offset*DAY;}
 export function tradingClock(state={}){
  const existing=state.tradingClock;
- if(existing?.version===1&&Number.isFinite(existing.epochMs)&&Math.abs(existing.epochMs)<8e15)return{...existing,timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES};
+ if(existing?.version===1&&Number.isFinite(existing.epochMs)&&Math.abs(existing.epochMs)<8e15)return{...existing,timeZone:GAME_TIME_ZONE,candleMinutes:state.historical?.version===2?1:CANDLE_MINUTES};
  return{version:1,epochMs:FIRST_DAY,timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES,source:'game-calendar'};
 }
 export function ensureTradingClock(state){state.tradingClock=tradingClock(state);return state.tradingClock;}
@@ -27,7 +27,7 @@ function lastObservedTimestamp(state,day=state.day,cursor=state.pending||state.e
  return start;
 }
 export function currentTradingTimestamp(state){
- if(state.historical?.version===1&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
+ if([1,2].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
  if(state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase))return reportTradingTimestamp(state,state.dayReport);
  if(state.earlyClose?.day===state.day&&state.phase==='closing')return Number.isFinite(state.earlyClose.timestamp)?state.earlyClose.timestamp:tradingTimestamp(state,state.earlyClose);
  if(state.tradingClock&&state.tradingClock.lastQuoteDay===state.day&&Number.isFinite(state.tradingClock.lastQuoteAt))return state.tradingClock.lastQuoteAt;
@@ -76,3 +76,5 @@ export function timeAxisTicks(points,{maxTicks=5,showDate=false}={}){
  let priorDate='';return [...indices].map(index=>{const timestamp=points[index].timestamp,full=formatTradingTime(timestamp,{full:true}),date=full.slice(0,10),label=formatTradingTime(timestamp,{date:showDate||date!==priorDate});priorDate=date;return{index,timestamp,label,title:full};});
 }
 export const TRADING_TIME_NOTICE='JST · 15分钟 K线';
+
+export const tradingTimeNotice=state=>state.historical?.version===2?'JST · 1分钟已完成线':TRADING_TIME_NOTICE;

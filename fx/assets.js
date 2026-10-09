@@ -1,6 +1,8 @@
+import {RESEARCH_BUILD} from './research-config.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Resolve against the module, so /fx.html, /fx and Pages subdirectories agree.
 export function assetURL(path,base=import.meta.url){
-  const source=new URL(base),url=new URL(path,source);
+  const source=new URL(base);let url=new URL(path,source);
+  if(RESEARCH_BUILD&&url.origin===source.origin&&url.pathname.includes('/game/fx/')&&!url.pathname.includes('/manga/contextual-lmno/')&&!url.pathname.includes('/sfx/')&&!url.pathname.includes('/expressions/')&&!/\/generated\/(?:emotion-extremes-v1\/(?:numb|tearful-stunned|realized-win)|father-cabinet-v1\/pain)\.webp$/.test(url.pathname))url=new URL(url.pathname.split('/game/fx/')[1],'https://gongfpp.github.io/kurumi-fx-pages/fx/');
   const version=source.searchParams.get('v');if(version)url.searchParams.set('v',version);
   return url.href;
 }
@@ -8,7 +10,7 @@ const requests=new WeakMap();
 function startImage(image,request,manual=false){
  request.attempt=manual?request.attempt+1:0;request.automaticRetry=false;
  image.dataset.imageRetry='0';image.classList.remove('image-unavailable');request.onStatus?.('loading');
- const assign=()=>{const retry=new URL(request.url);if(request.attempt)retry.searchParams.set('retry',String(request.attempt));image.src=retry.href;};
+ const assign=()=>{const retry=new URL(request.url);if(request.attempt&&!RESEARCH_BUILD)retry.searchParams.set('retry',String(request.attempt));image.src=retry.href;};
  image.onerror=()=>{
   if(requests.get(image)!==request)return;
   if(!request.automaticRetry){request.automaticRetry=true;request.attempt++;image.dataset.imageRetry='1';assign();}

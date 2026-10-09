@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {runPerformance} from './performance.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {runPerformance} from './performance.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -52,7 +52,7 @@ function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=4){let line='',count=0;f
 const fonts={body:'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif'};
 async function portraitImage(url,doc){
  if(!url)return null;const ImageClass=doc.defaultView?.Image||globalThis.Image;if(!ImageClass)return null;
- return new Promise(resolve=>{const image=new ImageClass();let timer;const done=value=>{clearTimeout(timer);image.onload=image.onerror=null;resolve(value);};image.onload=()=>done(image);image.onerror=()=>done(null);timer=setTimeout(()=>done(null),5000);image.src=url;});
+ return new Promise(resolve=>{const image=new ImageClass();let timer;const done=value=>{clearTimeout(timer);image.onload=image.onerror=null;resolve(value);};image.onload=()=>done(image);image.onerror=()=>done(null);timer=setTimeout(()=>done(null),5000);image.crossOrigin='anonymous';image.src=url;});
 }
 export async function createShareCard(state,options={}) {
  const doc=options.document||globalThis.document;if(!doc)throw Error('战报图片需要浏览器画布');
@@ -67,7 +67,7 @@ export async function createShareCard(state,options={}) {
  const rule=y=>{ctx.strokeStyle=line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(48,y);ctx.lineTo(1032,y);ctx.stroke();};
  num('FX韭留美',48,87,42);label(`${s.mode==='endless'?'操盘 · 无尽':'剧情模式'} / ${s.kind}`,48,129,23,darkPink);if(s.edited)label('开发测试数据',770,85,22,red);
  const image=await portraitImage(options.portraitUrl,doc);ctx.fillStyle='#ffe0ed';ctx.fillRect(48,169,178,178);
- if(image){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const crop=options.portraitCrop||[0,0,image.naturalWidth,image.naturalHeight],cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else num('久留美',66,266,28,darkPink);
+ if(image){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const crop=options.portraitCrop||[0,0,image.naturalWidth,image.naturalHeight],cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else {num('久留美',66,266,28,darkPink);if(options.portraitUrl)label('画像未载入',66,300,18,muted);}
  label(`${s.moodLabel} · ${s.recap.primary.label}`,252,196,22,darkPink);num(signed(s.recap.primary.profit),252,253,52,s.recap.primary.profit>=0?green:red,780);label(`收益率 ${s.recap.primary.returnRate===null?'—':(s.recap.primary.returnRate>=0?'+':'')+(s.recap.primary.returnRate*100).toFixed(2)+'%'}`,252,291,26,s.recap.primary.profit>=0?green:red);label(`第 ${s.day} 个游戏交易日 · 心理承受力 ${s.sanity} / 100`,252,329,20); 
  rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red);
  label('账户总资产 / 净资产',660,429,21);num(knownAmount(a.nominalAssets),660,474,34);num(knownAmount(a.netAssets),660,516,29);

@@ -1,10 +1,16 @@
-import {PROFIT_MANGA_ASSETS,PROFIT_MANGA_NODES,PROFIT_MANGA_ARCS} from './contextual-manga-profit-content.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {BORROWED_MANGA_ASSETS,BORROWED_MANGA_NODES,BORROWED_MANGA_ARCS} from './contextual-manga-borrowed-content.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {VERIFIED_DAILY_ASSETS} from './contextual-manga-verified-daily.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {DAILY_EXTENSION_ASSETS} from './contextual-manga-daily-extension.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {RESTRAINT_MANGA_ASSETS,RESTRAINT_MANGA_NODES,RESTRAINT_MANGA_ARCS} from './contextual-manga-restraint-content.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {PROFIT_MANGA_ASSETS,PROFIT_MANGA_NODES,PROFIT_MANGA_ARCS} from './contextual-manga-profit-content.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {BORROWED_MANGA_ASSETS,BORROWED_MANGA_NODES,BORROWED_MANGA_ARCS} from './contextual-manga-borrowed-content.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Reviewed, fixed character history. No triggers, live prices, or game-account mutations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const CONTEXTUAL_MANGA_ASSETS=freeze({
+  ...DAILY_EXTENSION_ASSETS,
+  ...VERIFIED_DAILY_ASSETS,
   ...BORROWED_MANGA_ASSETS,
   ...PROFIT_MANGA_ASSETS,
+  ...RESTRAINT_MANGA_ASSETS,
   "145": {
     "record": 145,
     "path": "./manga/contextual-def/145.jpg",
@@ -252,6 +258,7 @@ export const CONTEXTUAL_MANGA_ASSETS=freeze({
 export const CONTEXTUAL_MANGA_NODES=freeze([
   ...BORROWED_MANGA_NODES,
   ...PROFIT_MANGA_NODES,
+ ...RESTRAINT_MANGA_NODES,
   {
     "id": "loan-funds-return",
     "chapter": 12,
@@ -542,6 +549,7 @@ export const CONTEXTUAL_MANGA_NODES=freeze([
 export const CONTEXTUAL_MANGA_ARCS=freeze({
   ...BORROWED_MANGA_ARCS,
   ...PROFIT_MANGA_ARCS,
+ ...RESTRAINT_MANGA_ARCS,
   "borrowed-recovery": [
     "loan-funds-return",
     "short-recovery-plan",

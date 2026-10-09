@@ -1,3 +1,4 @@
+import {RESEARCH_BUILD} from './research-config.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // The sole public service-origin value. Production is intentionally unconfigured.
 // tools/build-fx.mjs writes the explicitly supplied KURUMI_SERVICE_ORIGIN into
 // the exported bundle only; tests can inject serviceOrigin without editing it.
@@ -23,7 +24,7 @@ export function serviceConfiguration({serviceOrigin = KURUMI_SERVICE_ORIGIN, loc
   // Only a loopback browser may use same-origin without a registered service.
   // Invalid explicit configuration must never silently select another backend.
   const origin = serviceOrigin === '' && isLoopbackOrigin(location?.origin) ? location.origin : serviceOrigin;
-  const configured = validServiceOrigin(origin);
+  const configured = !RESEARCH_BUILD && validServiceOrigin(origin);
   const pages = location?.origin === KURUMI_PAGES_ORIGIN;
   return Object.freeze({
     configured, origin: configured ? origin : '',

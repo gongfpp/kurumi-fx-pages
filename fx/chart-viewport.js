@@ -1,5 +1,5 @@
-import {movingAveragePath} from './moving-average.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.
@@ -23,9 +23,9 @@ export function spacedTimeTicks(points,x,{maxTicks=4,gap=84}={}){
  for(const tick of candidates.slice(1,-1))if(x(tick)-x(result.at(-1))>=gap&&x(last)-x(tick)>=gap)result.push(tick);
  if(x(last)-x(result.at(-1))>=gap)result.push(last);return result;
 }
-export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=280,dark=true,id='market',visibleCount=Infinity,currentPrice}={}){
+export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=280,width=660,dark=true,id='market',visibleCount=Infinity,currentPrice}={}){
  const window=candleWindow(candles,{count,offset}),bars=window.candles,ma=averages.map(a=>({...a,values:a.values.slice(window.start,window.end)}));
- const scale=candleScale(bars,ma,{zoom}),w=660,left=12,right=75,top=20,bottom=38,h=height,plotBottom=h-bottom;
+ const scale=candleScale(bars,ma,{zoom}),w=Math.max(280,Math.min(660,Number.isFinite(width)?width:660)),left=12,right=75,top=20,bottom=38,h=height,plotBottom=h-bottom;
  const y=v=>top+(scale.high-v)/(scale.high-scale.low)*(plotBottom-top),dx=(w-left-right)/Math.max(1,bars.length),x=i=>left+dx*(i+.5),labelColor=dark?'#c9c2d2':'#705565',grid=dark?'#494454':'#dcc3d0';
  // Cap sparse bodies without moving their timestamp slots or changing price geometry.
  const bodyWidth=Math.min(24,Math.max(1,dx*.54));
@@ -49,13 +49,14 @@ export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=
  return{html:parts.join(''),notice:notice.join(' · '),window,scale};
 }
 export function createChartViewport(doc,{count=12,onChange=()=>{}}={}){
- const state={count,offset:0,zoom:1,height:280},root=doc.createElement('div');root.className='candle-view-controls';root.setAttribute('aria-label','K线可视范围，不改变行情');
+ const baseHeight=doc.defaultView?.matchMedia?.('(max-width:690px)').matches?220:280;
+ const state={count,offset:0,zoom:1,height:baseHeight},root=doc.createElement('div');root.className='candle-view-controls';root.setAttribute('aria-label','K线可视范围，不改变行情');
  const buttons=[];
  const button=(label,action)=>{const b=doc.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{action();sync();onChange(state);};root.append(b);return b;};
  for(const [size,label]of [[12,'近12根'],[30,'近30根'],[0,'全部']]){const b=button(label,()=>{state.count=size;state.offset=0;});buttons.push([size,b]);}
  const plus=button('纵轴＋',()=>state.zoom=Math.min(128,state.zoom*2));plus.setAttribute('aria-label','放大纵轴，超出范围的K线会标记');
  const minus=button('纵轴－',()=>state.zoom=Math.max(1,state.zoom/2));minus.setAttribute('aria-label','缩小纵轴');
- button('全幅',()=>state.zoom=1);button('拉高图表',()=>state.height=state.height===280?440:280);
+ button('全幅',()=>state.zoom=1);button('拉高图表',()=>state.height=state.height===baseHeight?440:baseHeight);
  const label=doc.createElement('label'),slider=doc.createElement('input');label.className='candle-history';label.textContent='回看';slider.type='range';slider.min='0';slider.max='0';slider.value='0';slider.setAttribute('aria-label','回看较早K线，右端为最新');slider.oninput=()=>{state.offset=Number(slider.max)-Number(slider.value);onChange(state);};label.append(slider);root.append(label);
  function sync(){for(const [size,b]of buttons)b.setAttribute('aria-pressed',String(state.count===size));plus.disabled=state.zoom>=128;minus.disabled=state.zoom<=1;}
  sync();return{root,state,update(total){const max=state.count>0?Math.max(0,total-state.count):0;state.offset=clamp(state.offset,0,max);slider.max=String(max);slider.value=String(max-state.offset);slider.disabled=max===0;label.hidden=max===0;sync();}};

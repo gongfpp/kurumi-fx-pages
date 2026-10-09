@@ -1,4 +1,4 @@
-import {setImage} from './assets.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {setImage} from './assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const bindings=new WeakMap();
 // Lazy non-primary art and an explicit text fallback retain the ledger/context
 // even if both the original request and its one ordinary retry fail.

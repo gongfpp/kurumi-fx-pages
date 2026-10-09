@@ -1,24 +1,22 @@
 const finite=Number.isFinite,clamp=n=>Math.max(0,Math.min(1,n));
 const percentText=n=>n>0&&n<.01?'不足 0.01%':n.toFixed(2)+'%';
-// Same visual component, two explicitly different scopes. Price roots come
-// from the engine; this adapter does not solve or change risk/accounting rules.
+// A position card shows its own stop first; account risk has a separate meter.
+// Engine roots assume the portfolio stays unchanged, so an opposite-direction
+// account root must not be appended as the next event of a stopped order.
 export function positionRiskView(position,{price,grossPnl,stopLoss,accountEstimate}={}){
  const stop=finite(stopLoss)&&stopLoss>0&&finite(position.stopPrice)&&position.stopPrice>0?
   {kind:'stop',boundary:position.stopPrice,consumed:finite(grossPnl)?clamp(-grossPnl/stopLoss):null,label:'本单止损'}:null;
  const e=accountEstimate,validPrice=value=>finite(value)&&value>0;
  if(!finite(price)||price<=0)return{kind:'unknown',percent:null,tone:'unknown',label:'风险距离暂不可估算'};
  const roots=e&&!e.reason?[...new Set([e.price,...(e.prices||[])].filter(validPrice))].sort((a,b)=>Math.abs(a-price)-Math.abs(b-price)):[];
- const stopDirection=stop?Math.sign(stop.boundary-price):null;
- const comparable=stop?roots.find(value=>Math.sign(value-price)===stopDirection||value===price):roots[0];
- const opposite=stop?roots.find(value=>Math.sign(value-price)!==stopDirection&&value!==price):null;
+ const comparable=roots[0];
  const account=comparable!==undefined?{kind:'liquidation',boundary:comparable,consumed:finite(e.remainingLoss)&&finite(e.lossThreshold)&&e.lossThreshold>0?clamp(1-e.remainingLoss/e.lossThreshold):e.remainingLoss===0?1:null,label:'账户强平'}:null;
  // Without a finite root, report current margin status instead of inventing a distance.
  if(e?.remainingLoss===0&&e.reason!=='empty')return{kind:roots.length?'liquidation':'unknown',percent:roots.length?100:null,tone:'critical',label:roots.length?'已触及账户强平阈值':'账户保证金已触及强平阈值 · 无单一强平价'};
- const selected=account&&(!stop||account.consumed===1||stop.consumed!==1&&Math.abs(account.boundary-price)<Math.abs(stop.boundary-price))?account:stop;
- if(!selected)return{kind:'unknown',percent:null,tone:'unknown',label:finite(stopLoss)&&stopLoss>0?'本单止损价格暂不可估算':e?.reason==='hedged'?'未设止损 · 多空对冲，无单一强平价':'未设止损 · 账户强平距离暂不可估算'};
+ const selected=stop||account;
+ if(!selected)return{kind:'unknown',percent:null,tone:'unknown',label:finite(stopLoss)&&stopLoss>0?'本单止损价格暂不可估算':e?.reason==='hedged'?'未设止损 · 多空对冲，无单一强平价':e?.reason==='unreachable'?'未设止损 · 当前无可达的强平价格':'未设止损 · 账户强平距离暂不可估算'};
  const distance=Math.abs(selected.boundary/price-1)*100,at=selected.consumed===1||distance<1e-10,percent=selected.consumed===null?null:Math.round(selected.consumed*1000)/10;
  const direction=selected.boundary<price?'跌':'涨';let label=at?`已触及${selected.label}`:`${selected.label} · 再${direction} ${percentText(distance)}`;
- if(opposite&&selected.kind==='stop')label+=`；另向${opposite<price?'跌':'涨'} ${percentText(Math.abs(opposite/price-1)*100)}为账户强平`;
  const tone=at||distance<=.1||percent>=85?'critical':distance<=.35||percent>=60?'warning':'normal';
  return{kind:selected.kind,boundary:selected.boundary,percent,tone,label,scope:selected.kind==='stop'?'本单止损阈值':'全账户强平阈值',distance};
 }

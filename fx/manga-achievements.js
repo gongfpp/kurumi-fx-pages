@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Trophy references are labelled as inspiration, not screenshots of this save.
 const mappings=Object.freeze({
  'first-profit':{panel:'profit',note:'原作第 1 话第 45 页首单确认盈利。游戏解锁依据本局手续费后真实平仓结果；不采用图中 +24,000。'},

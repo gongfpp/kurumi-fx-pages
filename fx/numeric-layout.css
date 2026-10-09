@@ -17,3 +17,8 @@
 @media(max-width:390px){.position-pnl{display:grid;grid-template-columns:minmax(0,1fr)}.position-pnl>strong{margin-left:0;--amount-font:24px}.order-row-data,.order-estimate>div{display:flex;flex-direction:column;align-items:stretch}.order-row-data>b,.order-estimate>div>b{margin-left:0;text-align:left}.account-heading>b{--amount-font:32px}}
 
 .position-pnl>strong:not([data-atomic-amount]){white-space:normal;overflow-wrap:anywhere;min-width:0}
+/* Phone facts share a line whenever they fit; only genuinely long amounts wrap. */
+@media(max-width:690px){
+ .position-pnl{display:flex;gap:4px 8px}.position-pnl>strong{margin-left:auto;--amount-font:23px}.account-heading>b{--amount-font:29px}.order-live-pnl b{--amount-font:18px}.order-estimate .primary-estimate b{--amount-font:15px}.day-total>strong{--amount-font:29px}
+ .order-row-data,.order-estimate>div{flex-direction:row;align-items:baseline;gap:3px 7px}.order-row-data>b,.order-estimate>div>b{margin-left:auto;text-align:right}.liquidation-estimate>div{grid-template-columns:82px minmax(0,1fr);gap:6px}
+}

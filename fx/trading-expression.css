@@ -1,0 +1,18 @@
+/* Contained in the existing non-interactive portrait/speech: no extra mobile rows,
+   fixed viewport overlay, backdrop, focus trap, order interception or scroll lock. */
+.trading-expression[hidden],.trading-expression-thought[hidden]{display:none!important}
+.trading-expression{position:absolute;inset:0;z-index:2;background:#fff3f8;pointer-events:none;overflow:hidden;border:2px solid #b34776;border-radius:8px}
+.portrait .trading-expression img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+.trading-expression-close{position:absolute;top:2px;right:2px;width:28px;height:28px;min-height:28px;padding:0;border:1px solid #aa7590;border-radius:50%;font-size:21px;line-height:1;background:#fff;color:#553447;pointer-events:auto;cursor:pointer}
+.trading-expression-thought{position:absolute;inset:0;z-index:2;background:#fff9fc;padding:8px;display:flex;align-items:center;line-height:1.45;font-size:14px;color:#722d50;pointer-events:none;overflow:auto;overflow-wrap:anywhere}
+.motion-full .trading-expression:not([hidden]){animation:trading-expression-arrive .2s ease-out}
+@keyframes trading-expression-arrive{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+@media(max-width:930px){.trading-expression-thought{font-size:12px;padding:5px}.trading-expression-close{width:26px;height:26px;min-height:26px}}
+@media(max-width:390px){.trading-expression-thought{font-size:11px;padding:4px}}
+@media(prefers-reduced-motion:reduce){.motion-full .trading-expression:not([hidden]){animation:none}}
+.trading-expression.is-detached{position:fixed;inset:auto;width:208px;max-width:calc(100vw - 16px);height:94px;z-index:20;display:flex;align-items:stretch;box-shadow:2px 3px 0 #ddafc3}
+.trading-expression.is-detached img{width:64px;height:100%;object-fit:contain;flex:none}
+.trading-expression.is-detached .trading-expression-thought{position:static;flex:1;min-width:0;padding:5px 6px;font-size:11px;line-height:1.4;background:transparent}
+.trading-expression.is-detached .trading-expression-close{right:auto;left:1px;top:1px;width:24px;height:24px;min-height:24px}
+
+.portrait .trading-expression.has-embedded-text img{height:calc(100% - 28px);margin-top:28px}

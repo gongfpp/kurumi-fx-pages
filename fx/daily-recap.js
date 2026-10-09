@@ -1,10 +1,11 @@
-import {readRunStatistics} from './run-statistics.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {runPerformance} from './performance.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {displayCandles,candlePeriodNotice} from './candle-period.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {runPerformance} from './performance.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -35,17 +36,24 @@ export function buildRecapSnapshot(state={},options={}){
  const closingTrading={day:state.day,timestamp:closeTime,kind:'trading-close',...currentValues};
  today.push(closingTrading);cumulative.push(closingTrading);
  const tradingToday=today.map(point=>tradingPoint(point,{daily:true})).filter(Boolean),tradingCumulative=cumulative.map(point=>tradingPoint(point)).filter(Boolean);
+ // Only persisted, already observed account points participate in the replay.
+ // The adjusted asset path removes borrowing, repayments and spending, while
+ // unrealized remains an independent observation rather than invented profit.
+ const observations=points.filter(x=>x.timestamp<=closeTime&&Number.isFinite(x.unrealized)&&Number.isFinite(x.tradingAssets)).map(x=>({timestamp:x.timestamp,tradingAssets:x.tradingAssets+finite(state.dayOpeningFunding)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset),unrealized:x.unrealized}));
+ const observedClosing=closingTrading.tradingAssets+finite(state.dayOpeningFunding)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset);
+ if(Number.isFinite(observedClosing))observations.push({timestamp:closeTime,tradingAssets:observedClosing,unrealized:finite(currentValues.unrealized)});
  const cumulativeDenominator=finite(state.startEquity,p.startEquity),totalProfit=finite(report?.performance?.totalProfit,p.totalProfit),totalReturn=ratio(totalProfit,cumulativeDenominator),dayReturn=dayMetrics.returnRate;
  const primary=state.mode==='endless'?{scope:'cumulative',label:'累计已实现交易收益',profit:totalProfit,returnRate:totalReturn}:{scope:'today',label:dayMetrics.tradingNetPartial?'今日交易盈亏 · 留存样本':report?'今日交易净盈亏':'今日已实现交易盈亏',profit:tradingNet,returnRate:dayReturn};
- const allCandles=timedCandles(state),dayCandleStart=allCandles.findIndex(c=>c.day===state.day),dayCandleEnd=allCandles.findLastIndex(c=>c.day===state.day)+1,candleMovingAverages=dayCandleStart<0?[]:movingAverageSeries(state.candles,{start:dayCandleStart,end:dayCandleEnd});
+ const allCandles=displayCandles(state),dayCandleStart=allCandles.findIndex(c=>c.day===state.day),dayCandleEnd=allCandles.findLastIndex(c=>c.day===state.day)+1,candleMovingAverages=dayCandleStart<0?[]:movingAverageSeries(allCandles,{start:dayCandleStart,end:dayCandleEnd});
  const snapshot={version:1,id:`${state.runId||state.seed||0}:${state.day}:${closeTime}:${tradingNet}:${costs}`,day:state.day||1,mode:state.mode||'story',sealed:!!report,timestamp:closeTime,
   primary,daily:{tradingNet,tradingNetPartial:dayMetrics.tradingNetPartial,returnRate:dayReturn,returnDenominator:dayMetrics.denominator,returnDenominatorSource:dayMetrics.source,returnBasis:'今日收益率 = 今日已实现净盈亏 ÷ 开盘净资产',openingNominal:opening,closingNominal:closing,nominalChange:amount(closing-opening),costs:{total:costs,living,interest,consumption},netResult:amount(tradingNet-costs),fundingIncludingAccruedInterest:funding,fundingPrincipal:amount(funding-interestAccrued),interestAccrued,returnUnavailable:dayMetrics.returnUnavailable,noodlesUsed:!!state.itemsUsed?.noodles,livingStatus:report?.livingSettlement?.status||(report?'legacy-paid':'not-due'),pendingLivingCost:finite(report?.pendingLivingCost)},
   cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计收益率 = 累计已实现净盈亏 ÷ 初始本金'},
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
   curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial:recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||state.accountingJournal?.truncatedDays?.includes(state.day),cumulativePartial:!!state.accountingJournal?.legacyPartial||!state.accountingJournal||hasEarlierGap,unit:'日元 / ¥',timeUnit:'游戏交易时间 · JST'},
+  replay:{observations,partial:points.some(x=>!Number.isFinite(x.unrealized)||!Number.isFinite(x.tradingAssets))||(recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||!!state.accountingJournal?.truncatedDays?.includes(state.day))},
   trades:readRunStatistics(state).trades.filter(t=>t.day===state.day).map(t=>({...t})),
-  candles:allCandles.filter(c=>c.day===state.day),candleMovingAverages,timeNotice:TRADING_TIME_NOTICE,
+  candles:allCandles.filter(c=>c.day===state.day),candleMovingAverages,timeNotice:candlePeriodNotice(state),
   note:dayMetrics.returnUnavailable||null};
  return JSON.parse(JSON.stringify(snapshot));
 }
@@ -59,4 +67,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';

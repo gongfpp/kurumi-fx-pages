@@ -1,6 +1,7 @@
+import {RESEARCH_BUILD} from './research-config.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
-export const STORAGE_PREFIX='kurumi-fx:';
+export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
 const historicalKeys=['fx-girl-historical-story-v1','fx-girl-historical-endless-v1','fx-girl-market-source'];
 const allowed=new Set([...historicalKeys,'fx-api-v1-telemetry-budget','fx-api-v1-chapter-01-telemetry-budget','fx-bgm-preferences-v1','fx-api-v1-chapter-01-storage-check','fx-api-v1-chapter-01-consent','fx-api-v1-telemetry-consent','fx-api-v1-chapter-01-anon-session','fx-api-v1-chapter-01-last-visit','fx-api-v1-chapter-01-telemetry-outbox','fx-api-v1-chapter-01-telemetry-seen','fx-moving-averages','fx-girl-campaign-v2','fx-girl-campaign-v3','fx-girl-endless-v1','fx-girl-mode','fx-girl-settings','fx-girl-voice','fx-girl-motion','fx-girl-analytics','fx-girl-developer-backup-v3','fx-endless-developer-backup-v1','fx-jiuliumei-achievements-v1','fx-leaderboard-submit-session','fx-anon-visitor','fx-anon-session','fx-last-visit','fx-telemetry-enabled','fx-telemetry-outbox','fx-telemetry-seen','fx-api-v1-leaderboard-submit-session','fx-api-v1-anon-visitor','fx-api-v1-anon-session','fx-api-v1-last-visit','fx-api-v1-telemetry-outbox','fx-api-v1-telemetry-seen']);
 // Migration backups are exact recovery bytes for the two current save slots.
@@ -14,7 +15,7 @@ export function storageEventMatches(eventKey,key){return eventKey===null||!!key&
 export function namespacedStorage(raw){
  if(!raw)throw new Error('Browser storage is unavailable');
  return {
-  getItem(key){const scoped=storageKey(key),value=raw.getItem(scoped);if(value!==null)return value;if(raw.getItem(scoped+':removed')==='1'||serviceOnly(key))return null;return raw.getItem(key);},
+  getItem(key){const scoped=storageKey(key),value=raw.getItem(scoped);if(value!==null)return value;if(RESEARCH_BUILD||raw.getItem(scoped+':removed')==='1'||serviceOnly(key))return null;return raw.getItem(key);},
   setItem(key,value){const scoped=storageKey(key);raw.setItem(scoped,String(value));},
   // A tombstone keeps an intentional removal from reviving a legacy value.
   // Write the tombstone before removal so quota failures cannot erase a save.

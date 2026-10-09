@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Parallel original episodes. Fixed pictures and third-person narration only.
 const reused={16:'short-entry',17:'leverage',19:'retreat',20:'profit'};
 export const PROFIT_MANGA_ASSETS={
@@ -508,7 +508,7 @@ export const PROFIT_MANGA_NODES=[
         "alt": "萌智子口头说也来做空；同一画面的实名持仓板却写USD/JPY五十手做多、平均106.832日元"
       }
     ],
-    "after": "她嘴上说着做空，画面下方的持仓板却写着做多。"
+    "after": "嘴上说着做空，账户里却是多单。"
   },
   {
     "id": "opposite-floating-results",

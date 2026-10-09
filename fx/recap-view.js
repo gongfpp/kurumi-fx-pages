@@ -1,11 +1,11 @@
-import {createRecapStageChart} from './recap-stage-chart.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {setImage} from './assets.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {buildCurveScale} from './share-card.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {recapChoices} from './daily-recap.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {createRecapPlayer} from './recap-player.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {createRecapStageChart} from './recap-stage-chart.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {setImage} from './assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {recapChoices} from './daily-recap.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const pct=n=>n===null?'—':(n>0?'+':'')+(n*100).toFixed(2)+'%';
@@ -46,6 +46,7 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
  const stageProfit=el(doc,'strong','recap-stage-profit'),clock=el(doc,'span','recap-replay-clock'),eventCard=el(doc,'div','recap-event-card','沿当天 K 线回看'),eventDelta=el(doc,'strong','recap-event-delta'),phaseLabel=el(doc,'span','recap-phase-label','开盘'),progressTrack=el(doc,'div','recap-progress-track'),progressBar=el(doc,'i');progressTrack.append(progressBar);eventCard.append(eventDelta);
  const candles=createRecapStageChart(doc,snapshot);playback.append(phaseLabel,clock,stageProfit,candles.root,eventCard,progressTrack);container.append(playback);
  // Keep the detailed chart controls available after the central performance.
+ if(snapshot.replay?.partial)playback.append(el(doc,'p','recap-note','部分盘中资产未记录，仅回放已知数值。'));
  const chartDetails=el(doc,'details','recap-chart-details');chartDetails.append(el(doc,'summary','','查看完整 K 线 / 均线'),candleReplay(doc,snapshot.candles,snapshot.candleMovingAverages||[]).root);container.append(chartDetails);
  const tabs=el(doc,'div','recap-tabs'),curve=el(doc,'div','recap-curve');for(const [scope,label]of [['today',snapshot.curves.basis==='trading'?'今日交易资产曲线':'今日资金曲线'],['cumulative',snapshot.curves.basis==='trading'?'累计交易资产曲线':'累计资金曲线']]){const b=el(doc,'button','',label);b.type='button';b.onclick=()=>{for(const child of tabs.children)child.setAttribute('aria-pressed',String(child===b));curve.replaceChildren(drawRecapCurve(doc,snapshot.curves[scope],{label,partial:snapshot.curves[scope+'Partial'],basis:snapshot.curves.basis}));};tabs.append(b);}container.append(tabs,curve);tabs.firstElementChild.click();
  container.append(el(doc,'p','recap-clock',snapshot.timeNotice));const basis=el(doc,'details','recap-basis');basis.append(el(doc,'summary','','收益率和资金口径'),el(doc,'p','',snapshot.daily.returnBasis),el(doc,'p','',snapshot.cumulative.returnBasis),el(doc,'p','','净资产 = 账户总资产 − 全部欠款。'));container.append(basis);
@@ -62,9 +63,9 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
   player?.cancel();clearEffects();lastBeat=-1;lastEvent=-1;lastStage='';
   player=createRecapPlayer(snapshot,{...playerOptions,onTimeline,enabled:activeMotion,reducedMotion:systemReduced,render:f=>{
    const primaryValue=snapshot.primary.scope==='cumulative'?snapshot.primary.profit-snapshot.daily.tradingNet+f.realized:f.realized;
-   profitCounter.textContent=signed(Math.round(primaryValue*100)/100);rollAmount(f.value,activeMotion&&!systemReduced&&!f.complete);step.textContent=f.complete?'交易收盘资产':'交易资产 · 已实现';
+   profitCounter.textContent=signed(Math.round(primaryValue*100)/100);rollAmount(f.value,activeMotion&&!systemReduced&&!f.complete);step.textContent=f.complete?'交易收盘资产':'交易资产 · 含持仓浮盈';
    const denominator=snapshot.primary.scope==='cumulative'?snapshot.cumulative.returnDenominator:snapshot.daily.returnDenominator;rateCounter.textContent=pct(f.complete?snapshot.primary.returnRate:snapshot.primary.returnRate===null?null:denominator>0?primaryValue/denominator:snapshot.primary.profit?primaryValue/snapshot.primary.profit*snapshot.primary.returnRate:0);
-   stageProfit.textContent='净盈亏 '+signed(Math.round(f.realized*100)/100);clock.textContent=formatTradingTime(f.timestamp)+' JST';progressBar.style.width=(f.timeProgress*100)+'%';phaseLabel.textContent=f.complete?'收盘':f.stage==='anticipation'?'收盘前一拍':f.stage==='landing'?(presentation.direction==='loss'?'亏损落账':'收益落账'):'当天回放';
+   stageProfit.textContent='已实现 '+signed(Math.round(f.realized*100)/100)+' · 浮动 '+signed(Math.round(f.unrealized*100)/100);clock.textContent=formatTradingTime(f.timestamp)+' JST';progressBar.style.width=(f.timeProgress*100)+'%';phaseLabel.textContent=f.complete?'收盘':f.stage==='anticipation'?'收盘前一拍':f.stage==='landing'?(presentation.direction==='loss'?'亏损落账':'收益落账'):'当天回放';
    playback.dataset.eventDirection=f.event?.delta<0?'loss':f.event?.delta>0?'profit':'flat';
    if(f.event&&f.event.index!==lastEvent){lastEvent=f.event.index;eventCard.firstChild && (eventCard.firstChild.textContent='');eventCard.replaceChildren(el(doc,'span','recap-event-label',formatTradingTime(f.event.timestamp)+' · '+({open:'开仓',half:'部分平仓',stop:'止损',liquidation:'强制平仓',closing:'收盘平仓'}[f.event.type]||'平仓')),eventDelta);eventDelta.textContent=f.event.type==='open'?'持仓入场':signed(f.event.delta);
     if(activeMotion&&!systemReduced&&!f.complete){const loss=f.event.delta<0;animate(eventCard,[{opacity:.2,transform:'translateY(34px) rotate(-3deg) scale(.85)'},{opacity:1,transform:'translateY(-6px) rotate(1deg) scale(1.06)',offset:.55},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,.8,.2,1)'});animate(running,[{transform:'translateY(0) scale(1)'},{transform:`translateY(${loss?12:-16}px) scale(${1.1+presentation.intensity*.14})`,offset:.35},{transform:'none'}],{duration:650,easing:'cubic-bezier(.2,.8,.2,1)'});}

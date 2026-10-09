@@ -1,9 +1,10 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;
 // Only a terminal game is eligible. A normal daily settlement is not game-over.
 export function terminalRankingEligibility(state,report,storage){
+ if(state?.historical?.version===2)return {eligible:false,reason:'private-research'};
  if(!ID.test(state?.runId||''))return {eligible:false,reason:'missing-run'};
  if(state.phase!=='ending'||!ENDINGS.has(state.ending?.id)||report?.gameFinished!==true||report?.completionReason!==state.ending.id||report?.eligibility?.gameFinished!==true)return {eligible:false,reason:'unfinished'};
  try{if(hasDevelopmentTaint(state,storage)||report.eligibility.developmentTaint!==false)return {eligible:false,reason:'developer'};}catch{return {eligible:false,reason:'storage-unavailable'};}

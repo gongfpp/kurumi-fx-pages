@@ -1,4 +1,4 @@
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

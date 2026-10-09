@@ -1,4 +1,4 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 
 const positive=n=>Number.isFinite(n)&&n>0;
 const nonnegative=n=>Number.isFinite(n)&&n>=0;
@@ -44,6 +44,24 @@ function closedOrders(trades){
  return orders;
 }
 
+// Net equality alone cannot prove completeness: omitting a zero-net execution
+// can preserve the daily total while changing the apparent trading direction.
+// Reconcile the independently retained fee rows and all sealed daily net aliases.
+function completeDailyFees(state,report,trades){
+ if(!Array.isArray(state.feeLedger)||!nonnegative(report.fees)||!nonnegative(report.feesPaid))return false;
+ if(!['closedTradeNet','tradeNet','netTradingProfit'].every(k=>near(report[k],report.net)))return false;
+ const fees=state.feeLedger.filter(row=>row?.day===state.day);
+ if(fees.some(row=>!['open','close'].includes(row.side)||typeof row.positionId!=='string'||!integer(row.beat)||!nonnegative(row.amount)))return false;
+ if(!near(sum(trades,'fee'),report.fees)||!near(report.fees,report.feesPaid)||!near(sum(fees,'amount'),report.fees))return false;
+ const ids=[...new Set(trades.map(t=>t.positionId))];
+ if(fees.some(row=>!ids.includes(row.positionId)))return false;
+ for(const id of ids){
+  const executions=trades.filter(t=>t.positionId===id),opened=fees.filter(row=>row.positionId===id&&row.side==='open'),closed=fees.filter(row=>row.positionId===id&&row.side==='close');
+  if(opened.length!==1||!near(opened[0].amount,sum(executions,'openFee'))||!sameMultiset(closed,executions,(fee,t)=>fee.beat===t.beat&&near(fee.amount,t.closeFee)))return false;
+ }
+ return true;
+}
+
 // This is a read-only receipt gate. Durable-save/current-run presentation is
 // still owned by createSavedContextualManga; no receipt is repaired here.
 export function sealedDailyTradeEvidence(state){
@@ -51,7 +69,7 @@ export function sealedDailyTradeEvidence(state){
  if(state?.mode!=='story'||!outcome||!Number.isSafeInteger(state.day)||state.day<1||state.position||!Array.isArray(report.trades)||report.trades.some(t=>!t||t.day!==state.day)||!Array.isArray(state.history))return null;
  if(Object.hasOwn(report,'runId')&&report.runId!==state.runId)return null;
  const trades=report.trades.filter(t=>t.type!=='open'),history=state.history.filter(t=>t?.day===state.day&&t.type!=='open');
- if(!trades.length||trades.some(t=>!validClose(t,state.day))||!uniqueReceipts(trades)||!uniqueReceipts(history)||!sameMultiset(trades,history)||!near(sum(trades,'pnl'),outcome.net))return null;
+ if(!trades.length||trades.some(t=>!validClose(t,state.day))||!uniqueReceipts(trades)||!uniqueReceipts(history)||!sameMultiset(trades,history)||!near(sum(trades,'pnl'),outcome.net)||!completeDailyFees(state,report,trades))return null;
  // I and the older debt stories do not need opening chronology. Nevertheless,
  // an explicitly retained complete timeline must not contradict their ledger.
  // In particular, deleting the same losing/winning row from both saved copies
@@ -70,12 +88,19 @@ export function shortProfitEvidence(state){
  return {day:evidence.day,net:evidence.net,positions:evidence.positions};
 }
 
+// A positive day alone cannot stand in for a profitable long execution.
+export function longProfitEvidence(state){
+ const evidence=sealedDailyTradeEvidence(state);
+ if(!evidence||evidence.net<=0||evidence.trades.some(t=>t.direction!==1||t.exit<=t.entry||t.pnl<=0||t.lossReduction!==0||(t.balanceProtection??0)!==0))return null;
+ return {day:evidence.day,net:evidence.net,positions:evidence.positions};
+}
+
 // runStatistics v1 deliberately stores a projection, not a second financial
 // ledger. It has no native pnlModel/protection/runId fields. Match every saved
 // exit to a certified modern receipt instead of manufacturing those fields.
 const timelineNumbers=['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'];
 const sameExecution=(execution,receipt)=>['type','positionId','day','beat','timestamp','positionClosed'].every(k=>execution[k]===receipt[k])&&timelineNumbers.every(k=>execution[k]===(Number.isFinite(receipt[k])?receipt[k]:null));
-function validStatisticsShape(stats){
+export function validStatisticsShape(stats){
  const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','winningStreak','losingStreak','profitGivebackOrders','executions'];
  return counts.every(k=>integer(stats[k]))&&nonnegative(stats.maxLeverage)&&nonnegative(stats.maxOrderProfit)&&Number.isFinite(stats.maxOrderLoss)&&stats.maxOrderLoss<=0&&['realizedCumulative','realizedPeak','realizedTrough'].every(k=>Number.isFinite(stats[k]))&&['realizedPathComplete','maxLeverageComplete','profitGivebackComplete','drawdownRecorded'].every(k=>stats[k]===true)&&stats.winningOrders+stats.losingOrders+stats.breakevenOrders===stats.closedOrders&&stats.openOrders&&typeof stats.openOrders==='object'&&!Array.isArray(stats.openOrders)&&Object.keys(stats.openOrders).length===0;
 }
@@ -101,9 +126,9 @@ function completeExecutionOrders(trades,stats){
  const wins=closed.filter(o=>o.net>.005).length,losses=closed.filter(o=>o.net<-.005).length;
  return wins===stats.winningOrders&&losses===stats.losingOrders&&closed.length-wins-losses===stats.breakevenOrders&&near(Math.max(0,...closed.map(o=>o.net)),stats.maxOrderProfit)&&near(Math.min(0,...closed.map(o=>o.net)),stats.maxOrderLoss)&&closed.filter(o=>o.exits.at(-1).type==='liquidation').length===stats.liquidatedOrders&&closed.filter(o=>o.exits.at(-1).type==='stop').length===stats.stopLossOrders;
 }
-function retainedTimeline(state,evidence){
+export function retainedTimeline(state,evidence){
  const stats=state?.runStatistics;
- if(!stats||stats.version!==1||stats.complete!==true||stats.timelinePartial!==false||!Array.isArray(stats.trades)||!stats.trades.length||stats.trades.length>2048||!validStatisticsShape(stats)||stats.executions!==stats.trades.length)return null;
+ if(!stats||stats.version!==1||stats.complete!==true||stats.timelinePartial!==false||!Array.isArray(stats.trades)||stats.trades.length>2048||!validStatisticsShape(stats)||stats.executions!==stats.trades.length)return null;
  if(Object.hasOwn(stats,'runId')&&stats.runId!==state.runId)return null;
  const trades=stats.trades;
  for(const [index,t] of trades.entries()){

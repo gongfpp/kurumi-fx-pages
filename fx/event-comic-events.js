@@ -1,4 +1,4 @@
-import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Presentation candidates come only from records the engine has already written.
 // No balance differences, click intent, market predictions or historical replay.
 export function recordedComicEvents(state) {
@@ -39,7 +39,7 @@ export function createComicReceiptGate({initialState,context,select,onScenes=()=
    if(nextContext!==currentContext){rebase(state,nextContext);return {context:nextContext,revision,scenes:[]};}
    recordComicProfitBatch(state);
    const selected=scenes(state).filter(scene=>!seen.has(scene.receiptKey));
-   return {context:currentContext,revision,settlementDay:state.dayReport?.day===state.day&&['closing','day_end','resting','ending'].includes(state.phase)?state.day:0,trades:structuredClone(trades(state).filter(row=>!seenTrades.has(tradeKey(row)))),scenes:structuredClone(selected)};
+   return {context:currentContext,revision,observedDay:state.day,settlementDay:state.dayReport?.day===state.day&&['closing','day_end','resting','ending'].includes(state.phase)?state.day:0,trades:structuredClone(trades(state).filter(row=>!seenTrades.has(tradeKey(row)))),scenes:structuredClone(selected)};
   },
   commit(ticket,{saved,context:nextContext,blocked=false}={}){
    if(!saved||blocked||ticket.context!==nextContext||ticket.context!==currentContext||ticket.revision!==revision)return [];
@@ -48,7 +48,7 @@ export function createComicReceiptGate({initialState,context,select,onScenes=()=
    const settled=(ticket.trades||[]).filter(row=>!seenTrades.has(tradeKey(row)));
    for(const row of settled)seenTrades.add(tradeKey(row));
    const batchTradingNet=settled.reduce((sum,row)=>sum+row.pnl,0);
-   if(incoming.length)onScenes(incoming.map(scene=>({...scene,batchTradingNet,settlementDay:ticket.settlementDay||0})));
+   if(incoming.length)onScenes(incoming.map(scene=>({...scene,batchTradingNet,observedDay:ticket.observedDay,settlementDay:ticket.settlementDay||0})));
    return incoming;
   },
   rebase,

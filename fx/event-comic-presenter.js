@@ -1,12 +1,13 @@
-import {mountContextualManga} from './contextual-manga-view.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
-import {setImage} from './assets.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {setImage} from './assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -19,7 +20,7 @@ export function comicReceiptText(scene){
  return lines.join(' · ');
 }
 
-export function createEventComicPresenter({root=document,initialState,getContext,isBlocked=()=>false,isPaused=()=>false,onIdle=()=>{},onAutoShown=()=>{}}){
+export function createEventComicPresenter({root=document,initialState,getContext,isBlocked=()=>false,isPaused=()=>false,onIdle=()=>{},onAutoShown=()=>{},onReceipts=()=>{}}){
  const make=(tag,className,text)=>{const el=root.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;};
  const dialog=make('dialog','event-comic-dialog dialog-shell');dialog.id='event-comic-dialog';dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','event-comic-title');
  const toolbar=make('div','dialog-toolbar'),close=make('button','x-close','×');close.type='button';close.setAttribute('aria-label','关闭小剧场');toolbar.append(close);
@@ -31,13 +32,14 @@ export function createEventComicPresenter({root=document,initialState,getContext
  (root.getElementById('scene-resume')?.parentElement||root.querySelector('footer')||root.body).append(launcher);
  let showing=null,opener=null,closing=false,disposed=false,queue,deliveryTimer=null,deliveries=[],savedReplay=[],currentState=initialState,autoShown=new Set();
  ensureComicAutoplay(currentState);
+ const dailySettlement=()=>currentState.mode!=='endless'&&['closing','day_end','resting'].includes(currentState.phase);
  const syncRoot=()=>root.documentElement.classList.toggle('dialog-active',!!root.querySelector('dialog[open]'));
- function hide(){if(dialog.open){closing=true;dialog.close();closing=false;}showing=null;syncRoot();}
+ function hide(){if(dialog.open){closing=true;preserveScroll(opener?.parentElement||root.documentElement,()=>dialog.close());closing=false;}showing=null;syncRoot();}
  function valid(){return !disposed&&!isBlocked();}
  function safe(){return valid()&&!isPaused()&&![...(root.querySelectorAll?.('dialog[open]')||[])].some(open=>open!==dialog);}
  function paint(state){
-  launcher.hidden=!safe()||!state.pending.length&&!state.history.length&&!savedReplay.length;
-  launcher.textContent=state.pending.length?`继续小剧场 · ${state.pending.length}`:savedReplay.length?'重看今日小剧场':'重看小剧场';
+  launcher.hidden=dailySettlement()||!safe()||!state.pending.length&&!state.history.length&&!savedReplay.length;
+  launcher.textContent=state.pending.length?`继续小剧场 · ${state.pending.length}`:savedReplay.length?'重看小剧场':'重看小剧场';
   if(!state.active||!safe()){hide();return;}
   if(showing===state.active.receiptKey&&dialog.open){next.textContent=state.pending.length?'下一幕':'回到游戏';return;}
   const scene=state.active;showing=scene.receiptKey;title.textContent=scene.title;dialog.dataset.scene=scene.id;dialog.dataset.receiptKey=scene.receiptKey;dialog.dataset.artReady=String(scene.ready);
@@ -48,7 +50,7 @@ export function createEventComicPresenter({root=document,initialState,getContext
   lines.replaceChildren();for(const [speaker,text] of scene.lines){const line=make('li'),name=make('b',null,speaker);line.append(name,root.createTextNode(`：${text}`));lines.append(line);}
   mountContextualManga(contextual,scene.contextualManga,{manual:true,root});
   receipt.textContent=comicReceiptText(scene);receipt.hidden=!receipt.textContent;next.textContent=state.pending.length?'下一幕':'回到游戏';
-  if(!dialog.open){opener=root.activeElement;dialog.showModal();}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
+  if(!dialog.open){opener=root.activeElement;preserveScroll(root.documentElement,()=>dialog.showModal());}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
   if(scene.automatic&&!autoShown.has(scene.receiptKey)){autoShown.add(scene.receiptKey);markAutomaticComicShown(currentState,scene);onAutoShown();}
  }
  queue=createEventComicQueue({onChange:paint});
@@ -58,13 +60,16 @@ export function createEventComicPresenter({root=document,initialState,getContext
   // receipts until that same context is safe; rebase/invalidate discards them.
   if(!safe())return;
   const incoming=deliveries;deliveries=[];
-  const scenes=incoming.filter(item=>item.context===getContext()).flatMap(item=>item.scenes);
+  // The daily window owns the complete evening: recap, story and living receipt.
+  // A pre-close asynchronous delivery must not become a third night-time modal.
+  if(dailySettlement())return;
+  const scenes=incoming.filter(item=>item.context===getContext()).flatMap(item=>item.scenes).filter(scene=>scene.observedDay===currentState.day);
   // One visible interruption for this delivery turn. All other receipts remain
   // in the replay archive, never in an automatic 'next scene' backlog.
   if(!queue.state.active){const selected=chooseAutomaticComic(currentState,scenes);if(selected){const presented=realizedProfitComicPresentation(selected,{traumaActive:tradingTrauma(currentState).active});queue.enqueue([{...presented,automatic:true,result:['closed-profit','half-profit','stop-loss','liquidation'].includes(selected.id)?{...selected.result,tradingNet:selected.batchTradingNet}:selected.result}]);queue.resume();}}
  }
  function scheduleDelivery(){if(deliveryTimer===null&&deliveries.length&&safe())deliveryTimer=setTimeout(flushDeliveries,0);}
- const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes);const automatic=scenes.filter(scene=>!scene.manualOnly);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];autoShown.clear();queue.reset();}});
+ const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes);onReceipts();const automatic=scenes.filter(scene=>!scene.manualOnly&&!scene.settlementDay&&scene.observedDay===currentState.day);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];autoShown.clear();queue.reset();}});
  // A loaded save is already durable. Rebuild read-only scenes from its own
  // current-day receipts, but never autoplay them or call economic handlers.
  savedReplay=structuredClone(recordedComicScenes(initialState,(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS})));
@@ -76,7 +81,7 @@ export function createEventComicPresenter({root=document,initialState,getContext
  dialog.addEventListener('keydown',event=>event.stopPropagation());
  next.addEventListener('click',()=>{queue.next();if(!queue.state.active)onIdle();});
  replay.addEventListener('click',()=>{showing=null;queue.replay(queue.state.active?.receiptKey);});
- launcher.addEventListener('click',()=>{if(!safe())return;if(queue.state.pending.length)queue.resume();else if(savedReplay.length){queue.play(savedReplay.map(scene=>({...scene,automatic:false})));}else queue.replay();});
+ launcher.addEventListener('click',()=>{if(dailySettlement()||!safe())return;if(queue.state.pending.length)queue.resume();else if(savedReplay.length){queue.play(savedReplay.map(scene=>({...scene,automatic:false})));}else queue.replay();});
  // Back/Forward and page restore discard only presentation. Re-entering an
  // economic handler is never part of a dismissal, replay, reload or navigation.
  const win=root.defaultView;
@@ -85,12 +90,13 @@ export function createEventComicPresenter({root=document,initialState,getContext
  root.addEventListener?.('close',afterOtherDialogClose,true);
  const dismissNavigation=()=>queue.cancel();win?.addEventListener('popstate',dismissNavigation);win?.addEventListener('pagehide',dismissNavigation);
  return {
-  capture:state=>{currentState=state;ensureComicAutoplay(state);return gate.capture(state,getContext());},
+  capture:state=>{currentState=state;ensureComicAutoplay(state);if(dailySettlement()){clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];if(queue.state.active?.automatic||queue.state.pending.some(scene=>scene.automatic))queue.cancel();}const ticket=gate.capture(state,getContext());paint(queue.state);return ticket;},
   commit:(ticket,saved)=>gate.commit(ticket,{saved,context:getContext(),blocked:!valid()}),
   invalidate:()=>gate.invalidate(),
   refresh:refreshPresentation,
   presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0;},
   dispose(){disposed=true;gate.invalidate();root.removeEventListener?.('close',afterOtherDialogClose,true);win?.removeEventListener('popstate',dismissNavigation);win?.removeEventListener('pagehide',dismissNavigation);dialog.remove();launcher.remove();},
+  readCurrentDay:()=>structuredClone(savedReplay.filter(scene=>scene.receipt?.day===currentState.day)),
   get state(){return queue.state;},
  };
 }

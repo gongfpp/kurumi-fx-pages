@@ -1,3 +1,4 @@
+import {preserveScroll} from './preserve-scroll.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Every modal owns one fixed control strip and one scrollable content region.
 // Closing a narrative window dismisses its presentation, never chooses a story.
 export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={}) {
@@ -21,9 +22,11 @@ export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={
     const record={opener:null,show:dialog.showModal.bind(dialog),scroller};records.set(dialog,record);
     dialog.showModal=()=>{
       if(dialog.open)return;
-      record.opener=root.activeElement;record.show();scroller.scrollTop=0;sync();
+      record.opener=root.activeElement;preserveScroll(root.documentElement,()=>record.show());scroller.scrollTop=0;sync();
       close.focus({preventScroll:true});
     };
+    const nativeClose=dialog.close.bind(dialog);
+    dialog.close=(...args)=>preserveScroll(record.opener?.parentElement||root.documentElement,()=>nativeClose(...args));
     const dismiss=()=>{
       if(!dialog.open)return;
       if(dialog.id==='prop-dialog'){root.getElementById('prop-done').click();return;}

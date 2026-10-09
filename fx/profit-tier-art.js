@@ -1,3 +1,4 @@
+import {assetURL} from './assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
 // Read-only presentation. The caller supplies certified realized trading net,
 // never balance, equity, borrowed cash, deposits or unrealized profit.
 const rows = {
@@ -6,7 +7,7 @@ const rows = {
  'hundred-thousand': {path:'./generated/character-profit-v1/profit-hundred-thousand-v1.webp',alt:'久留美惊喜地掩住嘴，站起来举起双拳，又合掌确认收益。'},
  'twenty-million': {path:'./generated/character-profit-v1/profit-twenty-million-v1.webp',alt:'久留美震惊得停住动作，喜极而泣，举起双臂后按着心口笑了。'}
 };
-export const PROFIT_TIER_ART=Object.freeze(Object.fromEntries(Object.entries(rows).map(([tier,row])=>[tier,Object.freeze({...row,src:new URL(row.path,import.meta.url).href,tier,direction:'profit',people:1,panels:4,kind:'generated-game-art',reviewed:true})])));
+export const PROFIT_TIER_ART=Object.freeze(Object.fromEntries(Object.entries(rows).map(([tier,row])=>[tier,Object.freeze({...row,src:assetURL(row.path),tier,direction:'profit',people:1,panels:4,kind:'generated-game-art',reviewed:true})])));
 export function realizedProfitTier(net){
  if(!Number.isFinite(net)||net<=0)return null;
  return net>=20000000?'twenty-million':net>=100000?'hundred-thousand':net>=1000?'thousand':'small';
