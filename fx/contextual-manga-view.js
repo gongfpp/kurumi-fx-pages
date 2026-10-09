@@ -1,22 +1,24 @@
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {setImage} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {setImage} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+const mountedViews=new WeakMap();
 // Inline, manual presentation only. It has no game-state or persistence access.
-export function mountContextualManga(host,selection,{manual=true,root=host.ownerDocument||document}={}){
- host.replaceChildren();host.hidden=!selection;if(!selection)return null;
+export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){
+ mountedViews.get(host)?.();mountedViews.delete(host);host.replaceChildren();host.hidden=!selection;if(!selection)return null;
  const make=(tag,text)=>{const node=root.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
  host.className='contextual-manga';host.dataset.arc=selection.id;
  const section=make('section'),heading=make('h3',selection.title),content=make('div');
- const choices=[selection,...(selection.related||[])].slice(0,4);let active=selection,expanded=!manual,toggle=null;
+ const choices=[selection,...(selection.related||[])].slice(0,4);let active=selection,expanded=!manual,toggle=null;let observers=[];const dispose=()=>{for(const stop of observers)stop();observers=[];};mountedViews.set(host,dispose);
  const updateToggle=()=>{if(toggle){const label=active.parallelStory?'故事':'往事';toggle.textContent=(expanded?'收起这段':'展开这段')+label;toggle.setAttribute('aria-expanded',String(expanded));}};
- function paint(){content.replaceChildren();content.hidden=!expanded;if(!expanded)return;
-  for(const node of active.nodes){const story=make('section'),title=make('h4',node.title);story.dataset.node=node.id;story.append(title,make('p',node.before));
-   for(const panel of node.panels){if(panel.before)story.append(make('p',panel.before));const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record],figure=make('figure'),img=make('img'),missing=make('p','图片暂未加载。');missing.hidden=true;missing.setAttribute('role','status');img.alt=panel.alt;img.width=asset.dimensions[0];img.height=asset.dimensions[1];img.dataset.sourceRecord=String(panel.record);img.loading='eager';img.decoding='async';setImage(img,asset.path,{onStatus:status=>{missing.hidden=status!=='unavailable';img.hidden=status==='unavailable';}});figure.append(img,missing);story.append(figure);}
+ function paint(){dispose();content.replaceChildren();content.hidden=!expanded;if(!expanded)return;
+  for(const node of active.nodes){const remaining=node.panels.filter(panel=>{const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record];return !unreadOnly||!memory.has(artIdentity(asset));});if(!remaining.length)continue;const story=make('section'),title=make('h4',node.title);story.dataset.node=node.id;story.append(title,make('p',node.before));
+   for(const panel of remaining){if(panel.before)story.append(make('p',panel.before));const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record],figure=make('figure'),img=make('img'),missing=make('p','图片暂未加载。');missing.hidden=true;missing.setAttribute('role','status');img.alt=panel.alt;img.width=asset.dimensions[0];img.height=asset.dimensions[1];img.dataset.sourceRecord=String(panel.record);img.loading='eager';img.decoding='async';setImage(img,asset.path,{onStatus:status=>{missing.hidden=status!=='unavailable';img.hidden=status==='unavailable';}});figure.append(img,missing);story.append(figure);observers.push(observeSeenArtwork(img,{memory,identities:[artIdentity(asset)],onSeen:()=>{const all=active.nodes.flatMap(n=>n.panels).map(p=>artIdentity(CONTEXTUAL_MANGA_ASSETS[p.record]||CHARACTER_STORY_ASSETS[p.record]));if(all.length&&all.every(id=>memory.has(id)))memory.seen([`arc:${active.id}`]);}}));}
    story.append(make('p',node.after));content.append(story);
   }
  }
- section.append(heading);
+ if(showHeading)section.append(heading);
  if(manual||choices.length>1){toggle=make('button','展开这段往事');toggle.type='button';toggle.className='secondary';toggle.setAttribute('aria-expanded',String(expanded));toggle.addEventListener('click',()=>{expanded=!expanded;updateToggle();paint();});section.append(toggle);}
  if(choices.length>1){const nav=make('nav');nav.setAttribute('aria-label',choices.some(choice=>choice.parallelStory)?'相关故事':'相关往事');for(const choice of choices){const button=make('button',choice.title);button.type='button';button.className='secondary';button.dataset.arcChoice=choice.id;button.setAttribute('aria-pressed',String(choice===active));button.addEventListener('click',()=>{active=choice;expanded=true;heading.textContent=choice.title;host.dataset.arc=choice.id;for(const sibling of nav.children)sibling.setAttribute('aria-pressed',String(sibling===button));updateToggle();paint();});nav.append(button);}section.append(nav);}
- section.append(content);host.append(section);updateToggle();paint();return {get expanded(){return expanded;}};
+ section.append(content);host.append(section);updateToggle();paint();return {dispose,get expanded(){return expanded;}};
 }

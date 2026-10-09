@@ -16,3 +16,10 @@
 .trading-expression.is-detached .trading-expression-close{right:auto;left:1px;top:1px;width:24px;height:24px;min-height:24px}
 
 .portrait .trading-expression.has-embedded-text img{height:calc(100% - 28px);margin-top:28px}
+
+/* A reviewed face viewport reuses the unmodified manga image. The existing
+   card portrait underneath, its selector and all story readers are untouched. */
+.trading-expression-crop{position:absolute;left:50%;top:calc(50% + 14px);transform:translate(-50%,-50%);overflow:hidden;pointer-events:none}
+.portrait .trading-expression .trading-expression-crop img,.trading-expression.is-detached .trading-expression-crop img{position:absolute;max-width:none;object-fit:fill;margin:0;display:block}
+.trading-expression.is-detached .trading-expression-crop{left:0;transform:translateY(-50%)}
+.trading-expression.is-detached .trading-expression-thought{margin-left:64px}

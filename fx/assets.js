@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 // Resolve against the module, so /fx.html, /fx and Pages subdirectories agree.
 export function assetURL(path,base=import.meta.url){
   const source=new URL(base);let url=new URL(path,source);

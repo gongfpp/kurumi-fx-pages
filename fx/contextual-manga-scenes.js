@@ -1,28 +1,28 @@
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CHARACTER_STORY_NODES} from './character-story-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 const arcs={
  ...CONTEXTUAL_MANGA_ARCS,
  'profit-fades':['aud-yen-delight','profit-fades','look-away','first-negative-estimate'],
  'holding-loss':['considering-stop','refuse-to-stop','loss-deepens','support-and-margin','unrealized-fear'],
  'walkaway':['manga-fund-plan'],
 };
-const titles={'pause-and-return':'久留美 · 她说过要放弃','averaging-down-prayer':'久留美 · 直到只剩下祈求','friends-different-ledgers':'她们各自的赚与亏','floating-profit-caution':'久留美 · 浮盈之后的警惕','realized-short-profit':'久留美 · 第一次把利润留住','reversal-liquidation':'芽吹 · 没等到的救援','opposite-directions':'久留美与芽吹 · 上涨的两面','borrowed-time':'芽吹 · 借来的钱也在亏','asking-for-more':'芽吹与久留美 · 她还想再借一些','borrowed-recovery':'芽吹 · 想把亏掉的钱赚回来','twenty-seconds':'芽吹 · 满仓后的二十秒','follow-confidence':'久留美与芽吹 · 跟着前辈就能赢吗','profit-fades':'久留美 · 那次消失的浮盈','holding-loss':'久留美 · 那次没等到的反弹',walkaway:'康子 · 把钱用来画漫画'};
+const titles={'pause-and-return':'久留美 · 她说过要放弃','averaging-down-prayer':'久留美 · 直到只剩下祈求','friends-different-ledgers':'她们 · 与此同时','floating-profit-caution':'久留美 · 浮盈之后的警惕','realized-short-profit':'久留美 · 第一次把利润留住','reversal-liquidation':'芽吹 · 与此同时','opposite-directions':'久留美与芽吹 · 与此同时','borrowed-time':'芽吹 · 与此同时','asking-for-more':'芽吹与久留美 · 与此同时','borrowed-recovery':'芽吹 · 与此同时','twenty-seconds':'芽吹 · 与此同时','follow-confidence':'久留美与芽吹 · 与此同时','profit-fades':'久留美 · 那次消失的浮盈','holding-loss':'久留美 · 那次没等到的反弹',walkaway:'康子 · 与此同时'};
 // Extend only the sealed daily reader; independent event readers keep their
 // original lists. Amounts in these nodes remain the manga characters' facts.
 function dailyArc(id,evidence){
- if(id==='long-loss-then-short')return {id,title:'康子 · 刚换了方向，她又犹豫了',parallelStory:true,evidence:structuredClone(evidence),nodes:structuredClone(REVERSAL_DAILY_NODES.filter(n=>n.id==='kangzi-loss-and-turn'))};
+ if(id==='long-loss-then-short')return {id,title:'康子 · 与此同时',parallelStory:true,evidence:structuredClone(evidence),nodes:structuredClone(REVERSAL_DAILY_NODES.filter(n=>n.id==='kangzi-loss-and-turn'))};
  const result=id==='realized-long-profit'?{id,title:'久留美 · 确定下来的利润',parallelStory:true,evidence:structuredClone(evidence),nodes:[]}:arc(id,evidence);
  const node=key=>structuredClone([...CHARACTER_STORY_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES,...REVERSAL_DAILY_NODES,...LINK_DAILY_NODES].find(n=>n.id===key));
  if(id==='profit-fades'){result.nodes.unshift(node('entry-expectation'));result.nodes.splice(2,0,node('shop-profit-dream'));}
@@ -38,7 +38,7 @@ function dailyArc(id,evidence){
  }
  if(id==='realized-short-profit')result.nodes.unshift(node('first-trade-beginning'));
  if(id==='borrowed-time')result.nodes.splice(2,0,node('policy-surge-conversation'));
- if(id==='asking-for-more'){result.title='芽吹 · 她还想再借一些';result.nodes.push(node('promise-and-doubt'),node('mochiko-responsibility'),...structuredClone(BORROWING_CONTINUATION_NODES));}
+ if(id==='asking-for-more'){result.title='芽吹 · 与此同时';result.nodes.push(node('promise-and-doubt'),node('mochiko-responsibility'),...structuredClone(BORROWING_CONTINUATION_NODES));}
  if(id==='borrowed-recovery')result.nodes.splice(2,0,node('short-plan-drawdown'));
  if(id==='realized-long-profit')result.nodes=['long-profit-realized','later-overseas-profit'].map(node);
  const before=(record,key)=>{const index=result.nodes.findIndex(n=>n.panels.some(p=>p.record===record));if(index<0)throw Error('Missing daily story anchor: '+record);result.nodes.splice(index,0,node(key));};

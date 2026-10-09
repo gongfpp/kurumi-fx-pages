@@ -85,6 +85,7 @@ export const CHARACTER_STORY_NODES=freeze([
 ]);
 // Evidence of an event, not mere discovery, item availability, age of a run, or debt.
 export function characterStoriesAvailable(state={}){
+ if(state.mode==='endless')return false;
  return state.story?.seen?.includes('friendStudy')===true || state.story?.log?.some(row=>row?.id==='friendStudy')===true || state.itemsUsed?.mochiko===true || state.consumptionLedger?.some(row=>row?.kind==='item'&&/^item:[1-9]\d*:mochiko$/.test(row.id||''))===true;
 }
 export function createCharacterStorySession({getState,getContext,canOpen=()=>true,onPage=()=>{},onClose=()=>{}}){

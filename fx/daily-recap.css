@@ -126,3 +126,23 @@
 .recap-screen[data-loss-severity=catastrophic][data-stage=landing] .recap-screen-halo{animation-duration:2300ms}
 @keyframes recap-catastrophe-fracture{0%{opacity:0;transform:scale(1.04)}14%,68%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:translateY(20px)}}
 @media(prefers-reduced-motion:reduce){.daily-recap[data-loss-severity=catastrophic] .recap-playback{filter:none;transition:none}.recap-screen[data-loss-severity=catastrophic]{display:none!important}}
+
+/* Return explanations remain tappable beside both percentages at every width. */
+.return-formula-rate{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;align-self:center}.return-formula{display:inline-block;vertical-align:middle;margin-left:4px}.return-formula-trigger{display:inline-flex!important;align-items:center;justify-content:center;min-width:36px!important;min-height:36px!important;padding:4px!important;border:1px solid #997286!important;border-radius:50%!important;background:#fff4fa!important;color:#593447!important;font-size:14px!important;line-height:1!important;cursor:pointer}.return-formula-trigger:focus-visible{outline:3px solid #317eb2;outline-offset:2px}.return-formula-panel{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(370px,calc(100vw - 28px));max-height:calc(100dvh - 40px);overflow:auto;padding:16px;border:1px solid #ad7895;border-radius:12px;background:#fff8fc;color:#392d3a;font:13px/1.65 system-ui,sans-serif;white-space:normal;overflow-wrap:anywhere;box-shadow:0 8px 36px #33132a40;z-index:100}.return-formula-panel[hidden]{display:none}.return-formula-panel::backdrop{background:#24112526}.return-formula-line{display:block;margin:6px 0}.return-formula-line:first-child{font-weight:750}.return-formula-line:nth-child(3){font-variant-numeric:tabular-nums;font-weight:700}
+/* Monetary scoring stays legible and physically responsive on narrow screens.
+   Reserve scale room instead of clipping the beat or shrinking only tiny gains. */
+.recap-counter{font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;font-weight:950;font-variant-numeric:tabular-nums;letter-spacing:-.065em;padding:8px 12px;box-sizing:border-box;flex-basis:100%;text-shadow:0 3px 0 #0009,0 6px 12px #0006}
+.recap-digit{min-width:.58em}.recap-stage-profit{font-size:14px;line-height:1.6;font-weight:600;overflow-wrap:anywhere}
+.recap-counter[data-direction=loss],.recap-realized-score[data-direction=loss]{color:#ffb5cb!important}.recap-counter[data-direction=profit],.recap-realized-score[data-direction=profit]{color:#aaffd8!important}
+@media(max-width:480px){.daily-recap[data-tier] .recap-counter{font-size:clamp(22px,7.1vw,34px);padding:10px 8px;margin:8px 0;min-height:1.65em}.recap-event-delta{font-size:clamp(18px,5.4vw,25px)}.recap-stage-profit,.daily-recap[data-tier=small] .recap-stage-profit{font-size:12px}}
+
+.recap-realized-score{display:block;font:900 clamp(20px,4.5vw,30px)/1.5 ui-monospace,monospace;color:#ffe1a2;transform-origin:center}.recap-asset-line{display:block;margin-top:6px;font-size:12px;font-weight:500;color:#ddcdec}
+@media(max-width:480px){.recap-realized-score{font-size:21px}.recap-asset-line{font-size:11px}}
+
+/* A brief body landing translation must not create horizontal page scrolling. */
+html:has(.daily-recap[data-animate=true]){overflow-x:clip}
+
+.recap-asset-line{font-size:14px;line-height:1.6}.recap-realized-score{font-size:clamp(20px,3.8vw,28px)}
+@media(max-width:480px){.recap-asset-line{font-size:14px}.recap-realized-score{font-size:21px}}
+
+.recap-step-group{display:flex;align-items:center;gap:6px;flex:1 1 45%;min-width:0}.recap-step-group .recap-step{flex:0 1 auto}

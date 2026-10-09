@@ -1,8 +1,8 @@
-import {pendingStory,chooseStory} from './story.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {pendingStory,chooseStory} from './story.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 export function prepareDailyNarrative(state,{accountEquity}={}){
- if(state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
+ if(state.mode==='endless'||state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
  applyFatherDiscovery(state,{type:'migrate'});
  if(!state.settlementNarrative||state.settlementNarrative.day!==state.day){
   const candidate=fatherDiscoveryCandidate(state,{accountEquity});
@@ -16,7 +16,7 @@ export function prepareDailyNarrative(state,{accountEquity}={}){
 // loan or payment API; financial actions remain their existing explicit buttons.
 export function finishDailyNarrative(state,{choiceId}={}){
  const n=state.settlementNarrative;
- if(!n||n.day!==state.day||state.phase!=='resting')return{ok:false,reason:'no-current-narrative',hooks:[]};
+ if(state.mode==='endless'||!n||n.day!==state.day||state.phase!=='resting')return{ok:false,reason:'no-current-narrative',hooks:[]};
  if(n.effectsApplied)return{ok:true,changed:false,hooks:[]};
  let result=null,hooks=[];
  if(n.fatherDiscovery){

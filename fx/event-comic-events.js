@@ -1,4 +1,4 @@
-import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 // Presentation candidates come only from records the engine has already written.
 // No balance differences, click intent, market predictions or historical replay.
 export function recordedComicEvents(state) {
@@ -27,8 +27,8 @@ export function recordedComicScenes(state,select){return recordedComicEvents(sta
 
 // Only the context owner may certify the save. A returned ticket contains frozen
 // presentation data selected BEFORE an asynchronous save, never future state.
-export function createComicReceiptGate({initialState,context,select,onScenes=()=>{},onReset=()=>{}}) {
- let currentContext=context,revision=0,seen=new Set(),seenTrades=new Set();
+export function createComicReceiptGate({initialState,context,select,onScenes=()=>{},onReset=()=>{},onCommit=()=>{}}) {
+ let currentContext=context,revision=0,captureOrder=0,committedOrder=0,seen=new Set(),seenTrades=new Set();
  const trades=state=>(state.history||[]).filter(row=>['close','half','closing','stop','liquidation'].includes(row.type)&&Number.isFinite(row.pnl));
  const tradeKey=comicTradeKey;
  const scenes=state=>recordedComicScenes(state,select);
@@ -36,13 +36,14 @@ export function createComicReceiptGate({initialState,context,select,onScenes=()=
  rebase(initialState,context);
  return {
   capture(state,nextContext){
-   if(nextContext!==currentContext){rebase(state,nextContext);return {context:nextContext,revision,scenes:[]};}
+   if(nextContext!==currentContext)rebase(state,nextContext);
    recordComicProfitBatch(state);
-   const selected=scenes(state).filter(scene=>!seen.has(scene.receiptKey));
-   return {context:currentContext,revision,observedDay:state.day,settlementDay:state.dayReport?.day===state.day&&['closing','day_end','resting','ending'].includes(state.phase)?state.day:0,trades:structuredClone(trades(state).filter(row=>!seenTrades.has(tradeKey(row)))),scenes:structuredClone(selected)};
+   const replayScenes=scenes(state),selected=replayScenes.filter(scene=>!seen.has(scene.receiptKey));
+   return {context:currentContext,revision,captureOrder:++captureOrder,continuity:structuredClone({family:state.family,loan:state.loan}),replayScenes:structuredClone(replayScenes),observedDay:state.day,settlementDay:state.dayReport?.day===state.day&&['closing','day_end','resting','ending'].includes(state.phase)?state.day:0,trades:structuredClone(trades(state).filter(row=>!seenTrades.has(tradeKey(row)))),scenes:structuredClone(selected)};
   },
   commit(ticket,{saved,context:nextContext,blocked=false}={}){
    if(!saved||blocked||ticket.context!==nextContext||ticket.context!==currentContext||ticket.revision!==revision)return [];
+   if(ticket.captureOrder>committedOrder){committedOrder=ticket.captureOrder;onCommit(ticket.continuity,ticket.replayScenes);}
    const incoming=ticket.scenes.filter(scene=>!seen.has(scene.receiptKey));
    for(const scene of incoming)seen.add(scene.receiptKey);
    const settled=(ticket.trades||[]).filter(row=>!seenTrades.has(tradeKey(row)));

@@ -1,20 +1,22 @@
-import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;
  const tradingTimeline=buildRecapTimeline(snapshot,presentation);
- let frame=null,stopped=false,lastBeat=-1,finalCued=false,started=now();
- const cues=Object.freeze(presentation.beatTimes.map((atMs,beat)=>Object.freeze({...recapBeatCue(presentation,beat),atMs,beat,final:false})).concat(presentation.direction==='flat'?[]:[Object.freeze({...recapBeatCue(presentation,presentation.beats-1,{final:true}),atMs:presentation.countDuration,beat:presentation.beats-1,final:true})]).concat(tradingTimeline.events.map((e,i)=>Object.freeze({kind:e.type==='open'?'terminal-tap':e.delta<0?'terminal-close':'terminal-fill',atMs:e.atMs,rate:.8+.6*(i+1)/Math.max(1,tradingTimeline.events.length),level:.25+presentation.rank*.1,beat:i,trade:true,final:false}))).sort((a,b)=>a.atMs-b.atMs));
+ let frame=null,stopped=false,finalCued=false,started=now();
+ const cues=Object.freeze(tradingTimeline.scoreBeats.map(b=>Object.freeze({kind:b.step===b.count-1?(b.delta<0?'terminal-close':'terminal-fill'):'terminal-tap',atMs:b.atMs,rate:b.delta<0?1.12-.38*b.strength:.7+.55*b.strength,level:.28+.35*b.strength,beat:b.index,trade:true,final:false})).concat(tradingTimeline.events.filter(e=>!e.delta).map(e=>Object.freeze({kind:'terminal-tap',atMs:e.atMs+Math.min(80,e.hold/2),rate:.85,level:.25,trade:true,final:false}))).concat(presentation.direction==='flat'?[]:[Object.freeze({...recapBeatCue(presentation,presentation.beats-1,{final:true}),atMs:presentation.countDuration,beat:presentation.beats-1,final:true})]).sort((a,b)=>a.atMs-b.atMs));
+ let lastCue=-1;
  const timeline=duration&&typeof onTimeline==='function'?onTimeline(cues,{startedAt:started}):null;
  const draw=(elapsed,{silent=false}={})=>{
   const counting=duration?Math.min(1,Math.max(0,elapsed/presentation.countDuration)):1,progress=duration?recapProgress(presentation,elapsed):1,index=progress===0?0:progress<1?1:segments.length-1,segment=segments[index];
   const beat=duration?presentation.beatTimes.filter(t=>t<=elapsed).length-1:-1,complete=!duration||elapsed>=duration,stage=complete?'complete':counting>=1?'landing':counting>=(presentation.catastrophic?.84:.93)?'anticipation':counting<.09?'opening':'counting';
   const replay=recapTimelineFrame(tradingTimeline,elapsed,{complete});
   render({progress,segment,index,...replay,reconciliation:tradingTimeline.residual,value:replay.tradingAssets,intensity:presentation.intensity,complete,candleCount:snapshot.candles.filter(c=>c.timestamp<=replay.timestamp).length,stage,beat,presentation});
-  if(!silent&&!timeline&&duration&&counting<1&&beat>lastBeat){lastBeat=beat;if(elapsed-presentation.beatTimes[beat]<=65)onCue({...recapBeatCue(presentation,beat),segment,intensity:presentation.intensity,beat,final:false});}
-  if(!silent&&!timeline&&duration&&counting===1&&!finalCued&&presentation.direction!=='flat'){finalCued=true;onCue({...recapBeatCue(presentation,presentation.beats-1,{final:true}),segment,intensity:presentation.intensity,beat,final:true});}
+  if(!silent&&!timeline&&duration){
+   for(let i=lastCue+1;i<cues.length&&cues[i].atMs<=elapsed;i++){lastCue=i;if(elapsed-cues[i].atMs<=80||cues[i].final&&!finalCued){onCue({...cues[i],segment,intensity:presentation.intensity});if(cues[i].final)finalCued=true;}}
+  }
  };
  const tick=time=>{frame=null;if(stopped)return;const elapsed=Math.max(0,time-started);draw(elapsed);if(elapsed<duration)frame=requestFrame(tick);};
  const cancel=()=>{stopped=true;timeline?.cancel?.();if(frame!==null){cancelFrame(frame);frame=null;}};

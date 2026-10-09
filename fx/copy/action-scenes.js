@@ -281,7 +281,7 @@ export const ACTION_SCENES = Object.freeze({
     ]
   },
   "father-borrow": {
-    "title": "先用这些",
+    "title": "已经拿走的钱",
     "characters": [
       "久留美"
     ],
@@ -289,19 +289,19 @@ export const ACTION_SCENES = Object.freeze({
     "lines": [
       [
         "久留美",
-        "就在这里。"
+        "那次，我从柜子里拿走了钱。"
       ],
       [
         "久留美",
-        "只拿这些。"
+        "已经拿走了。"
       ],
       [
         "久留美",
-        "……先记下来。"
+        "拿走的数目，已经记下了。"
       ],
       [
         "久留美",
-        "得还回去。"
+        "那时想着，一定要还回去。"
       ]
     ]
   },

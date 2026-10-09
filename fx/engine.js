@@ -1,32 +1,32 @@
-import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ORDER_RATIOS,quoteOrderIntent} from './amount-controls.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-export {quotePackageState} from './quote-packages.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-export {dailyReturnMetrics} from './daily-performance.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ORDER_RATIOS,quoteOrderIntent} from './amount-controls.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+export {quotePackageState} from './quote-packages.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+export {dailyReturnMetrics} from './daily-performance.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 
-import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {recapChoices} from './recap-choices.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {recapChoices} from './recap-choices.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 
 
-import {creditTerms} from './credit-policy.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {NEWS_CHAINS,PROPS} from './content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {BLACK_SWANS} from './story-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {creditTerms} from './credit-policy.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {NEWS_CHAINS,PROPS} from './content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {BLACK_SWANS} from './story-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 export const VERSION = 9;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;
@@ -134,7 +134,7 @@ export function createGame(seed = Date.now(), {mode = 'story',historical=null} =
   if(historical){initializeHistorical(state,historical);state.accountingJournal={version:1,points:[],days:[],startedDay:1,legacyPartial:false};}
   ensureRunStatistics(state);ensureTradingClock(state);ensureAccountingJournal(state);recordAccountingPoint(state,'opening');
   state.script = historical?historicalScript():planDay(seed, 1, state.price);
-  chapterChat(state);ensureStory(state);observeTradingTrauma(state,{accountEquity:START});updateSpeech(state,'hopeful');state.dayOpeningLine=state.speech.text;
+  chapterChat(state);ensureStory(state);discoverItems(state);observeTradingTrauma(state,{accountEquity:START});updateSpeech(state,'hopeful');state.dayOpeningLine=state.speech.text;
   return state;
 }
 // position remains a first-order view for older story/dialogue consumers.
@@ -202,10 +202,14 @@ function orderStop(s,action){
 export function positionStopLoss(p){
   return Object.hasOwn(p,'stopPips')?(Number.isFinite(p.stopPrice)?Math.max(0,-grossPnlAt(p,p.stopPrice)):null):p.stop<1?p.margin*p.stop:null;
 }
+export function dailyLeverageUnlocked(s){
+ const key=`${s.mode||'story'}:${s.runId||s.seed}:${s.day}`;
+ return s.itemsUsed?.dailyDrink===true&&s.dailyLeverageUnlock===key;
+}
 export function restrictions(s){
   const limits=baseRestrictions(s),emotion=mood(s),pressure=pressureMood(s),forceNoStop=['ecstatic','despair'].includes(emotion)||!!pressure;
   const pressured=!!pressure&&!limits.noEntry;
-  return {...limits,...(pressured?{leverage:100,stake:1}:{}),minLeverage:forceNoStop?25:5,forceNoStop,emotion};
+  return {...limits,...(pressured?{leverage:100,stake:1}:{}),...(!limits.noEntry&&dailyLeverageUnlocked(s)?{leverage:100}:{}),minLeverage:forceNoStop?25:5,forceNoStop,emotion};
 }
 export function tradingOpen(s){return historicalReady(s)&&(s.phase==='decision'||s.realtime===true&&s.phase==='playing');}
 export function canCloseAtKnownQuote(s){return tradingOpen(s)||(isHistorical(s)&&['decision','playing'].includes(s.phase)&&Number.isFinite(s.historical.lastQuote?.[0]));}
@@ -390,6 +394,7 @@ export function useProp(s,id,{amount=FATHER_SAVINGS}={}){
  if(s.itemsUsed[id])throw Error('今天已经用过了');
  const cost=PROPS[id].cost||0;if(accountMetrics(s).availableMargin<cost)throw Error('可用资金不足');
  s.cash-=cost;s.expenses+=cost;s.itemsUsed[id]=true;recordConsumption(s,{id:`item:${s.day}:${id}`,kind:'item',label:PROPS[id].name,amount:cost,timestamp:currentTradingTimestamp(s)});
+ if(id==='dailyDrink')s.dailyLeverageUnlock=`${s.mode||'story'}:${s.runId||s.seed}:${s.day}`;
  if(id==='takeaway')s.mentalBoost=Math.min(50,(s.mentalBoost||0)+10);
  if(id==='celebration')s.mentalBoost=Math.min(50,(s.mentalBoost||0)+20);
  if(id==='noodles')s.livingDiscount=.4;

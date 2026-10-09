@@ -1,13 +1,13 @@
-import {selectTradingExpressionAsset} from './asset-usage-catalog.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {assetURL} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {selectOriginalTradingExpression} from './trading-expression-originals.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {assetURL} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 
-export function mountTradingExpression({portrait,speech,getState,canEnter=()=>true,doc=portrait.ownerDocument,now=()=>Date.now(),selectAsset=selectTradingExpressionAsset}){
+export function mountTradingExpression({portrait,speech,getState,canEnter=()=>true,doc=portrait.ownerDocument,now=()=>Date.now(),selectAsset=selectOriginalTradingExpression}){
  const win=doc.defaultView,observer=createExpressionObserver({now}),gate=createExpressionGate({now});
  const panel=doc.createElement('div'),img=doc.createElement('img'),close=doc.createElement('button'),thought=doc.createElement('div');
  panel.id='trading-expression';panel.className='trading-expression';panel.hidden=true;
  img.alt='';close.type='button';close.className='trading-expression-close';close.textContent='×';close.setAttribute('aria-label','收起交易表情');
- panel.append(img,close);portrait.append(panel);thought.className='trading-expression-thought';thought.hidden=true;thought.setAttribute('role','status');thought.setAttribute('aria-live','polite');speech.append(thought);
+ const cropFrame=doc.createElement('div');cropFrame.className='trading-expression-crop';cropFrame.append(img);panel.append(cropFrame,close);portrait.append(panel);thought.className='trading-expression-thought';thought.hidden=true;thought.setAttribute('role','status');thought.setAttribute('aria-live','polite');speech.append(thought);
  let shown=null,expire=null,hesitation=null,suspended=false,seed=0,shownAsset=null,selectionSeed=0,placementFrame=null,cachedSelectionKey='',cachedSelection=null;
  function selectForSize(context,width,height){
   const key=JSON.stringify([context.event,context.direction,context.position,context.profitBasis,context.pnlSign,context.previousPnlSign,context.seed,width,height]);
@@ -22,7 +22,8 @@ export function mountTradingExpression({portrait,speech,getState,canEnter=()=>tr
   const r=portrait.getBoundingClientRect(),height=win.innerHeight,width=doc.documentElement.clientWidth;
   const attached=r.top>=0&&r.bottom<=height;
   const asset=selectForSize({...shown,seed:selectionSeed},attached?Math.max(0,r.width-4):64,attached?Math.max(0,r.height-4):90);
-  if(asset&&asset.id!==shownAsset?.id)paintAsset(asset);
+  if(!asset){hide();return;}if(asset.id!==shownAsset?.id)paintAsset(asset);
+  sizeCrop(attached?Math.max(0,r.width-4):64,attached?Math.max(0,r.height-4):90);
   if(attached){if(panel.parentNode!==portrait)portrait.append(panel);if(thought.parentNode!==speech)speech.append(thought);panel.classList.remove('is-detached');panel.style.removeProperty('left');panel.style.removeProperty('top');return;}
   // Mobile may be scrolled down to the ticket. Find a genuinely free area,
   // excluding every input/button and chart/risk readout rather than using a
@@ -38,9 +39,16 @@ export function mountTradingExpression({portrait,speech,getState,canEnter=()=>tr
  function cancelHesitation(){win.clearTimeout(hesitation);hesitation=null;}
  function hide({dismiss=false}={}){cancelHesitation();win.cancelAnimationFrame(placementFrame);placementFrame=null;win.clearTimeout(expire);shown=null;panel.hidden=true;thought.hidden=true;thought.textContent='';if(panel.parentNode!==portrait)portrait.append(panel);if(thought.parentNode!==speech)speech.append(thought);panel.classList.remove('is-detached');if(dismiss)gate.dismiss();}
  function suspend(){suspended=true;observer.reset();hide({dismiss:true});}
+ function sizeCrop(width,height){
+  if(!shownAsset?.expressionCrop)return;
+  const [x,y,w,h]=shownAsset.expressionCrop,[sourceWidth,sourceHeight]=shownAsset.source.dimensions;
+  const scale=Math.min(width/w,Math.max(0,height-28)/h);
+  Object.assign(cropFrame.style,{width:w*scale+'px',height:h*scale+'px'});
+  Object.assign(img.style,{width:sourceWidth*scale+'px',height:sourceHeight*scale+'px',left:-x*scale+'px',top:-y*scale+'px'});
+ }
  function paintAsset(asset){
-  shownAsset=asset;panel.classList.toggle('has-embedded-text',!!asset.hasEmbeddedText);panel.dataset.assetId=asset.id;img.src=assetURL(asset.path);
-  img.alt=asset.hasEmbeddedText?(asset.textOriginal||asset.displayText||`${asset.character}的交易表情`):`${asset.character}的交易表情`;
+  shownAsset=asset;panel.dataset.sourceKind=asset.source.kind;panel.dataset.sourceRecord=asset.source.record??'';panel.classList.toggle('has-embedded-text',!!asset.hasEmbeddedText);panel.dataset.assetId=asset.id;img.src=assetURL(asset.path);
+  img.alt=asset.expressionCrop?`${asset.character}的${asset.emotion}表情（原作画面）`:asset.hasEmbeddedText?(asset.textOriginal||asset.displayText||`${asset.character}的交易表情`):`${asset.character}的交易表情`;
   thought.textContent=asset.hasEmbeddedText?'':`${asset.character}心想：${expressionThought(shown.event,shown.direction)}`;
   thought.hidden=!!asset.hasEmbeddedText;
  }

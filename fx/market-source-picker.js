@@ -1,32 +1,50 @@
-// One ordinary game entry. Transport details stay outside the main mode panel.
-export function mountMarketSourcePicker({document,library,onSelect=()=>{},importFile,acquireHistory,cancelAcquire=()=>{}}){
- const $=id=>document.getElementById(id),panel=$('history-choice-step');
- const selected=new Map();let rows=[],loading=null,target='mode',ready=false,busy=false,ownerMonthAvailable=false,step=null;
+// History is selected in the opening panel, without a second confirmation step.
+export function mountMarketSourcePicker({document,library,onSelect=()=>{},importFile,acquireHistory,cancelAcquire=()=>{},getMode=()=>null,availableYears=[]}){
+ const $=id=>document.getElementById(id),panel=$('history-choice-step'),selectedYears=new Map();
+ let rows=[],loading=null,target='mode',ready=false,busy=false,failed=false,generation=0,request=null,requestMode=null,importController=null;
  const status=text=>{$('history-choice-status').textContent=text;};
- function choose(prefix,market){$(prefix+'-market').value=market;for(const b of document.querySelectorAll(`[data-market-prefix="${prefix}"]`)){const active=b.dataset.market===market;b.setAttribute('aria-pressed',String(active));b.classList.toggle('selected',active);}onSelect(prefix,market);}
- function paint(){const has=rows.length>0;$('history-date-field').hidden=!has;$('history-choice-confirm').disabled=!has||busy;$('history-file-open').hidden=has;$('history-owner-load').hidden=ownerMonthAvailable||!acquireHistory;$('history-owner-load').textContent=has?'载入2008年10月':'载入历史行情';$('history-owner-load').disabled=busy;$('history-file-open').disabled=busy;$('history-choice-retry').hidden=ready||busy;}
+ const years=()=>[...new Set([...availableYears,...rows.map(r=>r.date.slice(0,4))])].sort();
+ const yearFor=prefix=>selectedYears.get(prefix)||'2014';
+ const rowFor=(prefix,mode)=>mode==='story'?rows.find(r=>r.date==='2014-02-14'):rows.find(r=>r.date.startsWith(yearFor(prefix)+'-'));
+ function paint(){const has=years().length>0;$('history-date-field').hidden=!has||getMode(target)==='story';$('history-choice-date').disabled=false;$('history-file-open').hidden=rows.length>0;$('history-file-open').disabled=busy;$('history-choice-retry').hidden=!failed||busy;panel.setAttribute?.('aria-busy',String(busy));}
+ function show(prefix){target=prefix;const anchor=document.querySelector?.(`[data-market-prefix="${prefix}"][data-market="historical"]`)?.parentElement;anchor?.after(panel);panel.hidden=false;$('history-choice-date').value=yearFor(prefix);paint();}
+ function cancel(){generation++;cancelAcquire();importController?.abort();request=null;busy=false;paint();}
+ function choose(prefix,market){if(market!=='historical'){cancel();if(target===prefix)panel.hidden=true;}$(prefix+'-market').value=market;for(const b of document.querySelectorAll(`[data-market-prefix="${prefix}"]`)){const active=b.dataset.market===market;b.setAttribute('aria-pressed',String(active));b.classList.toggle('selected',active);}if(market==='historical')show(prefix);onSelect(prefix,market);}
  async function load(){
-  if(loading)return loading;busy=true;status('正在读取本机历史行情…');paint();
-  loading=(async()=>{try{await library.catalog();const found=[];ownerMonthAvailable=false;for(const dataset of library.datasets){const p=await library.provider(dataset);ownerMonthAvailable ||= p.manifest.schemaVersion==='research-m1-close-v1'&&p.manifest.id==='research-forexite-2008-10';for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));const dates=$('history-choice-date');dates.replaceChildren(...rows.map((r,i)=>new Option(r.date,String(i))));ready=true;status(rows.length?'':acquireHistory?'这台设备还没有历史行情。登录确认后即可载入。':'这台设备还没有历史行情。选择本机文件后即可开始。');for(const prefix of ['mode','restart'])if(!selected.has(prefix)&&rows.length)selected.set(prefix,rows.find(r=>r.date==='2014-02-14')||rows[0]);}catch(error){ready=false;rows=[];status(error.message||'历史行情暂时无法读取，请重试。');}finally{busy=false;loading=null;paint();}})();return loading;
+  if(loading)return loading;
+  loading=(async()=>{try{
+   await library.catalog();const found=[];for(const dataset of library.datasets){const p=await library.provider(dataset);for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));
+   $('history-choice-date').replaceChildren(...years().map(year=>new Option(year+'年',year)));
+   ready=true;for(const prefix of ['mode','restart'])if(!selectedYears.has(prefix))selectedYears.set(prefix,rows[0]?.date.slice(0,4)||'2014');
+   if(!panel.hidden)show(target);return rows;
+  }finally{loading=null;paint();}})();return loading;
  }
- function back({focus=true}={}){
-  cancelAcquire();if(!step)return;const old=step;step=null;panel.hidden=true;for(const [node,hidden]of old.visibility)node.hidden=hidden;
-  if(old.label)old.host.setAttribute('aria-labelledby',old.label);else old.host.removeAttribute?.('aria-labelledby');old.scroller.scrollTop=old.scroll;
-  if(focus)document.querySelector?.(`[data-market-prefix="${old.prefix}"][data-market="historical"]`)?.focus?.({preventScroll:true});
+ async function activate(prefix,mode=getMode(prefix)||'endless'){
+  if(request&&target===prefix)return request;
+  cancel();requestMode=mode;choose(prefix,'historical');const token=generation;busy=true;failed=false;status('正在读取历史行情…');paint();
+  request=(async()=>{await Promise.resolve();try{
+   if(!ready)await load();if(token!==generation)return;
+   if(!rowFor(prefix,mode)){
+    if(!acquireHistory)throw Error('这台设备还没有历史行情。可选择本机文件。');
+    const year=mode==='story'?'2014':yearFor(prefix),dataset=year==='2008'?'2008-10':year==='2014'?'2014-02':null;
+    if(!dataset)throw Error('这一年暂无可用的历史行情');
+    await acquireHistory({datasets:[dataset]});if(token!==generation)return;ready=false;await load();
+   }
+   if(token!==generation)return;if(!rowFor(prefix,mode))throw Error(mode==='story'?'缺少2014年2月14日历史行情，无法开始剧情':'这一年暂无可用的历史行情');status('');show(prefix);
+  }catch(error){if(token!==generation)return;failed=true;status(error.name==='TimeoutError'?'历史行情载入超时，请重试。':error.message||'历史行情暂时无法读取，请重试。');}finally{if(token===generation){busy=false;request=null;paint();}}})();return request;
  }
- async function open(prefix){
-  if(step)back({focus:false});target=prefix;const host=$(prefix+'-dialog'),scroller=host.querySelector?.('.dialog-scroll')||host;
-  const visibility=[...(scroller.children||[])].filter(node=>node!==panel).map(node=>[node,node.hidden]);step={prefix,host,scroller,visibility,scroll:scroller.scrollTop||0,label:host.getAttribute?.('aria-labelledby')};
-  for(const [node]of visibility)node.hidden=true;scroller.append(panel);panel.hidden=false;host.setAttribute?.('aria-labelledby','history-choice-title');scroller.scrollTop=0;
-  if(!ready)await load();const chosen=selected.get(prefix),index=rows.findIndex(r=>r.datasetId===chosen?.datasetId&&r.date===chosen?.date);if(index>=0)$('history-choice-date').value=String(index);
-  if(step?.prefix===prefix)$('history-choice-title').focus?.({preventScroll:true});
- }
- for(const b of document.querySelectorAll('[data-market-prefix]'))b.onclick=()=>{if(b.dataset.market==='historical')void open(b.dataset.marketPrefix);else choose(b.dataset.marketPrefix,'simulated');};
- $('history-choice-confirm').onclick=()=>{const row=rows[Number($('history-choice-date').value)];if(busy||!row)return;const prefix=target;selected.set(prefix,row);back();choose(prefix,'historical');};
- for(const prefix of ['mode','restart'])$(prefix+'-dialog').addEventListener?.('close',()=>{if(step?.prefix===prefix)back({focus:false});});
- $('history-owner-load').onclick=async()=>{if(busy||!acquireHistory)return;busy=true;status('请在打开的窗口确认载入历史行情。');paint();try{await acquireHistory();ready=false;busy=false;await load();}catch(error){status(error.message||'历史行情尚未载入。');}finally{busy=false;paint();}};
- $('history-choice-cancel').onclick=()=>back();$('history-choice-retry').onclick=()=>void load();
+ for(const b of document.querySelectorAll('[data-market-prefix]'))b.onclick=()=>b.dataset.market==='historical'?activate(b.dataset.marketPrefix):choose(b.dataset.marketPrefix,'simulated');
+ $('history-choice-date').onchange=()=>{const year=$('history-choice-date').value;if(!years().includes(year))return;selectedYears.set(target,year);cancel();return activate(target,'endless');};
+ for(const prefix of ['mode','restart'])$(prefix+'-dialog').addEventListener?.('close',()=>{if(target===prefix){cancel();panel.hidden=true;}});
+ $('history-choice-retry').onclick=()=>{ready=false;return activate(target,requestMode||undefined);};
  $('history-file-open').onclick=()=>$('history-local-file').click();
- $('history-local-file').onchange=async e=>{const file=e.target.files?.[0];if(!file||busy)return;busy=true;status('正在读取历史文件…');paint();try{await importFile(file);ready=false;busy=false;await load();}catch(error){status(error.message||'这个历史文件无法读取。');}finally{busy=false;e.target.value='';paint();}};
- return {load,select:choose,async options(prefix){if(!ready)await load();const chosen=selected.get(prefix);if(!chosen||!rows.some(r=>r.datasetId===chosen.datasetId&&r.date===chosen.date))throw Error('请先选择本机历史行情');return library.options(chosen.datasetId,chosen.date);}};
+ $('history-local-file').onchange=async e=>{const file=e.target.files?.[0];if(!file||busy)return;const token=generation;importController=new AbortController();busy=true;failed=false;status('正在读取历史文件…');paint();try{await importFile(file,{signal:importController.signal});if(token!==generation)return;ready=false;await load();if(token===generation)status('');}catch(error){if(token===generation){failed=true;status(error.message||'这个历史文件无法读取。');}}finally{e.target.value='';if(token===generation){busy=false;paint();}}};
+ return {load,select:choose,async options(prefix,mode='endless'){
+  if(!ready)await load();
+  if(!rowFor(prefix,mode)&&acquireHistory&&(!request||requestMode!==mode)){if(request)cancel();void activate(prefix,mode);}
+  const token=generation,pending=request;if(pending&&!rowFor(prefix,mode))await pending;
+  if(token!==generation||$(prefix+'-market').value!=='historical')throw Error('已取消历史行情载入');
+  const chosen=rowFor(prefix,mode);if(!chosen){const text=mode==='story'?'缺少2014年2月14日历史行情，无法开始剧情':'历史行情尚未载入，请在开局界面重试';status(text);throw Error(text);}
+  const result=await library.options(chosen.datasetId,chosen.date);if(token!==generation||$(prefix+'-market').value!=='historical')throw Error('已取消历史行情载入');return result;
+ }};
 }

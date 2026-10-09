@@ -1,5 +1,5 @@
-import {setImage} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {comicReceiptText} from './event-comic-presenter.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {setImage} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {comicReceiptText} from './event-comic-presenter.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 // The daily story already owns settlement, trade recap and the living receipt.
 // Keep other durable same-day events in that very window, not another modal.
 export function eveningReceiptScenes(scenes,{day,narrative}={}){
@@ -7,7 +7,7 @@ export function eveningReceiptScenes(scenes,{day,narrative}={}){
  return scenes.filter(scene=>scene.receipt?.day===day&&!duplicate.has(scene.id)&&!scene.id.startsWith('settled-')&&!scene.id.startsWith('living-')&&!['friend-treat','walkaway','closed-profit','half-profit','stop-loss','liquidation'].includes(scene.id));
 }
 export function mountEveningReceipts(container,scenes){
- const signature=JSON.stringify(scenes.map(s=>[s.receiptKey,s.result]));
+ const signature=JSON.stringify(scenes.map(s=>[s.receiptKey,s.result,s.lines]));
  if(container.dataset.receipts===signature)return;
  container.dataset.receipts=signature;const doc=container.ownerDocument,oldOpen=new Map([...container.querySelectorAll('details')].map(x=>[x.dataset.receiptKey,x.open]));
  container.replaceChildren();container.hidden=!scenes.length;if(!scenes.length)return;

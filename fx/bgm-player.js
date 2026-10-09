@@ -1,6 +1,6 @@
-import {AudioEnvelope} from './audio-envelope.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {assetURL} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {assetURL} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 
 const clamp=(value,min,max,fallback)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
 const gesture=event=>event?.isTrusted===true&&!event.repeat&&['click','pointerdown','keydown'].includes(event.type);
@@ -12,13 +12,15 @@ export class BgmPlayer {
   constructor({tracks=BGM_CATALOG,makeAudio=()=>new Audio(),now=()=>performance.now(),
     schedule=(fn,ms)=>{const id=setTimeout(fn,ms);id.unref?.();return id;},cancel=id=>clearTimeout(id),
     envelope,unlockAudio=()=>true,resolveSrc=src=>assetURL(src),onUpdate=()=>{},
-    volume=.35,crossfadeMs=1200,duckFactor=.28,loadTimeoutMs=15000}={}) {
+    volume=.35,crossfadeMs=1200,duckFactor=.28,loadTimeoutMs=15000,sceneStableMs=4000,sceneCooldownMs=20000}={}) {
     this.tracks=validateBgmCatalog(tracks);this.now=now;this.schedule=schedule;this.cancel=cancel;
     // BGM uses the native media-volume envelope: never attach it to a suspended
     // shared voice/SFX AudioContext. Native play() remains subject to browser policy.
     this.envelope=envelope||new AudioEnvelope({now,schedule,cancel,getGraph:()=>null});this.unlockAudio=unlockAudio;this.resolveSrc=resolveSrc;
     this.volume=clamp(volume,0,.65,.35);this.crossfadeMs=clamp(crossfadeMs,100,5000,1200);
     this.duckFactor=clamp(duckFactor,.05,1,.28);this.loadTimeoutMs=clamp(loadTimeoutMs,1000,60000,15000);
+    this.sceneStableMs=clamp(sceneStableMs,0,30000,4000);this.sceneCooldownMs=clamp(sceneCooldownMs,0,120000,20000);
+    this.sceneTimer=null;this.pendingScene=null;this.lastSceneSwitch=-Infinity;
     this.mode='follow';this.scene='neutral';this.selectedId=this.tracks.find(t=>t.sceneTags.includes(this.scene))?.id||this.tracks[0]?.id||null;
     this.onPreference=()=>{};this.muted=true;this.wanted=false;this.unlocked=false;this.hidden=false;this.destroyed=false;
     this.voiceActive=false;this.duckLevel=1;this.generation=0;this.error=null;this.fade=null;this.duck=null;this.timers=new Set();this.frame=null;
@@ -157,7 +159,7 @@ export class BgmPlayer {
   selectTrack(id,{manual=true,event}={}) {
     if(this.destroyed)return Promise.resolve(false);
     const track=this.tracks.find(item=>item.id===id);if(!track)return Promise.resolve(false);
-    if(manual)this.mode='manual';this.selectedId=id;this.error=null;if(manual)this._remember();
+    if(manual){this._cancelScene();this.mode='manual';}this.selectedId=id;this.error=null;if(manual)this._remember();
     // Selecting a track while muted/paused only selects; it does not opt into sound.
     this._emit();return this._allowed()?this._begin(track):Promise.resolve(true);
   }
@@ -165,18 +167,42 @@ export class BgmPlayer {
     const index=this.tracks.findIndex(track=>track.id===this.selectedId),next=this.tracks[(index+1)%this.tracks.length];
     return next?this.selectTrack(next.id,{event}):Promise.resolve(false);
   }
+  _cancelScene() {
+    if(this.sceneTimer!==null)this.cancel(this.sceneTimer);
+    this.sceneTimer=null;this.pendingScene=null;
+  }
+  _followScene(tag) {
+    if(this.destroyed||this.mode!=='follow')return Promise.resolve(false);
+    const track=this.tracks.find(item=>item.id===this.selectedId&&item.sceneTags.includes(tag))||this.tracks.find(item=>item.sceneTags.includes(tag));
+    if(!track)return Promise.resolve(false);
+    if(track.id!==this.selectedId)this.lastSceneSwitch=this.now();
+    return this.selectTrack(track.id,{manual:false});
+  }
   setMode(mode) {
     if(this.destroyed||!['manual','follow'].includes(mode))return Promise.resolve(false);
-    this.mode=mode;this._remember();this._emit();return mode==='follow'?this.setScene(this.scene):Promise.resolve(true);
+    this._cancelScene();this.mode=mode;this._remember();this._emit();
+    // Explicitly opting into automatic selection applies the latest scene now.
+    return mode==='follow'?this._followScene(this.scene):Promise.resolve(true);
   }
-  setScene(tag) {
+  setScene(tag,{stabilize=false}={}) {
     if(this.destroyed||!BGM_SCENE_TAGS.includes(tag))return Promise.resolve(false);
     // Render ticks are not a retry policy. A failed recording stays failed until
     // an explicit playback/selection action or a genuinely different scene.
     if(tag===this.scene&&this.error)return Promise.resolve(false);
-    this.scene=tag;this._emit();if(this.mode!=='follow')return Promise.resolve(true);
-    const track=this.tracks.find(item=>item.id===this.selectedId&&item.sceneTags.includes(tag))||this.tracks.find(item=>item.sceneTags.includes(tag));
-    return track?this.selectTrack(track.id,{manual:false}):Promise.resolve(false);
+    const changed=tag!==this.scene;this.scene=tag;if(changed)this._emit();
+    if(this.mode!=='follow'){this._cancelScene();return Promise.resolve(true);}
+    const compatible=this.tracks.find(item=>item.id===this.selectedId)?.sceneTags.includes(tag);
+    if(!stabilize||compatible){this._cancelScene();return this._followScene(tag);}
+    if(this.pendingScene===tag)return Promise.resolve(true);
+    this._cancelScene();this.pendingScene=tag;
+    // Independent of playback/fade generations; scene changes and manual picks
+    // cancel this timer. Continuous render ticks must not restart its debounce.
+    const delay=Math.max(this.sceneStableMs,this.lastSceneSwitch+this.sceneCooldownMs-this.now());
+    this.sceneTimer=this.schedule(()=>{
+      this.sceneTimer=null;this.pendingScene=null;
+      if(!this.destroyed&&this.mode==='follow'&&this.scene===tag)void this._followScene(tag);
+    },delay);
+    return Promise.resolve(true);
   }
   setVoiceActive(value) {
     if(this.destroyed)return;const active=Boolean(value);if(active===this.voiceActive)return;
@@ -192,7 +218,7 @@ export class BgmPlayer {
     this._emit();
   }
   destroy() {
-    if(this.destroyed)return;this.wanted=false;this.muted=true;this._silence({unload:true});this.destroyed=true;
+    if(this.destroyed)return;this._cancelScene();this.wanted=false;this.muted=true;this._silence({unload:true});this.destroyed=true;
     for(const deck of this.decks){deck.media.removeEventListener('error',deck.onError);deck.media.removeEventListener('pause',deck.onPause);deck.graph?.source?.disconnect();deck.graph?.gain?.disconnect();deck.graph=null;}
     this._emit();this.listeners.clear();
   }

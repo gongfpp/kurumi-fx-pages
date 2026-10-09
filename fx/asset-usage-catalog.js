@@ -1,16 +1,16 @@
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
-import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
 
 // Classification is additive. Existing story/daily consumers retain their own
 // source chronology and gates; this catalogue never rewrites those registries.
