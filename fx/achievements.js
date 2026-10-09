@@ -1,6 +1,6 @@
-import {grossPnlAt} from './market.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});

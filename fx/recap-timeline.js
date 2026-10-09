@@ -6,7 +6,7 @@ export function buildRecapTimeline(snapshot,presentation){
  const times=[...observations.map(p=>p.timestamp),...candles.map(c=>c.timestamp),...trades.map(t=>t.timestamp)].filter(Number.isFinite);
  const start=Math.min(...times,finite(snapshot.timestamp,Infinity)),end=Math.max(start+1,...times,finite(snapshot.timestamp),...(Number.isFinite(snapshot.timestamp)?[]:candles.map(c=>c.timestamp+900000)));
  const safeStart=Number.isFinite(start)?start:0,safeEnd=Number.isFinite(end)?end:safeStart+1;
- const travel=presentation.countDuration*.70,hold=Math.min(850,presentation.countDuration*.20/Math.max(1,trades.length));
+ const travel=presentation.countDuration*.70,hold=Math.min(presentation.catastrophic?1500:850,presentation.countDuration*.20/Math.max(1,trades.length));
  let pnl=0;
  const events=trades.map((t,index)=>{const delta=t.type==='open'?0:finite(t.pnl),before=pnl;pnl+=delta;return {...t,index,delta,before,after:pnl,atMs:travel*((t.timestamp-safeStart)/(safeEnd-safeStart))**(1/1.7)+index*hold,hold};});
  const known=events.reduce((sum,e)=>sum+e.delta,0),residual=finite(snapshot.daily.tradingNet)-known;

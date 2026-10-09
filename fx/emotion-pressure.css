@@ -30,3 +30,11 @@ body:not(.motion-full) .emotion-soft-lock::before{display:none!important}
    the target away from a stationary pointer. Keep this animated game surface
    out of anchor selection; do not move the viewport or suppress its motion. */
 main:has([data-pressure-label]){overflow-anchor:none}
+
+/* The lock outline itself loses fragments on each press. The central label is
+   excluded from the fracture paths by an SVG rim clip, rather than painted over. */
+.pressure-frame-shards{opacity:0}.pressure-frame-shards line{stroke:#a14b75;stroke-width:1.25;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;transform-box:fill-box;transform-origin:center}
+.segments button.emotion-soft-lock[data-pressure-frame=cracking]{border-color:transparent}
+.emotion-soft-lock[data-pressure-frame=cracking] .pressure-frame-shards{opacity:1}
+body.motion-full .pressure-frame-shards line{transition:transform 180ms ease-out,opacity 180ms ease-out}
+@media(prefers-reduced-motion:reduce){body.motion-full .pressure-frame-shards line{transition:none!important;transform:none!important}}

@@ -1,6 +1,6 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];
@@ -9,10 +9,18 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   panel.hidden=true;instructions.textContent=PRESSURE_TOOLTIP;instructions.className='sr-only';status.className='sr-only';root.body.append(instructions,status);
   const tooltip=root.createElement('div');tooltip.id='emotion-pressure-tooltip';tooltip.className='pressure-tooltip';tooltip.setAttribute('role','tooltip');tooltip.hidden=true;root.body.append(tooltip);
   const decorations=new Map();
-  for(const button of buttons){
+  for(const [decorationIndex,button] of buttons.entries()){
     const svg=root.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 200 64');svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');svg.classList.add('pressure-fracture');
-    const paths=PRESSURE_CRACKS.map(spec=>{const path=root.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);svg.append(path);return {path,at:spec.at};});
-    const count=root.createElement('span');count.className='pressure-count';count.setAttribute('aria-hidden','true');count.hidden=true;button.append(svg,count);button.dataset.pressureLabel=original.get(button).text;decorations.set(button,{svg,paths,count});
+    // Keep the readable label clear; cracks spread inward from the frame only.
+    const defs=root.createElementNS('http://www.w3.org/2000/svg','defs'),clip=root.createElementNS('http://www.w3.org/2000/svg','clipPath'),clipId=`pressure-rim-${decorationIndex}`;
+    clip.id=clipId;
+    for(const [x,y,width,height] of [[0,0,200,14],[0,50,200,14],[0,0,22,64],[178,0,22,64]]){const rect=root.createElementNS('http://www.w3.org/2000/svg','rect');for(const [key,value] of Object.entries({x,y,width,height}))rect.setAttribute(key,String(value));clip.append(rect);}
+    defs.append(clip);svg.append(defs);
+    const frame=root.createElementNS('http://www.w3.org/2000/svg','g');frame.classList.add('pressure-frame-shards');
+    const shards=[[2,2,70,2,-3,-3,.18],[130,62,198,62,3,3,.32],[198,2,198,30,4,-2,.46],[2,34,2,62,-4,2,.6],[70,2,130,2,0,-4,.72],[70,62,130,62,0,4,.84],[130,2,198,2,3,-3,.94],[2,62,70,62,-3,3,1],[2,2,2,34,-4,-2,1],[198,30,198,62,4,2,1]].map(([x1,y1,x2,y2,dx,dy,at])=>{const line=root.createElementNS('http://www.w3.org/2000/svg','line');for(const [key,value] of Object.entries({x1,y1,x2,y2}))line.setAttribute(key,String(value));frame.append(line);return {line,dx,dy,at};});
+    svg.append(frame);
+    const paths=PRESSURE_CRACKS.map(spec=>{const path=root.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);path.setAttribute('clip-path',`url(#${clipId})`);svg.append(path);return {path,at:spec.at};});
+    const count=root.createElement('span');count.className='pressure-count';count.setAttribute('aria-hidden','true');count.hidden=true;button.append(svg,count);button.dataset.pressureLabel=original.get(button).text;decorations.set(button,{svg,paths,count,shards});
   }
   const presentation=createPressurePresentation({root,motion,enabled:motionEnabled});
   let animation=null,lastSignature='',lastStateKey='',disposed=false,hintTimer,breakTimer;
@@ -38,6 +46,8 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
       button.disabled=classification==='hard';button.classList.toggle('emotion-soft-lock',soft);button.dataset.emotionLock=soft?'soft':'';
       button.dataset.pressureStage=visual.stage;button.style.setProperty('--pressure-progress',String(p.intensity));
       for(const {path,at} of decoration.paths)path.style.opacity=p.intensity*12>=at?'1':'0';
+      button.dataset.pressureFrame=p.taps?'cracking':'';
+      for(const {line,dx,dy,at} of decoration.shards){const broken=p.intensity>=at;line.style.opacity=broken?'0':'1';line.style.transform=broken&&!reduced()?`translate(${dx}px,${dy}px)`:'none';}
       decoration.count.textContent=`${p.taps}/${p.target||5}`;decoration.count.hidden=!p.taps||(!soft&&!p.extreme)||target(button).value<(target(button).kind==='stake'?.5:50);
       if(soft){
         button.setAttribute('aria-disabled','true');button.setAttribute('aria-describedby','emotion-pressure-instructions emotion-pressure-status');

@@ -1,6 +1,6 @@
-import {selectTradingExpressionAsset} from './asset-usage-catalog.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {assetURL} from './assets.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {selectTradingExpressionAsset} from './asset-usage-catalog.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {assetURL} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 
 export function mountTradingExpression({portrait,speech,getState,canEnter=()=>true,doc=portrait.ownerDocument,now=()=>Date.now(),selectAsset=selectTradingExpressionAsset}){
  const win=doc.defaultView,observer=createExpressionObserver({now}),gate=createExpressionGate({now});

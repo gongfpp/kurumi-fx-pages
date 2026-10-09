@@ -1,4 +1,4 @@
-import {assetURL} from './assets.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {assetURL} from './assets.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 // Read-only presentation. The caller supplies certified realized trading net,
 // never balance, equity, borrowed cash, deposits or unrealized profit.
 const rows = {
@@ -10,7 +10,9 @@ const rows = {
 export const PROFIT_TIER_ART=Object.freeze(Object.fromEntries(Object.entries(rows).map(([tier,row])=>[tier,Object.freeze({...row,src:assetURL(row.path),tier,direction:'profit',people:1,panels:4,kind:'generated-game-art',reviewed:true})])));
 export function realizedProfitTier(net){
  if(!Number.isFinite(net)||net<=0)return null;
- return net>=20000000?'twenty-million':net>=100000?'hundred-thousand':net>=1000?'thousand':'small';
+ // Match the displayed currency precision without changing the trading ledger.
+ const amount=Math.round(net*100)/100;
+ return amount>=20000000?'twenty-million':amount>=100000?'hundred-thousand':amount>=1000?'thousand':'small';
 }
 export function selectRealizedProfitArtwork(net){const tier=realizedProfitTier(net);return tier?PROFIT_TIER_ART[tier]:null;}
 // Daily recap integration: specifically consume the immutable snapshot's daily

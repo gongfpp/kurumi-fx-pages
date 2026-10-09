@@ -1,6 +1,6 @@
-import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;
@@ -10,7 +10,7 @@ export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabl
  const timeline=duration&&typeof onTimeline==='function'?onTimeline(cues,{startedAt:started}):null;
  const draw=(elapsed,{silent=false}={})=>{
   const counting=duration?Math.min(1,Math.max(0,elapsed/presentation.countDuration)):1,progress=duration?recapProgress(presentation,elapsed):1,index=progress===0?0:progress<1?1:segments.length-1,segment=segments[index];
-  const beat=duration?presentation.beatTimes.filter(t=>t<=elapsed).length-1:-1,complete=!duration||elapsed>=duration,stage=complete?'complete':counting>=1?'landing':counting>=.93?'anticipation':counting<.09?'opening':'counting';
+  const beat=duration?presentation.beatTimes.filter(t=>t<=elapsed).length-1:-1,complete=!duration||elapsed>=duration,stage=complete?'complete':counting>=1?'landing':counting>=(presentation.catastrophic?.84:.93)?'anticipation':counting<.09?'opening':'counting';
   const replay=recapTimelineFrame(tradingTimeline,elapsed,{complete});
   render({progress,segment,index,...replay,reconciliation:tradingTimeline.residual,value:replay.tradingAssets,intensity:presentation.intensity,complete,candleCount:snapshot.candles.filter(c=>c.timestamp<=replay.timestamp).length,stage,beat,presentation});
   if(!silent&&!timeline&&duration&&counting<1&&beat>lastBeat){lastBeat=beat;if(elapsed-presentation.beatTimes[beat]<=65)onCue({...recapBeatCue(presentation,beat),segment,intensity:presentation.intensity,beat,final:false});}

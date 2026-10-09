@@ -111,3 +111,18 @@
  .recap-playback{margin-bottom:10px;padding:9px;gap:4px 6px}.recap-counter{margin:5px 0}.recap-heading{padding:5px 0}.recap-primary .recap-profit{font-size:23px}.recap-event-card{padding:6px 8px}.recap-stage-profit{font-size:16px;margin-bottom:5px}.recap-stage-chart svg{min-height:120px}.recap-choices{gap:7px}.recap-choices button{padding:9px;min-height:44px}.recap-curve{margin-block:8px}.recap-tabs{gap:6px}
 }
 #day-evening-receipts{margin-block:12px;text-align:left}#day-evening-receipts>h3{font-size:15px;margin:8px 0}.evening-receipt{border:1px solid #dec6d4;border-radius:6px;margin:7px 0;background:#fff9fc}.evening-receipt summary{padding:10px;min-height:44px;box-sizing:border-box;font-size:12px;line-height:1.5;cursor:pointer}.evening-receipt-content{padding:0 10px 10px}.evening-receipt-content img{display:block;width:min(100%,420px);height:auto;margin:0 auto 10px}.evening-receipt-content p{font-size:12px;line-height:1.55;margin:6px 0}
+
+/* Certified catastrophic liquidation: a single heavy drop, held fracture and static aftermath.
+   No flashing cycles; reduced motion retains only the factual loss marker and border. */
+.recap-catastrophe-note{flex:0 0 100%;margin:4px 0 8px;padding:8px 10px;border-left:4px solid #cf6076;background:#341e2a;color:#ffdce5;font-size:13px;font-weight:700;line-height:1.6}
+.recap-catastrophe-note[hidden]{display:none}
+.daily-recap[data-direction=loss][data-loss-severity=catastrophic] .recap-playback{border:3px solid #9b4b5b;background:linear-gradient(145deg,#291e27,#171820 65%,#3a2029);box-shadow:inset 0 0 36px #05040888}
+.daily-recap[data-loss-severity=catastrophic] .recap-counter{color:#ffbdc9!important;margin-bottom:48px}
+.daily-recap[data-loss-severity=catastrophic] .recap-playback[data-stage=anticipation],.daily-recap[data-loss-severity=catastrophic] .recap-playback[data-stage=landing]{filter:saturate(.3);transition:filter 450ms ease}
+.daily-recap[data-loss-severity=catastrophic] .recap-playback[data-stage=complete]{border-color:#78424e}
+.recap-screen[data-loss-severity=catastrophic] .recap-screen-ring{box-shadow:inset 0 0 24vw #180c19bb;background:linear-gradient(118deg,transparent 49.55%,#ed9bacbb 49.7%,#ed9bacbb 50.3%,transparent 50.45%),linear-gradient(36deg,transparent 49.6%,#c9849699 49.8%,#c9849699 50.2%,transparent 50.4%),linear-gradient(77deg,transparent 49.7%,#dda2b2aa 49.85%,#dda2b2aa 50.15%,transparent 50.3%),linear-gradient(151deg,transparent 49.7%,#dda2b288 49.85%,#dda2b288 50.15%,transparent 50.3%)}
+.recap-screen[data-loss-severity=catastrophic] .recap-screen-shard{width:5px;height:180px;background:linear-gradient(#e19bad,transparent)}
+.recap-screen[data-loss-severity=catastrophic][data-stage=landing] .recap-screen-ring{animation:recap-catastrophe-fracture 2700ms ease-out both}
+.recap-screen[data-loss-severity=catastrophic][data-stage=landing] .recap-screen-halo{animation-duration:2300ms}
+@keyframes recap-catastrophe-fracture{0%{opacity:0;transform:scale(1.04)}14%,68%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:translateY(20px)}}
+@media(prefers-reduced-motion:reduce){.daily-recap[data-loss-severity=catastrophic] .recap-playback{filter:none;transition:none}.recap-screen[data-loss-severity=catastrophic]{display:none!important}}

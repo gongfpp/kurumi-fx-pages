@@ -1,4 +1,4 @@
-import {HistoricalProvider,validateHistoricalManifest} from './historical-provider.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {HistoricalProvider,validateHistoricalManifest} from './historical-provider.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 const DB='kurumi-fx:historical-data-v1',STORE='packages',MAX_HEADER=1024*1024,MAX_FILE=512*1024*1024;
 function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'key'});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(Error('浏览器无法打开历史行情存储'));});}
 async function operation(mode,fn){const db=await database();try{return await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,mode),request=fn(tx.objectStore(STORE));let result;request.onsuccess=()=>result=request.result;tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(Error('历史行情未保存，请检查浏览器空间'));tx.onabort=()=>reject(Error('历史行情保存被中断'));});}finally{db.close();}}

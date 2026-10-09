@@ -1,4 +1,4 @@
-import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=67ec3f8e9248c704ac17a7c1b439280fb0090054-23f2a20b7717';
 // Presentation candidates come only from records the engine has already written.
 // No balance differences, click intent, market predictions or historical replay.
 export function recordedComicEvents(state) {
