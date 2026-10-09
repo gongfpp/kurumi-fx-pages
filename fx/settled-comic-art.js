@@ -1,5 +1,5 @@
-import {dailyReturnMetrics} from './daily-performance.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
 // Generic AFTER-close scenes. These do not depict an intraday market path.
 // The single authoritative emotion selector supplies mood/traumaActive.
 const positive=Object.freeze({path:'./generated/settled-comics-v1/settled-gain.webp',kind:'generated-game-art',layout:'whole-sheet',alt:'收盘后，久留美看过账单，放下手机，松了一口气'});

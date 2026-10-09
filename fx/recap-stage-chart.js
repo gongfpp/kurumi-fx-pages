@@ -1,4 +1,4 @@
-import {formatTradingTime} from './trading-time.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
 const node=(doc,tag,attrs={})=>{const e=doc.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;};
 export function createRecapStageChart(doc,snapshot){
  const root=doc.createElement('div');root.className='recap-stage-chart';

@@ -1,4 +1,4 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;

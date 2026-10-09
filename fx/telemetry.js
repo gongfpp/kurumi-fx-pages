@@ -1,6 +1,6 @@
-import {kurumiStorage} from './storage-namespace.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
