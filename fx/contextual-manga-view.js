@@ -1,6 +1,6 @@
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {setImage} from './assets.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {setImage} from './assets.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
 // Inline, manual presentation only. It has no game-state or persistence access.
 export function mountContextualManga(host,selection,{manual=true,root=host.ownerDocument||document}={}){
  host.replaceChildren();host.hidden=!selection;if(!selection)return null;
@@ -8,7 +8,7 @@ export function mountContextualManga(host,selection,{manual=true,root=host.owner
  host.className='contextual-manga';host.dataset.arc=selection.id;
  const section=make('section'),heading=make('h3',selection.title),content=make('div');
  const choices=[selection,...(selection.related||[])].slice(0,4);let active=selection,expanded=!manual,toggle=null;
- const updateToggle=()=>{if(toggle){toggle.textContent=expanded?'收起这段往事':'展开这段往事';toggle.setAttribute('aria-expanded',String(expanded));}};
+ const updateToggle=()=>{if(toggle){const label=active.parallelStory?'故事':'往事';toggle.textContent=(expanded?'收起这段':'展开这段')+label;toggle.setAttribute('aria-expanded',String(expanded));}};
  function paint(){content.replaceChildren();content.hidden=!expanded;if(!expanded)return;
   for(const node of active.nodes){const story=make('section'),title=make('h4',node.title);story.dataset.node=node.id;story.append(title,make('p',node.before));
    for(const panel of node.panels){if(panel.before)story.append(make('p',panel.before));const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record],figure=make('figure'),img=make('img'),missing=make('p','图片暂未加载。');missing.hidden=true;missing.setAttribute('role','status');img.alt=panel.alt;img.width=asset.dimensions[0];img.height=asset.dimensions[1];img.dataset.sourceRecord=String(panel.record);img.loading='eager';img.decoding='async';setImage(img,asset.path,{onStatus:status=>{missing.hidden=status!=='unavailable';img.hidden=status==='unavailable';}});figure.append(img,missing);story.append(figure);}
@@ -17,6 +17,6 @@ export function mountContextualManga(host,selection,{manual=true,root=host.owner
  }
  section.append(heading);
  if(manual||choices.length>1){toggle=make('button','展开这段往事');toggle.type='button';toggle.className='secondary';toggle.setAttribute('aria-expanded',String(expanded));toggle.addEventListener('click',()=>{expanded=!expanded;updateToggle();paint();});section.append(toggle);}
- if(choices.length>1){const nav=make('nav');nav.setAttribute('aria-label','相关往事');for(const choice of choices){const button=make('button',choice.title);button.type='button';button.className='secondary';button.dataset.arcChoice=choice.id;button.setAttribute('aria-pressed',String(choice===active));button.addEventListener('click',()=>{active=choice;expanded=true;heading.textContent=choice.title;host.dataset.arc=choice.id;for(const sibling of nav.children)sibling.setAttribute('aria-pressed',String(sibling===button));updateToggle();paint();});nav.append(button);}section.append(nav);}
+ if(choices.length>1){const nav=make('nav');nav.setAttribute('aria-label',choices.some(choice=>choice.parallelStory)?'相关故事':'相关往事');for(const choice of choices){const button=make('button',choice.title);button.type='button';button.className='secondary';button.dataset.arcChoice=choice.id;button.setAttribute('aria-pressed',String(choice===active));button.addEventListener('click',()=>{active=choice;expanded=true;heading.textContent=choice.title;host.dataset.arc=choice.id;for(const sibling of nav.children)sibling.setAttribute('aria-pressed',String(sibling===button));updateToggle();paint();});nav.append(button);}section.append(nav);}
  section.append(content);host.append(section);updateToggle();paint();return {get expanded(){return expanded;}};
 }

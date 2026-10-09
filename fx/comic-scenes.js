@@ -1,8 +1,8 @@
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.

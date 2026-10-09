@@ -1,6 +1,6 @@
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=b4720c23c50a873116b8cc8838042595dc3956dd-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){
