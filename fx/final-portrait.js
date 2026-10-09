@@ -1,9 +1,9 @@
-import {tradingTrauma} from './trading-trauma.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {positionNetUnrealized,mood} from './engine.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {MOODS} from './content.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {floatingReactionSnapshot} from './floating-reaction.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {positionNetUnrealized,mood} from './engine.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {MOODS} from './content.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {floatingReactionSnapshot} from './floating-reaction.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 
 const generated=(path,emotion,label,scope,evidence)=>({kind:'generated',path,emotion,label,scope,evidence,sourceLabel:'原创同人',origin:'generated-game-art'});
 const plain=(emotion,scope,evidence)=>generated(`./expressions/kurumi-${MOODS[emotion]?.[1]||'calm'}.webp`,emotion,MOODS[emotion]?.[0]||'平静',scope,evidence);

@@ -1,7 +1,7 @@
-import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {scheduleAudioTimeline} from './audio-timeline.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {AudioEnvelope,getSafeAudioContext,connectScheduledAudio} from './audio-envelope.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {assetURL} from './assets.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {scheduleAudioTimeline} from './audio-timeline.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {AudioEnvelope,getSafeAudioContext,connectScheduledAudio} from './audio-envelope.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {assetURL} from './assets.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 

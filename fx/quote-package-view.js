@@ -1,5 +1,5 @@
-import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {hasCanonicalGrid} from './quote-grid.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {hasCanonicalGrid} from './quote-grid.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 const yen=value=>`¥${value.toLocaleString('zh-CN',{maximumFractionDigits:0})}`;
 export function quotePackagePresentation(state,{availableCash=state.cash,canPurchase=true}={}){
  const p=quotePackageState(state),legacy=!hasCanonicalGrid(state.script),effectiveHz=legacy?1:p.selectedHz;

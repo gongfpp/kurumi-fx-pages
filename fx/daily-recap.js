@@ -1,10 +1,10 @@
-import {readRunStatistics} from './run-statistics.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {runPerformance} from './performance.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {runPerformance} from './performance.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -59,4 +59,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';

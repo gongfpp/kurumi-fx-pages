@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {runPerformance} from './performance.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {runPerformance} from './performance.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);

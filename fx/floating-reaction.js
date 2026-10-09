@@ -1,4 +1,4 @@
-import {positionNetUnrealized} from './engine.js?v=8903becb6b9180163bc2e2fe85f9d26e6fe51982-23f2a20b7717';
+import {positionNetUnrealized} from './engine.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
 
 // Presentation-only: aggregate the unchanged positions' net mark-to-market.
 // Account cash, borrowed funds, deposits and withdrawals are never profit signals.
