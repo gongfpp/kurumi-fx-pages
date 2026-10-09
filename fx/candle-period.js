@@ -1,12 +1,12 @@
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
 export const CANDLE_PERIODS=Object.freeze([{minutes:15,label:'15分钟',hz:1},{minutes:1440,label:'日K',hz:1},{minutes:5,label:'5分钟',hz:2},{minutes:1,label:'1分钟',hz:4}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;
 export const candlePeriod=s=>{const m=requestedCandlePeriod(s),p=CANDLE_PERIODS.find(p=>p.minutes===m);return quotePackageState(s).ownedHz>=p.hz?m:15;};
 export const candlePeriodLabel=s=>CANDLE_PERIODS.find(p=>p.minutes===candlePeriod(s)).label;
-export const candlePeriodNotice=s=>`JST · ${candlePeriodLabel(s)}${candlePeriod(s)===1440?'':' K线'}`;
+export const candlePeriodNotice=(s,{includeTimeZone=true}={})=>`${includeTimeZone?'JST · ':''}${candlePeriodLabel(s)}${candlePeriod(s)===1440?'':' K线'}`;
 export function recordDisplayQuote(s,timestamp,price){
  if(!Number.isFinite(timestamp)||!Number.isFinite(price)||price<=0)return;
  s.displayMinutes ||= [];const bars=s.displayMinutes,bucket=Math.floor(timestamp/MINUTE)*MINUTE,last=bars.at(-1);

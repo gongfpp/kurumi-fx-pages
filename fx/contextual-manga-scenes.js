@@ -1,11 +1,14 @@
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {CHARACTER_STORY_NODES} from './character-story-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
 const arcs={
  ...CONTEXTUAL_MANGA_ARCS,
  'profit-fades':['aud-yen-delight','profit-fades','look-away','first-negative-estimate'],
@@ -16,18 +19,30 @@ const titles={'pause-and-return':'久留美 · 她说过要放弃','averaging-do
 // Extend only the sealed daily reader; independent event readers keep their
 // original lists. Amounts in these nodes remain the manga characters' facts.
 function dailyArc(id,evidence){
+ if(id==='long-loss-then-short')return {id,title:'康子 · 刚换了方向，她又犹豫了',parallelStory:true,evidence:structuredClone(evidence),nodes:structuredClone(REVERSAL_DAILY_NODES.filter(n=>n.id==='kangzi-loss-and-turn'))};
  const result=id==='realized-long-profit'?{id,title:'久留美 · 确定下来的利润',parallelStory:true,evidence:structuredClone(evidence),nodes:[]}:arc(id,evidence);
- const node=key=>structuredClone([...CHARACTER_STORY_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES].find(n=>n.id===key));
+ const node=key=>structuredClone([...CHARACTER_STORY_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES,...REVERSAL_DAILY_NODES,...LINK_DAILY_NODES].find(n=>n.id===key));
  if(id==='profit-fades'){result.nodes.unshift(node('entry-expectation'));result.nodes.splice(2,0,node('shop-profit-dream'));}
+ if(id==='friends-different-ledgers')result.nodes.unshift(node('friends-earlier-invitation'));
  if(id==='holding-loss')result.nodes.unshift(node('heavy-position'));
- if(id==='follow-confidence'){result.nodes.unshift(node('admiring-senpai'));result.nodes.splice(3,0,node('message-from-mebuki'));}
+ if(id==='follow-confidence'){
+  const intro=node('admiring-senpai'),chart=result.nodes[0],follow=result.nodes[1],later=node('message-from-mebuki'),confidence=result.nodes[2];
+  intro.panels.push(structuredClone(LINK_DAILY_PANELS[89]));intro.after='久留美觉得，懂得越多，就越有机会赢。';
+  chart.title='先看这张图';chart.before='话题转到图表，K线上已经走出一段下跌。久留美认真起来：“投资是自负盈亏的。”';
+  chart.panels.unshift(...[94,95].map(r=>structuredClone(LINK_DAILY_PANELS[r])));
+  later.title='后来的消息';later.panels.push(...confidence.panels);later.after=confidence.after;
+  result.nodes=[intro,node('imagined-life-and-accounts'),chart,follow,later];
+ }
+ if(id==='realized-short-profit')result.nodes.unshift(node('first-trade-beginning'));
+ if(id==='borrowed-time')result.nodes.splice(2,0,node('policy-surge-conversation'));
+ if(id==='asking-for-more')result.nodes.push(node('promise-and-doubt'),node('mochiko-responsibility'));
  if(id==='borrowed-recovery')result.nodes.splice(2,0,node('short-plan-drawdown'));
  if(id==='realized-long-profit')result.nodes=['long-profit-realized','later-overseas-profit'].map(node);
  const before=(record,key)=>{const index=result.nodes.findIndex(n=>n.panels.some(p=>p.record===record));if(index<0)throw Error('Missing daily story anchor: '+record);result.nodes.splice(index,0,node(key));};
  if(id==='profit-fades'){before(25,'funding-refusal');before(28,'prompted-purchase');before(31,'carefree-walk');before(35,'weight-of-loss');}
- if(id==='holding-loss')before(45,'furious-at-loss');
+ if(id==='holding-loss'){before(45,'furious-at-loss');result.nodes.push(node('another-funding-idea'));}
  if(id==='averaging-down-prayer')result.nodes.push(node('savings-fear'));
- if(id==='realized-long-profit')before(75,'profit-confirmation');
+ if(id==='realized-long-profit'){before(75,'profit-confirmation');result.nodes.push(node('tax-return-worry'));}
  if(id==='borrowed-recovery'){
   before(157,'news-and-more-shorts');before(161,'tuition-distance');before(166,'scholarship-fantasy');
   const end=result.nodes.find(n=>n.panels.some(p=>p.record===169));end.panels.splice(end.panels.findIndex(p=>p.record===169),0,structuredClone(VERIFIED_DAILY_PANELS[168]));
@@ -58,14 +73,15 @@ function borrowedToday(state){
  const r=state.loan?.lastBorrow;
  return r?.day===state.day&&/^network-borrow:[1-9]\d*$/.test(r.id||'')&&positive(r.amount)&&Number.isFinite(r.timestamp)&&positive(r.outstanding)&&r.outstanding>=r.amount&&positive(state.loan.borrowed)&&state.loan.borrowed>=r.amount?r:null;
 }
-function combine(selections){const choices=selections.filter(Boolean);return choices.length?{...choices[0],related:choices.slice(1)}:null;}
+function combine(selections){const choices=selections.filter(Boolean).slice(0,4);return choices.length?{...choices[0],related:choices.slice(1)}:null;}
 export function selectDailyContextualManga(state){
+ const directionChange=longLossThenShortEvidence(state);
  const longProfit=longProfitEvidence(state),profit=shortProfitEvidence(state),liquidation=reversalLiquidationEvidence(state),opposite=oppositeDirectionsEvidence(state);
- const specific=longProfit?dailyArc('realized-long-profit',longProfit):profit?arc('realized-short-profit',profit):liquidation?arc('reversal-liquidation',liquidation):opposite?dailyArc('opposite-directions',opposite):null;
+ const specific=longProfit?dailyArc('realized-long-profit',longProfit):profit?dailyArc('realized-short-profit',profit):liquidation?arc('reversal-liquidation',liquidation):opposite?dailyArc('opposite-directions',opposite):null;
  // A completed reversal-and-liquidation gets one coherent story, rather than
  // another generic reversal episode competing for the same receipt.
  const averaging=liquidation?null:averagingDownEvidence(state),pause=averaging?null:pauseAndReturnEvidence(state),friends=friendsLedgersEvidence(state),caution=floatingCautionEvidence(state);
- const base=specific||averaging||pause?null:baseDailyContextualManga(state),outcome=sealedDailyMangaOutcome(state),report=state.dayReport;
+ const base=specific||directionChange||averaging||pause?null:baseDailyContextualManga(state),outcome=sealedDailyMangaOutcome(state),report=state.dayReport;
  const reversal=base?.id==='profit-fades'?arc('twenty-seconds',base.evidence):null;
  const trades=report?.trades?.filter(t=>t.day===state.day&&t.type!=='open')||[],loan=borrowedToday(state);
  const certified=loan?sealedDailyTradeEvidence(state):null;
@@ -74,7 +90,7 @@ export function selectDailyContextualManga(state){
  const shortLoss=certified&&certified.net<0&&certified.trades.every(t=>t.direction===-1&&t.exit>t.entry&&t.grossPnl<0&&t.pnl<0&&t.timestamp>loan.timestamp)&&positive(state.loan.outstanding)&&Number.isFinite(state.loan.repaid)&&state.loan.repaid>=0&&Math.abs(state.loan.borrowed+(state.loan.interestAccrued??0)-state.loan.repaid-state.loan.outstanding)<=.02;
  const debt=loan&&outcome?.net<0&&trades.length&&trades.every(closed)&&trades.reduce((sum,t)=>sum+t.pnl,0)<0?(shortLoss?dailyArc:arc)('borrowed-recovery',{day:state.day,receipt:loan.id,amount:loan.amount,net:outcome.net}):null;
  const priorDebt=priorBorrowedShortLossEvidence(state);
- return combine([specific,averaging?dailyArc('averaging-down-prayer',averaging):null,friends?arc('friends-different-ledgers',friends):null,caution?arc('floating-profit-caution',caution):null,pause?arc('pause-and-return',pause):null,base,reversal,pause&&priorDebt?null:debt,...(priorDebt?[arc('borrowed-time',priorDebt),arc('asking-for-more',priorDebt)]:[])]);
+ return combine([specific,directionChange?dailyArc('long-loss-then-short',directionChange):null,averaging?dailyArc('averaging-down-prayer',averaging):null,friends?dailyArc('friends-different-ledgers',friends):null,caution?arc('floating-profit-caution',caution):null,pause?arc('pause-and-return',pause):null,base,reversal,pause&&priorDebt?null:debt,...(priorDebt?[dailyArc('borrowed-time',priorDebt),dailyArc('asking-for-more',priorDebt)]:[])]);
 }
 export function selectStoryContextualManga(state,event){
  if(event?.key!=='friendStudy'||state.mode!=='story')return null;

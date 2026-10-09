@@ -1,13 +1,13 @@
-import {preserveScroll} from './preserve-scroll.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
-import {setImage} from './assets.js?v=11110082a121db2b95b0f01ab243349641eb7d85-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {setImage} from './assets.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);

@@ -103,9 +103,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
   "./manga/ch01-rule.jpg": {
     "sourceRecord": 12,
     "primaryUse": "story-dialogue",
-    "character": "久留美",
+    "character": "未核定短发人物",
     "characters": [
-      "久留美"
+      "未核定短发人物"
     ],
     "emotion": "剧情",
     "intensity": null,
@@ -116,9 +116,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "faceClarity": "scene-scale",
     "textClarity": "not-transcribed",
     "minDisplayWidth": 320,
-    "identityStatus": "pixel-reviewed-primary-character",
-    "identityDescription": "久留美",
-    "status": "verified",
+    "identityStatus": "pending-identity-for-stated-unknown-figures",
+    "identityDescription": "未核定短发人物",
+    "status": "pending",
     "tags": [],
     "exclusions": [
       "story-only",
@@ -353,9 +353,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
   "./manga/characters-v1/206.jpg": {
     "sourceRecord": 206,
     "primaryUse": "story-dialogue",
-    "character": "萌智子、康子与久留美",
+    "character": "三名谈话人物；发言者未核定",
     "characters": [
-      "萌智子、康子与久留美"
+      "三名谈话人物；发言者未核定"
     ],
     "emotion": "剧情",
     "intensity": null,
@@ -366,9 +366,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "faceClarity": "scene-scale",
     "textClarity": "not-transcribed",
     "minDisplayWidth": 320,
-    "identityStatus": "pixel-reviewed-primary-character",
-    "identityDescription": "萌智子、康子与久留美",
-    "status": "verified",
+    "identityStatus": "pending-identity-for-stated-unknown-figures",
+    "identityDescription": "三名谈话人物；发言者未核定",
+    "status": "pending",
     "tags": [],
     "exclusions": [
       "story-only",
@@ -1034,9 +1034,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
   "./manga/characters-v1/95.jpg": {
     "sourceRecord": 95,
     "primaryUse": "story-dialogue",
-    "character": "未核定；仅局部眼部和脸部",
+    "character": "久留美",
     "characters": [
-      "未核定；仅局部眼部和脸部"
+      "久留美"
     ],
     "emotion": "剧情",
     "intensity": null,
@@ -1047,9 +1047,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "faceClarity": "scene-scale",
     "textClarity": "not-transcribed",
     "minDisplayWidth": 320,
-    "identityStatus": "pending-identity-for-stated-unknown-figures",
-    "identityDescription": "未核定；仅局部眼部和脸部",
-    "status": "pending",
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
     "tags": [],
     "exclusions": [
       "story-only",
@@ -3963,6 +3963,689 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "minDisplayWidth": 320,
     "identityStatus": "verified",
     "identityDescription": "芽吹",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/109.jpg": {
+    "sourceRecord": 109,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹",
+    "characters": [
+      "芽吹"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "芽吹",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/110.jpg": {
+    "sourceRecord": 110,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/111.jpg": {
+    "sourceRecord": 111,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹",
+    "characters": [
+      "芽吹"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "芽吹",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/112.jpg": {
+    "sourceRecord": 112,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹",
+    "characters": [
+      "芽吹"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "芽吹",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/113.jpg": {
+    "sourceRecord": 113,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/114.jpg": {
+    "sourceRecord": 114,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、康子",
+    "characters": [
+      "芽吹",
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "芽吹、康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/115.jpg": {
+    "sourceRecord": 115,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、康子、久留美与朋友",
+    "characters": [
+      "芽吹",
+      "康子",
+      "久留美与朋友"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "芽吹、康子、久留美与朋友",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/121.jpg": {
+    "sourceRecord": 121,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/122.jpg": {
+    "sourceRecord": 122,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/123.jpg": {
+    "sourceRecord": 123,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/124.jpg": {
+    "sourceRecord": 124,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/125.jpg": {
+    "sourceRecord": 125,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/126.jpg": {
+    "sourceRecord": 126,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/127.jpg": {
+    "sourceRecord": 127,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-reversal/128.jpg": {
+    "sourceRecord": 128,
+    "primaryUse": "story-dialogue",
+    "character": "康子",
+    "characters": [
+      "康子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "verified",
+    "identityDescription": "康子",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/47.jpg": {
+    "sourceRecord": 47,
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/48.jpg": {
+    "sourceRecord": 48,
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/77.jpg": {
+    "sourceRecord": 77,
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/78.jpg": {
+    "sourceRecord": 78,
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/91.jpg": {
+    "sourceRecord": 91,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、久留美",
+    "characters": [
+      "芽吹",
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "芽吹、久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/92.jpg": {
+    "sourceRecord": 92,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、久留美",
+    "characters": [
+      "芽吹",
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "芽吹、久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/93.jpg": {
+    "sourceRecord": 93,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、久留美",
+    "characters": [
+      "芽吹",
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "芽吹、久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/94.jpg": {
+    "sourceRecord": 94,
+    "primaryUse": "story-dialogue",
+    "character": "无人像",
+    "characters": [
+      "无人像"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "无人像",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/205.jpg": {
+    "sourceRecord": 205,
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/224.jpg": {
+    "sourceRecord": 224,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、久留美",
+    "characters": [
+      "芽吹",
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "芽吹、久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/225.jpg": {
+    "sourceRecord": 225,
+    "primaryUse": "story-dialogue",
+    "character": "芽吹、久留美",
+    "characters": [
+      "芽吹",
+      "久留美"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "芽吹、久留美",
+    "status": "verified",
+    "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/contextual-links/226.jpg": {
+    "sourceRecord": 226,
+    "primaryUse": "story-dialogue",
+    "character": "萌智子",
+    "characters": [
+      "萌智子"
+    ],
+    "emotion": "剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-reviewed-primary-character",
+    "identityDescription": "萌智子",
     "status": "verified",
     "tags": [],
     "exclusions": [
