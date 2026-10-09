@@ -1,3 +1,4 @@
+import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
 // Presentation candidates come only from records the engine has already written.
 // No balance differences, click intent, market predictions or historical replay.
 export function recordedComicEvents(state) {
@@ -27,21 +28,27 @@ export function recordedComicScenes(state,select){return recordedComicEvents(sta
 // Only the context owner may certify the save. A returned ticket contains frozen
 // presentation data selected BEFORE an asynchronous save, never future state.
 export function createComicReceiptGate({initialState,context,select,onScenes=()=>{},onReset=()=>{}}) {
- let currentContext=context,revision=0,seen=new Set();
+ let currentContext=context,revision=0,seen=new Set(),seenTrades=new Set();
+ const trades=state=>(state.history||[]).filter(row=>['close','half','closing','stop','liquidation'].includes(row.type)&&Number.isFinite(row.pnl));
+ const tradeKey=comicTradeKey;
  const scenes=state=>recordedComicScenes(state,select);
- function rebase(state,nextContext){currentContext=nextContext;revision++;seen=new Set(scenes(state).map(scene=>scene.receiptKey));onReset();}
+ function rebase(state,nextContext){currentContext=nextContext;revision++;seen=new Set(scenes(state).map(scene=>scene.receiptKey));seenTrades=new Set(trades(state).map(tradeKey));onReset();}
  rebase(initialState,context);
  return {
   capture(state,nextContext){
    if(nextContext!==currentContext){rebase(state,nextContext);return {context:nextContext,revision,scenes:[]};}
+   recordComicProfitBatch(state);
    const selected=scenes(state).filter(scene=>!seen.has(scene.receiptKey));
-   return {context:currentContext,revision,scenes:structuredClone(selected)};
+   return {context:currentContext,revision,settlementDay:state.dayReport?.day===state.day&&['closing','day_end','resting','ending'].includes(state.phase)?state.day:0,trades:structuredClone(trades(state).filter(row=>!seenTrades.has(tradeKey(row)))),scenes:structuredClone(selected)};
   },
   commit(ticket,{saved,context:nextContext,blocked=false}={}){
    if(!saved||blocked||ticket.context!==nextContext||ticket.context!==currentContext||ticket.revision!==revision)return [];
    const incoming=ticket.scenes.filter(scene=>!seen.has(scene.receiptKey));
    for(const scene of incoming)seen.add(scene.receiptKey);
-   if(incoming.length)onScenes(incoming);
+   const settled=(ticket.trades||[]).filter(row=>!seenTrades.has(tradeKey(row)));
+   for(const row of settled)seenTrades.add(tradeKey(row));
+   const batchTradingNet=settled.reduce((sum,row)=>sum+row.pnl,0);
+   if(incoming.length)onScenes(incoming.map(scene=>({...scene,batchTradingNet,settlementDay:ticket.settlementDay||0})));
    return incoming;
   },
   rebase,

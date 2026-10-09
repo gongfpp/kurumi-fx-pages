@@ -7,7 +7,9 @@ export function createEventComicQueue({onChange=()=>{}}={}) {
  return {
   get state(){return view();},
   enqueue(scenes){for(const scene of scenes)if(scene?.receiptKey&&!seen.has(scene.receiptKey)){seen.add(scene.receiptKey);pending.push(scene);}if(!active&&!paused)advance();emit();},
+  play(scenes){pending=[...scenes];active=null;paused=false;advance();emit();},
   next(){active=null;if(!paused)advance();emit();},
+  cancel(){pending=[];active=null;paused=true;emit();},
   dismiss(){active=null;paused=true;emit();},
   resume(){paused=false;if(!active)advance();emit();},
   replay(key){const scene=history.findLast(scene=>!key||scene.receiptKey===key);if(!scene)return false;if(active&&active.receiptKey!==scene.receiptKey)pending.unshift(active);active=scene;paused=false;emit();return true;},

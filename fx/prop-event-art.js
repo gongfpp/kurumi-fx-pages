@@ -3,7 +3,7 @@
 export const PROP_EVENT_ART = Object.freeze({
   energy:{path:'./generated/props-v1/energy.webp',alt:'久留美在桌前喝能量饮料',kind:'generated-game-art'},
   celebration:{path:'./generated/props-v1/spa.webp',alt:'久留美在温泉休息区的按摩椅上放松',kind:'generated-game-art'},
-  mochiko:{path:'./generated/props-v1/mochiko-watch.webp',alt:'萌智子坐在久留美身边专注盯盘',kind:'generated-game-art'},
+  mochiko:{path:'./generated/character-profit-v1/mochiko-watch-v2.webp',alt:'久留美请萌智子帮忙，两人核对持仓；萌智子指着屏幕，久留美点头回应。',kind:'generated-game-art'},
   takeaway:{path:'./comics/event-takeaway.webp',grid:[1,0,2,2],alt:'久留美吃外卖便当',kind:'existing-game-art'},
   noodles:{path:'./comics/event-takeaway.webp',grid:[1,1,2,2],alt:'久留美在夜里吃杯面',kind:'existing-game-art'},
 });

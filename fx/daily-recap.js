@@ -1,9 +1,10 @@
-import {consumptionStatement} from './consumption-ledger.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {runPerformance} from './performance.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {runPerformance} from './performance.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,TRADING_TIME_NOTICE} from './trading-time.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -43,6 +44,7 @@ export function buildRecapSnapshot(state={},options={}){
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
   curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial:recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||state.accountingJournal?.truncatedDays?.includes(state.day),cumulativePartial:!!state.accountingJournal?.legacyPartial||!state.accountingJournal||hasEarlierGap,unit:'日元 / ¥',timeUnit:'游戏交易时间 · JST'},
+  trades:readRunStatistics(state).trades.filter(t=>t.day===state.day).map(t=>({...t})),
   candles:allCandles.filter(c=>c.day===state.day),candleMovingAverages,timeNotice:TRADING_TIME_NOTICE,
   note:dayMetrics.returnUnavailable||null};
  return JSON.parse(JSON.stringify(snapshot));
@@ -57,4 +59,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';

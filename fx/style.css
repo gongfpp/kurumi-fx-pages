@@ -102,3 +102,5 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 
 /* Cross-game navigation leaves the active session open. */
 .top-right .stock-game-link{color:inherit;font:inherit;text-decoration:none;border:1px solid currentColor;border-radius:7px;padding:7px 10px;white-space:nowrap}.top-right .stock-game-link:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+
+.risk-line #risk-note{display:block;font-size:11px;line-height:1.6;margin-top:3px}.risk-line #risk-note[hidden]{display:none}

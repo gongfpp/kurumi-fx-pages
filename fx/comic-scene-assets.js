@@ -343,9 +343,9 @@ export const COMIC_SCENE_ASSETS=Object.freeze({
   }
 });
 
-// Supplemental presentation reuses existing art; it does not increase the locked
-// independent four-panel inventory. The Mochiko picture is a single illustration.
+// Supplemental presentation preserves the locked inventory. The replacement
+// Mochiko asset is a separately reviewed complete four-panel story.
 export const COMIC_PRESENTATION_ASSETS=Object.freeze({...COMIC_SCENE_ASSETS,
-"mochiko-watch":{"path": "./generated/props-v1/mochiko-watch.webp", "width": 1086, "height": 1448, "sha256": "45afd748a39d525a090c2abb74b4b6dcb5af994a7dd4019a93ead61ea3451b57", "people": 2, "panels": 1, "reviewed": true, "kind": "existing-game-illustration", "alt": "萌智子坐在久留美身边，指着屏幕一起核对持仓。", "independentComic": false},"walkaway":{"path": "./comics/ending-walkaway.webp", "width": 768, "height": 1024, "sha256": "f113007acf7d854ae618bea07d7db8d71b5699bbf3b89f71dc41ed5f38d2639d", "people": 2, "panels": 4, "reviewed": true, "kind": "existing-game-illustration", "alt": "久留美放下交易手机，和萌智子喝咖啡散步，交易桌前空了下来。", "independentComic": false},
+"mochiko-watch":{"path": "./generated/character-profit-v1/mochiko-watch-v2.webp", "width": 1086, "height": 1448, "sha256": "8e3b14869952d018c0fb7984823299c563faf1191cf341d2199b016fc2a693ee", "people": 2, "panels": 4, "reviewed": true, "kind": "generated-game-art", "alt": "久留美请萌智子帮忙，两人核对持仓；萌智子指着屏幕，久留美点头回应。", "independentComic": true},"walkaway":{"path": "./comics/ending-walkaway.webp", "width": 768, "height": 1024, "sha256": "f113007acf7d854ae618bea07d7db8d71b5699bbf3b89f71dc41ed5f38d2639d", "people": 2, "panels": 4, "reviewed": true, "kind": "existing-game-illustration", "alt": "久留美放下交易手机，和萌智子喝咖啡散步，交易桌前空了下来。", "independentComic": false},
 "half-profit":{...COMIC_SCENE_ASSETS["closed-profit"],alt:"久留美确认盈利的半仓成交，剩余仓位仍继续持有。",independentComic:false,reusedFrom:"closed-profit"}
 });

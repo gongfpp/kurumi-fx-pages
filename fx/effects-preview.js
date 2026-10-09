@@ -1,21 +1,22 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {PRESSURE_CRACKS} from './pressure-visuals.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {GameMotion} from './motion.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {mountDailyRecap} from './recap-view.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {FXAudio} from './audio.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {unlockSafeAudio} from './audio-envelope.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
+import {selectDailyRecapProfitArtwork} from './profit-tier-art.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {PRESSURE_CRACKS} from './pressure-visuals.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {GameMotion} from './motion.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {mountDailyRecap} from './recap-view.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {EFFECT_SCENARIOS,effectFixture} from './effects-fixtures.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {FXAudio} from './audio.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {unlockSafeAudio} from './audio-envelope.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
 for(const type of ['pointerdown','keydown'])document.addEventListener(type,event=>{if(event.isTrusted){unlockSafeAudio(event);audio.unlock();}},{capture:true});
 const $=id=>document.getElementById(id),audio=new FXAudio({onError:()=>{$('sound-status').textContent='音频未能载入；视觉仍可检查。'}});let view=null,selected='small-profit',started=0,trace=[];
 function play(id){
  selected=id;view?.dispose();audio.stopEffects();audio.unlock();audio.configure({sound:$('preview-sound').checked,soundVolume:.5});started=performance.now();trace=[];
  const snapshot=effectFixture(id),frozen=JSON.stringify(snapshot),profile=recapPresentation(snapshot);
- $('scenario-detail').textContent=`已实现交易盈亏 ${snapshot.primary.profit.toLocaleString('zh-CN')} 日元（${(snapshot.primary.returnRate*100).toFixed(0)}%）。${profile.rank===3?(profile.direction==='profit'?'递增计数 → 停顿 → 全屏金色扩散 → 收束':'递增计数 → 停顿 → 全屏暗红裂纹与下坠 → 收束'):'较短、较轻的计数反馈'}。`;
+ $('scenario-detail').textContent=`已实现交易盈亏 ${snapshot.primary.profit.toLocaleString('zh-CN')} 日元（${(snapshot.primary.returnRate*100).toFixed(0)}%）。${profile.rank===3?(profile.direction==='profit'?'逐笔回放 → 递进击打 → 全屏金色扩散 → 收盘':'逐笔回放 → 下坠击打 → 全屏暗红裂纹 → 收盘'):'沿真实交易节点计数，强度随金额变化'}。`;
  $('sound-status').textContent=$('preview-sound').checked?'声音已开启；实际听感需播放设备确认。':'声音已关闭';
  for(const b of $('scenario-buttons').children)b.setAttribute('aria-pressed',String(b.dataset.scenario===id));
  $('trace-status').textContent=`${profile.tier} / ${profile.beats} 拍 / ${profile.duration} ms；快照只读`;$('trace').textContent='';
- view=mountDailyRecap($('preview'),snapshot,{motion:true,reducedMotion:$('preview-reduce').checked||matchMedia('(prefers-reduced-motion: reduce)').matches,portraitUrl:new URL(id.includes('loss')?'./expressions/kurumi-regretful.webp':'./expressions/kurumi-relieved.webp',import.meta.url).href,onTimeline:(cues,options)=>audio.scheduleTimeline(cues,{...options,onTrace:receipt=>{const cue=receipt.cue;trace.push({ms:Math.round(performance.now()-started),atMs:cue.atMs,kind:cue.kind,plannedRate:cue.rate,actualRate:receipt.rate,target:receipt.target,duration:receipt.duration,level:cue.level,status:receipt.status,audioTime:receipt.audioTime,unchanged:JSON.stringify(snapshot)===frozen});$('trace').textContent=trace.map(x=>JSON.stringify(x)).join('\n');}}),onSound:(kind,options)=>{const accepted=audio.effect(kind,options);trace.push({ms:Math.round(performance.now()-started),kind,rate:Number(options.rate.toFixed(3)),level:Number(options.level.toFixed(3)),accepted,unchanged:JSON.stringify(snapshot)===frozen});$('trace').textContent=trace.map(x=>JSON.stringify(x)).join('\n');}});
+ view=mountDailyRecap($('preview'),snapshot,{outcomeArtwork:selectDailyRecapProfitArtwork(snapshot),motion:true,reducedMotion:$('preview-reduce').checked||matchMedia('(prefers-reduced-motion: reduce)').matches,portraitUrl:new URL(id.includes('loss')?'./expressions/kurumi-regretful.webp':'./expressions/kurumi-relieved.webp',import.meta.url).href,onTimeline:(cues,options)=>audio.scheduleTimeline(cues,{...options,onTrace:receipt=>{const cue=receipt.cue;trace.push({ms:Math.round(performance.now()-started),atMs:cue.atMs,kind:cue.kind,plannedRate:cue.rate,actualRate:receipt.rate,target:receipt.target,duration:receipt.duration,level:cue.level,status:receipt.status,audioTime:receipt.audioTime,unchanged:JSON.stringify(snapshot)===frozen});$('trace').textContent=trace.map(x=>JSON.stringify(x)).join('\n');}}),onSound:(kind,options)=>{const accepted=audio.effect(kind,options);trace.push({ms:Math.round(performance.now()-started),kind,rate:Number(options.rate.toFixed(3)),level:Number(options.level.toFixed(3)),accepted,unchanged:JSON.stringify(snapshot)===frozen});$('trace').textContent=trace.map(x=>JSON.stringify(x)).join('\n');}});
 }
 for(const scenario of EFFECT_SCENARIOS){const button=document.createElement('button');button.type='button';button.textContent=scenario.label;button.dataset.scenario=scenario.id;button.onclick=()=>play(scenario.id);$('scenario-buttons').append(button);}
 $('preview-sound').onchange=()=>{audio.configure({sound:$('preview-sound').checked});$('sound-status').textContent=$('preview-sound').checked?'声音已开启；点重播试听。':'声音已关闭';};$('preview-reduce').onchange=()=>play(selected);

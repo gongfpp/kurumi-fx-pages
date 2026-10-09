@@ -1,9 +1,11 @@
-import {selectComicScene} from './comic-scenes.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {setImage} from './assets.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
-import {settlementPresentation} from './settlement-stage.js?v=8d7e5c345e325247dcd7f03ea1c7375ec7d6edb5-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
+import {setImage} from './assets.js?v=5ea391d39ec5a53cc38a2a8201466b7d2981bd06-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -16,7 +18,7 @@ export function comicReceiptText(scene){
  return lines.join(' · ');
 }
 
-export function createEventComicPresenter({root=document,initialState,getContext,isBlocked=()=>false,isPaused=()=>false,onIdle=()=>{}}){
+export function createEventComicPresenter({root=document,initialState,getContext,isBlocked=()=>false,isPaused=()=>false,onIdle=()=>{},onAutoShown=()=>{}}){
  const make=(tag,className,text)=>{const el=root.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el;};
  const dialog=make('dialog','event-comic-dialog dialog-shell');dialog.id='event-comic-dialog';dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','event-comic-title');
  const toolbar=make('div','dialog-toolbar'),close=make('button','x-close','×');close.type='button';close.setAttribute('aria-label','关闭小剧场');toolbar.append(close);
@@ -25,7 +27,8 @@ export function createEventComicPresenter({root=document,initialState,getContext
  image.decoding='async';image.loading='eager';receipt.setAttribute('role','status');for(const button of [replay,next])button.type='button';controls.append(replay,next);body.append(eyebrow,title,image,missing,lines,receipt,controls);dialog.append(toolbar,body);root.body.append(dialog);
  const launcher=make('button','event-comic-launcher secondary','重看小剧场');launcher.id='event-comic-open';launcher.type='button';launcher.hidden=true;
  (root.getElementById('scene-resume')?.parentElement||root.querySelector('footer')||root.body).append(launcher);
- let showing=null,opener=null,closing=false,disposed=false,queue,deliveryTimer=null,deliveries=[],savedReplay=[];
+ let showing=null,opener=null,closing=false,disposed=false,queue,deliveryTimer=null,deliveries=[],savedReplay=[],currentState=initialState,autoShown=new Set();
+ ensureComicAutoplay(currentState);
  const syncRoot=()=>root.documentElement.classList.toggle('dialog-active',!!root.querySelector('dialog[open]'));
  function hide(){if(dialog.open){closing=true;dialog.close();closing=false;}showing=null;syncRoot();}
  function valid(){return !disposed&&!isBlocked();}
@@ -43,8 +46,8 @@ export function createEventComicPresenter({root=document,initialState,getContext
   lines.replaceChildren();for(const [speaker,text] of scene.lines){const line=make('li'),name=make('b',null,speaker);line.append(name,root.createTextNode(`：${text}`));lines.append(line);}
   receipt.textContent=comicReceiptText(scene);receipt.hidden=!receipt.textContent;next.textContent=state.pending.length?'下一幕':'回到游戏';
   if(!dialog.open){opener=root.activeElement;dialog.showModal();}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
+  if(scene.automatic&&!autoShown.has(scene.receiptKey)){autoShown.add(scene.receiptKey);markAutomaticComicShown(currentState,scene);onAutoShown();}
  }
- const restoredDayBoundary=initialState.phase==='resting'&&settlementPresentation(initialState)?.stage==='complete';
  queue=createEventComicQueue({onChange:paint});
  function flushDeliveries(){
   deliveryTimer=null;
@@ -52,35 +55,38 @@ export function createEventComicPresenter({root=document,initialState,getContext
   // receipts until that same context is safe; rebase/invalidate discards them.
   if(!safe())return;
   const incoming=deliveries;deliveries=[];
-  queue.enqueue(incoming.filter(item=>item.context===getContext()).flatMap(item=>item.scenes));
+  const scenes=incoming.filter(item=>item.context===getContext()).flatMap(item=>item.scenes);
+  // One visible interruption for this delivery turn. All other receipts remain
+  // in the replay archive, never in an automatic 'next scene' backlog.
+  if(!queue.state.active){const selected=chooseAutomaticComic(currentState,scenes);if(selected){const presented=realizedProfitComicPresentation(selected,{traumaActive:tradingTrauma(currentState).active});queue.enqueue([{...presented,automatic:true,result:['closed-profit','half-profit','stop-loss','liquidation'].includes(selected.id)?{...selected.result,tradingNet:selected.batchTradingNet}:selected.result}]);queue.resume();}}
  }
  function scheduleDelivery(){if(deliveryTimer===null&&deliveries.length&&safe())deliveryTimer=setTimeout(flushDeliveries,0);}
- const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes.filter(scene=>scene.manualOnly));const automatic=scenes.filter(scene=>!scene.manualOnly);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];queue.reset();}});
+ const gate=createComicReceiptGate({initialState,context:getContext(),select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes);const automatic=scenes.filter(scene=>!scene.manualOnly);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];autoShown.clear();queue.reset();}});
  // A loaded save is already durable. Rebuild read-only scenes from its own
  // current-day receipts, but never autoplay them or call economic handlers.
  savedReplay=structuredClone(recordedComicScenes(initialState,(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS})));
  paint(queue.state);
- function dismiss(){queue.dismiss();if(opener?.isConnected&&!opener.disabled)opener.focus?.({preventScroll:true});onIdle();}
+ function dismiss(){queue.cancel();if(opener?.isConnected&&!opener.disabled)opener.focus?.({preventScroll:true});onIdle();}
  close.addEventListener('click',dismiss);
  dialog.addEventListener('cancel',event=>{event.preventDefault();event.stopImmediatePropagation();dismiss();});
  dialog.addEventListener('close',()=>{if(!closing&&queue.state.active)dismiss();syncRoot();});
  dialog.addEventListener('keydown',event=>event.stopPropagation());
  next.addEventListener('click',()=>{queue.next();if(!queue.state.active)onIdle();});
  replay.addEventListener('click',()=>{showing=null;queue.replay(queue.state.active?.receiptKey);});
- launcher.addEventListener('click',()=>{if(!safe())return;if(queue.state.pending.length)queue.resume();else if(savedReplay.length){const scenes=savedReplay;savedReplay=[];queue.enqueue(scenes);queue.resume();}else queue.replay();});
+ launcher.addEventListener('click',()=>{if(!safe())return;if(queue.state.pending.length)queue.resume();else if(savedReplay.length){queue.play(savedReplay.map(scene=>({...scene,automatic:false})));}else queue.replay();});
  // Back/Forward and page restore discard only presentation. Re-entering an
  // economic handler is never part of a dismissal, replay, reload or navigation.
  const win=root.defaultView;
  const refreshPresentation=()=>{paint(queue.state);scheduleDelivery();};
  const afterOtherDialogClose=event=>{if(event.target!==dialog)queueMicrotask(()=>{if(!disposed)refreshPresentation();});};
  root.addEventListener?.('close',afterOtherDialogClose,true);
- const dismissNavigation=()=>queue.dismiss();win?.addEventListener('popstate',dismissNavigation);win?.addEventListener('pagehide',dismissNavigation);
+ const dismissNavigation=()=>queue.cancel();win?.addEventListener('popstate',dismissNavigation);win?.addEventListener('pagehide',dismissNavigation);
  return {
-  capture:state=>gate.capture(state,getContext()),
+  capture:state=>{currentState=state;ensureComicAutoplay(state);return gate.capture(state,getContext());},
   commit:(ticket,saved)=>gate.commit(ticket,{saved,context:getContext(),blocked:!valid()}),
   invalidate:()=>gate.invalidate(),
   refresh:refreshPresentation,
-  presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0||(restoredDayBoundary&&savedReplay.some(scene=>!scene.manualOnly));},
+  presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0;},
   dispose(){disposed=true;gate.invalidate();root.removeEventListener?.('close',afterOtherDialogClose,true);win?.removeEventListener('popstate',dismissNavigation);win?.removeEventListener('pagehide',dismissNavigation);dialog.remove();launcher.remove();},
   get state(){return queue.state;},
  };
