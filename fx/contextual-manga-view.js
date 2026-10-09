@@ -1,6 +1,6 @@
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {setImage} from './assets.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {setImage} from './assets.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
 // Inline, manual presentation only. It has no game-state or persistence access.
 export function mountContextualManga(host,selection,{manual=true,root=host.ownerDocument||document}={}){
  host.replaceChildren();host.hidden=!selection;if(!selection)return null;

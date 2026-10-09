@@ -1,7 +1,7 @@
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {isTraumaMood} from './trading-trauma.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {STORIES,getStory} from './story-content.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {isTraumaMood} from './trading-trauma.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
@@ -22,7 +22,7 @@ export function restrictions(s){
  for(const e of s.effects||[]){const def=DEBUFFS[e.id];if(!def)continue;mental+=def.mental||0;stress+=def.stress||0;}
  return{leverage,stake,stop,stopMaximum:stop,noStop:true,noEntry:sanity<=5,mental,stress};
 }
-export function ageEffects(s){const expired=[];s.effects=(s.effects||[]).filter(e=>{if(!DEBUFFS[e.id])return false;if(e.remaining===null)return true;e.remaining--;if(e.remaining<=0){expired.push(e.id);return false;}return true;});return expired;}
+export function ageEffects(s,segments=1){const expired=[];if(segments<=0)return expired;s.effects=(s.effects||[]).filter(e=>{if(!DEBUFFS[e.id])return false;if(e.remaining===null)return true;e.remaining-=segments;if(e.remaining<=0){expired.push(e.id);return false;}return true;});return expired;}
 export function queueStory(s,id){ensureStory(s);if(s.mode==='endless'||!STORIES[id]||s.story.seen.includes(id)||s.story.queue.includes(id))return false;s.story.queue.push(id);return true;}
 export function checkStories(s,account,emotion){ensureStory(s);
  if(s.mode==='endless'){s.story.queue=[];return;}

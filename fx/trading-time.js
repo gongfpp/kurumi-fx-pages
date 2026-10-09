@@ -27,6 +27,7 @@ function lastObservedTimestamp(state,day=state.day,cursor=state.pending||state.e
  return start;
 }
 export function currentTradingTimestamp(state){
+ if(state.historical?.version===1&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
  if(state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase))return reportTradingTimestamp(state,state.dayReport);
  if(state.earlyClose?.day===state.day&&state.phase==='closing')return Number.isFinite(state.earlyClose.timestamp)?state.earlyClose.timestamp:tradingTimestamp(state,state.earlyClose);
  if(state.tradingClock&&state.tradingClock.lastQuoteDay===state.day&&Number.isFinite(state.tradingClock.lastQuoteAt))return state.tradingClock.lastQuoteAt;

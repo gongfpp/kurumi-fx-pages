@@ -1,5 +1,5 @@
-import {tradingTimestamp} from './trading-time.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,START,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,START,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -10,6 +10,7 @@ export function developerValues(s){return {cash:s.cash,reserve:s.reserve,profit:
 // Edits are atomic. Real position exits remain ordinary game actions, so the editor
 // never destroys a margin balance or fabricates a settlement for an open order.
 export function applyDeveloperPatch(current,patch){
+  if(current.historical)throw Error('历史行情开局后固定，请重新选择开局日期');
   if(current.phase==='playing'&&!(current.realtime&&current.marketPaused)||current.position)throw Error('请先平仓并等行情暂停，再修改数据');
   const v={...developerValues(current),...patch};
   range(v.cash,0,1e10,'可用资金');range(v.reserve,0,1e8,'备用金');range(v.profit,-1e10,1e10,'交易净收益');

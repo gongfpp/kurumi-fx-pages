@@ -1,5 +1,5 @@
-import {grossPnlAt} from './market.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
-import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
+import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=7fd8cf8f1b94a0ba94cf7477cd37c1a5ede993c9-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 export function accountingValues(state){
  const positions=state.positions?.length?state.positions:state.position?[state.position]:[];
@@ -34,4 +34,4 @@ export function sealAccountingDay(state){
  const row={day:report.day,timestamp:report.closedAt,opening:report.opening,tradingNet:report.net,costs:report.costs,funding:report.funding,...accountingValues(state)};
  const index=j.days.findIndex(d=>d.day===report.day);if(index>=0)j.days[index]=row;else j.days.push(row);j.days=j.days.slice(-400);return report.accounting;
 }
-export function dayOpeningPoint(state,report){return{day:report.day,timestamp:tradingTimestamp(state,{day:report.day}),nominalAssets:report.opening,netAssets:null,kind:'opening'};}
+export function dayOpeningPoint(state,report){return{day:report.day,timestamp:Number.isFinite(report.openedAt)?report.openedAt:tradingTimestamp(state,{day:report.day}),nominalAssets:report.opening,netAssets:null,kind:'opening'};}
