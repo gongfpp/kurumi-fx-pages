@@ -1,6 +1,6 @@
-import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 // Simulated market information is separate from user-approved character dialogue.
-import {approvedQuote,dialogueFacts} from './dialogue.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {approvedQuote,dialogueFacts} from './dialogue.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 // USD/JPY is quoted in JPY per USD: positive = stronger USD / weaker JPY.
 // Bias is a simulated tendency; seeded noise and reversals can outweigh it.
 // Quote convention: https://www.boj.or.jp/about/education/oshiete/intl/g18.htm

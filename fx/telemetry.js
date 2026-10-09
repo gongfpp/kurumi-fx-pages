@@ -1,11 +1,12 @@
-import {kurumiStorage} from './storage-namespace.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
 const numbers = new Set(['leverage','sizePct','durationMs','drawdownPct','tolerance','stress','turn','count','day','beat','stake','stop','duration','threshold']);
-const booleans = new Set(['success','returning','muted']);
+const metricNumbers = new Set(['realizedPnl','initialCapital','closedTrades']);
+const booleans = new Set(['success','returning','muted','metricsComplete']);
 // The events service currently exposes fixed error strings, not machine codes.
 // This is contract compatibility, not an authenticated response signature.
 // Unknown gateways (even JSON ones) must never make queued activity disposable.
@@ -18,6 +19,7 @@ async function permanentEventRejection(response, status) {
   if(!allowed || response.headers?.get?.('content-type')?.split(';')[0].trim().toLowerCase()!=='application/json')return false;
   try {
     const body=await response.json();
+    if(status===400&&body?.code==='invalid-events-v2'&&body.error==='事件无效：仅接受固定事件与匿名参数'&&Object.keys(body).length===3&&Array.isArray(body.invalidIDs)&&body.invalidIDs.length>0&&body.invalidIDs.every(id=>typeof id==='string'&&/^[a-zA-Z0-9_-]{8,80}$/.test(id)))return {invalidIDs:body.invalidIDs};
     return !!body && typeof body==='object' && !Array.isArray(body) &&
       Object.keys(body).length===1 && allowed.has(body.error);
   } catch {return false;}
@@ -32,6 +34,7 @@ export function sanitizeDetail(value = {}) {
   const result = {};
   for (const [key, val] of Object.entries(value && typeof value === 'object' && !Array.isArray(value) ? value : {})) {
     if (tokens.has(key) && token(val)) result[key] = val;
+    else if (metricNumbers.has(key) && Number.isFinite(val) && Math.abs(val)<=1e10 && (key==='realizedPnl'||val>=0)) result[key]=val;
     else if (numbers.has(key) && Number.isFinite(val)) result[key] = Math.max(0, Math.min(1000000, val));
     else if (booleans.has(key) && typeof val === 'boolean') result[key] = val;
   }
@@ -64,7 +67,12 @@ export class FXTelemetry {
     this.explicitConsent = false;
     this.chapterConsent = null; this.globalPreferenceOff = false;
     this.chapterOffLatched = false; this.chapterChoiceUnsaved = false; this.chapterStorageVerified = false; this.chapterTrackingFailed = false;
+    this.getMetrics = typeof options.getMetrics==='function' ? options.getMetrics : null;
+    this.wallAnchor=this.now();this.monoAnchor=this.monotonic();
+    this.sequence=0;this.foregroundDelta=0;this.engagedDelta=0;this.lastInteraction=-Infinity;this.checkpointAt=this.monotonic();
     this.surface = options.initialContext?.screen === 'chapter-01' ? 'chapter-01' : '';
+    this.playerAnalytics=!this.surface;
+    this.outboxStorage=this.playerAnalytics ? this.sessionStorage : this.storage;
     this.trackingKey = key => 'fx-api-v1-' + (this.surface ? this.surface + '-' : '') + key;
     this.initialContext = {screen: token(options.initialContext?.screen) && options.initialContext.screen.length <= 40 ? options.initialContext.screen : 'boot', run: '', day: 0};
     this.preferenceEnabled = options.enabled !== false;
@@ -74,14 +82,17 @@ export class FXTelemetry {
     this.endpoint = this.configuration.eventsEndpoint;
     this.context = {...this.initialContext};
     this.build = token(options.build || '') ? options.build || '' : '';
-    this.queue = []; this.seen = new Set(); this.pending = false; this.active = 0; this.pageTime = 0; this.decision = 0; this.last = this.monotonic(); this.visible = !this.document?.hidden; this.lastScreen = ''; this.attempts = 0; this.retryAt = 0; this.ended = false; this.diagnostics = {sent: 0, failed: 0, filteredCount: 0, lastFilterReason: null, lastSent: null, dropped: 0, rejectedBatches: 0, retries: 0, lastStatus: 0}; this.lastReason = 'ready'; this.onStatus = typeof options.onStatus === 'function' ? options.onStatus : () => {};
+    this.queue = []; this.seen = new Set(); this.pending = false; this.active = 0; this.pageTime = 0; this.decision = 0; this.last = this.monotonic(); this.visible = !this.document?.hidden; this.lastScreen = ''; this.attempts = 0; this.retryAt = 0; this.ended = false; this.diagnostics = {sent: 0, failed: 0, filteredCount: 0, lastFilterReason: null, lastSent: null, dropped: 0, rejectedBatches: 0, retries: 0, droppedTimeMs:0, lastStatus: 0}; this.lastReason = 'ready'; this.onStatus = typeof options.onStatus === 'function' ? options.onStatus : () => {};
     this.visitor = ''; this.session = ''; this.generation = 0; this.controller = null;this.privacyCleanupPending=false;this.taintedRuns=new Set();this.inflightIDs=null;
     this.syncPrivacy();
     if (this.enabled && !this.suspended) this.start();
     else this.clearTracking(this.blockReason());
     if (this.blockReason()) this.report(this.blockReason());
     this.onVisibility = () => { this.clock(); if (this.document?.hidden) { this.beat(); this.flush(true); } this.last = this.monotonic(); };
-    this.onHide = () => { this.clock(); if (!this.ended) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('session_end', '', {detail: {reason: 'pagehide'}}); this.ended = true; } this.beat(); this.pageTime = 0; this.flush(true); };
+    // Only the occurrence of trusted interactions is used. Never read keys, text, coordinates or targets.
+    this.onInteraction = event => {if(event.isTrusted===false)return;this.clock();this.lastInteraction=this.monotonic();};
+    for(const name of ['pointerdown','keydown','touchstart','wheel'])this.document?.addEventListener(name,this.onInteraction,{passive:true});
+    this.onHide = event => { this.clock(); if (!this.ended) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('session_end', '', {detail: {reason: event?.persisted ? 'bfcache' : 'pagehide'}}); this.ended = true; } this.beat(); this.pageTime = 0; this.flush(true); };
     this.onShow = event => { this.ended = false; this.last = this.monotonic(); this.visible = !this.document?.hidden; if(event.persisted) this.emit('screen_view'); };
     this.onOnline = () => { if(this.diagnostics.lastStatus!==403)this.retryAt = 0; this.flush(); };
     // Read current values, never event.newValue: storage events may arrive late.
@@ -96,7 +107,7 @@ export class FXTelemetry {
     this.onRejection = () => this.emit('error', 'runtime', {detail: {code: 'unhandled-rejection'}, dedupeKey: 'unhandled-rejection'});
     this.window?.addEventListener('error', this.onError);
     this.window?.addEventListener('unhandledrejection', this.onRejection);
-    this.timer = options.autoTimer === false ? null : setInterval(() => { this.clock(); if (this.active >= 15000) this.beat(); this.flush(); }, 5000);
+    this.timer = options.autoTimer === false ? null : setInterval(() => { this.clock(); if (this.monotonic()-this.checkpointAt >= 120000) this.beat(); this.flush(); }, 5000);
   }
   privacyReason() {
     if (this.navigator?.globalPrivacyControl === true) return 'privacy-gpc';
@@ -173,7 +184,7 @@ export class FXTelemetry {
     if(this.privacyCleanupPending){this.preferencesUnavailable=true;this.enabled=false;reason=this.blockReason();}
     // Resume starts a fresh timing interval: never backfill time spent without consent.
     if((wasAllowed && reason) || (!wasAllowed && !reason) || wasSuspended!==this.suspended || wasUnavailable!==(this.preferencesUnavailable || this.testModeUnavailable)){
-      this.active=this.pageTime=this.decision=0;this.last=this.monotonic();
+      this.active=this.pageTime=this.decision=this.foregroundDelta=this.engagedDelta=0;this.lastInteraction=-Infinity;this.last=this.monotonic();
     }
     if(!reason && (wasSuspended || wasUnavailable)){
       // A resumed/new run must not attach its bootstrap visit to the old run.
@@ -189,7 +200,7 @@ export class FXTelemetry {
       failed:this.diagnostics.failed,filteredCount:this.diagnostics.filteredCount,
       lastFilterReason:this.diagnostics.lastFilterReason,lastStatus:this.diagnostics.lastStatus,
       lastSent:this.diagnostics.lastSent,pending:this.pending,retryAt:this.retryAt,
-      dropped:this.diagnostics.dropped,rejectedBatches:this.diagnostics.rejectedBatches,retries:this.diagnostics.retries,
+      dropped:this.diagnostics.dropped,droppedTimeMs:this.diagnostics.droppedTimeMs,rejectedBatches:this.diagnostics.rejectedBatches,retries:this.diagnostics.retries,
       reason:this.blockReason() || this.lastReason});
   }
   report(reason) { this.lastReason=reason; try {this.onStatus(this.snapshot());} catch {} }
@@ -206,10 +217,13 @@ export class FXTelemetry {
         this.visitor=visitor;this.session=session;
       }catch{this.chapterTrackingFailed=true;this.preferencesUnavailable=true;this.enabled=false;this.clearTracking('privacy-storage-unavailable');return;}
     }else{
-      this.visitor = stableID(this.storage, 'fx-api-v1-anon-visitor'); this.session = stableID(this.sessionStorage, this.trackingKey('anon-session'));
+      this.visitor = stableID(this.storage, 'fx-api-v1-anon-visitor');
+      // A session is one document lifecycle; reload keeps the player/run, but
+      // creates a fresh session, including tabs cloned from sessionStorage.
+      if(!this.session){this.session=uid();put(this.sessionStorage,this.trackingKey('anon-session'),this.session);}
     }
     try { this.seen = new Set(JSON.parse(get(this.sessionStorage, this.trackingKey('telemetry-seen')) || '[]').filter(k => typeof k === 'string').slice(-1200)); } catch { this.seen = new Set(); }
-    try { const saved = JSON.parse(get(this.storage, this.trackingKey('telemetry-outbox')) || '[]'); this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),queuedAt:e.queuedAt})); } catch { this.queue = []; }
+    try { const own=JSON.parse(get(this.outboxStorage,this.trackingKey('telemetry-outbox'))||'[]'),legacy=this.playerAnalytics?JSON.parse(get(this.storage,this.trackingKey('telemetry-outbox'))||'[]'):[];const saved=[...new Map([...legacy,...own].map(e=>[e.id,e])).values()]; this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && e.queuedAt<=this.now()+300000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),...(e.v===2?{v:2,at:e.at,seq:e.seq,foregroundMs:e.foregroundMs,engagedMs:e.engagedMs,loss:e.loss,clockUncertain:e.clockUncertain===true}:{}),queuedAt:e.queuedAt})); } catch { this.queue = []; }
     const previous = Number(get(this.storage, this.trackingKey('last-visit')) || 0), gap = this.now() - previous;
     put(this.storage, this.trackingKey('last-visit'), String(this.now()));
     const mobile = (this.window?.innerWidth || 1024) < 640;
@@ -217,7 +231,7 @@ export class FXTelemetry {
   }
   persist() {
     if(!this.enabled || this.suspended)return;
-    if(!this.surface){put(this.storage,this.trackingKey('telemetry-outbox'),JSON.stringify(this.queue));return;}
+    if(!this.surface){put(this.outboxStorage,this.trackingKey('telemetry-outbox'),JSON.stringify(this.queue));return;}
     try {const key=this.trackingKey('telemetry-outbox'),value=JSON.stringify(this.queue);this.storage.setItem(key,value);if(this.storage.getItem(key)!==value)throw new Error('outbox-unsaved');}
     catch {this.chapterStorageVerified=false;this.chapterTrackingFailed=true;this.preferencesUnavailable=true;this.enabled=false;this.clearTracking('privacy-storage-unavailable');}
   }
@@ -233,7 +247,7 @@ export class FXTelemetry {
     const globalOptOut=reason==='statistics-disabled' && (!this.surface || this.globalPreferenceOff) || reason==='privacy-dnt' || reason==='privacy-gpc' || reason==='server-privacy';
     const shared=globalOptOut || !this.surface ? ['fx-api-v1-anon-visitor'] : [];
     if(reason==='statistics-disabled' && globalOptOut)remove(this.storage,'fx-api-v1-telemetry-consent');
-    const localKeys=['telemetry-outbox','last-visit'],sessionKeys=['anon-session','telemetry-seen'];
+    const localKeys=['telemetry-outbox','last-visit'],sessionKeys=['anon-session','telemetry-seen','telemetry-outbox','telemetry-budget'];
     const allKeys=keys=>(globalOptOut ? ['','chapter-01-'] : [this.surface ? this.surface+'-' : '']).flatMap(surface=>keys.map(key=>'fx-api-v1-'+surface+key));
     const cleared=[...shared.concat(allKeys(localKeys)).map(key=>remove(this.storage,key)),...allKeys(sessionKeys).map(key=>remove(this.sessionStorage,key))];
     this.privacyCleanupPending=cleared.some(ok=>!ok);
@@ -277,7 +291,19 @@ export class FXTelemetry {
     this.report(blocked || 'ready');
     return this.enabled;
   }
-  clock() { this.syncPrivacy();const now = this.monotonic(), elapsed = Math.max(0, Math.min(30000, now - this.last)); this.last = now; if (this.enabled && !this.suspended && this.visible) { this.active += elapsed; this.pageTime += elapsed; this.decision += elapsed; } this.visible = !this.document?.hidden; }
+  clock() { this.syncPrivacy();const now=this.monotonic(),start=this.last,elapsed=Math.max(0,Math.min(30000,now-start));this.last=now;
+    if(this.enabled&&!this.suspended&&this.visible){this.active+=elapsed;this.pageTime+=elapsed;this.decision+=elapsed;this.foregroundDelta+=elapsed;this.engagedDelta+=Math.max(0,Math.min(elapsed,this.lastInteraction+30000-Math.max(start,now-elapsed)));}
+    this.visible=!this.document?.hidden;
+  }
+  identity() { return this.syncPrivacy() ? null : this.visitor || null; }
+  budget(name) {
+    const key=this.trackingKey('telemetry-budget'),now=this.now();let times=[];
+    try{times=JSON.parse(get(this.sessionStorage,key)||'[]').filter(t=>Number.isFinite(t)&&t>now-3600000&&t<=now);}catch{}
+    // Reserve 120 of 600 rows/hour for decisions, trades and lifecycle records.
+    const important=['trade_open','trade_close','trade_rejected','story_choice','item_used','ending_seen','session_end','heartbeat','error'].includes(name);
+    if(times.length>=(important?600:480)){this.diagnostics.dropped++;return this.filtered('hourly-budget');}
+    times.push(now);put(this.sessionStorage,key,JSON.stringify(times));return true;
+  }
   emit(name, target = '', extra = {}) {
     const blocked=this.syncPrivacy();
     if (blocked) return this.filtered(blocked);
@@ -287,15 +313,20 @@ export class FXTelemetry {
     if(this.blockReason() || !this.visitor || !this.session)return this.filtered(this.blockReason() || 'privacy-storage-unavailable');
     if (!token(target)) return this.filtered('invalid-target');
     if (extra.dedupeKey) { const key = `${name}:${extra.dedupeKey}`; if (this.seen.has(key)) return this.filtered('duplicate-event'); this.seen.add(key); if (this.seen.size > 1200) this.seen.delete(this.seen.values().next().value); put(this.sessionStorage, this.trackingKey('telemetry-seen'), JSON.stringify([...this.seen])); }
-    this.queue.push({id: uid(), visitor: this.visitor, session: this.session, game: 'fx', site: 'fx', channel: this.channel, path: this.path, ...this.context, name, target, stage: 0, activeMs: Math.round(Math.max(0, Math.min(3600000, extra.activeMs || 0))), detail: {...sanitizeDetail(extra.detail), build: this.build}, queuedAt: this.now()});
+    if(this.playerAnalytics&&!this.budget(name))return false;
+    let metrics={};try{if(this.context.run&&this.getMetrics)metrics=sanitizeDetail(this.getMetrics(this.context.run));}catch{}
+    this.queue.push({id: uid(), visitor: this.visitor, session: this.session, game: 'fx', site: 'fx', channel: this.channel, path: this.path, ...this.context, name, target, stage: 0, activeMs: Math.round(Math.max(0, Math.min(3600000, extra.activeMs || 0))), detail: {...sanitizeDetail(extra.detail),...metrics, build: this.build}, ...(this.playerAnalytics?{v:2,at:this.now(),seq:++this.sequence,foregroundMs:Math.round(Math.min(3600000,this.foregroundDelta)),engagedMs:Math.round(Math.min(3600000,this.engagedDelta)),loss:this.diagnostics.dropped,clockUncertain:Math.abs((this.now()-this.wallAnchor)-(this.monotonic()-this.monoAnchor))>5000}:{}),queuedAt: this.now()});
+    this.foregroundDelta=this.engagedDelta=0;
     if (this.queue.length > 240) {const count=this.queue.splice(0,this.queue.length-240).length;this.diagnostics.dropped+=count;this.filtered('buffer-limit',count);}
     this.persist(); return true;
   }
-  beat() { if (this.active > 0) this.emit('heartbeat', '', {activeMs: this.active}); this.active = 0; }
+  beat() { this.checkpointAt=this.monotonic();if (this.active > 0) this.emit('heartbeat', '', {activeMs: this.active}); this.active = 0; }
   view(context = {}) {
     this.clock(); const next = {screen: this.surface ? (token(context.screen) && context.screen.length <= 40 && (context.screen===this.surface || context.screen.startsWith(this.surface+':')) ? context.screen : this.surface) : (token(context.screen) && context.screen.length <= 40 ? context.screen : this.context.screen), run: token(context.run) ? context.run : this.context.run, day: Math.max(0, Math.min(10000, Math.floor(Number.isFinite(context.day) ? context.day : this.context.day)))};
-    if (next.screen !== this.lastScreen) {
+    if (next.screen !== this.lastScreen || next.run !== this.context.run) {
       if (this.lastScreen) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('transition', '', {detail: {from: this.lastScreen, to: next.screen}}); }
+      // Rejected/capped old-context events must not migrate their dwell into a new screen or run.
+      if(this.foregroundDelta>0){this.diagnostics.droppedTimeMs+=this.foregroundDelta;this.foregroundDelta=this.engagedDelta=0;}
       this.context = next; this.emit('screen_view'); this.pageTime = 0; this.lastScreen = next.screen;
     } else this.context = next;
   }
@@ -310,7 +341,7 @@ export class FXTelemetry {
   async flush(lifecycle = false) {
     if (this.syncPrivacy() || !this.queue.length || this.pending) return false;
     const before=this.queue.length;
-    this.queue=this.queue.filter(e=>this.now()-e.queuedAt<86400000);
+    this.queue=this.queue.filter(e=>this.now()-e.queuedAt<86400000&&e.queuedAt<=this.now()+300000);
     const expired=before-this.queue.length;
     if(expired){this.diagnostics.dropped+=expired;this.filtered('expired',expired);this.persist();}
     if(!this.queue.length || this.now()<this.retryAt)return false;
@@ -342,7 +373,11 @@ export class FXTelemetry {
       })()]);
       if(this.syncPrivacy() || generation!==this.generation)return false;
       this.diagnostics.lastStatus=status;
-      if(result.permanent===true){
+      if(result.permanent?.invalidIDs){
+        const invalid=new Set(result.permanent.invalidIDs.filter(id=>ids.has(id)));
+        if(invalid.size){this.diagnostics.failed++;this.diagnostics.rejectedBatches++;this.diagnostics.dropped+=invalid.size;this.queue=this.queue.filter(e=>!invalid.has(e.id));this.attempts=0;this.retryAt=0;this.persist();this.report('invalid-event-dropped');return false;}
+      }
+      if(result.permanent===true && !(status===400 && rows.some(e=>e.v===2))){
         this.diagnostics.failed++;this.diagnostics.rejectedBatches++;this.diagnostics.dropped+=rows.length;
         this.queue=this.queue.filter(e=>!ids.has(e.id));this.attempts=0;this.retryAt=0;this.persist();this.report('batch-rejected');return false;
       }
@@ -354,6 +389,7 @@ export class FXTelemetry {
       if(!ack || typeof ack!=='object' || Array.isArray(ack) || ack.ok!==true || ack.ignored!==undefined || !Number.isInteger(ack.count) || ack.count!==rows.length){failure='invalid-ack';throw new Error('retry');}
       // The backend inserts by event ID. Retrying a lost ACK never creates new IDs.
       this.queue=this.queue.filter(e=>!ids.has(e.id));this.attempts=0;this.retryAt=0;
+      if(this.playerAnalytics){try{const key=this.trackingKey('telemetry-outbox'),legacy=JSON.parse(get(this.storage,key)||'[]');if(legacy.length)put(this.storage,key,JSON.stringify(legacy.filter(e=>!ids.has(e.id)&&this.now()-e.queuedAt<86400000)));}catch{}}
       this.diagnostics.sent+=rows.length;this.diagnostics.lastSent=this.now();this.persist();this.report('sent');return true;
     } catch {
       if(this.syncPrivacy() || generation!==this.generation)return false;
@@ -366,6 +402,6 @@ export class FXTelemetry {
       this.report(this.blockReason() || this.lastReason);
     }
   }
-  destroy() { this.destroyed=true;this.generation++;this.controller?.abort();if (this.timer) clearInterval(this.timer); this.document?.removeEventListener('visibilitychange', this.onVisibility); for (const [name, handler] of [['pagehide',this.onHide],['pageshow',this.onShow],['online',this.onOnline],['storage',this.onStorage],['error',this.onError],['unhandledrejection',this.onRejection]]) this.window?.removeEventListener(name,handler); }
+  destroy() { this.destroyed=true;this.generation++;this.controller?.abort();if (this.timer) clearInterval(this.timer); this.document?.removeEventListener('visibilitychange', this.onVisibility);for(const name of ['pointerdown','keydown','touchstart','wheel'])this.document?.removeEventListener(name,this.onInteraction); for (const [name, handler] of [['pagehide',this.onHide],['pageshow',this.onShow],['online',this.onOnline],['storage',this.onStorage],['error',this.onError],['unhandledrejection',this.onRejection]]) this.window?.removeEventListener(name,handler); }
 }
 export {FXTelemetry as Telemetry};

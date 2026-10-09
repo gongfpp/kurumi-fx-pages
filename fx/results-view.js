@@ -1,4 +1,4 @@
-import {AI_REVIEW_PROMPT,downloadResults} from './results-report.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {AI_REVIEW_PROMPT,downloadResults} from './results-report.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';

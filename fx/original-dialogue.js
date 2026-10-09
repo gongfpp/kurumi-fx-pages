@@ -1,4 +1,4 @@
-import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 export {ORIGINAL_DIALOGUE_BANK};
 // All market/stance/swan directions refer to the USD/JPY quote, not yen strength.
 // Only public, already-rendered market observations are read here. Never inspect script/tracks.

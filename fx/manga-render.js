@@ -1,5 +1,5 @@
-import {setMangaImage} from './manga-images.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
-import {showMangaPortrait} from './manga-portraits.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
+import {showMangaPortrait} from './manga-portraits.js?v=d7eab928adaeb7f4ba6fa63a094bc93600d2668d-23f2a20b7717';
 
 export function renderMangaSelection(frame,selection,{openSource}={}){
  const document=frame.ownerDocument;
