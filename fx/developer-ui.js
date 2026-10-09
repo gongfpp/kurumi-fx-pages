@@ -1,6 +1,6 @@
-import {DeveloperAccess} from './developer-access.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {DeveloperSession} from './developer-session.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {applyDeveloperPatch,developerValues} from './developer.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {DeveloperAccess} from './developer-access.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {DeveloperSession} from './developer-session.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {applyDeveloperPatch,developerValues} from './developer.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
 
 export function mountDeveloperUI({root=document,leaderboard,storage,getState,getGeneration,guard,canEdit,backupKey,restore,replace,pause,onTaint,notify,render,now=()=>Date.now()}){
  const $=id=>root.getElementById(id),access=new DeveloperAccess({leaderboard,now});

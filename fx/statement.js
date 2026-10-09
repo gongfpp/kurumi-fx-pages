@@ -1,7 +1,7 @@
-import {consumptionStatement} from './consumption-ledger.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {formatQuote as quote,directionLabel} from './market.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {TRANSITION_COPY} from './copy/transitions.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {formatQuote as quote,directionLabel} from './market.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {TRANSITION_COPY} from './copy/transitions.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
 const yen=value=>`${value<0?'−':''}¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const signed=value=>`${value>0?'+':''}${yen(value)}`;
 export function buildFXReceipt(report,state={}){

@@ -1,7 +1,8 @@
-import {ACTION_SCENES} from './copy/action-scenes.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.
@@ -106,7 +107,7 @@ export function selectComicScene(state,event={}, {assets={}}={}){
  const art=candidate?.reviewed===true&&(candidate.panels===4||(selected.id==='mochiko-watch'&&candidate.panels===1&&candidate.kind==='existing-game-illustration'&&candidate.independentComic===false))&&candidate.people===text.people&&typeof candidate.path==='string'&&candidate.path&&!candidate.grid?{...candidate}:null;
  const receipt={...selected.receipt};
  return {id:selected.id,title:text.title,characters:[...text.characters],people:text.people,lines:text.lines.map(line=>[...line]),art,ready:!!art,
-  receiptKey:`${state.runId||state.seed}:${selected.key}`,receipt,result:{amount:finite(receipt.cost)?receipt.cost:finite(receipt.amount)?receipt.amount:null,outstanding:finite(receipt.outstanding)?receipt.outstanding:null,netAssetsAfter:finite(receipt.netAssetsAfter)?receipt.netAssetsAfter:null,tradingNet:finite(receipt.tradingNet)?receipt.tradingNet:finite(receipt.pnl)?receipt.pnl:null}};
+  contextualManga:selectEventContextualManga(state,event),receiptKey:`${state.runId||state.seed}:${selected.key}`,receipt,result:{amount:finite(receipt.cost)?receipt.cost:finite(receipt.amount)?receipt.amount:null,outstanding:finite(receipt.outstanding)?receipt.outstanding:null,netAssetsAfter:finite(receipt.netAssetsAfter)?receipt.netAssetsAfter:null,tradingNet:finite(receipt.tradingNet)?receipt.tradingNet:finite(receipt.pnl)?receipt.pnl:null}};
 }
 // Inventory only; runtime acceptance additionally needs real trigger and browser evidence.
 export function reviewedComicInventory(assets={}){

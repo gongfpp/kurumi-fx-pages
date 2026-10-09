@@ -1,11 +1,12 @@
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
-import {setImage} from './assets.js?v=877675b645f0124cb91b0289bd3aed82e848654c-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
+import {setImage} from './assets.js?v=f8e46c73488e10f2709e832efabab8cf5592af68-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -23,8 +24,9 @@ export function createEventComicPresenter({root=document,initialState,getContext
  const dialog=make('dialog','event-comic-dialog dialog-shell');dialog.id='event-comic-dialog';dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','event-comic-title');
  const toolbar=make('div','dialog-toolbar'),close=make('button','x-close','×');close.type='button';close.setAttribute('aria-label','关闭小剧场');toolbar.append(close);
  const body=make('div','dialog-scroll'),eyebrow=make('p','event-comic-eyebrow','小剧场'),title=make('h2');title.id='event-comic-title';
+ const contextual=make('div');
  const image=make('img','event-comic-sheet'),missing=make('p','event-comic-missing','画面待补'),lines=make('ol','event-comic-lines'),receipt=make('p','event-comic-receipt'),controls=make('div','event-comic-controls'),replay=make('button','secondary','重看'),next=make('button','primary','继续');
- image.decoding='async';image.loading='eager';receipt.setAttribute('role','status');for(const button of [replay,next])button.type='button';controls.append(replay,next);body.append(eyebrow,title,image,missing,lines,receipt,controls);dialog.append(toolbar,body);root.body.append(dialog);
+ image.decoding='async';image.loading='eager';receipt.setAttribute('role','status');for(const button of [replay,next])button.type='button';controls.append(replay,next);body.append(eyebrow,title,image,missing,lines,receipt,contextual,controls);dialog.append(toolbar,body);root.body.append(dialog);
  const launcher=make('button','event-comic-launcher secondary','重看小剧场');launcher.id='event-comic-open';launcher.type='button';launcher.hidden=true;
  (root.getElementById('scene-resume')?.parentElement||root.querySelector('footer')||root.body).append(launcher);
  let showing=null,opener=null,closing=false,disposed=false,queue,deliveryTimer=null,deliveries=[],savedReplay=[],currentState=initialState,autoShown=new Set();
@@ -44,6 +46,7 @@ export function createEventComicPresenter({root=document,initialState,getContext
    const key=scene.receiptKey,failed=image.onerror;image.onerror=()=>{if(showing!==key)return;failed?.();if(image.classList.contains('image-unavailable')){image.hidden=true;missing.hidden=false;missing.textContent='画面暂时没载入';dialog.dataset.artReady='false';}};
   }else{image.removeAttribute('src');image.alt='';missing.textContent='画面待补';}
   lines.replaceChildren();for(const [speaker,text] of scene.lines){const line=make('li'),name=make('b',null,speaker);line.append(name,root.createTextNode(`：${text}`));lines.append(line);}
+  mountContextualManga(contextual,scene.contextualManga,{manual:true,root});
   receipt.textContent=comicReceiptText(scene);receipt.hidden=!receipt.textContent;next.textContent=state.pending.length?'下一幕':'回到游戏';
   if(!dialog.open){opener=root.activeElement;dialog.showModal();}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
   if(scene.automatic&&!autoShown.has(scene.receiptKey)){autoShown.add(scene.receiptKey);markAutomaticComicShown(currentState,scene);onAutoShown();}
