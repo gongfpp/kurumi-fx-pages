@@ -1,6 +1,6 @@
-import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;

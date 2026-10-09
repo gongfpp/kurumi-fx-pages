@@ -1,4 +1,4 @@
-import {LIFESTYLES} from './consumption-ledger.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {LIFESTYLES} from './consumption-ledger.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 const yen=n=>'¥'+n.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export function mountConsumptionStatement(container,statement,{onLifestyle=()=>{}}={}){
  const doc=container.ownerDocument,section=doc.createElement('section');section.className='consumption-statement';

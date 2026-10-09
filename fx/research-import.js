@@ -1,5 +1,5 @@
 // A browser-local, single-month container. This module has no upload transport.
-import {ResearchProvider} from './research-provider.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 const DB='kurumi-fx:research-data-v1',STORE='months',HEADER=1024*1024,MAX=17*1024*1024;
 function database(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'key'});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(Error('无法读取这台设备的历史行情'));});}
 async function operation(mode,fn,{signal,beforeWrite}={}){signal?.throwIfAborted();const db=await database();try{signal?.throwIfAborted();beforeWrite?.();return await new Promise((resolve,reject)=>{const tx=db.transaction(STORE,mode);const abort=()=>{try{tx.abort();}catch{}};signal?.addEventListener('abort',abort,{once:true});let result;const cleanup=()=>signal?.removeEventListener('abort',abort);tx.oncomplete=()=>{cleanup();resolve(result);};tx.onerror=tx.onabort=()=>{cleanup();reject(signal?.aborted?signal.reason:Error('历史行情未保存，请检查本机空间'));};if(signal?.aborted){abort();return;}const r=fn(tx.objectStore(STORE));r.onsuccess=()=>result=r.result;});}finally{db.close();}}

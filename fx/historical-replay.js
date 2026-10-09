@@ -1,4 +1,4 @@
-import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;

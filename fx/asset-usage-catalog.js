@@ -1,14 +1,16 @@
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 
 // Classification is additive. Existing story/daily consumers retain their own
 // source chronology and gates; this catalogue never rewrites those registries.
@@ -26,7 +28,7 @@ for(const [id,a]of Object.entries(CHARACTER_STORY_ASSETS))register('CHARACTER_ST
 for(const [id,a]of Object.entries(CONTEXTUAL_MANGA_ASSETS))register('CONTEXTUAL_MANGA_ASSETS',id,a);
 for(const [id,a]of Object.entries(COMIC_SCENE_ASSETS))register('COMIC_SCENE_ASSETS',id,a);
 for(const a of SUPPLEMENTAL_ASSET_SOURCES)register('SUPPLEMENTAL_ASSET_SOURCES',a.id,a);
-const storyNodes=[...LINK_DAILY_NODES,{id:'daily-links-panels',panels:Object.values(LINK_DAILY_PANELS)},...REVERSAL_DAILY_NODES,...CHARACTER_STORY_NODES,...CONTEXTUAL_MANGA_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES,{id:'daily-interleaved-panels',panels:Object.values(VERIFIED_DAILY_PANELS)}];
+const storyNodes=[...FIRSTDAY_BACKSTORY_NODES,{id:'opposite-open-opinions',panels:[OPPOSITE_IMAGINATION_PANEL]},...BORROWING_CONTINUATION_NODES,...LINK_DAILY_NODES,{id:'daily-links-panels',panels:Object.values(LINK_DAILY_PANELS)},...REVERSAL_DAILY_NODES,...CHARACTER_STORY_NODES,...CONTEXTUAL_MANGA_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES,{id:'daily-interleaved-panels',panels:Object.values(VERIFIED_DAILY_PANELS)}];
 const eventRules=freeze({
  'entry-hesitation':{positions:['flat','open'],profitBases:['none'],directions:['long','short']},
  'position-opened':{positions:['open'],profitBases:['none'],directions:['long','short','mixed']},

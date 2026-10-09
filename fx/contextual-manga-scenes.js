@@ -1,14 +1,17 @@
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {CHARACTER_STORY_NODES} from './character-story-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 const arcs={
  ...CONTEXTUAL_MANGA_ARCS,
  'profit-fades':['aud-yen-delight','profit-fades','look-away','first-negative-estimate'],
@@ -35,7 +38,7 @@ function dailyArc(id,evidence){
  }
  if(id==='realized-short-profit')result.nodes.unshift(node('first-trade-beginning'));
  if(id==='borrowed-time')result.nodes.splice(2,0,node('policy-surge-conversation'));
- if(id==='asking-for-more')result.nodes.push(node('promise-and-doubt'),node('mochiko-responsibility'));
+ if(id==='asking-for-more'){result.title='芽吹 · 她还想再借一些';result.nodes.push(node('promise-and-doubt'),node('mochiko-responsibility'),...structuredClone(BORROWING_CONTINUATION_NODES));}
  if(id==='borrowed-recovery')result.nodes.splice(2,0,node('short-plan-drawdown'));
  if(id==='realized-long-profit')result.nodes=['long-profit-realized','later-overseas-profit'].map(node);
  const before=(record,key)=>{const index=result.nodes.findIndex(n=>n.panels.some(p=>p.record===record));if(index<0)throw Error('Missing daily story anchor: '+record);result.nodes.splice(index,0,node(key));};
@@ -48,6 +51,9 @@ function dailyArc(id,evidence){
   const end=result.nodes.find(n=>n.panels.some(p=>p.record===169));end.panels.splice(end.panels.findIndex(p=>p.record===169),0,structuredClone(VERIFIED_DAILY_PANELS[168]));
  }
  if(id==='opposite-directions'){
+  const opening=result.nodes.find(n=>n.id==='opposite-open-opinions');
+  opening.panels.splice(opening.panels.findIndex(p=>p.record===182)+1,0,structuredClone(OPPOSITE_IMAGINATION_PANEL));
+  opening.before+=' 芽吹心里却不以为然：在这个位置做多，她觉得久留美是上当了。';
   const debate=result.nodes.find(n=>n.panels.some(p=>p.record===187));debate.panels.splice(debate.panels.findIndex(p=>p.record===187),0,...[185,186].map(r=>structuredClone(VERIFIED_DAILY_PANELS[r])));
  }
  return result;
@@ -78,6 +84,11 @@ export function selectDailyContextualManga(state){
  const directionChange=longLossThenShortEvidence(state);
  const longProfit=longProfitEvidence(state),profit=shortProfitEvidence(state),liquidation=reversalLiquidationEvidence(state),opposite=oppositeDirectionsEvidence(state);
  const specific=longProfit?dailyArc('realized-long-profit',longProfit):profit?dailyArc('realized-short-profit',profit):liquidation?arc('reversal-liquidation',liquidation):opposite?dailyArc('opposite-directions',opposite):null;
+ if(specific?.id==='realized-short-profit'&&firstDayBackstoryEvidence(state)){
+  specific.nodes.unshift(...structuredClone(FIRSTDAY_BACKSTORY_NODES));
+  const adult=specific.nodes.find(n=>n.id==='first-trade-beginning');
+  adult.before='时间到了2014年2月14日。二十岁的久留美，终于坐到了交易屏幕前。';
+ }
  // A completed reversal-and-liquidation gets one coherent story, rather than
  // another generic reversal episode competing for the same receipt.
  const averaging=liquidation?null:averagingDownEvidence(state),pause=averaging?null:pauseAndReturnEvidence(state),friends=friendsLedgersEvidence(state),caution=floatingCautionEvidence(state);

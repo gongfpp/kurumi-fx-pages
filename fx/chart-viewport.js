@@ -1,5 +1,5 @@
-import {movingAveragePath} from './moving-average.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.

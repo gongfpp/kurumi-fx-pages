@@ -1,7 +1,7 @@
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {isTraumaMood} from './trading-trauma.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
-import {STORIES,getStory} from './story-content.js?v=a3f9eecb8c4bffe5ed12deeae323a4a94c9c180e-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {isTraumaMood} from './trading-trauma.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=90af80d63b506a5a375de960fb3ae606348525b5-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
