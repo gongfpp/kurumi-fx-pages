@@ -1,23 +1,23 @@
-import {grossPnlAt} from './market.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
 export const ACHIEVEMENTS = Object.freeze([
   define('first-profit','太好啦！确定盈利！','完成第一笔手续费后仍盈利的平仓。','利','原作第 1 话第 45 页：确认盈利；图内数字不作为本局条件。'),
   define('million-thirty','一百三十万的余震','累计已实现净收益达到 ¥1,300,000。','130','原作第 5 话第 23 页：130 万日元收益确定后发抖。',1300000),
-  define('liquidated','祈祷没有成交价','第一次因保证金不足被强制平仓。','祈','游戏成就：真实保证金强平。已审核的大浮亏图不能证明已强平，因此不配。'),
-  define('hold-loss','关掉屏幕仍在亏','选择继续持有后，实际播放至少一根 K 线，仍持有亏损超过保证金 25% 的订单。','暗','游戏成就：继续持亏并经历行情。已审核素材不能证明本局关掉屏幕，因此不配。'),
-  define('hundred-times','杠杆把心跳放大','实际持有 100× 仓位经历一次行情变化。','100','借原作杠杆放大心跳的主题，100×门槛为游戏设计；不使用带原作10枚/固定金额的账单。'),
-  define('father-funds','柜子里的存款','实际取用一笔父亲的柜中存款。','柜','家庭资金梗的游戏改编；现有审核图未证明本局实际取款金额，不强配。'),
-  define('tell-everything','今晚把事情说清楚','实际向朋友披露欠款，或在父亲发现前主动归还一笔。','话','本作加入实际披露与还款；没有准确对应的原作完成截图。'),
-  define('fully-repaid','借多少，还多少','取用父亲的柜中存款后，将欠款全部归还。','还','归还实际取用金额是游戏账本中的行为；不是原作既成事实，没有对应完成图。'),
+  define('liquidated','祈祷没有成交价','第一次因保证金不足被强制平仓。','祈','游戏真实强平成交；插图呼应原作电脑前祈求神明的动作。'),
+  define('hold-loss','关掉屏幕仍在亏','选择继续持有后，实际播放至少一根 K 线，仍持有亏损超过保证金 25% 的订单。','暗','本局继续持亏并经历行情；插图呼应原作短暂没看屏幕后发现价格下跌。'),
+  define('hundred-times','杠杆把心跳放大','实际持有 100× 仓位经历一次行情变化。','100','借原作杠杆放大心跳的主题，100×门槛为游戏设计；图中10枚为原作订单数量，不是100倍。'),
+  define('father-funds','柜子里的存款','实际取用一笔父亲的柜中存款。','柜','父亲柜中存款的游戏改编；原动画抽屉信封只作对象呼应。'),
+  define('tell-everything','今晚把事情说清楚','实际向朋友披露欠款，或在父亲发现前主动归还一笔。','话','本作加入实际披露与还款；原作芽吹向萌智子披露借贷消息的画面呼应主动开口。'),
+  define('fully-repaid','借多少，还多少','取用父亲的柜中存款后，将欠款全部归还。','还','归还实际取用金额是游戏账本中的行为；借原作落袋后含泪发抖的情绪呼应，不表示原作已还款。'),
   define('accept-stop','不顾一切，进行止损！','实际执行一次止损平仓。','止','原作第 4 话第 2 页的止损决心，由游戏真实止损成交践行。'),
-  define('mochiko-warning','萌智子帮忙盯盘','实际使用萌智子的盯盘保护。','萌','萌智子保护及爆仓减免为游戏设计；现有审核素材没有精确对应截图。'),
-  define('profit-receipt','利润换成热饭','赚到第一笔利润后，点一份外卖。','饭','真实盈利后点外卖是本作设计；现有审核素材没有对应热饭截图。'),
+  define('mochiko-warning','萌智子帮忙盯盘','实际使用萌智子的盯盘保护。','萌','萌智子保护及爆仓减免为游戏设计；原动画举手机展示行情的动作呼应盯盘。'),
+  define('profit-receipt','利润换成热饭','赚到第一笔利润后，点一份外卖。','饭','真实盈利后点外卖是本作设计；原动画快餐店正常用餐的场景呼应一顿饭。'),
   define('saved-at-last','手还在发抖','一笔曾接近强平的仓位最终净盈利平仓。','救','呼应原作第5话第23页落袋后发抖；近强平后盈利的精确触发是本作改写，不能据原图推断。'),
-  define('walkaway','屏幕之外还有明天','完成主动离场结局。','休','主动离场为本作原创结局；不把原作爆仓或暂停画面当成主动退休。'),
+  define('walkaway','屏幕之外还有明天','完成主动离场结局。','休','主动离场为本作原创结局；借原作久留美说放弃FX的瞬间呼应决定，不把它当作永久退休。'),
   define('twenty-million','妈妈……我赚到钱了……','正常游戏中，累计已实现交易净利润达到 ¥20,000,000；扣交易费用，不含借款、浮盈或账户本金。','2000','游戏自拟标题，呼应原作第 1 话第 11 页赚回两千万的目标；不是原作兑现台词。',20000000)
 ]);
 const finite = (n, fallback=0) => Number.isFinite(n) ? n : fallback;
@@ -70,7 +70,7 @@ const UI_STYLES=`
 .fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
 @keyframes fx-ach-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.fx-ach-host{right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.fx-ach-toast{width:310px;padding:12px;gap:9px}}
-@media(prefers-reduced-motion:reduce){.fx-ach-toast{animation:none}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .fx-ach-toast{animation:none}}
 `;
 const queues=new WeakMap();
 function styles(doc){if(doc.getElementById('fx-ach-style'))return;const css=doc.createElement('style');css.id='fx-ach-style';css.textContent=UI_STYLES;doc.head.append(css);}

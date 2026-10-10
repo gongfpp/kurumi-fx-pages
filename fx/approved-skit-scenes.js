@@ -1,10 +1,10 @@
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 
 export function approvedSkit(id,{assets=APPROVED_FOUR_SKIT_ASSETS}={}){
  const script=APPROVED_FOUR_SKITS[id];if(!script)return null;

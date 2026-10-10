@@ -15,7 +15,7 @@
 @keyframes pressure-crack-release{0%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.14)}}
 .emotion-pressure-panel{display:none!important}
 .pressure-tooltip{position:fixed;z-index:10000;box-sizing:border-box;padding:11px 13px;background:#302732;color:#fff4fa;border:1px solid #98647d;border-radius:7px;box-shadow:0 5px 18px #30273233;font-size:12px;line-height:1.65;overflow-wrap:anywhere;pointer-events:none}
-@media(prefers-reduced-motion:reduce){.emotion-soft-lock,.pressure-breaking,.pressure-fracture{animation:none!important;transition:none!important;transform:none!important}.emotion-soft-lock::before{display:none!important}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .emotion-soft-lock,body:not(.motion-full) .pressure-breaking,body:not(.motion-full) .pressure-fracture{animation:none!important;transition:none!important;transform:none!important}body:not(.motion-full) .emotion-soft-lock::before{display:none!important}}
 body:not(.motion-full) .pressure-breaking,body:not(.motion-full) .pressure-fracture{animation:none!important;transform:none!important}
 body:not(.motion-full) .emotion-soft-lock::before{display:none!important}
 
@@ -23,7 +23,7 @@ body:not(.motion-full) .emotion-soft-lock::before{display:none!important}
    from trade transforms, and never runs with reduced motion. */
 .pressure-fracture path{stroke-width:1.8;filter:drop-shadow(0 1px 0 #fff8fc)}.emotion-soft-lock[data-pressure-stage=fracture] .pressure-fracture{opacity:.95}.emotion-soft-lock[data-pressure-stage=rupture]{border-width:2px;border-color:#a93668;box-shadow:inset 0 0 12px #a94b7528}.pressure-breaking{animation:pressure-final-frame .65s ease-out both!important}.pressure-breaking .pressure-fracture{opacity:1;animation:pressure-final-crack .65s ease-out both!important}.pressure-count{font-size:10px;font-weight:800;background:#fff6fbef}.pressure-page-flare{position:fixed;inset:0;pointer-events:none;z-index:9998;box-shadow:inset 0 0 0 0 transparent;opacity:0;transition:opacity .2s ease}.pressure-page-flare[data-active=true]{opacity:1;box-shadow:inset 0 0 32px 6px rgb(157 47 94 / var(--pressure-edge,.2))}body[data-pressure-impact=break] .pressure-page-flare{box-shadow:inset 0 0 48px 9px #a6386555}
 @keyframes pressure-final-frame{0%{box-shadow:inset 0 0 0 2px #9d3569}40%{box-shadow:0 0 0 7px #b9588238,inset 0 0 16px #cf89ad}100%{box-shadow:none}}@keyframes pressure-final-crack{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.28)}}
-@media(prefers-reduced-motion:reduce){.pressure-page-flare{display:none!important}.pressure-breaking,.pressure-breaking .pressure-fracture{animation:none!important;transform:none!important}}body:not(.motion-full) .pressure-page-flare{display:none}body:not(.motion-full) .pressure-breaking,body:not(.motion-full) .pressure-breaking .pressure-fracture{animation:none!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .pressure-page-flare{display:none!important}body:not(.motion-full) .pressure-breaking,body:not(.motion-full) .pressure-breaking .pressure-fracture{animation:none!important;transform:none!important}}body:not(.motion-full) .pressure-page-flare{display:none}body:not(.motion-full) .pressure-breaking,body:not(.motion-full) .pressure-breaking .pressure-fracture{animation:none!important;transform:none!important}
 
 /* Re-rendering the trading surface during a pressure shake invalidates its
    scroll anchor. Browsers can compensate by one text line per press, moving
@@ -37,7 +37,7 @@ main:has([data-pressure-label]){overflow-anchor:none}
 .segments button.emotion-soft-lock[data-pressure-frame=cracking]{border-color:transparent}
 .emotion-soft-lock[data-pressure-frame=cracking] .pressure-frame-shards{opacity:1}
 body.motion-full .pressure-frame-shards line{transition:transform 180ms ease-out,opacity 180ms ease-out}
-@media(prefers-reduced-motion:reduce){body.motion-full .pressure-frame-shards line{transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .pressure-frame-shards line{transition:none!important;transform:none!important}}
 
 /* Short, readable directional pressure; low-contrast edge tint never strobes. */
 .segments button[data-pressure-direction=ecstatic],.pressure-page-flare[data-direction=ecstatic]{--pressure-ink:#ad4261;--pressure-rgb:173 66 97}

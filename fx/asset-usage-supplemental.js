@@ -1,5 +1,8 @@
 // Source identities only for assets not covered by existing runtime registries.
 export const SUPPLEMENTAL_ASSET_SOURCES=Object.freeze([
+ {"id":"cafe-meal-anime","path":"./manga/achievement-anime/cafe-meal.jpg","sha256":"e1683e04f61c2cefd310efbc3801066ae85ffacd8d368d473d5252ab878bba90","dimensions":[450,220],"kind":"original-anime-frame","sourceURL":"https://www.bilibili.com/video/BV1eqH96AEtJ/","sourceMetadata":"docs/achievement-original-images-20261010/source-review.json"},
+ {"id":"mochiko-chart-anime","path":"./manga/achievement-anime/mochiko-chart.jpg","sha256":"a1f52bfb748a8e47fbef438d982e69d785b79705c085e51c702293f4caddaabf","dimensions":[765,592],"kind":"original-anime-frame","sourceURL":"https://www.bilibili.com/video/BV1eqH96AEtJ/","sourceMetadata":"docs/achievement-original-images-20261010/source-review.json"},
+{"id":"father-envelope-anime","path":"./manga/achievement-anime/father-envelope.jpg","sha256":"1cf8b5747cad3abf9e0081e15fdfd5dcdbb83a2623b6335f20984233950fda32","dimensions":[591,343],"kind":"original-anime-frame","sourceURL":"https://www.bilibili.com/video/BV1bypx6mEAN/","sourceMetadata":"docs/achievement-original-images-20261010/source-review.json"},
   {
     "id": "comics-ending-broke",
     "path": "./comics/ending-broke.webp",

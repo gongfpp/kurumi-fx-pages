@@ -1,4 +1,5 @@
-import {pressureVisual} from './pressure-visuals.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {pressureVisual} from './pressure-visuals.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 // Only rendering. This module cannot unlock a control, place an order, or save.
 export function pressureMotionPlan(taps,{reduced=false,unlocked=false,target=5}={}){
  const visual=pressureVisual(taps,{reduced,unlocked,target}),pageDisplacement=reduced?0:unlocked?18:taps===0?0:7+9*visual.intensity;
@@ -27,7 +28,7 @@ export function createPressurePresentation({root=document,motion,enabled=()=>tru
   const computed=win?.getComputedStyle?.(body);return {left:parseFloat(computed?.left)||0,top:parseFloat(computed?.top)||0};
  }
 
- const cancelForContext=()=>{if(blocked()||!enabled()||media?.matches)clear();};
+ const cancelForContext=()=>{if(blocked()||!enabled()||systemReducedMotion(root))clear();};
  const observer=win?.MutationObserver?new win.MutationObserver(cancelForContext):null;
  observer?.observe(root.body,{subtree:true,attributes:true,attributeFilter:['open']});
  const preferenceObserver=win?.MutationObserver?new win.MutationObserver(cancelForContext):null;
@@ -36,7 +37,7 @@ export function createPressurePresentation({root=document,motion,enabled=()=>tru
 
  function play(button,{taps,unlocked=false,target=5,direction='ecstatic'}={}){
   if(disposed)return;clear();if(blocked())return;activeButton=button;
-  const reduced=!enabled()||!!root.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches,plan=pressureMotionPlan(taps,{reduced,unlocked,target});
+  const reduced=!enabled()||systemReducedMotion(root),plan=pressureMotionPlan(taps,{reduced,unlocked,target});
   button.dataset.pressureStage=plan.stage;button.dataset.pressureDirection=direction;flare.dataset.direction=direction;
   if(reduced)return plan;
   const x=plan.displacement,page=root.body,p=plan.pageDisplacement;

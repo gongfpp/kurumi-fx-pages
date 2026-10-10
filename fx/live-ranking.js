@@ -1,5 +1,5 @@
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 const sameScore=(a,b)=>a&&a.closedTrades===b.closedTrades&&a.day===b.day&&Math.abs(a.totalProfit-b.totalProfit)<1000&&a.daysSurvived===b.daysSurvived&&a.netAssets===b.netAssets&&a.openPositionCount===b.openPositionCount;

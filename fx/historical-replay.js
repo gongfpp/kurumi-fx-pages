@@ -1,4 +1,4 @@
-import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
@@ -12,7 +12,7 @@ export function historicalScript(){return{historical:true,tracks:[],events:Array
 export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL}){
  if(manifest.schemaVersion==='research-m1-close-v1')return initializeResearch(s,{manifest,dayData,startDate,manifestURL});
  const entry=manifest.days.find(d=>d.date===startDate);if(!entry)throw Error('所选日期没有历史行情');
- s.version=s.version===12?12:10;s.historical={version:1,datasetId:manifest.id??manifest.datasetId,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL:manifestURL||null,priceBasis:'bid-ask-mid',date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
+ s.version=[12,13].includes(s.version)?s.version:10;s.historical={version:1,datasetId:manifest.id??manifest.datasetId,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL:manifestURL||null,priceBasis:'bid-ask-mid',date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
  bindHistoricalDay(s,manifest,dayData);
  const quote=dayData.ticks[0];if(!quote)throw Error('当日没有报价');
  s.price=mid(quote);s.startPrice=s.price;s.candles=[{open:s.price,close:s.price,high:s.price,low:s.price,closed:false,day:1,beat:0,timestamp:Math.floor(quote[0]/900000)*900000,timeSource:'historical',firstQuoteAt:quote[0],lastQuoteAt:quote[0]}];s.script=historicalScript();
@@ -55,13 +55,13 @@ export function commitHistoricalQuote(s,q){const h=s.historical;if(h.cursor===0)
 export function validHistoricalSave(s){
  const h=s.historical;if(!h)return true;
  if(isResearch(s))return validResearchSave(s);
- return [10,12].includes(s.version)&&h.version===1&&typeof h.datasetId==='string'&&h.datasetId.length>0&&typeof h.sourceVersion==='string'&&h.sourceVersion.length>0&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&/^[a-f0-9]{64}$/.test(h.dayHash)&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='bid-ask-mid'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===3&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&h.lastQuote[2]>=h.lastQuote[1]&&s.price===mid(h.lastQuote)&&s.script?.historical===true&&Array.isArray(s.script.tracks)&&s.script.tracks.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];
+ return [10,12,13].includes(s.version)&&h.version===1&&typeof h.datasetId==='string'&&h.datasetId.length>0&&typeof h.sourceVersion==='string'&&h.sourceVersion.length>0&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&/^[a-f0-9]{64}$/.test(h.dayHash)&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='bid-ask-mid'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===3&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&h.lastQuote[2]>=h.lastQuote[1]&&s.price===mid(h.lastQuote)&&s.script?.historical===true&&Array.isArray(s.script.tracks)&&s.script.tracks.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];
 }
 export function markHistoricalRestored(s){if(isHistorical(s)&&s.historical.status==='ready'){s.historical.resumeAfterLoad=!s.marketPaused;s.historical.status='loading';}}
 
 function initializeResearch(s,{manifest,dayData,startDate,manifestURL}){
  const entry=manifest.days.find(d=>d.date===startDate);if(!entry)throw Error('所选日期没有分钟行情');
- s.version=s.version===12?12:11;s.historical={version:2,datasetId:manifest.id,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL,priceBasis:'observed-close-only',research:{...manifest.research},date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
+ s.version=[12,13].includes(s.version)?s.version:11;s.historical={version:2,datasetId:manifest.id,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL,priceBasis:'observed-close-only',research:{...manifest.research},date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
  bindResearchDay(s,manifest,dayData);const bar=dayData.bars[0];s.price=bar.close;s.startPrice=s.price;s.candles=[researchCandle(s,bar)];s.completedCandles=1;s.script=historicalScript();
  s.tradingClock={version:1,epochMs:Math.floor((bar.availableAt+JST)/DAY)*DAY-JST,timeZone:'Asia/Tokyo',candleMinutes:1,source:'historical',lastQuoteAt:bar.availableAt,lastQuoteDay:s.day};
  commitHistoricalQuote(s,[bar.availableAt,bar.close]);recordDisplaySourceCandle(s,s.candles[0]);s.historical.status='ready';return s;
@@ -75,6 +75,6 @@ function bindResearchDay(s,manifest,data){
  feeds.set(s,{manifest,dayData:data});if(h.status==='gap'){h.status='ready';s.marketPaused=false;delete h.gap;h.acceptedGapCursor=null;}
  if(['loading','error','ready'].includes(h.status))h.status='ready';return s;
 }
-function validResearchSave(s){const h=s.historical;return [11,12].includes(s.version)&&typeof h.datasetId==='string'&&typeof h.sourceVersion==='string'&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&h.dayHash===h.sourceHash&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='observed-close-only'&&h.research?.executionModel==='observed-close-only'&&h.research?.availabilityModel==='label-plus-60-seconds'&&h.research?.spreadModel==='none'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===2&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&s.price===h.lastQuote[1]&&s.script?.historical===true&&s.script.tracks?.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];}
+function validResearchSave(s){const h=s.historical;return [11,12,13].includes(s.version)&&typeof h.datasetId==='string'&&typeof h.sourceVersion==='string'&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&h.dayHash===h.sourceHash&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='observed-close-only'&&h.research?.executionModel==='observed-close-only'&&h.research?.availabilityModel==='label-plus-60-seconds'&&h.research?.spreadModel==='none'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===2&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&s.price===h.lastQuote[1]&&s.script?.historical===true&&s.script.tracks?.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];}
 
 function researchMetadataEqual(a,b){const keys=['timestampMeaning','quoteSide','availabilityModel','executionModel','spreadModel','feesModel'];return a&&b&&Object.keys(a).length===keys.length&&Object.keys(b).length===keys.length&&keys.every(k=>Object.hasOwn(a,k)&&Object.hasOwn(b,k)&&a[k]===b[k]);}

@@ -1,9 +1,10 @@
+// Mochiko color/identity authority: original anime frame BV1eqH96AEtJ at 399.735747s, sha256 a1f52bfb748a8e47fbef438d982e69d785b79705c085e51c702293f4caddaabf. Purple hair and eyes; older generated art is not identity evidence.
 // Only exact user-approved dialogue revisions with pixel-reviewed four-panel
 // artwork belong here. An absent entry never falls back to an unrelated sheet.
 export const APPROVED_FOUR_SKIT_ASSETS=Object.freeze({
  'dinner-small':{
   path:'./generated/approved-four-skits-v1/dinner-small.webp',width:1086,height:1448,
-  sha256:'9db2b9cb383202e32c880a7e347c278db5ee6f2f5e71af7b907eef50dfb80c28',
+  sha256:'f31f34dd11ace14a85630b84a1f2e8b3301c8c65f1497d05031695390cf804a3',
   people:2,characters:['久留美','萌智子'],panels:4,reviewed:true,independentComic:true,kind:'original-fan-art',
   dialogueId:'approved-four-skits-20261010:dinner-small',
   alt:'久留美拿手机向萌智子报喜，两人在咖喱店选餐、坐下吃两份咖喱；萌智子举勺时，久留美举起手机拍照。',
@@ -24,7 +25,7 @@ export const APPROVED_FOUR_SKIT_ASSETS=Object.freeze({
  },
  'holding-loss-companion':{
   path:'./generated/approved-four-skits-v1/holding-loss-companion.webp',width:1086,height:1448,
-  sha256:'06c54da159c50f6194347eec8bcdabc34ad91e4bfcf69eed1fb8bbd97c5b09ee',
+  sha256:'9f8854d58b30042f6e27743847152ca6f98dc1a482ff060d8385b7fdd6f01162',
   people:2,characters:['久留美','萌智子'],panels:4,reviewed:true,independentComic:true,kind:'original-fan-art',
   dialogueId:'approved-four-skits-20261010:holding-loss-companion',
   alt:'久留美和萌智子一起盯着下跌的报价，久留美逐渐慌张，拉住萌智子的袖子请她先别走。',

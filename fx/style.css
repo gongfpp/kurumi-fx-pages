@@ -34,7 +34,7 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 .four-comic{display:block;width:min(100%,48.75vh);max-height:65vh;object-fit:contain;background:white;border:2px solid #302936;margin:12px auto}
 .story-comic-frame{position:relative;width:min(100%,48.75vh);margin:12px auto;background:#fff}.story-comic-frame .four-comic{width:100%;max-height:none;margin:0}.comic-cover{display:none;position:absolute;width:50%;height:50%;background:#fff;border:1px solid #302936;box-sizing:border-box}.cover-two{top:0;right:0}.cover-three{bottom:0;left:0}.cover-four{bottom:0;right:0}.stage-one .comic-cover,.stage-three .cover-four{display:block}
 .homage-panel{margin:14px 0;background:#fff;padding:10px;border:2px solid #352b3c}.homage-panel img{display:block;max-width:100%;max-height:320px;object-fit:contain;margin:auto}.homage-panel figcaption{font-size:11px;line-height:1.5;color:#57465c;margin-top:6px}
-@media(prefers-reduced-motion:reduce){.message,.typing-status:not(:empty){animation:none}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .message,body:not(.motion-full) .typing-status:not(:empty){animation:none}}
 /* The editor is opt-in and uses the same dialog/focus behavior as the game. */
 .developer-status{margin:0 0 18px;padding:12px 16px;border:1px solid #dc8d47;background:#fff1db;color:#54301d;font-size:14px}
 .developer-dialog{width:min(720px,calc(100vw - 28px));max-height:90vh;overflow:auto}
@@ -142,3 +142,7 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 @media(max-width:390px){#father-take-dialog{padding:18px}#father-take-dialog h2{font-size:21px}}
 
 #news-archive-details{font-size:11px;color:#775b6e}#news-archive-source{color:#87425f;text-underline-offset:3px}.news-meta{flex-wrap:wrap;gap:4px 8px}
+
+/* Reserve the same toolbar slot through every save state, including narrow screens. */
+.top-right #saved{display:inline-flex;align-items:center;justify-content:center;flex:0 0 7em;width:7em;min-height:24px;margin-right:0;white-space:nowrap}
+.top-right #saved[data-save-warning="true"]{color:#9d244c;font-weight:700}

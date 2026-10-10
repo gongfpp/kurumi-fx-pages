@@ -8,4 +8,4 @@
 .trading-expression.is-detached{position:fixed;margin:0;z-index:20}
 .motion-full .trading-expression:not([hidden]){animation:trading-expression-arrive .2s ease-out}
 @keyframes trading-expression-arrive{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@media(prefers-reduced-motion:reduce){.motion-full .trading-expression:not([hidden]){animation:none}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .trading-expression:not([hidden]){animation:none}}

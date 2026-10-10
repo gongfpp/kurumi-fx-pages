@@ -1,13 +1,14 @@
-import {recapImpact} from './recap-impact.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {createRecapStageChart} from './recap-stage-chart.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {setImage} from './assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {buildCurveScale} from './share-card.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {recapChoices} from './daily-recap.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {createRecapPlayer} from './recap-player.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {recapImpact} from './recap-impact.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {createRecapStageChart} from './recap-stage-chart.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {setImage} from './assets.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {recapChoices} from './daily-recap.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const typeWidth=text=>Array.from(text).reduce((sum,c)=>sum+(/[\u3400-\u9fff]/.test(c)?1:.64),0);
@@ -74,7 +75,7 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
     if(target&&viewport){const top=Math.max(0,scroller.scrollTop+target.top-viewport.top-(scroller.clientTop||0));if(scroller.scrollTo)scroller.scrollTo({top,behavior:'instant'});else scroller.scrollTop=top;}
    }
   }
-  const activeMotion=initial?motion:typeof replayMotion==='function'?replayMotion():replayMotion,systemReduced=reducedMotion||!!doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const activeMotion=initial?motion:typeof replayMotion==='function'?replayMotion():replayMotion,systemReduced=reducedMotion||systemReducedMotion(doc);
   player?.cancel();clearEffects();lastBeat=-1;lastAssetBeat=-1;lastEvent=-1;lastStage='';collapseUntil=0;assetDelta.textContent='';impactLabel.textContent='';eventDelta.textContent='';eventCard.textContent='';eventCard.replaceChildren(eventDelta);eventCard.hidden=true;
   player=createRecapPlayer(snapshot,{...playerOptions,onTimeline,enabled:activeMotion,reducedMotion:systemReduced,render:f=>{
    const primaryValue=snapshot.primary.scope==='cumulative'?snapshot.primary.profit-snapshot.daily.tradingNet+f.realized:f.realized;

@@ -1,7 +1,7 @@
-import {recapImpact,boundedRecapCues} from './recap-impact.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {recapImpact,boundedRecapCues} from './recap-impact.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame} from './recap-timeline.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;

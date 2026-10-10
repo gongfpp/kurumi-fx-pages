@@ -1,6 +1,7 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];
@@ -29,7 +30,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   let animation=null,lastSignature='',lastStateKey='',disposed=false,hintTimer,breakTimer;
   const target=button=>({kind:button.hasAttribute('data-stake')?'stake':'leverage',value:Number(button.dataset.stake??button.dataset.leverage)});
   const classify=button=>emotionControlState({...target(button),limits:getLimits(),hardBlocked:getContext(button).hardBlocked});
-  const reduced=()=>!motionEnabled()||!!root.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const reduced=()=>!motionEnabled()||systemReducedMotion(root);
   function hideHint(){clearTimeout(hintTimer);tooltip.hidden=true;}
   function showHint(button,text,timeout=2600){
     tooltip.textContent=text;tooltip.hidden=false;

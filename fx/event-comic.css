@@ -38,7 +38,7 @@
 .daily-recap .recap-choices button.recap-choice[data-selected='true'] .recap-choice-label::after{content:' ✓';color:#397554}
 @media(hover:hover){.daily-recap .recap-choices button:is(.recap-choice,.recap-loan):hover:not(:disabled){transform:translateY(-2px);border-color:#924264!important;box-shadow:0 5px 0 #d5a0b7,0 10px 18px #7b415924}}
 @media(max-width:480px){.daily-recap .recap-choices button.recap-choice,.daily-recap .recap-choices button.recap-loan{min-height:78px;padding:13px 14px!important}.daily-recap .recap-choice-label{min-width:0}.daily-recap .recap-choices b{font-size:14px}.daily-recap .recap-choices{gap:10px}}
-@media(prefers-reduced-motion:reduce){.daily-recap .recap-choices button:is(.recap-choice,.recap-loan){transition:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .daily-recap .recap-choices button:is(.recap-choice,.recap-loan){transition:none!important;transform:none!important}}
 
 /* Approved four-panel captions preserve two speakers without renumbering panels. */
 .event-comic-lines .comic-panel-line{font-size:inherit;line-height:inherit;margin:2px 0}
