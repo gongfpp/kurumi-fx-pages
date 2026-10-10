@@ -1,4 +1,5 @@
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -7,11 +8,11 @@ const nullable=(value,check)=>value===null||value===undefined?null:check(value);
 const cents=n=>Math.round((n+Number.EPSILON)*100)/100;
 // Fixed score projection, never the full JSON export, names, transactions,
 // accounting journal, open-position details, seed, or browser storage.
-export function finishedLeaderboardScore(state,report,{storage}={}){
- const eligible=terminalRankingEligibility(state,report,storage);
+function projectLeaderboardScore(state,report,{storage,live=false}={}){
+ const eligible=live?{eligible:state?.historical?.version!==2&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
  if(!eligible.eligible)throw Object.assign(Error(eligible.reason==='developer'?'开发测试局不能自动上榜':'本局尚不可自动上榜'),{code:eligible.reason});
  if(report.schemaVersion!=='1.0.0'||!['story','endless'].includes(report.mode)||report.mode!==state.mode)throw Error('终局成绩版本或模式不正确');
- if((state.positions?.length||state.position)||report.account?.openPositions?.length)throw Error('尚有未平仓订单，不能提交终局成绩');
+ if(!live&&((state.positions?.length||state.position)||report.account?.openPositions?.length))throw Error('尚有未平仓订单，不能提交终局成绩');
  const p=report.performance,a=report.account;
  if(!p||!a||typeof p.complete!=='boolean')throw Error('终局统计完整性未知');
  const day=integer(report.day,'day',1,10000);if(day!==state.day)throw Error('终局成绩不是当前日期');
@@ -21,7 +22,7 @@ export function finishedLeaderboardScore(state,report,{storage}={}){
  const rawReturnRate=rawTotalProfit/initialEquity,rawDailyReturnRate=rawReturnRate/elapsedDays;
  const returnRate=totalProfit/initialEquity,dailyReturnRate=returnRate/elapsedDays;
  if(Math.abs(finite(p.returnRate,'returnRate')-rawReturnRate)>1e-8||Math.abs(finite(p.dailyReturnRate,'dailyReturnRate')-rawDailyReturnRate)>1e-8)throw Error('终局收益率与净交易账本不一致');
- const score={schemaVersion:'1.0.0',gameFinished:true,completionReason:report.completionReason,developmentTaint:false,statisticsComplete:p.complete,gameMode:report.mode,day,initialEquity,daysSurvived,elapsedDays,returnRate,dailyReturnRate,totalProfit,closedTrades:integer(p.closeExecutions,'closeExecutions'),maxDrawdown:nullable(p.maxDrawdown,v=>finite(v,'maxDrawdown',0,1))};
+ const score={schemaVersion:live?'1.1.0':'1.0.0',gameFinished:!live,completionReason:live?null:report.completionReason,developmentTaint:false,statisticsComplete:p.complete,gameMode:report.mode,day,initialEquity,daysSurvived,elapsedDays,returnRate,dailyReturnRate,totalProfit,closedTrades:integer(p.closeExecutions,'closeExecutions'),maxDrawdown:nullable(p.maxDrawdown,v=>finite(v,'maxDrawdown',0,1))};
  for(const key of counts)score[key]=nullable(p[key],v=>integer(v,key));
  score.winRate=nullable(p.winRate,v=>finite(v,'winRate',0,1));
  score.maxOrderLoss=nullable(p.maxOrderLoss,v=>cents(finite(v,'maxOrderLoss',-1e10,0)));
@@ -34,5 +35,18 @@ export function finishedLeaderboardScore(state,report,{storage}={}){
  if(score.closedOrders===0&&score.winRate!==null)throw Error('没有完整订单时胜率必须未知');
  if(score.closedOrders>0&&score.winningOrders!==null&&(score.winRate===null||Math.abs(score.winRate-score.winningOrders/score.closedOrders)>1e-8))throw Error('胜率与完整订单数不一致');
  if([score.fatherDebt,score.networkDebt,score.totalDebt].every(v=>v!==null)&&Math.abs(score.fatherDebt+score.networkDebt-score.totalDebt)>.01)throw Error('总欠款与两项债务不一致');
+ return score;
+}
+
+export const finishedLeaderboardScore=(state,report,options)=>projectLeaderboardScore(state,report,options);
+export function liveOpenPositionCount(state){
+ const positions=state?.positions?.length?state.positions:state?.position?[state.position]:[];
+ return positions.filter(p=>typeof p.id==='string'&&Number.isFinite(p.entry)&&p.entry>0&&Number.isFinite(p.leverage)&&p.leverage>0&&p.leverage<=100&&Number.isFinite(p.margin)&&p.margin>0).length;
+}
+export function hasLiveTradingActivity(state){return liveOpenPositionCount(state)>0||Number.isSafeInteger(state?.performance?.closedTrades)&&state.performance.closedTrades>0||(state?.history||[]).some(t=>['close','half','rescue','stop','liquidation','closing'].includes(t.type)&&Number.isFinite(t.pnl));}
+export function liveLeaderboardScore(state,report,options){
+ const score=projectLeaderboardScore(state,report,{...options,live:true});
+ score.openPositionCount=liveOpenPositionCount(state);
+ if(score.closedTrades<1&&score.openPositionCount<1)throw Object.assign(Error('实际成交后开始更新进度成绩'),{code:'no-trades'});
  return score;
 }

@@ -1,5 +1,5 @@
-import {createGameStorage} from './storage.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
 // Content identity is independent of day, event receipt, and file cache query.
 export function artIdentity(art){return art?.sha256?'sha256:'+art.sha256:art?.path?'path:'+art.path.split('?')[0]:null;}
@@ -19,13 +19,19 @@ export function createDailyArtMemory(storage=createGameStorage(()=>kurumiStorage
 export const dailyArtMemory=createDailyArtMemory(createGameStorage(()=>kurumiStorage()),createGameStorage(()=>kurumiStorage('sessionStorage')));
 // A selected/queued image is not seen. Record only a decoded image actually in
 // the viewport; an expanded offscreen story remains eligible until scrolled to.
-export function observeSeenArtwork(image,{identities=[],memory=dailyArtMemory,onSeen=()=>{}}={}){
+export function observeSeenArtwork(image,{identities=[],memory=dailyArtMemory,onSeen=()=>{},visibilityTarget=image,visibilityTargets=[visibilityTarget],minVisibleRatio=0}={}){
  if(!image.ownerDocument?.defaultView||!image.getBoundingClientRect)return()=>{};
- let loaded=image.complete&&image.naturalWidth>0,visible=false,done=false,observer=null;
- const finish=()=>{if(done||!loaded||!visible||image.isConnected===false||image.ownerDocument.hidden)return;done=true;memory.seen(identities);onSeen();observer?.disconnect();};
+ const targets=[...new Set(visibilityTargets)],visibility=new Map(targets.map(target=>[target,false]));
+ let loaded=image.complete&&image.naturalWidth>0,done=false,observer=null;
  const win=image.ownerDocument.defaultView;
- const check=()=>{const r=image.getBoundingClientRect();visible=r.width>0&&r.height>0&&r.bottom>0&&r.top<(win.innerHeight||0)&&r.right>0&&r.left<(win.innerWidth||0);finish();};
- const load=()=>{loaded=image.naturalWidth>0;check();};image.addEventListener('load',load);
- if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{visible=entries.some(e=>e.isIntersecting&&e.intersectionRatio>0);finish();},{threshold:[0,.01]});observer.observe(image);}else{win?.addEventListener('scroll',check,true);win?.addEventListener('resize',check);}
- check();return()=>{observer?.disconnect();image.removeEventListener('load',load);win?.removeEventListener('scroll',check,true);win?.removeEventListener('resize',check);};
+ const finish=()=>{if(done||!loaded||!targets.every(target=>visibility.get(target))||image.isConnected===false||image.ownerDocument.hidden)return;done=true;memory.seen(identities);onSeen();observer?.disconnect();};
+ // Older browsers must account for scroll containers too, not just the window.
+ const check=()=>{for(const target of targets){
+  const r=target.getBoundingClientRect(),area=r.width*r.height;let left=Math.max(r.left,0),right=Math.min(r.right,win.innerWidth||0),top=Math.max(r.top,0),bottom=Math.min(r.bottom,win.innerHeight||0),hidden=false;
+  for(let node=target;node;node=node.parentElement){const style=win.getComputedStyle?.(node);if(node.hidden||style?.display==='none'||style?.visibility==='hidden'){hidden=true;break;}if(node===target||!style)continue;const box=node.getBoundingClientRect();if(/auto|scroll|hidden|clip/.test(style.overflowX)){left=Math.max(left,box.left+node.clientLeft);right=Math.min(right,box.left+node.clientLeft+node.clientWidth);}if(/auto|scroll|hidden|clip/.test(style.overflowY)){top=Math.max(top,box.top+node.clientTop);bottom=Math.min(bottom,box.top+node.clientTop+node.clientHeight);}}
+  const shown=Math.max(0,right-left)*Math.max(0,bottom-top);visibility.set(target,!hidden&&area>0&&shown>0&&shown/area>=minVisibleRatio);
+ }finish();};
+ const load=()=>{loaded=image.naturalWidth>0;if(observer)finish();else check();};image.addEventListener('load',load);
+ if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{for(const e of entries){const target=e.target||(targets.length===1?targets[0]:null);if(visibility.has(target))visibility.set(target,e.isIntersecting&&e.intersectionRatio>0&&e.intersectionRatio>=minVisibleRatio);}finish();},{threshold:[0,.01,...(minVisibleRatio?[minVisibleRatio]:[])]});targets.forEach(target=>observer.observe(target));}else{win?.addEventListener('scroll',check,true);win?.addEventListener('resize',check);check();}
+ return()=>{done=true;observer?.disconnect();image.removeEventListener('load',load);win?.removeEventListener('scroll',check,true);win?.removeEventListener('resize',check);};
 }

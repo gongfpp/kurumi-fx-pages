@@ -78,5 +78,5 @@ export function pressEmotion(s,{kind,value,limits,hardBlocked=false,emotion,prof
 
 export function pressureFeedback(intensity) {
   const value=clamp(intensity);
-  return {rate:.9+.35*value,level:.18+.32*value,displacement:1+3*value,duration:120+80*value};
+  return {rate:.9+.35*value,level:.3+.5*value,displacement:1+3*value,duration:120+80*value};
 }

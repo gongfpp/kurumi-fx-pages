@@ -13,3 +13,5 @@
 
 #investor-danmaku .investor-danmaku-line:nth-child(3n+2){color:#7c4d67}
 #investor-danmaku[data-reduced="true"]{height:58px}
+
+.leaderboard-broadcast{position:fixed;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:15;pointer-events:none;max-width:min(86vw,620px);font-size:12px;line-height:1.5;color:#f5efcf;background:#252a35ed;border:1px solid #87794f;border-radius:14px;padding:7px 14px;box-shadow:0 3px 12px #0003}.leaderboard-broadcast:empty{display:none}@media(max-width:600px){.leaderboard-broadcast{bottom:calc(88px + env(safe-area-inset-bottom));font-size:11px;max-width:88vw}}

@@ -127,28 +127,43 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
   },
   "./manga/ch01-short-entry.jpg": {
     "sourceRecord": 16,
-    "primaryUse": "story-dialogue",
+    "primaryUse": "trading-expression",
     "character": "久留美",
     "characters": [
       "久留美"
     ],
-    "emotion": "剧情",
-    "intensity": null,
-    "events": [],
-    "directions": [],
+    "emotion": "得意",
+    "intensity": 2,
+    "events": [
+      "position-opened"
+    ],
+    "directions": [
+      "short"
+    ],
     "hasEmbeddedText": true,
-    "textOriginal": null,
-    "faceClarity": "scene-scale",
-    "textClarity": "not-transcribed",
+    "textOriginal": "好！賣了不錯的價格！然後只要在最低價時買回就行了！",
+    "faceClarity": "clear",
+    "textClarity": "clear-in-source",
     "minDisplayWidth": 320,
     "identityStatus": "pixel-reviewed-primary-character",
     "identityDescription": "久留美",
     "status": "verified",
     "tags": [],
     "exclusions": [
-      "story-only",
-      "never-crop-dialogue"
-    ]
+      "unfilled-order",
+      "existing-position",
+      "direction-mismatch",
+      "profit-notification",
+      "never-crop-dialogue",
+      "never-replace-embedded-dialogue"
+    ],
+    "eventRules": {
+      "position-opened": {
+        "eventSources": [
+          "receipt-first-open"
+        ]
+      }
+    }
   },
   "./manga/characters-v1/152.jpg": {
     "sourceRecord": 152,
@@ -2051,7 +2066,7 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "emotion": "犹疑",
     "intensity": 1,
     "events": [
-      "floating-loss"
+      "entry-hesitation"
     ],
     "directions": [
       "short"
@@ -2066,14 +2081,24 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "status": "verified",
     "tags": [],
     "exclusions": [
-      "flat/no open position",
-      "realized-profit notification",
-      "realized-loss notification",
-      "executed-order confirmation",
+      "open-position",
+      "cancelled-intent",
       "direction-mismatch",
+      "profit-notification",
+      "executed-order confirmation",
       "never-crop-dialogue",
       "never-replace-embedded-dialogue"
-    ]
+    ],
+    "eventRules": {
+      "entry-hesitation": {
+        "positions": [
+          "flat"
+        ],
+        "eventSources": [
+          "pointer-hover"
+        ]
+      }
+    }
   },
   "./manga/contextual-def/99.jpg": {
     "sourceRecord": 99,
@@ -3277,16 +3302,18 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     ],
     "emotion": "剧情",
     "intensity": null,
-    "events": [],
+    "events": [
+      "voluntary-run-exit"
+    ],
     "directions": [],
     "hasEmbeddedText": true,
-    "textOriginal": null,
+    "textOriginal": "放棄FX了…",
     "faceClarity": "scene-scale",
-    "textClarity": "not-transcribed",
+    "textClarity": "readable",
     "minDisplayWidth": 320,
-    "identityStatus": "pending-identity-for-stated-unknown-figures",
-    "identityDescription": "久留美；身后另一人未核定",
-    "status": "pending",
+    "identityStatus": "verified-with-stated-visible-speaker-limits",
+    "identityDescription": "第8话28至30页连续服饰与107具名账户核对；近景发夹人物为久留美，非原索引误标的芽吹。暂时停手，不表示永久退出或本局余额为零。",
+    "status": "verified",
     "tags": [],
     "exclusions": [
       "story-only",

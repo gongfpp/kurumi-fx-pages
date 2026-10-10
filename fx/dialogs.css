@@ -26,3 +26,11 @@ dialog.dialog-shell:has(.food-comic:not([hidden])){padding:0}
  .dialog-scroll{padding:10px 12px 16px}.dialog-scroll h2{font-size:22px;margin-block:8px 12px}.dialog-scroll>p{margin-block:8px}.dialog-toolbar{min-height:48px;padding-top:0}
  .day-total{padding:9px 0;margin:12px 0}.day-total strong{font-size:29px}.comic-captions{gap:7px;margin:10px 0}.dialog-scroll .primary,.dialog-scroll .secondary{min-height:40px}
 }
+
+/* The cabinet crisis stays one expanded story, with all three moments visible. */
+.daily-family-sequence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.daily-family-sequence[hidden]{display:none}
+.daily-family-sequence figure{margin:0;min-width:0;background:#fffaf3;border:1px solid #dbc1c7;border-radius:8px;overflow:hidden}
+.daily-family-sequence img{display:block;width:100%;height:auto;object-fit:contain}
+.daily-family-sequence figcaption{padding:8px;font-size:13px;line-height:1.55;overflow-wrap:anywhere;color:#593647}
+@media(max-width:560px){.daily-family-sequence{grid-template-columns:1fr;gap:8px}.daily-family-sequence figure{display:grid;grid-template-columns:42% minmax(0,1fr);align-items:center}.daily-family-sequence figcaption{padding:9px;font-size:13px}}

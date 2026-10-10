@@ -1,7 +1,7 @@
-import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {scheduleAudioTimeline} from './audio-timeline.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {AudioEnvelope,getSafeAudioContext,connectScheduledAudio} from './audio-envelope.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {assetURL} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {TERMINAL_SOUND_CUES} from './terminal-cues.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {scheduleAudioTimeline} from './audio-timeline.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {AudioEnvelope,getSafeAudioContext,connectScheduledAudio} from './audio-envelope.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {assetURL} from './assets.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 function volume(value,fallback){return Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;}
 
@@ -22,16 +22,16 @@ export class FXAudio{
  report(label){if(!this.reported.has(label)){this.reported.add(label);this.onError(label);}}
  configure(prefs){this.prefs={...this.prefs,...prefs};this.sync();if(!this.prefs.sound)this.stopEffects();}
  unlock(){this.unlocked=true;this.preloadTimeline();}
- preloadTimeline(){if(getSafeAudioContext())for(const kind of ['terminal-tap','terminal-fill','terminal-close','outcome-profit','outcome-loss'])void this.loadBuffer(kind).catch(()=>{});}
+ preloadTimeline(){if(getSafeAudioContext())for(const kind of ['terminal-tap','terminal-fill','terminal-close','outcome-profit','outcome-loss','recap-rise','recap-fall','recap-land-profit','recap-land-loss'])void this.loadBuffer(kind).catch(()=>{});}
  loadBuffer(kind){const spec=TERMINAL_SOUND_CUES[kind];if(!spec)return Promise.reject(new Error('Unknown sample'));const file=spec.file;if(!this.buffers.has(file)){const context=getSafeAudioContext();const pending=fetch(assetURL(`./sfx/${file}.mp3`)).then(r=>{if(!r.ok)throw new Error('Sample unavailable');return r.arrayBuffer();}).then(bytes=>context.decodeAudioData(bytes));this.buffers.set(file,pending);pending.catch(()=>this.buffers.delete(file));}return this.buffers.get(file);}
  scheduleTimeline(cues,{startedAt=this.now(),onTrace=()=>{}}={}){
   if(!this.unlocked||!this.prefs.sound||this.hidden())return {cancel(){},ready:Promise.resolve(),receipts:[]};
   for(const previous of [...this.timelines])previous.cancel();
-  const handle=scheduleAudioTimeline(cues,{context:getSafeAudioContext(),load:kind=>this.loadBuffer(kind),connect:entry=>connectScheduledAudio(entry,assetURL(`./sfx/${TERMINAL_SOUND_CUES[entry.cue.kind].file}.mp3`)),startedAt,now:this.now,hidden:this.hidden,allowed:()=>this.unlocked&&this.prefs.sound,level:volume(this.prefs.soundVolume,.5),fallback:cue=>this.effect(cue.kind,cue),onTrace});
+  const handle=scheduleAudioTimeline(cues,{context:getSafeAudioContext(),load:kind=>this.loadBuffer(kind),connect:entry=>connectScheduledAudio(entry,assetURL(`./sfx/${TERMINAL_SOUND_CUES[entry.cue.kind].file}.mp3`)),startedAt,now:this.now,hidden:this.hidden,allowed:()=>this.unlocked&&this.prefs.sound,level:volume(this.prefs.soundVolume,.5),fallback:cue=>{let voice;const accepted=this.effect(cue.kind,{...cue,onVoice:handle=>voice=handle});return accepted?(voice||true):false;},onTrace});
   this.timelines.add(handle);const cancel=handle.cancel.bind(handle);handle.cancel=()=>{cancel();this.timelines.delete(handle);};return handle;
  }
  sync(){if(this.hidden())this.stopEffects();}
- effect(kind,{rate=1,stretch=false,level=1,preview=false}={}){
+ effect(kind,{rate=1,stretch=false,level=1,preview=false,onVoice=()=>{}}={}){
   // Continuous prices stay quiet. quote-tick exists only for explicit audition.
   if(!this.unlocked||!this.prefs.sound||this.hidden()||(kind==='rattle'&&!preview))return false;
   const amplitude=volume(this.prefs.soundVolume,.5)*volume(level,1);if(amplitude===0)return false;
@@ -45,6 +45,8 @@ export class FXAudio{
   if(active.length>=2)return false;
   this.lastPlayed.set(file,time);this.lastAny=time;a.currentTime=0;
   const envelope=this.envelope.prepare(a,{target:amplitude,leadInSeconds:spec?0:.04,coldMs:spec?8:180,warmMs:spec?8:75,tailMs:spec?20:120});
+  // A timeline owns this particular envelope, never a later reuse of the voice.
+  onVoice({stop:()=>{if(this.envelope.records.get(a)===envelope){this.envelope.stop(a);a.pause();}}});
   a.playbackRate=Math.max(.8,Math.min(1.25,Number.isFinite(rate)?rate:1));a.preservesPitch=stretch;a.webkitPreservesPitch=stretch;
   try{const playing=a.play();if(playing?.then)playing.then(()=>this.envelope.start(a,envelope)).catch(error=>{if(this.envelope.records.get(a)!==envelope)return;this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);});else this.envelope.start(a,envelope);}
   catch(error){this.envelope.stop(a);if(error?.name!=='AbortError'&&error?.name!=='NotAllowedError')this.report(label);return false;}

@@ -1,6 +1,6 @@
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 export const CANDLE_PERIODS=Object.freeze([{minutes:15,label:'15分钟',hz:1},{minutes:1440,label:'日K',hz:1},{minutes:5,label:'5分钟',hz:2},{minutes:1,label:'1分钟',hz:4}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;

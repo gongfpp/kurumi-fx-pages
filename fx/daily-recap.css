@@ -146,3 +146,23 @@ html:has(.daily-recap[data-animate=true]){overflow-x:clip}
 @media(max-width:480px){.recap-asset-line{font-size:14px}.recap-realized-score{font-size:21px}}
 
 .recap-step-group{display:flex;align-items:center;gap:6px;flex:1 1 45%;min-width:0}.recap-step-group .recap-step{flex:0 1 auto}
+
+/* Recap impact v3: monetary hierarchy, reserved type space, no opacity flashing. */
+.recap-playback{container-type:inline-size}
+.recap-counter{font-size:min(58px,calc((100cqw - 80px)/var(--recap-character-width,8)));padding:16px 8px 4px;margin:8px 0 2px;min-height:1.55em}
+.daily-recap[data-tier=small] .recap-counter{font-size:min(44px,calc((100cqw - 54px)/var(--recap-character-width,8)))}
+.recap-asset-delta{order:2;flex:1 1 100%;min-height:1.6em;text-align:center;font:700 13px/1.6 ui-monospace,monospace;color:#d9c6e5}
+.recap-asset-delta[data-direction=profit]{color:#aaffd8}.recap-asset-delta[data-direction=loss]{color:#ffb5cb}
+.recap-impact-label{position:absolute;right:16px;top:69px;font:900 11px/1.4 system-ui;color:#ffe2a0;transform:rotate(-5deg);padding:3px 7px;border-radius:3px;background:#33223c;box-shadow:0 2px 0 #08051255;pointer-events:none}
+.recap-impact-label:empty{display:none}.recap-impact-label[data-direction=loss]{color:#ffc2d2}
+.recap-stage-profit{margin-top:3px}.daily-recap[data-tier=flat] .recap-counter{color:#eadff0!important}.daily-recap[data-tier=small] .recap-burst{display:none}
+@media(max-width:480px){.daily-recap[data-tier] .recap-counter{font-size:min(36px,calc((100cqw - 48px)/var(--recap-character-width,8)));padding:14px 2px 3px;margin:6px 0 0;min-height:1.8em}.recap-impact-label{top:62px;right:8px;font-size:9px;padding:2px 4px}.recap-asset-delta{font-size:12px;min-height:1.7em}.daily-recap[data-loss-severity=catastrophic] .recap-counter{margin-bottom:30px}}
+.recap-playback{position:relative}
+.daily-recap[data-tier=small] .recap-playback[data-stage=landing],.daily-recap[data-tier=flat] .recap-playback[data-stage=landing]{animation:none}
+/* The secondary score needs the same peak-shape reservation as the main amount. */
+.recap-realized-score{font-size:min(28px,calc((100cqw - 60px)/var(--recap-score-width,12)))}
+.recap-event-delta{display:inline-block;transform-origin:right center}
+@media(max-width:480px){.recap-realized-score{font-size:min(21px,calc((100cqw - 48px)/var(--recap-score-width,12)))}.recap-event-label{flex-basis:100%}.recap-event-delta{margin-left:auto;margin-right:3px}}
+/* Keep the label out of the numeral fit budget, rather than shrinking both to tiny type. */
+.recap-realized-label{display:block;font:600 11px/1.3 system-ui;color:#d9c6e5}
+.recap-realized-value{display:block;line-height:1.35}

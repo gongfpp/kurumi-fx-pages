@@ -1,24 +1,26 @@
-import {tradingExpressionCandidates} from './asset-usage-catalog.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {ASSET_USAGE_CATALOG,tradingExpressionCandidates} from './asset-usage-catalog.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
-// Original bytes stay unchanged. These face-only viewports were pixel-reviewed;
-// they inherit the full panel's event/direction/account gates, never its dialogue.
-// Coordinates are in the source image. No generated portrait fallback is allowed.
-export const ORIGINAL_EXPRESSION_CROPS=Object.freeze({
- 31:Object.freeze([305,240,260,230]),
- 37:Object.freeze([456,218,188,154]),
- 54:Object.freeze([387,105,195,166]),
- 64:Object.freeze([328,149,240,224]),
- 98:Object.freeze([363,173,144,129]),
+// Whole dialogue panels, never face-only crops. The small amount of adjacent
+// panel border in record 36 is excluded, preserving its complete speech bubble.
+export const ORIGINAL_EXPRESSION_PANELS=Object.freeze({
+ 16:{minWidth:320},31:{minWidth:220},37:{minWidth:280},54:{minWidth:320},64:{minWidth:240},98:{minWidth:380},
+ 36:{minWidth:280,crop:[0,0,770,394]},
 });
 export function selectOriginalTradingExpression(context={}){
- const {maxDisplayWidth,maxDisplayHeight,...facts}=context;
- if([maxDisplayWidth,maxDisplayHeight].some(n=>n!==undefined&&!Number.isFinite(n)))return null;
- if(maxDisplayWidth!==undefined&&maxDisplayWidth<48||maxDisplayHeight!==undefined&&maxDisplayHeight<76)return null;
- const pool=tradingExpressionCandidates(facts).filter(a=>a.source.kind==='original-manga'&&Object.hasOwn(ORIGINAL_EXPRESSION_CROPS,a.source.record));
- if(!pool.length)return null;
- const seed=Number.isSafeInteger(context.seed)?context.seed:0;
- const eligible=pool.filter(a=>{const [,,w,h]=ORIGINAL_EXPRESSION_CROPS[a.source.record],scale=Math.min((maxDisplayWidth??Infinity)/w,((maxDisplayHeight??Infinity)-28)/h);return Math.min(w,h)*scale>=48;});
+ const {maxDisplayWidth=360,maxDisplayHeight=420,...facts}=context;
+ if(!Number.isFinite(maxDisplayWidth)||!Number.isFinite(maxDisplayHeight)||maxDisplayWidth<=0||maxDisplayHeight<=32)return null;
+ const pool=tradingExpressionCandidates(facts).filter(a=>a.source.kind==='original-manga'&&a.character==='久留美'&&Object.hasOwn(ORIGINAL_EXPRESSION_PANELS,a.source.record));
+ // This panel is the same AUD/JPY long-loss scene immediately before record 37.
+ // Generic wording alone does not permit using it for a short/flat/profit event.
+ if(facts.event==='floating-loss'&&facts.direction==='long'&&facts.position==='open'&&facts.profitBasis==='floating'&&facts.pnlSign===-1){
+  const heavy=ASSET_USAGE_CATALOG.find(a=>a.source.record===36);if(heavy?.review.status==='verified')pool.push({...heavy,textOriginal:'好沉重…'});
+ }
+ const eligible=pool.map(asset=>{
+  const spec=ORIGINAL_EXPRESSION_PANELS[asset.source.record],crop=spec.crop||[0,0,...asset.source.dimensions],w=crop[2],h=crop[3];
+  const scale=Math.min(1,maxDisplayWidth/w,(maxDisplayHeight-32)/h);
+  return {...asset,hasEmbeddedText:true,expressionCrop:crop,displayWidth:w*scale,displayHeight:h*scale,minimumReadableWidth:spec.minWidth};
+ }).filter(a=>a.displayWidth>=a.minimumReadableWidth);
  if(!eligible.length)return null;
- const asset=eligible[((seed%eligible.length)+eligible.length)%eligible.length];
- return {...asset,hasEmbeddedText:false,textOriginal:null,originalHasEmbeddedText:asset.hasEmbeddedText,expressionCrop:ORIGINAL_EXPRESSION_CROPS[asset.source.record]};
+ const seed=Number.isSafeInteger(context.seed)?context.seed:0;
+ return eligible[((seed%eligible.length)+eligible.length)%eligible.length];
 }

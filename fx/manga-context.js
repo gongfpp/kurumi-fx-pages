@@ -1,4 +1,5 @@
-import {MANGA_PANELS} from './manga-panels.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {RESTRAINT_MANGA_ASSETS} from './contextual-manga-restraint-content.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 // Card matching is intentionally independent of the portrait's emotion rules.
 // An illustration is evidence for a scene, never the ledger for this account.
@@ -18,6 +19,10 @@ export function selectNarrativeManga(state,{kind='event',event=null,index=0,cata
   if(index===0)return matched('family-loss','原作第 1 话：母亲造成的家庭亏损。',['原作背景 · 家庭亏损两千万日元。'],{catalog});
   if(index===1)return matched('recovery-vow','原作第 1 话：想把家中的亏损赚回来。',['原作背景 · 久留美的入场动机。'],{catalog});
   return matched('ready','正式入场的觉悟；本局本金另按游戏规则。',['本局采用十万日元开局，是游戏改编；原作首单本金三十万。'],{catalog});
+ }
+ if(kind==='ending'&&state.phase==='ending'&&state.ending?.id==='walkaway'&&!state.positions?.length&&!state.position){
+  const asset=RESTRAINT_MANGA_ASSETS[105];
+  return {status:'matched',cards:[{panel:{id:'kurumi-pauses-fx',character:'久留美与芽吹',chapter:8,page:28,original:asset.path,sha256:asset.sha256,imageSize:asset.dimensions,sourceRecord:105,sourceCommit:"b37bbf7efe7caa05621946879dcd8e4ada56ae59",sourceURL:"https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E8%8A%BD%E5%90%B9_%E5%89%B2%E8%82%89%E7%A6%BB%E5%9C%BA_%E6%95%99%E5%AE%A4_%E7%A9%BA%E6%B4%9E%E7%9C%BC_%E6%94%BE%E6%A3%84FX%E4%BA%86.jpg",sourceBlob:"eb8dca746a8beb6b6690b2a64cd07d6b886c0e92",context:'原作暂时收手；后续仍有重新入金，不代表永久退出或玩家账户归零。'},crop:null,reason:'久留美曾表示放弃 FX；此处对应玩家主动结束这一局。'}],reason:'主动离场',facts:[],boundary:MANGA_BOUNDARY};
  }
  if(kind==='ending')return missing('这个结局由本局选择产生；素材中没有与全部结果一致的原作结局，不用别的结局代替。');
  return missing(event?.key?.startsWith('repay')?'原作素材没有可核验的本次还款画面；以实际还款记录为准。':'当前人物对话没有精确对应的原作画面，保留对话与旁白。');

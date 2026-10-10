@@ -1,12 +1,12 @@
 // Bounded sample score on the audio clock: overdue beats are dropped, never burst.
 export function scheduleAudioTimeline(cues,{context,load,connect,startedAt,now=()=>performance.now(),hidden=()=>false,allowed=()=>true,level=.5,fallback=()=>false,schedule=setTimeout,clear=clearTimeout,onTrace=()=>{}}={}) {
  const score=Object.freeze(cues.slice(0,64).map(c=>Object.freeze({...c})).filter((c,i,a)=>Number.isFinite(c.atMs)&&c.atMs>=0&&c.atMs<=30000&&(i===0||c.atMs-a[i-1].atMs>=65)));
- const sources=new Set(),timers=new Set(),receipts=[];let cancelled=false,cleanupClock=()=>{},wakeClock=null,clockPromise=null,schedulingDone=false;
+ const sources=new Set(),timers=new Set(),fallbackVoices=new Set(),receipts=[];let cancelled=false,cleanupClock=()=>{},wakeClock=null,clockPromise=null,schedulingDone=false;
  const report=(cue,status,extra={})=>{const r=Object.freeze({cue,status,...extra});receipts.push(r);try{onTrace(r);}catch{}};
- const handle={receipts,cancel(){if(cancelled)return;cancelled=true;wakeClock?.(null);cleanupClock();for(const id of timers)clear(id);timers.clear();for(const entry of [...sources]){try{entry.gain.gain.cancelScheduledValues(context.currentTime);entry.gain.gain.setValueAtTime(0,context.currentTime);entry.source.stop();}catch{}entry.release();}sources.clear();},ready:null};
+ const handle={receipts,cancel(){if(cancelled)return;cancelled=true;wakeClock?.(null);cleanupClock();for(const id of timers)clear(id);timers.clear();for(const voice of fallbackVoices)voice.stop();fallbackVoices.clear();for(const entry of [...sources]){try{entry.gain.gain.cancelScheduledValues(context.currentTime);entry.gain.gain.setValueAtTime(0,context.currentTime);entry.source.stop();}catch{}entry.release();}sources.clear();},ready:null};
  const valid=()=>!cancelled&&!hidden()&&allowed(),began=Number.isFinite(startedAt)?startedAt:now();
  if(!context){
-  for(const cue of score){const id=schedule(()=>{timers.delete(id);if(!valid())return;const late=now()-began-cue.atMs;if(late>65){report(cue,'dropped-late',{lateMs:late});return;}report(cue,fallback(cue)?'fallback-play-requested':'fallback-rejected');},Math.max(0,began+cue.atMs-now()));timers.add(id);}
+  for(const cue of score){const id=schedule(()=>{timers.delete(id);if(!valid())return;const late=now()-began-cue.atMs;if(late>65){report(cue,'dropped-late',{lateMs:late});return;}const voice=fallback(cue);if(voice&&typeof voice.stop==='function')fallbackVoices.add(voice);report(cue,voice?'fallback-play-requested':'fallback-rejected');},Math.max(0,began+cue.atMs-now()));timers.add(id);}
   handle.ready=Promise.resolve(handle);return handle;
  }
  // A suspended device has no usable audio-clock anchor. Keep the original wall

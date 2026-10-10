@@ -1,4 +1,4 @@
-import {formatTradingTime} from './trading-time.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const node=(doc,tag,attrs={})=>{const e=doc.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;};
 // Compress unrecorded session gaps geometrically, never synthesize market data.
 // Timestamp interpolation is only for the replay cursor / receipt marker x-axis.

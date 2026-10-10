@@ -1,4 +1,4 @@
-import {positionsOf,positionNetUnrealized,accountMetrics,tradingOpen} from './engine.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {positionsOf,positionNetUnrealized,accountMetrics,tradingOpen} from './engine.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 // Presentation only: no RNG, clock advances, account mutations or cash-based P&L.
 export const TRADING_EXPRESSION_RULES=Object.freeze({
@@ -16,7 +16,7 @@ export function expressionThought(event,direction){const rule=TRADING_EXPRESSION
 export function tradingExpressionSnapshot(state){
  const orders=positionsOf(state),directions=new Set(orders.map(p=>p.direction)),net=orders.reduce((n,p)=>n+positionNetUnrealized(state,p),0);
  const notional=orders.reduce((n,p)=>n+(p.notional??p.margin*p.leverage),0),band=Math.max(50,notional*.00003);
- return {active:tradingOpen(state),context:`${state.runId}:${state.mode}:${state.day}`,key:orders.map(p=>`${p.id}:${p.direction}:${p.margin}:${p.entry}`).sort().join('|'),position:orders.length?'open':'flat',direction:directions.size>1?'mixed':directions.has(1)?'long':directions.has(-1)?'short':'none',net,pnlSign:orders.length&&Number.isFinite(net)&&Math.abs(net)>band?Math.sign(net):0,atRisk:orders.length>0&&accountMetrics(state).marginLevel<=1.25};
+ return {positionIds:orders.map(p=>p.id),active:tradingOpen(state),context:`${state.runId}:${state.mode}:${state.day}`,key:orders.map(p=>`${p.id}:${p.direction}:${p.margin}:${p.entry}`).sort().join('|'),position:orders.length?'open':'flat',direction:directions.size>1?'mixed':directions.has(1)?'long':directions.has(-1)?'short':'none',net,pnlSign:orders.length&&Number.isFinite(net)&&Math.abs(net)>band?Math.sign(net):0,atRisk:orders.length>0&&accountMetrics(state).marginLevel<=1.25};
 }
 export function expressionEvent(event,snapshot,extra={}){
  const rule=TRADING_EXPRESSION_RULES[event];return rule?{event,direction:snapshot.direction,position:snapshot.position,profitBasis:rule.basis,pnlSign:rule.basis==='none'?0:snapshot.pnlSign,previousPnlSign:0,context:snapshot.context,positionKey:snapshot.key,...extra}:null;
@@ -24,7 +24,12 @@ export function expressionEvent(event,snapshot,extra={}){
 export function expressionForTrades(trades,snapshot){
  const list=(trades||[]).filter(Boolean);if(!list.length)return null;
  const dirs=new Set(list.map(t=>t.direction)),direction=dirs.size>1?'mixed':dirs.has(1)?'long':dirs.has(-1)?'short':'none';
- if(list.every(t=>t.type==='open'))return expressionEvent('position-opened',snapshot,{direction});
+ if(list.every(t=>t.type==='open')){
+  // Only a receipt matching every current position proves a fresh entry from flat.
+  const ids=list.map(t=>t.positionId),current=snapshot.positionIds;
+  const firstOpen=direction===snapshot.direction&&list.every(t=>[t.margin,t.entry,t.quantity].every(n=>Number.isFinite(n)&&n>0))&&snapshot.active&&snapshot.position==='open'&&Array.isArray(current)&&current.length===ids.length&&new Set(ids).size===ids.length&&ids.every(id=>id!=null&&current.includes(id));
+  return expressionEvent('position-opened',snapshot,{direction:snapshot.direction,eventSource:firstOpen?'receipt-first-open':'receipt-addition'});
+ }
  if(list.some(t=>!Number.isFinite(t.pnl)))return null;
  const pnl=list.reduce((n,t)=>n+t.pnl,0);return pnl===0?null:expressionEvent(pnl>0?'closed-profit':'closed-loss',snapshot,{direction,pnlSign:Math.sign(pnl)});
 }

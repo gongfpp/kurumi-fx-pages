@@ -1,15 +1,15 @@
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {comicContinuity} from './comic-continuity.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {preserveScroll} from './preserve-scroll.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {setImage} from './assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {comicContinuity} from './comic-continuity.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {setImage} from './assets.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -82,7 +82,8 @@ export function createEventComicPresenter({root=document,artMemory=dailyArtMemor
   if(!queue.state.active){const selected=chooseAutomaticComic(currentState,unseenAutomaticComicScenes(scenes,{memory:artMemory,traumaActive:tradingTrauma(currentState).active}));if(selected){const presented=realizedProfitComicPresentation(selected,{traumaActive:tradingTrauma(currentState).active});queue.enqueue([{...presented,automatic:true,result:['closed-profit','half-profit','stop-loss','liquidation'].includes(selected.id)?{...selected.result,tradingNet:selected.batchTradingNet}:selected.result}]);queue.resume();}}
  }
  function scheduleDelivery(){if(deliveryTimer===null&&deliveries.length&&safe())deliveryTimer=setTimeout(flushDeliveries,0);}
- const gate=createComicReceiptGate({initialState,context:getContext(),onCommit:(snapshot,recovered)=>{continuityState=snapshot;let added=false;for(const scene of recovered||[])if(!savedReplay.some(old=>old.receiptKey===scene.receiptKey)){savedReplay.push(scene);added=true;}if(added)onReceipts();},select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes.filter(scene=>!savedReplay.some(old=>old.receiptKey===scene.receiptKey)));onReceipts();const automatic=scenes.filter(scene=>!scene.manualOnly&&!scene.settlementDay&&scene.observedDay===currentState.day);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];autoShown.clear();manualReplay.clear();queue.reset();}});
+ const gate=createComicReceiptGate({initialState,context:getContext(),onCommit:(snapshot,recovered)=>{continuityState=snapshot;let added=false;for(const scene of recovered||[])if(!savedReplay.some(old=>old.receiptKey===scene.receiptKey)){savedReplay.push(scene);added=true;}if(added)onReceipts();},select:(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS}),onScenes:scenes=>{savedReplay.push(...scenes.filter(scene=>!savedReplay.some(old=>old.receiptKey===scene.receiptKey)));onReceipts();// Live liquidations use the inline receipt; keep the comic available for deliberate replay.
+ const automatic=scenes.filter(scene=>scene.id!=='liquidation'&&!scene.manualOnly&&!scene.settlementDay&&scene.observedDay===currentState.day);if(automatic.length)deliveries.push({context:getContext(),scenes:automatic});paint(queue.state);scheduleDelivery();},onReset:()=>{clearTimeout(deliveryTimer);deliveryTimer=null;deliveries=[];savedReplay=[];autoShown.clear();manualReplay.clear();queue.reset();}});
  // A loaded save is already durable. Rebuild read-only scenes from its own
  // current-day receipts, but never autoplay them or call economic handlers.
  savedReplay=structuredClone(recordedComicScenes(initialState,(state,event)=>selectComicScene(state,event,{assets:COMIC_PRESENTATION_ASSETS})));

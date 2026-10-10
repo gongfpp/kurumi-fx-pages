@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {runPerformance} from './performance.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {runPerformance} from './performance.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -81,10 +81,10 @@ export async function createShareCard(state,options={}) {
   const points=s.recap.curves[scope],trail=points.map(p=>p.nominalAssets),scale=buildCurveScale(trail),plot={left:125+offset,right:514+offset,top:844,bottom:932};
   const start=points[0]?.timestamp||0,range=Math.max(1,(points.at(-1)?.timestamp||start)-start),plotX=p=>plot.left+(p.timestamp-start)/range*(plot.right-plot.left),plotY=value=>plot.bottom-(value-scale.min)/(scale.max-scale.min)*(plot.bottom-plot.top);
   for(const value of scale.ticks){const y=plotY(value);ctx.strokeStyle='#f0dfe7';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(plot.left,y);ctx.lineTo(plot.right,y);ctx.stroke();ctx.textAlign='right';label(axisAmount(value,scale.step),plot.left-8,y+5,14);ctx.textAlign='left';}
-  ctx.strokeStyle=darkPink;ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=plotX(p),y=plotY(p.nominalAssets);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+  ctx.strokeStyle=darkPink;ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=plotX(p),y=plotY(p.nominalAssets);i&&!p.gapBefore?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
   for(const t of timeAxisTicks(points,{maxTicks:2})){ctx.textAlign=t.index===0?'left':'right';label(t.label,plotX(t),955,15);ctx.textAlign='left';}
  }
- label(s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'旧记录仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线':'账户总资产曲线',48,981,16);rule(1000);
+ label(s.recap.curves.todaySampled?(s.recap.curves.todayMissing||s.recap.curves.cumulativePartial?'部分历史缺失，其余盘中资金已采样；仅展示实际记录':'盘中资金已采样；点为实际记录，连线不是逐笔走势'):s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'部分历史未记录，仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线':'账户总资产曲线',48,981,16);rule(1000);
  num('特别记录',48,1033,27);
  if(!report.specialRecords.length)label(p.complete?'这局还没有特别记录':'旧档订单记录不完整，未知项保留为空',48,1094,22);
  report.specialRecords.forEach((record,i)=>{const value=['negative-net-assets','loss-over-initial'].includes(record.id)?knownAmount(record.value):String(record.value)+(record.id==='max-leverage'?'×':'');label(record.label,48,1094+i*48,22,ink);ctx.textAlign='right';num(value,1032,1094+i*48,26,darkPink);ctx.textAlign='left';});

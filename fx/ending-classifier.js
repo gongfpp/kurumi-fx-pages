@@ -1,5 +1,5 @@
-import {accountingValues} from './accounting-journal.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({
@@ -16,6 +16,10 @@ export const ENDING_VARIANTS=Object.freeze({
  'debt-free':{title:'无债一身轻',description:'曾经借过的钱已经还清，父亲欠款与网贷余额都归零。这一局不再带着欠款离场。'},
  'returned-savings':{title:'把钱放回去',description:'实际取用的父亲存款已经归还。柜子里的账先被补齐了。'}
 });
+
+// Append-only catalog: persisted/displayed numbers never depend on rule priority.
+export const ENDING_CATALOG=Object.freeze(['million','walkaway','broke','crisis','debt-exit','paper-millionaire','gave-it-back','back-to-even','debt-free','returned-savings']);
+export function endingCatalogEntry(id){const index=ENDING_CATALOG.indexOf(id);return index<0?null:{id,number:index+1,total:ENDING_CATALOG.length,label:`END ${index+1}/${ENDING_CATALOG.length}`};}
 
 // Classification is read-only and only runs for an already sealed terminal state.
 // It must never create a terminal state, trade, fee or story transition.
@@ -46,5 +50,5 @@ export function classifyEnding(state={}){
  }else if(baseId==='walkaway'&&debtsKnown&&totalDebt<=.005&&fatherRepaid>0){
   variant='debt-free';matchedRule='主动离场；有实际父亲借款归还记录，父亲欠款与网贷欠款均已清零';
  }
- return {rulesVersion:ENDING_RULES_VERSION,baseId,variant,...(variant?ENDING_VARIANTS[variant]:BASE_ENDINGS[baseId]),evidence,matchedRule};
+ return {rulesVersion:ENDING_RULES_VERSION,baseId,variant,catalog:endingCatalogEntry(variant||baseId),...(variant?ENDING_VARIANTS[variant]:BASE_ENDINGS[baseId]),evidence,matchedRule};
 }

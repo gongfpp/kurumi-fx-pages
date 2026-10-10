@@ -1,4 +1,5 @@
-import {AI_REVIEW_PROMPT,downloadResults} from './results-report.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {downloadResults} from './results-report.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';
@@ -20,10 +21,13 @@ export function mountResultsReport(root,report,options={}){
  if(report.specialRecords.length){const section=make('section',undefined,'results-special');section.append(make('h4','特别记录'));const list=make('ul');for(const record of report.specialRecords)list.append(make('li',`${record.label}：${['negative-net-assets','loss-over-initial'].includes(record.id)?amount(record.value):record.value+(record.id==='max-leverage'?'×':'')}`));section.append(list);root.append(section);}
  for(const warning of report.dataQuality.warnings)root.append(make('p',warning,'results-warning'));
  const actions=make('div',undefined,'results-actions'),download=make('button','下载本局 JSON','primary'),copy=make('button','复制 AI 锐评提示词','secondary');download.type=copy.type='button';download.dataset.resultsAction='download';copy.dataset.resultsAction='copy-prompt';
+ const voiceLabel=make('label','吐槽口吻 ','results-voice'),voice=make('select');voice.setAttribute('aria-label','AI 吐槽口吻');voice.dataset.resultsAction='roast-voice';
+ for(const item of AI_ROAST_VOICES){const option=make('option',item.label);option.value=item.id;voice.append(option);}voice.value='tieba';voiceLabel.append(voice);
  const status=make('p','','small-print');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
- const promptBox=make('details',undefined,'results-details'),text=make('textarea');promptBox.append(make('summary','查看 / 手动复制提示词'));text.value=AI_REVIEW_PROMPT;text.readOnly=true;text.rows=9;text.setAttribute('aria-label','AI 游戏复盘提示词');promptBox.append(text);
+ const promptBox=make('details',undefined,'results-details'),text=make('textarea');promptBox.append(make('summary','查看 / 手动复制提示词'));text.value=buildAIRoastPrompt(voice.value);text.readOnly=true;text.rows=9;text.setAttribute('aria-label','AI 游戏吐槽提示词');promptBox.append(text);
+ voice.onchange=()=>{text.value=buildAIRoastPrompt(voice.value);status.textContent='口吻已切换，复制后配合本局 JSON 使用。';};
  download.onclick=()=>{try{const result=(options.download||downloadResults)(report);status.textContent=`已生成 ${result.filename}，请查看浏览器下载。`;}catch(error){status.textContent=error?.message||'下载失败，请重试';}};
- copy.onclick=async()=>{try{const clipboard=options.clipboard??globalThis.navigator?.clipboard;if(!clipboard?.writeText)throw Error('clipboard unavailable');await clipboard.writeText(AI_REVIEW_PROMPT);status.textContent='提示词已复制。把它和刚下载的 JSON 一起交给你选择的 AI。';}catch{promptBox.open=true;text.focus?.();text.select?.();status.textContent='浏览器未允许自动复制，已展开提示词，请手动复制。';}};
- actions.append(download,copy);root.append(actions,status,promptBox,make('p','导出只保存在本地。你可以自行选择 GPT、DeepSeek 等工具，再上传 JSON 并粘贴提示词。','small-print'));
- return {report,download,copy};
+ copy.onclick=async()=>{try{const clipboard=options.clipboard??globalThis.navigator?.clipboard;if(!clipboard?.writeText)throw Error('clipboard unavailable');const selectedPrompt=buildAIRoastPrompt(voice.value);await clipboard.writeText(selectedPrompt);status.textContent='所选口吻的提示词已复制。和本局 JSON 一起交给 AI，就能得到一小段吐槽。';}catch{text.value=buildAIRoastPrompt(voice.value);promptBox.open=true;text.focus?.();text.select?.();status.textContent='浏览器未允许自动复制，已展开提示词，请手动复制。';}};
+ actions.append(download,copy);root.append(voiceLabel,actions,status,promptBox,make('p','导出只保存在本地。你可以自行选择 GPT、DeepSeek 等工具，再上传 JSON 并粘贴提示词。','small-print'));
+ return {report,download,copy,voice};
 }

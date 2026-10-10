@@ -28,5 +28,5 @@ export function recapProgress(presentation,elapsed){
 }
 export function recapBeatCue(presentation,index,{final=false}={}){
  const fraction=presentation.beats?Math.min(1,(index+1)/presentation.beats):0;
- return{kind:final?(presentation.rank===3?`outcome-${presentation.direction}`:presentation.direction==='profit'?'terminal-fill':'terminal-close'):'terminal-tap',rate:presentation.direction==='loss'?1.2-.4*fraction:.78+.47*fraction,level:final?.45+presentation.rank*.12:.15+fraction*(.2+presentation.rank*.09)};
+ return{kind:final?(presentation.rank===3?`recap-land-${presentation.direction}`:presentation.direction==='profit'?'terminal-fill':'terminal-close'):'terminal-tap',rate:presentation.direction==='loss'?1.2-.4*fraction:.78+.47*fraction,level:final?.45+presentation.rank*.12:.15+fraction*(.2+presentation.rank*.09)};
 }

@@ -1,6 +1,6 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];
@@ -22,7 +22,10 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     const paths=PRESSURE_CRACKS.map(spec=>{const path=root.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);path.setAttribute('clip-path',`url(#${clipId})`);svg.append(path);return {path,at:spec.at};});
     const count=root.createElement('span');count.className='pressure-count';count.setAttribute('aria-hidden','true');count.hidden=true;button.append(svg,count);button.dataset.pressureLabel=original.get(button).text;decorations.set(button,{svg,paths,count,shards});
   }
-  const presentation=createPressurePresentation({root,motion,enabled:motionEnabled});
+  let pressureVoice=null;
+  const presentation=createPressurePresentation({root,motion,enabled:motionEnabled,onClear:reason=>{pressureVoice?.stop();pressureVoice=null;if(reason!=='finished')hideHint();}});
+  const heldPressureKeys=new Set(),pointerPresses=new Map(),pointerReleaseTimers=new Map();
+  let spacePress=null,spaceRelease=null,spaceReleaseTimer=null,inputOrder=0;
   let animation=null,lastSignature='',lastStateKey='',disposed=false,hintTimer,breakTimer;
   const target=button=>({kind:button.hasAttribute('data-stake')?'stake':'leverage',value:Number(button.dataset.stake??button.dataset.leverage)});
   const classify=button=>emotionControlState({...target(button),limits:getLimits(),hardBlocked:getContext(button).hardBlocked});
@@ -30,8 +33,8 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   function hideHint(){clearTimeout(hintTimer);tooltip.hidden=true;}
   function showHint(button,text,timeout=2600){
     tooltip.textContent=text;tooltip.hidden=false;
-    const box=button.getBoundingClientRect(),width=Math.min(340,(root.defaultView?.innerWidth||root.documentElement.clientWidth)-24);
-    tooltip.style.width=width+'px';tooltip.style.left=Math.max(12,Math.min(box.left,(root.defaultView?.innerWidth||root.documentElement.clientWidth)-width-12))+'px';
+    const box=button.getBoundingClientRect(),maxWidth=Math.min(340,(root.defaultView?.innerWidth||root.documentElement.clientWidth)-24);
+    tooltip.style.maxWidth=maxWidth+'px';const width=tooltip.offsetWidth||maxWidth;tooltip.style.left=Math.max(12,Math.min(box.left,(root.defaultView?.innerWidth||root.documentElement.clientWidth)-width-12))+'px';
     const height=tooltip.offsetHeight,viewHeight=root.defaultView?.innerHeight||root.documentElement.clientHeight;
     tooltip.style.top=Math.max(12,box.top>height+16?box.top-height-10:Math.min(viewHeight-height-12,box.bottom+10))+'px';
     clearTimeout(hintTimer);hintTimer=setTimeout(hideHint,timeout);
@@ -44,7 +47,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     for(const button of buttons){
       const classification=classify(button),soft=classification==='soft',base=original.get(button),decoration=decorations.get(button);
       button.disabled=classification==='hard';button.classList.toggle('emotion-soft-lock',soft);button.dataset.emotionLock=soft?'soft':'';
-      button.dataset.pressureStage=visual.stage;button.style.setProperty('--pressure-progress',String(p.intensity));
+      button.dataset.pressureStage=visual.stage;button.dataset.pressureDirection=p.direction||'';button.style.setProperty('--pressure-progress',String(p.intensity));
       for(const {path,at} of decoration.paths)path.style.opacity=p.intensity*12>=at?'1':'0';
       button.dataset.pressureFrame=p.taps?'cracking':'';
       for(const {line,dx,dy,at} of decoration.shards){const broken=p.intensity>=at;line.style.opacity=broken?'0':'1';line.style.transform=broken&&!reduced()?`translate(${dx}px,${dy}px)`:'none';}
@@ -63,17 +66,46 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     lastSignature=`${stateKey}:${p.taps}:${p.direction}`;
   }
   function onClick(event){
-    const button=event.target.closest?.('[data-stake],[data-leverage]');if(!buttons.includes(button)||classify(button)!=='soft')return;
+    const button=event.target.closest?.('[data-stake],[data-leverage]');if(!buttons.includes(button))return;
+    const classification=classify(button);
+    const keyboardPress=event.detail===0&&spaceRelease?.button===button?spaceRelease:null;
+    if(keyboardPress){spaceRelease=null;clearTimeout(spaceReleaseTimer);}
+    const legacyPointer=event.detail>0&&!pointerPresses.has(event.pointerId)?[...pointerPresses].filter(([,p])=>p.button===button&&p.released).sort((a,b)=>b[1].released-a[1].released)[0]:null;
+    const pointerId=legacyPointer?.[0]??event.pointerId,pointerPress=event.detail!==0?pointerPresses.get(pointerId):null;
+    if(pointerPress){pointerPresses.delete(pointerId);clearTimeout(pointerReleaseTimers.get(pointerId));pointerReleaseTimers.delete(pointerId);}
+    const gesture=keyboardPress||pointerPress;
+    // Finish a soft-lock gesture as pressure only, even if another input unlocked
+    // the control between down and click. Selection always needs a fresh gesture.
+    if(gesture?.soft&&(gesture.cancelled||gesture.context!==lastStateKey||classification!=='soft')){event.preventDefault();event.stopImmediatePropagation();return;}
+    if(classification!=='soft')return;
     event.preventDefault();event.stopImmediatePropagation();if(!event.isTrusted||!canInteract()||root.querySelector('dialog[open]'))return;
     const result=pressEmotion(getState(),{...target(button),limits:getLimits(),...getContext(button)});if(!result.accepted)return;
-    const feedback=pressureFeedback(result.intensity),visual=pressureVisual(result.taps,{reduced:reduced(),unlocked:result.unlocked,target:result.target});
-    audio?.unlock();audio?.effect(result.unlocked?'pressure-break':'pressure-hit',feedback);animation?.cancel();
-    onChange(result);render();showHint(button,visual.hint,result.unlocked?3200:2600);
-    presentation.play(button,{taps:result.taps,unlocked:result.unlocked,target:result.target});
+    const feedback=pressureFeedback(result.intensity),visual=pressureVisual(result.taps,{reduced:reduced(),unlocked:result.unlocked,target:result.target,direction:result.direction});
+    animation?.cancel();onChange(result);render();
+    presentation.play(button,{taps:result.taps,unlocked:result.unlocked,target:result.target,direction:result.direction});
+    showHint(button,visual.hint,result.unlocked?3200:1600);
+    audio?.unlock();audio?.effect(result.unlocked?(result.direction==='despair'?'pressure-break-despair':'pressure-break'):'pressure-hit',{...feedback,onVoice:voice=>{pressureVoice=voice;}});
   }
-  function onKey(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(event.repeat&&buttons.includes(button)&&classify(button)==='soft'&&['Enter',' '].includes(event.key))event.preventDefault();}
-  function onHint(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(button&&buttons.includes(button)&&classify(button)==='soft')showHint(button,pressureVisual(pressureStatus(getState()).taps,{target:pressureStatus(getState()).target||pressureTarget(getState(),{...target(button),limits:getLimits(),...getContext(button)})}).hint,5000);}
-  root.addEventListener('click',onClick,true);root.addEventListener('keydown',onKey,true);root.addEventListener('pointerover',onHint);root.addEventListener('focusin',onHint);root.addEventListener('scroll',hideHint,true);
+  function onKey(event){
+    if(!['Enter',' '].includes(event.key))return;
+    const button=event.target.closest?.('[data-stake],[data-leverage]');
+    // A held Enter must not become an ordinary selection when its last hit unlocks.
+    if(event.repeat&&(heldPressureKeys.has(event.key)||buttons.includes(button))){event.preventDefault();return;}
+    spaceRelease=null;clearTimeout(spaceReleaseTimer);
+    const soft=buttons.includes(button)&&classify(button)==='soft';
+    if(soft)heldPressureKeys.add(event.key);
+    if(event.key===' '){spacePress=soft?{button,soft:true,context:lastStateKey,cancelled:false}:null;}
+  }
+  const onKeyUp=event=>{
+    heldPressureKeys.delete(event.key);
+    if(event.key===' '&&spacePress){spaceRelease=spacePress;spacePress=null;clearTimeout(spaceReleaseTimer);spaceReleaseTimer=setTimeout(()=>{spaceRelease=null;},1000);}
+  };
+  const onPointerDown=event=>{const button=event.target.closest?.('[data-stake],[data-leverage]');if(!buttons.includes(button))return;clearTimeout(pointerReleaseTimers.get(event.pointerId));pointerPresses.set(event.pointerId,{button,soft:classify(button)==='soft',context:lastStateKey,cancelled:false});};
+  const onPointerUp=event=>{if(!pointerPresses.has(event.pointerId))return;pointerPresses.get(event.pointerId).released=++inputOrder;clearTimeout(pointerReleaseTimers.get(event.pointerId));pointerReleaseTimers.set(event.pointerId,setTimeout(()=>{pointerPresses.delete(event.pointerId);pointerReleaseTimers.delete(event.pointerId);},1000));};
+  const onPointerCancel=event=>{clearTimeout(pointerReleaseTimers.get(event.pointerId));pointerReleaseTimers.delete(event.pointerId);pointerPresses.delete(event.pointerId);};
+  const onBlur=()=>{heldPressureKeys.clear();if(spacePress)spacePress.cancelled=true;if(spaceRelease)spaceRelease.cancelled=true;for(const p of pointerPresses.values())p.cancelled=true;presentation.clear();};
+  function onHint(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(button&&buttons.includes(button)&&classify(button)==='soft')showHint(button,pressureVisual(pressureStatus(getState()).taps,{direction:pressureStatus(getState()).direction,target:pressureStatus(getState()).target||pressureTarget(getState(),{...target(button),limits:getLimits(),...getContext(button)})}).hint,5000);}
+  root.addEventListener('pointerdown',onPointerDown,true);root.addEventListener('pointerup',onPointerUp,true);root.addEventListener('pointercancel',onPointerCancel,true);root.addEventListener('click',onClick,true);root.addEventListener('keydown',onKey,true);root.addEventListener('keyup',onKeyUp,true);root.defaultView?.addEventListener?.('blur',onBlur);root.addEventListener('pointerover',onHint);root.addEventListener('focusin',onHint);root.addEventListener('scroll',hideHint,true);
   const interval=setInterval(()=>{if(disposed||root.hidden)return;const state=getState(),p=pressureStatus(state),signature=`${state.mode}:${state.runId||state.seed}:${state.day}:${p.taps}:${p.direction}`;if(signature!==lastSignature){onChange({cooled:true,...p});render();}},500);
-  return {render,dispose(){disposed=true;presentation.dispose();clearInterval(interval);clearTimeout(breakTimer);hideHint();animation?.cancel();tooltip.remove();root.removeEventListener('click',onClick,true);root.removeEventListener('keydown',onKey,true);root.removeEventListener('pointerover',onHint);root.removeEventListener('focusin',onHint);root.removeEventListener('scroll',hideHint,true);}};
+  return {render,dispose(){disposed=true;clearTimeout(spaceReleaseTimer);spacePress=null;spaceRelease=null;heldPressureKeys.clear();for(const t of pointerReleaseTimers.values())clearTimeout(t);pointerReleaseTimers.clear();pointerPresses.clear();presentation.dispose();clearInterval(interval);clearTimeout(breakTimer);hideHint();animation?.cancel();tooltip.remove();root.removeEventListener('pointerdown',onPointerDown,true);root.removeEventListener('pointerup',onPointerUp,true);root.removeEventListener('pointercancel',onPointerCancel,true);root.removeEventListener('click',onClick,true);root.removeEventListener('keydown',onKey,true);root.removeEventListener('keyup',onKeyUp,true);root.defaultView?.removeEventListener?.('blur',onBlur);root.removeEventListener('pointerover',onHint);root.removeEventListener('focusin',onHint);root.removeEventListener('scroll',hideHint,true);}};
 }

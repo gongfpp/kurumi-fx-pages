@@ -1,5 +1,6 @@
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const FAMILY_EVENTS=new Set(['fatherDiscover','fatherUnlock','fatherFound','repayPartial','repayFull']);
 const positive=n=>Number.isFinite(n)&&n>0;
 const taken=s=>!!s.fatherUsed||!!s.family?.takenConfirmed||positive(s.family?.outstanding)||positive(s.family?.repaid)||positive(s.family?.withdrawal?.amount);
@@ -21,6 +22,12 @@ export function selectDailyFamilyArtwork(state,narrative,{assets=COMIC_SCENE_ASS
   }
  }else if(!taken(state)){
   const discovery=state.fatherDiscovery;
+  if(discovery?.route==='crisis'&&['presenting','available'].includes(discovery.status)&&discovery.eventId&&discovery.startedDay===narrative.day&&discovery.facts?.severe===true){
+   const ids=['pain','discover','relief'],frames=narrative.fatherFrames;
+   if(frames?.length===3&&frames.every((frame,index)=>frame.id===ids[index]&&frame.eventId===discovery.eventId&&frame.route==='crisis')){
+    return {id:'father-crisis',title:'柜子里的信封',frames:frames.map(frame=>({id:frame.id,text:frame.text,art:{...FATHER_DISCOVERY_ART[frame.id]}}))};
+   }
+  }
   // The complete calm sheet leaves the envelope untouched. It is not the
   // crisis pain/discovery/relief sequence, and never an already-taken receipt.
   if(discovery?.route==='calendar'&&['presenting','available'].includes(discovery.status)&&discovery.eventId&&narrative.fatherFrames?.some(frame=>frame.id==='calm'&&frame.eventId===discovery.eventId))id='father-discover';

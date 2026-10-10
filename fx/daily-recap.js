@@ -1,11 +1,12 @@
-import {displayCandles,candlePeriodNotice} from './candle-period.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {readRunStatistics} from './run-statistics.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {runPerformance} from './performance.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+import {displayCandles,candlePeriodNotice} from './candle-period.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {runPerformance} from './performance.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -23,9 +24,11 @@ export function buildRecapSnapshot(state={},options={}){
  const closing=finite(report?.closing,currentValues.nominalAssets),closeTime=report?reportTradingTimestamp(state,report):currentTradingTimestamp(state);
  if(!today.length||today.at(-1).nominalAssets!==closing||today.at(-1).timestamp!==closeTime)today.push({day:state.day,timestamp:closeTime,nominalAssets:closing,netAssets:currentValues.netAssets,kind:'closing'});
  const cumulative=(state.accountingJournal?.days||[]).filter(x=>Number.isFinite(x.timestamp)&&Number.isFinite(x.nominalAssets)).map(x=>({...x}));
- const hasEarlierGap=!!cumulative.length&&cumulative[0].day>1;
- cumulative.unshift({day:1,timestamp:tradingTimestamp(state,{day:1}),nominalAssets:p.startEquity,netAssets:p.startEquity,kind:'start'});
- if(cumulative.at(-1).timestamp!==closeTime||cumulative.at(-1).nominalAssets!==closing)cumulative.push({day:state.day,timestamp:closeTime,nominalAssets:closing,netAssets:currentValues.netAssets,kind:'current'});
+ const journal=state.accountingJournal,missingDailyCount=accountingDailyCoverage(journal,state.day).missingDays;
+ const retainedStart=accountingStart(journal);
+ if(retainedStart&&Number.isFinite(retainedStart.timestamp)&&Number.isFinite(retainedStart.nominalAssets))cumulative.unshift({...retainedStart,kind:'start'});
+ const hasEarlierGap=missingDailyCount>0||!retainedStart;
+ if(!cumulative.length||cumulative.at(-1).timestamp!==closeTime||cumulative.at(-1).nominalAssets!==closing)cumulative.push({day:state.day,timestamp:closeTime,nominalAssets:closing,netAssets:currentValues.netAssets,kind:'current'});
  // Presentation curves remove every non-trading cash flow, while the journal
  // and account balances above retain the actual assets and liabilities.
  const tradingPoint=(point,{daily=false}={})=>{
@@ -42,6 +45,13 @@ export function buildRecapSnapshot(state={},options={}){
  const observations=points.filter(x=>x.timestamp<=closeTime&&Number.isFinite(x.unrealized)&&Number.isFinite(x.tradingAssets)).map(x=>({timestamp:x.timestamp,tradingAssets:x.tradingAssets+finite(state.dayOpeningFunding)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset),unrealized:x.unrealized}));
  const observedClosing=closingTrading.tradingAssets+finite(state.dayOpeningFunding)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset);
  if(Number.isFinite(observedClosing))observations.push({timestamp:closeTime,tradingAssets:observedClosing,unrealized:finite(currentValues.unrealized)});
+ const todaySampled=!!recorded?.sampled||accountingDaySampled(journal,state.day);
+ const todayMissing=!journal||!!journal.legacyPartial&&journal.startedDay===state.day||accountingDayMissing(journal,state.day)||(recorded?.partial&&!todaySampled);
+ const todayPartial=!!recorded?.partial||!!todayMissing||todaySampled;
+ // A missing daily row (including one that cannot be converted to trading assets)
+ // stays a visible break, rather than a line across unobserved dates.
+ for(let i=1;i<tradingCumulative.length;i++)if(tradingCumulative[i].day>tradingCumulative[i-1].day+1||tradingCumulative[i-1].kind==='start'&&tradingCumulative[i].day>1)tradingCumulative[i].gapBefore=true;
+ const missingTradingDays=accountingDailyCoverage({days:tradingCumulative.filter(p=>!['start','current','trading-close'].includes(p.kind))},state.day).missingDays;
  const cumulativeDenominator=finite(state.startEquity,p.startEquity),totalProfit=finite(report?.performance?.totalProfit,p.totalProfit),totalReturn=ratio(totalProfit,cumulativeDenominator),dayReturn=dayMetrics.returnRate;
  const primary=state.mode==='endless'?{scope:'cumulative',label:'累计已实现交易收益',profit:totalProfit,returnRate:totalReturn}:{scope:'today',label:dayMetrics.tradingNetPartial?'今日交易盈亏 · 留存样本':report?'今日交易净盈亏':'今日已实现交易盈亏',profit:tradingNet,returnRate:dayReturn};
  const allCandles=displayCandles(state),dayCandleStart=allCandles.findIndex(c=>c.day===state.day),dayCandleEnd=allCandles.findLastIndex(c=>c.day===state.day)+1,candleMovingAverages=dayCandleStart<0?[]:movingAverageSeries(allCandles,{start:dayCandleStart,end:dayCandleEnd});
@@ -50,8 +60,8 @@ export function buildRecapSnapshot(state={},options={}){
   cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计收益率 = 累计已实现净盈亏 ÷ 初始本金'},
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
-  curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial:recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||state.accountingJournal?.truncatedDays?.includes(state.day),cumulativePartial:!!state.accountingJournal?.legacyPartial||!state.accountingJournal||hasEarlierGap,unit:'日元 / ¥',timeUnit:'游戏交易时间 · JST'},
-  replay:{observations,partial:points.some(x=>!Number.isFinite(x.unrealized)||!Number.isFinite(x.tradingAssets))||(recorded?!!recorded.partial:!state.accountingJournal||!!state.accountingJournal.legacyPartial&&state.accountingJournal.startedDay===state.day||!!state.accountingJournal?.truncatedDays?.includes(state.day))},
+  curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial,todaySampled,todayMissing:!!todayMissing,cumulativePartial:!!journal?.legacyPartial||!journal||hasEarlierGap||missingTradingDays>0,missingDailyCount,missingTradingDays,unit:'日元 / ¥',timeUnit:'游戏交易时间 · JST'},
+  replay:{observations,partial:points.some(x=>!Number.isFinite(x.unrealized)||!Number.isFinite(x.tradingAssets))||todayPartial,sampled:todaySampled,missing:!!todayMissing},
   trades:readRunStatistics(state).trades.filter(t=>t.day===state.day).map(t=>({...t})),
   candles:allCandles.filter(c=>c.day===state.day),candleMovingAverages,timeNotice:candlePeriodNotice(state),
   note:dayMetrics.returnUnavailable||null};
@@ -67,4 +77,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=b39a790857a9b07859ddbae35501a27b30daae44-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
