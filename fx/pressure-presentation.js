@@ -1,5 +1,5 @@
-import {systemReducedMotion} from './motion-preference.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {pressureVisual} from './pressure-visuals.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {pressureVisual} from './pressure-visuals.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 // Only rendering. This module cannot unlock a control, place an order, or save.
 export function pressureMotionPlan(taps,{reduced=false,unlocked=false,target=5}={}){
  const visual=pressureVisual(taps,{reduced,unlocked,target}),pageDisplacement=reduced?0:unlocked?18:taps===0?0:7+9*visual.intensity;

@@ -1,5 +1,5 @@
-import {movingAveragePath} from './moving-average.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.
@@ -45,32 +45,35 @@ export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=
  const hidden=window.hiddenBefore+window.hiddenAfter,notice=[`${window.total?window.start+1:0}–${window.end} / ${window.total} 根`,hidden?`窗外 ${hidden} 根，选“全部”查看`:'全部已记录行情',scale.zoom>1?`纵轴 ${scale.zoom}×`:'完整纵轴'];
  if(scale.clippedCandles)notice.push(`▲▼ ${scale.clippedCandles} 根超出纵轴，尖针未删除`);
  if(scale.clippedAverages)notice.push(`${scale.clippedAverages} 条均线部分超出纵轴`);
- if(scale.zoom>1)notice.push('“全幅”恢复原幅度');
  return{html:parts.join(''),notice:notice.join(' · '),window,scale};
 }
 export function createChartViewport(doc,{count=12,onChange=()=>{}}={}){
- const baseHeight=doc.defaultView?.matchMedia?.('(max-width:690px)').matches?220:280;
+ const baseHeight=doc.defaultView?.matchMedia?.('(max-width:690px)').matches?196:280;
  const state={count,offset:0,zoom:1,height:baseHeight},root=doc.createElement('div');root.className='candle-view-controls';root.setAttribute('aria-label','K线可视范围，不改变行情');
- let total=0;
- const buttons=[];
+ let total=0,overview=null,context;
  const button=(label,action)=>{const b=doc.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{action();sync();onChange(state);};root.append(b);return b;};
- for(const [size,label]of [[0,'全部']]){const b=button(label,()=>{state.count=size;state.offset=0;});buttons.push([size,b]);}
+ const all=button('全部',()=>{
+  if(overview){state.count=overview.count;state.offset=overview.offset===0?0:Math.max(0,total-overview.end);overview=null;}
+  else {overview={count:state.count,offset:state.offset,end:total-state.offset};state.count=0;state.offset=0;}
+ });all.setAttribute('aria-label','全览已记录行情，再点返回刚才的横轴范围');
  // Keep the rightmost visible candle anchored while changing the horizontal span.
  const visibleSize=()=>state.count>0?Math.min(total,Math.max(1,state.count)):total;
  function resizeHorizontal(enlarge){
   const size=visibleSize();if(size<1)return;
   const next=clamp(enlarge?Math.floor(size/1.5):Math.ceil(size*1.5),1,total);
   if(next===size)return;
-  state.count=next===total?0:next;
+  overview=null;state.count=next===total?0:next;
  }
  const horizontalPlus=button('横轴＋',()=>resizeHorizontal(true));horizontalPlus.setAttribute('aria-label','放大横轴，减少可见K线根数');
  const horizontalMinus=button('横轴－',()=>resizeHorizontal(false));horizontalMinus.setAttribute('aria-label','缩小横轴，增加可见K线根数');
- button('全幅',()=>state.zoom=1);button('拉高图表',()=>state.height=state.height===baseHeight?440:baseHeight);
  const label=doc.createElement('label'),slider=doc.createElement('input');label.className='candle-history';label.textContent='回看';slider.type='range';slider.min='0';slider.max='0';slider.value='0';slider.setAttribute('aria-label','回看较早K线，右端为最新');slider.oninput=()=>{state.offset=Number(slider.max)-Number(slider.value);onChange(state);};label.append(slider);root.append(label);
  function sync(){
   const max=state.count>0?Math.max(0,total-state.count):0;state.offset=clamp(state.offset,0,max);slider.max=String(max);slider.value=String(max-state.offset);slider.disabled=max===0;label.hidden=max===0;
-  for(const [size,b]of buttons)b.setAttribute('aria-pressed',String(state.count===size));
+  all.setAttribute('aria-pressed',String(Boolean(overview)));
   horizontalPlus.disabled=visibleSize()<=1;horizontalMinus.disabled=visibleSize()>=total;
  }
- sync();return{root,state,update(length){total=Math.max(0,Math.trunc(Number(length))||0);sync();}};
+ sync();return{root,state,update(length,nextContext=context){
+  if(context!==undefined&&nextContext!==context){overview=null;state.count=count;state.offset=0;}
+  context=nextContext;total=Math.max(0,Math.trunc(Number(length))||0);sync();
+ }};
 }

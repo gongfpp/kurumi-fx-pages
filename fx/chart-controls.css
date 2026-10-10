@@ -37,3 +37,17 @@
 }
 
 .candle-view-controls #quote-package-open{width:auto;flex:0 0 auto;margin:0}
+
+/* Two restrained beats, then rest. No flashing, continuous shaking or quote pulse. */
+#price[data-heartbeat]:not([data-heartbeat="quiet"]){display:inline-block;transform-origin:center;animation:chart-risk-heartbeat var(--risk-heartbeat-duration,1100ms) ease-in-out infinite}
+@keyframes chart-risk-heartbeat{0%,34%,100%{transform:none}9%{transform:translateY(-1px) scale(1.035)}17%{transform:none}25%{transform:translateY(-.5px) scale(1.022)}}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) #price{animation:none!important}}
+/* Out-of-flow overlay anchored INSIDE the lower plot. It never changes the
+   chart, order controls or position layout. Price labels and the time axis stay
+   outside its bounds. Multiple warnings scroll inside the same capped panel. */
+.chart-risk-stage{position:relative;min-width:0}
+#risk-alerts{position:absolute;z-index:2;left:8px;bottom:42px;width:min(360px,calc(100% - 98px));box-sizing:border-box;isolation:isolate;margin:0;max-height:124px;overflow:auto;overscroll-behavior:contain;border:1px solid #dbadbd;border-radius:10px;background:#fff4f8;box-shadow:0 6px 18px #08050b55;color:#5b3027;padding:6px}
+#risk-alerts[hidden],#risk-alerts:empty{display:none}
+#risk-alerts .risk-alert{color:inherit;margin:0;border:0;border-radius:6px;background:transparent;box-shadow:none}
+#risk-alerts .risk-alert+.risk-alert{border-top:1px solid #ebcbd5}
+@media(max-width:690px){#risk-alerts{max-height:112px;padding:3px;left:3px;width:calc(100% - 85px)}#risk-alerts .risk-alert{gap:6px;padding:5px}#risk-alerts .risk-copy{font-size:11px}#risk-alerts button{min-height:36px}}

@@ -1,5 +1,5 @@
-import {downloadResults} from './results-report.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {downloadResults} from './results-report.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';

@@ -1,5 +1,5 @@
-import {setImage} from './assets.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {setImage} from './assets.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. The original 2x2 file remains untouched.
 export function mountComicDialogue(host,scene,{root=host.ownerDocument||document}={}){
@@ -19,6 +19,6 @@ export function mountComicDialogue(host,scene,{root=host.ownerDocument||document
  }
  const dispose=()=>{for(const stop of stops)stop();stops=[];};
  return {count:panels.length,images,dispose,observe({memory=dailyArtMemory,identities=[artIdentity(scene.art)]}={}){
-  dispose();const seen=new Set();stops=images.map(({image,crop,caption},index)=>observeSeenArtwork(image,{memory:{seen(){}},identities:[],visibilityTargets:[crop,caption],minVisibleRatio:.9,onSeen:()=>{seen.add(index);if(seen.size===4)memory.seen(identities.filter(Boolean));}}));return dispose;
+  dispose();const seen=new Set();stops=images.map(({image,crop,caption},index)=>observeSeenArtwork(image,{memory:{seen(){}},identities:[],visibilityTargets:[crop,caption],minVisibleRatio:.9,accumulateVisibility:true,onSeen:()=>{seen.add(index);if(seen.size===4)memory.seen(identities.filter(Boolean));}}));return dispose;
  }};
 }

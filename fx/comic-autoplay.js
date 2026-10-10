@@ -1,5 +1,5 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 // Presentation frequency is run-local. Receipts and manual replay are untouched.
 export const COMIC_PROFIT_MULTIPLIER=2;
 const FIRST_ONLY=new Set(['shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);

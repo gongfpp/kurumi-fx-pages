@@ -1,5 +1,5 @@
-import {tradingTimestamp} from './trading-time.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);

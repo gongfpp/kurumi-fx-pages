@@ -1,4 +1,4 @@
-import {positionsOf,positionNetUnrealized,accountMetrics,tradingOpen} from './engine.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {positionsOf,positionNetUnrealized,accountMetrics,tradingOpen} from './engine.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 
 // Presentation only: no RNG, clock advances, account mutations or cash-based P&L.
 export const TRADING_EXPRESSION_RULES=Object.freeze({

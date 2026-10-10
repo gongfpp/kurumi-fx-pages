@@ -1,7 +1,7 @@
-import {MANGA_PANELS} from './manga-panels.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {positionsOf,positionUnrealized,positionNetUnrealized,mood} from './engine.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {sealedDailyMangaOutcome,selectDailyManga} from './manga-context.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {positionsOf,positionUnrealized,positionNetUnrealized,mood} from './engine.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {sealedDailyMangaOutcome,selectDailyManga} from './manga-context.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 
 // Rules refer to actual account exposure, never the direction of the market
 // alone. Canonical labels are retained in the catalogue; corrected semantics

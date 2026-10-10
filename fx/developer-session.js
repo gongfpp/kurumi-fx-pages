@@ -1,4 +1,4 @@
-import {markDevelopmentTaint} from './development-taint.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {markDevelopmentTaint} from './development-taint.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 
 // No local flag is an authorization. Every open, edit and restore asks the
 // service again, and every await is followed by a current-run/epoch check.

@@ -1,4 +1,4 @@
-import {formatTradingTime} from './trading-time.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 const node=(doc,tag,attrs={})=>{const e=doc.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;};
 // Compress unrecorded session gaps geometrically, never synthesize market data.
 // Timestamp interpolation is only for the replay cursor / receipt marker x-axis.
@@ -8,6 +8,20 @@ export function recapCandlePosition(candles,timestamp,{left=0,right=1,end}={}){
  if(timestamp<=first)return left+slot/2;
  for(let i=1;i<candles.length;i++)if(timestamp<candles[i].timestamp){const a=candles[i-1].timestamp,b=candles[i].timestamp;return left+slot*(i-.5+Math.max(0,Math.min(1,(timestamp-a)/Math.max(1,b-a))));}
  return left+slot*(candles.length-.5+.5*Math.max(0,Math.min(1,(timestamp-last)/Math.max(1,(end??last+900000)-last))));
+}
+// Reserve a conservative 12 SVG units per character at the 12px label size.
+// Pick endpoints before the optional middle tick; omit duplicate/colliding labels
+// without moving their timestamps or the candle / trade geometry.
+export function recapTimeTicks(candidates,{left,right,gap=8}){
+ const kept=[];
+ for(const [timestamp,anchor,X] of candidates){
+  const label=formatTradingTime(timestamp)+' JST',width=label.length*12;
+  const offset=anchor==='end'?width:anchor==='middle'?width/2:0;
+  const begin=Math.max(left,Math.min(right-width,X-offset)),finish=begin+width;
+  if(width>right-left||kept.some(t=>t.label===label||!(finish+gap<=t.begin||begin>=t.finish+gap)))continue;
+  kept.push({timestamp,anchor,x:begin+offset,label,begin,finish});
+ }
+ return kept.sort((a,b)=>a.timestamp-b.timestamp);
 }
 export function createRecapStageChart(doc,snapshot){
  const root=doc.createElement('div');root.className='recap-stage-chart';
@@ -25,6 +39,7 @@ export function createRecapStageChart(doc,snapshot){
  const bars=candles.map((c,i)=>{const g=node(doc,'g',{'data-replay-candle':i,opacity:0}),color=c.close>=c.open?'#8cface':'#ff87b2',X=x(c.timestamp),w=Math.max(2,Math.min(14,(right-left)/Math.max(1,candles.length)*.65));g.append(node(doc,'line',{x1:X,x2:X,y1:y(c.high),y2:y(c.low),stroke:color,'stroke-width':1.7}),node(doc,'rect',{x:X-w/2,y:Math.min(y(c.open),y(c.close)),width:w,height:Math.max(2,Math.abs(y(c.close)-y(c.open))),fill:color}));svg.append(g);return {g,c};});
  const markers=trades.map((t,i)=>{const c=candles.filter(c=>c.timestamp<=t.timestamp).at(-1)||candles[0],price=Number.isFinite(t.exit)?t.exit:Number.isFinite(t.entry)?t.entry:c?.close??0,X=x(t.timestamp),Y=Math.max(27,Math.min(177,y(price))),g=node(doc,'g',{'data-replay-trade':i,opacity:0}),color=t.type==='open'?'#c4b2ff':t.pnl>=0?'#83f8c3':'#ff90b2',title=node(doc,'title');title.textContent=`${formatTradingTime(t.timestamp)} ${t.type==='open'?'开仓':'平仓'} ${Number.isFinite(t.pnl)?t.pnl.toFixed(2):''}`;g.append(node(doc,'circle',{cx:X,cy:Y,r:7,fill:'#272031',stroke:color,'stroke-width':2}),title);const label=node(doc,'text',{x:X,y:Y-12,'text-anchor':'middle',fill:color,'font-size':12});label.textContent=t.type==='open'?'开':t.pnl>=0?'+':'−';g.append(label);svg.append(g);return{g,t,index:i};});
  const cursor=node(doc,'line',{x1:24,x2:24,y1:18,y2:187,stroke:'#ffda86','stroke-width':2,'stroke-dasharray':'4 4'}),head=node(doc,'circle',{cx:24,cy:18,r:4,fill:'#ffda86'});svg.append(cursor,head);
- for(const [t,anchor]of (narrow?[[start,'start'],[end,'end']]:[[start,'start'],[candles[Math.floor(candles.length/2)]?.timestamp??(start+end)/2,'middle'],[end,'end']])){const label=node(doc,'text',{x:x(t),y:215,fill:'#c5b6cc','font-size':12,'text-anchor':anchor});label.textContent=formatTradingTime(t)+' JST';svg.append(label);}
+ const middle=candles[Math.floor(candles.length/2)]?.timestamp??(start+end)/2,ticks=[[end,'end',x(end)],[start,'start',x(start)],...(!narrow?[[middle,'middle',x(middle)]]:[])];
+ for(const tick of recapTimeTicks(ticks,{left,right})){const label=node(doc,'text',{x:tick.x,y:215,fill:'#c5b6cc','font-size':12,'text-anchor':tick.anchor});label.textContent=tick.label;svg.append(label);}
  return{root,update(frame){const t=frame.timestamp??end;for(const {g,c}of bars)g.setAttribute('opacity',frame.complete||Math.min(c.availableAt??c.timestamp+(c.periodMinutes||15)*60000,end)<=t?1:0);for(const {g,index}of markers)g.setAttribute('opacity',frame.complete||index<(frame.eventCount||0)?1:0);const X=x(t);cursor.setAttribute('x1',X);cursor.setAttribute('x2',X);head.setAttribute('cx',X);}};
 }

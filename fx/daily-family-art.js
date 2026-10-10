@@ -1,6 +1,6 @@
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=42af2d398ec805e2c863657b55b1725ad2314fc6-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
 const FAMILY_EVENTS=new Set(['fatherDiscover','fatherUnlock','fatherFound','repayPartial','repayFull']);
 const positive=n=>Number.isFinite(n)&&n>0;
 const taken=s=>!!s.fatherUsed||!!s.family?.takenConfirmed||positive(s.family?.outstanding)||positive(s.family?.repaid)||positive(s.family?.withdrawal?.amount);
