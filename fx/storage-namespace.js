@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=e9394d2e9c338188c2d4680441d7c59e8f5d8a93-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
 export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
