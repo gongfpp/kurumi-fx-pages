@@ -1,4 +1,4 @@
-import {ASSET_USAGE_CATALOG,tradingExpressionCandidates} from './asset-usage-catalog.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {ASSET_USAGE_CATALOG,tradingExpressionCandidates} from './asset-usage-catalog.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
 
 // Whole dialogue panels, never face-only crops. The small amount of adjacent
 // panel border in record 36 is excluded, preserving its complete speech bubble.

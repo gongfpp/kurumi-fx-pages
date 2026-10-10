@@ -140,3 +140,5 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 #father-take-dialog .father-amount-presets button[aria-pressed="true"]{background:#f0c4d9;border-color:#a7547e;box-shadow:inset 0 0 0 1px #a7547e}
 #father-confirm-art figcaption:empty{display:none}
 @media(max-width:390px){#father-take-dialog{padding:18px}#father-take-dialog h2{font-size:21px}}
+
+#news-archive-details{font-size:11px;color:#775b6e}#news-archive-source{color:#87425f;text-underline-offset:3px}.news-meta{flex-wrap:wrap;gap:4px 8px}

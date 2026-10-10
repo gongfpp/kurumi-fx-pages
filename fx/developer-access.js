@@ -1,4 +1,4 @@
-import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/,TOKEN=/^[a-f0-9]{64}$/,REQUEST=/^[a-f0-9-]{36}$/;
 // Passwords are never entered or handled by the Pages app. The owner completes
 // verification in a top-level first-party Site window; polling uses the same

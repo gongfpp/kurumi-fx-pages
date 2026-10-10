@@ -1,6 +1,6 @@
-import {createPressurePresentation} from './pressure-presentation.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
-import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];

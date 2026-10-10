@@ -11,7 +11,9 @@ export function recapPresentation(snapshot){
  const rate=Math.abs(Number.isFinite(snapshot.primary?.returnRate)?snapshot.primary.returnRate:0),amount=Math.round(Math.abs(profit)*100)/100;
  const weight=Math.max(clamp(rate/.5),clamp(Math.log10(1+amount/1000)/3));
  const catastrophic=catastrophicRecapLoss(snapshot);
- const rank=catastrophic?3:profit===0?0:rate>=.2||amount>=100000?3:rate>=.05||amount>=10000?2:1;
+ const observedMotion=(snapshot.replay?.observations||[]).some(p=>Number.isFinite(p.tradingAssets)&&Math.abs(p.tradingAssets-(snapshot.daily?.openingNominal||0))>=.01);
+ const receiptMotion=(snapshot.trades||[]).some(t=>t.type!=='open'&&Number.isFinite(t.pnl)&&Math.abs(t.pnl)>=.01);
+ const rank=catastrophic?3:profit===0?(observedMotion||receiptMotion?1:0):rate>=.2||amount>=100000?3:rate>=.05||amount>=10000?2:1;
  const tier=['flat','small','medium','large'][rank],direction=profit>0?'profit':profit<0?'loss':'flat';
  const intensity=catastrophic?1:rank?Math.min(1,[0,.16,.38,.7][rank]+weight*.3):0;
  const duration=catastrophic?20800:[3000,9600,12800,19200][rank],countDuration=duration-(catastrophic?3400:[400,900,1600,2600][rank]),beats=[0,8,16,26][rank];

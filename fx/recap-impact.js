@@ -2,9 +2,9 @@
 const clamp=n=>Math.max(0,Math.min(1,n));
 export function recapImpact(presentation,{delta=0,strength=.5,asset=false,landing=false}={}){
  const rank=presentation.rank||0,weight=clamp(strength),loss=delta<0;
- const scale=[0,.035,.09,.16][rank],amount=presentation.amountTier==='twenty-million'?1.45:presentation.amountTier==='hundred-thousand'?1.18:1;
+ const scale=[0,.13,.19,.25][rank],amount=presentation.amountTier==='twenty-million'?1.45:presentation.amountTier==='hundred-thousand'?1.18:1;
  const power=(asset?.7:1)*(landing?1.35:1)*(.5+.5*weight)*amount;
- return{scale:1+scale*power,kick:[0,1.2,3.5,7][rank]*power,lift:[0,2.5,7,15][rank]*power,tilt:(loss?-1:1)*[0,.35,.8,1.8][rank]*power,duration:[0,250,340,450][rank],loss,level:rank?(.13+rank*.085)*(.55+.45*weight)*(asset?.65:1):0};
+ return{scale:1+scale*power,kick:[0,4,7,10][rank]*power,lift:[0,11,17,24][rank]*power,tilt:(loss?-1:1)*[0,1.2,1.8,2.5][rank]*power,duration:[0,340,390,450][rank],loss,level:rank?(.32+rank*.10)*(.55+.45*weight)*(asset?.65:1):0};
 }
 
 // One bounded score, shared by the visual player and both audio backends.

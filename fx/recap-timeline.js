@@ -8,16 +8,19 @@ export function buildRecapTimeline(snapshot,presentation){
  const safeStart=Number.isFinite(start)?start:0,safeEnd=Number.isFinite(end)?end:safeStart+1,clockPower=1.18;
  // Give every receipt a readable scoring window. Later receipts resolve faster;
  // time only advances between receipts. This is presentation, never a new ledger.
- const budget=presentation.countDuration*.52,weights=trades.map((t,i)=>(t.type==='open'?.45:1)*(1-.32*i/Math.max(1,trades.length-1))),weightSum=weights.reduce((a,b)=>a+b,0);
- const holds=weights.map((w,i)=>Math.min(trades[i].type==='open'?600:presentation.catastrophic?1500:1800,budget*w/Math.max(.01,weightSum))),totalHold=holds.reduce((a,b)=>a+b,0);
- const travel=presentation.countDuration*.90-totalHold,hold=holds[0]||0;
+ const knownTotal=trades.reduce((sum,t)=>sum+(t.type==='open'?0:finite(t.pnl)),0),missing=finite(snapshot.daily.tradingNet)-knownTotal;
+ // This is explicitly a closing aggregate, not an invented execution.
+ if(Math.abs(missing)>.005)trades.push({type:'summary',timestamp:safeEnd,pnl:missing,key:'summary',summary:true});
+ const leadIn=600,budget=Math.max(0,Math.min(presentation.countDuration*.72,presentation.countDuration*.90-leadIn-400)),weights=trades.map((t,i)=>(t.type==='open'?.45:1)*(1-.32*i/Math.max(1,trades.length-1))),weightSum=weights.reduce((a,b)=>a+b,0);
+ const holds=weights.map((w,i)=>Math.min(trades[i].type==='open'?450:Infinity,budget*w/Math.max(.01,weightSum))),totalHold=holds.reduce((a,b)=>a+b,0);
+ const travel=presentation.countDuration*.90-totalHold-leadIn,hold=holds[0]||0;
  let pnl=0,spent=0;
- const events=trades.map((t,index)=>{const delta=t.type==='open'?0:finite(t.pnl),before=pnl;pnl+=delta;const event={...t,index,delta,before,after:pnl,atMs:travel*((t.timestamp-safeStart)/(safeEnd-safeStart))**(1/clockPower)+spent,hold:holds[index]};spent+=event.hold;return event;});
+ const events=trades.map((t,index)=>{const delta=t.type==='open'?0:finite(t.pnl),before=pnl;pnl+=delta;const event={...t,index,delta,before,after:pnl,atMs:leadIn+travel*((t.timestamp-safeStart)/(safeEnd-safeStart))**(1/clockPower)+spent,hold:holds[index]};spent+=event.hold;return event;});
  // Each monetary beat releases a larger slice of this actual receipt. The audio
  // and amount punch share these exact timestamps, including modest daily gains.
  const scoreBeats=events.flatMap(event=>{
   if(!event.delta)return [];
-  const count=Math.max(1,Math.min(6,Math.floor(event.hold/160)));
+  const count=Math.max(1,Math.min(12,Math.floor(event.hold/160)));
   return Array.from({length:count},(_,step)=>({eventIndex:event.index,delta:event.delta,step,count,atMs:event.atMs+event.hold*(.12+.76*((step+1)/count)**.72),fraction:((step+1)/count)**1.35}));
  }).map((beat,index,all)=>({...beat,index,strength:.35+.65*(index+1)/Math.max(1,all.length)}));
  // Only observed trading assets can produce market beats. Collapse observations
@@ -27,18 +30,18 @@ export function buildRecapTimeline(snapshot,presentation){
  const assetBeats=[];
  for(const point of unique){
   const delta=point.tradingAssets-previous;previous=point.tradingAssets;
-  const atMs=travel*((point.timestamp-safeStart)/(safeEnd-safeStart))**(1/clockPower)+events.filter(e=>e.timestamp<point.timestamp).reduce((sum,e)=>sum+e.hold,0);
+  const atMs=leadIn+travel*((point.timestamp-safeStart)/(safeEnd-safeStart))**(1/clockPower)+events.filter(e=>e.timestamp<point.timestamp).reduce((sum,e)=>sum+e.hold,0);
   // Sampling limits presentation density, never the visible recorded balance.
   if(Math.abs(delta)<.01||atMs<100||atMs-lastAssetAt<[700,560,380,260][presentation.rank]||assetBeats.length>=24||scoreBeats.some(b=>Math.abs(b.atMs-atMs)<110))continue;
   lastAssetAt=atMs;assetBeats.push({index:assetBeats.length,atMs,timestamp:point.timestamp,value:point.tradingAssets,delta,strength:Math.max(.18,Math.min(1,Math.abs(delta)/Math.max(1,Math.abs(snapshot.daily.openingNominal)*.03))),asset:true});
  }
- const known=events.reduce((sum,e)=>sum+e.delta,0),residual=finite(snapshot.daily.tradingNet)-known;
- return {start:safeStart,end:safeEnd,clockPower,travel,hold,events,scoreBeats,assetBeats,known,residual,observations,opening:finite(snapshot.daily.openingNominal),closing: snapshot.sealed ? finite(snapshot.daily.openingNominal)+finite(snapshot.daily.tradingNet) : observations.at(-1)?.tradingAssets,partial:!!snapshot.replay?.partial,finishAt:travel+totalHold};
+ const known=knownTotal,residual=missing;
+ return {leadIn,start:safeStart,end:safeEnd,clockPower,travel,hold,events,scoreBeats,assetBeats,known,residual,observations,opening:finite(snapshot.daily.openingNominal),closing: snapshot.sealed ? finite(snapshot.daily.openingNominal)+finite(snapshot.daily.tradingNet) : observations.at(-1)?.tradingAssets,partial:!!snapshot.replay?.partial,finishAt:leadIn+travel+totalHold};
 }
 export function recapTimelineFrame(timeline,elapsed,{complete=false}={}){
  let spent=0,active=null,realized=0,seen=0;
  for(const event of timeline.events){if(elapsed<event.atMs)break;active=event;seen++;const local=Math.min(1,Math.max(0,(elapsed-event.atMs)/Math.max(1,event.hold)));const beats=timeline.scoreBeats.filter(b=>b.eventIndex===event.index&&b.atMs<=elapsed),last=beats.at(-1);realized=event.before+event.delta*(local>=1?1:last?.fraction||0);spent+=Math.min(event.hold,Math.max(0,elapsed-event.atMs));}
- const progress=complete?1:Math.min(1,Math.max(0,(elapsed-spent)/Math.max(1,timeline.travel)));
+ const progress=complete?1:Math.min(1,Math.max(0,(elapsed-(timeline.leadIn||0)-spent)/Math.max(1,timeline.travel)));
  const timestamp=timeline.start+(timeline.end-timeline.start)*progress**(timeline.clockPower||1.18);
  // Incomplete old ledgers reconcile only at the known closing snapshot, never
  // fabricate execution times or distribute an unknown gain over the candles.
@@ -52,5 +55,10 @@ export function recapTimelineFrame(timeline,elapsed,{complete=false}={}){
  const unrealized=reconciled&&Number.isFinite(timeline.closing)?finite(points.at(-1)?.unrealized):finite(observed?.unrealized);
  const scoreBeat=timeline.scoreBeats.filter(b=>b.atMs<=elapsed).at(-1)||null;
  const assetBeat=(timeline.assetBeats||[]).filter(b=>b.atMs<=elapsed).at(-1)||null;
- return {scoreBeat,assetBeat,timestamp,realized,unrealized,tradingAssets,observationAvailable:!!observed,observationPartial:timeline.partial,event:active,eventCount:seen,timeProgress:progress,reconciled};
+ // Observed equity already includes completed receipts. Remove their full
+ // recorded amounts before adding back this presentation's counted portion.
+ // Floating moves stay real, and a close is never counted twice.
+ const observedReceipts=observed?timeline.events.filter(e=>e.timestamp<=observed.timestamp).reduce((sum,e)=>sum+e.delta,0):0;
+ const settlementAssets=reconciled?tradingAssets:observed?observed.tradingAssets-observedReceipts+realized:timeline.opening+realized;
+ return {settlementAssets,scoreBeat,assetBeat,timestamp,realized,unrealized,tradingAssets,observationAvailable:!!observed,observationPartial:timeline.partial,event:active,eventCount:seen,timeProgress:progress,reconciled};
 }
