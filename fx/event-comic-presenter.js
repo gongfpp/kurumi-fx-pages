@@ -1,15 +1,15 @@
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {comicContinuity} from './comic-continuity.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {preserveScroll} from './preserve-scroll.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {setImage} from './assets.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {comicContinuity} from './comic-continuity.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {setImage} from './assets.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);

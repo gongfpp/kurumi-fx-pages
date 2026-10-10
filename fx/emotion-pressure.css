@@ -52,3 +52,14 @@ body[data-pressure-impact=break] .pressure-page-flare{box-shadow:inset 0 0 46px 
 .pressure-tooltip{padding:8px 11px;font-size:12px;line-height:1.5;width:max-content;max-width:calc(100vw - 24px)}
 
 .segments button[data-pressure-label]{touch-action:manipulation}
+
+/* Full-viewport impact reads at the first press, with five growing edge cracks.
+   All decorative layers are pointer transparent and never change focus. */
+.pressure-page-flare{overflow:hidden;contain:strict;transition:none}
+.pressure-viewport-glass{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pressure-viewport-glass path{fill:none;stroke:rgb(var(--pressure-rgb,173 66 97));stroke-width:2;stroke-linecap:round;stroke-linejoin:bevel;vector-effect:non-scaling-stroke;filter:drop-shadow(1px 1px 0 #fff)}
+.pressure-impact-ring{position:absolute;left:var(--pressure-origin-x,50%);top:var(--pressure-origin-y,50%);width:240px;height:240px;transform:translate(-50%,-50%);border:2px solid rgb(var(--pressure-rgb,173 66 97) / .3);border-radius:50%;box-shadow:0 0 0 18px rgb(var(--pressure-rgb,173 66 97) / .04);pointer-events:none}
+.pressure-page-flare[data-stage=break] .pressure-impact-ring{width:440px;height:440px;border-width:4px;box-shadow:0 0 0 35px rgb(var(--pressure-rgb,173 66 97) / .07)}
+.pressure-page-flare[data-stage=break] .pressure-viewport-glass path{stroke-width:3}
+body[data-pressure-impact=break] .pressure-page-flare{box-shadow:inset 0 0 70px 14px rgb(var(--pressure-rgb,173 66 97) / .36)}
+@media(max-width:690px){.pressure-impact-ring{width:150px;height:150px}.pressure-page-flare[data-stage=break] .pressure-impact-ring{width:280px;height:280px}}

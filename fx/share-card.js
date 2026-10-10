@@ -1,9 +1,9 @@
-import {buildResultsReport} from './results-report.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {runPerformance} from './performance.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {runPerformance} from './performance.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -21,7 +21,7 @@ export function buildShareSummary(state={},options={}) {
   const recap=options.recap||buildRecapSnapshot(state,options);
   return {recap,results:buildResultsReport(state,{recap}),title:'FX韭留美',day,kind:options.variant==='ranking'?'完整战绩':state.mode==='endless'?'操盘战报':report?report.livingSettlement?.status==='pending'?'交易复盘 · 生活费待结':'收盘战报':'盘中战报',equity:eq,...performance,
     realizedProfit:total,dayRealizedProfit:daily,unrealized:floating,
-    tradingProfit:finite(options.tradingProfit,eq-100000-finite(state.externalFunding)+finite(state.expenses)-finite(state.developer?.profitOffset)),
+    tradingProfit:finite(options.tradingProfit,eq-finite(state.startEquity,100000)-finite(state.externalFunding)+finite(state.expenses)-finite(state.developer?.profitOffset)),
     dayTradingProfit:report?finite(report.net):null,
     feesPaid:totalFees, debt:Math.max(0,finite(state.family?.outstanding)+finite(state.loan?.outstanding)),livingCost:finite(report?.livingCost),funding:finite(state.externalFunding),
     tradeCount:performance.closedTrades,winRate:performance.winRate===null?null:performance.winRate*100,

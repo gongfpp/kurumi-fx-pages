@@ -29,3 +29,11 @@
 #quote-package-dialog #quote-package-error:empty{display:none}
 #quote-package-dialog>.primary{min-height:44px;margin-top:12px;padding:10px}
 @media(max-width:380px){#quote-package-dialog{padding:16px}.candle-period-row{min-height:52px;padding:8px 10px}.candle-period-list{gap:7px}}
+
+/* Dropdown changes chart period; adjacent pressed buttons change the rental directly. */
+.candle-view-controls #quote-package-open{border-style:dashed;background:#282330;min-height:44px}
+.quote-refresh-options{display:flex;gap:4px;flex:1 1 200px;min-width:0;max-width:360px}
+.candle-view-controls .quote-refresh-choice{display:flex;flex:1 1 0;min-width:0;min-height:44px;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:5px 4px;border-style:solid;white-space:normal;font-size:11px}
+.quote-refresh-choice strong,.quote-refresh-choice small{font-size:inherit;line-height:1.25;white-space:nowrap}
+.quote-refresh-choice small{font-size:10px;opacity:.85}
+@media(max-width:380px){.quote-refresh-options{gap:3px;flex-basis:192px}.candle-view-controls .quote-refresh-choice{font-size:10px;padding:5px 2px}.candle-view-controls #quote-package-open{padding-inline:5px}}

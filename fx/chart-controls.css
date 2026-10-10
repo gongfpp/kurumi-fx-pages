@@ -7,7 +7,13 @@
 .chart-controls #finish-day{background:#5b3e53;border-color:#bc84a6;color:#ffeef6}
 .chart-controls button:hover:not(:disabled){filter:brightness(1.15)}
 .chart-controls button:focus-visible,.chart-foot button:focus-visible{outline:2px solid #ffc8e3;outline-offset:3px}
-.chart-foot #motion-toggle{flex:0 0 auto;border:1px solid #6c6374;background:transparent;color:#cfc1d2;border-radius:4px;padding:5px 7px;font-size:10px;line-height:1.2;min-height:28px;white-space:nowrap}
+.chart-foot #motion-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex:0 0 auto;border:1px solid #817486;background:transparent;color:#f3e8f1;border-radius:6px;padding:7px 9px;font:inherit;font-size:11px;line-height:1.2;min-height:44px;white-space:nowrap;cursor:pointer;touch-action:manipulation}
+#motion-toggle .motion-switch-track{display:block;position:relative;flex:0 0 34px;width:34px;height:20px;box-sizing:border-box;border:1px solid #b5a8ba;border-radius:12px;background:#514958}
+#motion-toggle .motion-switch-thumb{display:block;position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#f8f0f6;transition:transform .16s ease}
+#motion-toggle[aria-checked="true"] .motion-switch-track{background:#efacd0;border-color:#efacd0}
+#motion-toggle[aria-checked="true"] .motion-switch-thumb{transform:translateX(14px);background:#302534}
+#motion-toggle-state{min-width:1em;font-weight:700}
+@media(prefers-reduced-motion:reduce){#motion-toggle .motion-switch-thumb{transition:none}}
 .npc-investors{background:#fffafd;border:1px solid #eadce5;border-radius:7px;padding:10px 12px;min-width:0;overflow:hidden}
 .npc-investors-heading{display:flex;align-items:center;gap:8px;margin-bottom:5px}.npc-investors-heading h2{font-size:12px;margin:0;font-weight:750;color:#786474}.npc-investors-heading>span{font-size:9px;border:1px solid #d6c1ce;border-radius:4px;padding:1px 5px;color:#977489}
 #npc-messages{list-style:none;padding:0;margin:0;display:grid;gap:5px;max-height:116px;overflow:auto;overscroll-behavior:contain}

@@ -1,4 +1,4 @@
-import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/,TOKEN=/^[a-f0-9]{64}$/,REQUEST=/^[a-f0-9-]{36}$/;
 // Passwords are never entered or handled by the Pages app. The owner completes
 // verification in a top-level first-party Site window; polling uses the same
@@ -19,7 +19,7 @@ export class DeveloperAccess {
   this.assertState(state);if(!this.configured())throw Error('独立密码验证服务未配置，开发入口暂不可用');
   const previouslyTainted=hasDevelopmentTaint(state,this.storage);
   const token=await this.leaderboard.ensureToken(state.runId);
-  await this.leaderboard.request('/run',{method:'POST',data:{campaign:state.runId,session:this.leaderboard.sessionFor(),token,gameMode:state.mode}});
+  await this.leaderboard.request('/run',{method:'POST',data:{campaign:state.runId,session:this.leaderboard.sessionFor(),token,gameMode:state.mode,initialEquity:state.startEquity??100000}});
   if(previouslyTainted){this.applyTaint(state,await this.request('taint',state,token));}
   const data=await this.request('request',state,token);this.applyTaint(state,data);
   if(!REQUEST.test(data.requestId||'')||!Number.isSafeInteger(data.expiresAt)||data.expiresAt<=this.now()||typeof data.unlockPath!=='string')throw Error('验证请求格式不正确');

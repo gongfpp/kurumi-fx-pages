@@ -1,5 +1,5 @@
-import {tradingTimestamp} from './trading-time.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,START,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -25,7 +25,7 @@ export function applyDeveloperPatch(current,patch){
   s.family.unlocked ||= v.debt>0;s.fatherUsed ||= v.debt>0;
   if(v.debt>0&&s.family.borrowedAt===null)s.family.borrowedAt=(v.day-1)*4+v.beat;
   if(!v.debt)s.effects=s.effects.filter(e=>e.id!=='guilt');
-  s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-100000-s.externalFunding+s.expenses-v.profit};
+  s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-initialCapital(s)-s.externalFunding+s.expenses-v.profit};
   s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
   s.settlementPresentation=null;s.settlementNarrative=null;s.accountingJournal=null;s.recapChoiceLedger=[];delete s.nextDayLivingDiscount;
   if(s.tradingClock)s.tradingClock={...s.tradingClock,lastQuoteAt:tradingTimestamp(s,{day:s.day,beat:s.beat}),lastQuoteDay:s.day};
@@ -35,12 +35,12 @@ export function applyDeveloperPatch(current,patch){
   s.candles=s.candles.slice(-100);s.history=[];
   // Edited runs start a new synthetic performance baseline. They remain marked
   // as developer data and cannot enter leaderboards or player achievements.
-  s.startEquity=START;s.bonusBeats=0;s.completedDays=v.day-1;
+  s.startEquity=initialCapital(s);s.bonusBeats=0;s.completedDays=v.day-1;
   s.completedCandles=((v.day-1)*BEATS_PER_DAY+v.beat)*CANDLES_PER_BEAT;
-  const netEquity=Math.max(0,START+v.profit),peakEquity=Math.max(START,netEquity);
+  const netEquity=Math.max(0,initialCapital(s)+v.profit),peakEquity=Math.max(initialCapital(s),netEquity);
   s.performance={totalProfit:v.profit,closedTrades:0,maxLoss:0,maxProfit:0,peakEquity,maxDrawdown:1-netEquity/peakEquity};
   if(s.loan)s.loan.lastInterestDay=v.day-1;
-  s.peakPersonal=Math.max(100000,100000+v.profit);s.equityTrail=[s.peakPersonal];
+  s.peakPersonal=Math.max(initialCapital(s),initialCapital(s)+v.profit);s.equityTrail=[s.peakPersonal];
   mentalState(s,true);
   if(v.phase!=='decision'){
     s.beat=BEATS_PER_DAY;s.completedCandles=v.day*BEATS_PER_DAY*CANDLES_PER_BEAT;s.phase='closing';

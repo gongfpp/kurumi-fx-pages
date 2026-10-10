@@ -1,5 +1,5 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -16,7 +16,8 @@ function projectLeaderboardScore(state,report,{storage,live=false}={}){
  const p=report.performance,a=report.account;
  if(!p||!a||typeof p.complete!=='boolean')throw Error('终局统计完整性未知');
  const day=integer(report.day,'day',1,10000);if(day!==state.day)throw Error('终局成绩不是当前日期');
- const initialEquity=finite(p.initialCapital,'initialCapital',100000,100000),rawTotalProfit=finite(p.realizedNetTradingPnl,'realizedNetTradingPnl'),totalProfit=cents(rawTotalProfit);
+ const initialEquity=finite(p.initialCapital,'initialCapital',100000,300000),rawTotalProfit=finite(p.realizedNetTradingPnl,'realizedNetTradingPnl'),totalProfit=cents(rawTotalProfit);
+ if(initialEquity!==100000&&(report.mode!=='story'||initialEquity!==300000)||initialEquity!==(state.startEquity??100000))throw Error('初始本金与本局不一致');
  const daysSurvived=integer(p.daysSurvived,'daysSurvived',0,day),elapsedDays=Math.max(1,finite(p.elapsedSimulatedDays,'elapsedSimulatedDays',0,day));
  if(daysSurvived>elapsedDays)throw Error('存活天数大于模拟时间');
  const rawReturnRate=rawTotalProfit/initialEquity,rawDailyReturnRate=rawReturnRate/elapsedDays;

@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 
 // Eight pixel-reviewed excerpts, in chapter-one order. The last page belongs
 // to this game's run; none of the manga's trades or balances are imported.
@@ -38,7 +38,7 @@ export const OPENING_PAGES=Object.freeze([
     sourceNote:'第1话第38页。原图说明FX不存在必胜法；标题、摘要与按钮为游戏衔接文案，不是漫画对白。'}),
   Object.freeze({id:'first-trade',panelId:null,title:'你的这一局',
     text:'第一笔交易，还在等你。',next:'进入交易室 →',
-    sourceNote:'本页为游戏原创衔接：本局开局资金默认10万日元，目标为净已实现交易利润2000万；不沿用原作30万账户或原作首单结果。进入交易室不会替玩家下单。'})
+    sourceNote:'本页为游戏原创衔接：剧情新局以30万日元起步，目标为净已实现交易利润2000万；续玩保留原有本金，不复现原作首单结果。进入交易室不会替玩家下单。'})
 ]);
 
 export function openingPanel(page){return page?.panelId?MANGA_PANELS[page.panelId]:null;}

@@ -63,3 +63,8 @@ export function planQuotePackagePurchase(state,hz,{availableCash=state.cash,canP
  const receipt={id:receiptId(state,hz,state.day),kind:'daily-rental',hz,amount:offer.price,totalPaid:p.paid+offer.price,day:state.day,timestamp,currency:'game-JPY',label:`${quotePackageName(hz)} · 第 ${state.day} 日`};
  return{charged:true,amount:offer.price,receipt,package:{...p,version:2,rentalDay:state.day,rentedHz:hz,ownedHz:hz,selectedHz:hz,preferredHz:hz,renewalBlocked:false,paid:p.paid+offer.price,receipts:[...p.receipts,receipt]}};
 }
+
+// Persisted 1/2/4 tier IDs are not render Hz. Keep receipts and old saves unchanged.
+// Playback speed changes source time only; it cannot unlock a faster display tier.
+export const QUOTE_DISPLAY_RATES=Object.freeze({1:1,2:5,4:20});
+export function quoteRefreshMilliseconds(state){return 1000/QUOTE_DISPLAY_RATES[quotePackageState(state).selectedHz];}

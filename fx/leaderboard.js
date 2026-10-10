@@ -1,9 +1,9 @@
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {runPerformance} from './performance.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {runPerformance} from './performance.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -130,7 +130,7 @@ export class FXLeaderboard {
       if(!token||keepalive&&!this.registered.has(campaign))throw new LeaderboardError('等待下次联网更新','pending');
       if(!isAllowed())throw new LeaderboardError('进度更新已暂停','ineligible');
       if(!this.registered.has(campaign)){
-        const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode}});
+        const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
         if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
         this.registered.add(campaign);
       }
@@ -147,7 +147,7 @@ export class FXLeaderboard {
     this.pending=true;this.status({state:'publishing'});
     try{
       const token=await this.ensureToken(campaign);
-      await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode}});
+      await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       const result=await this.request('',{method:'POST',data:{campaign,token,...score,alias:name}});
       if(result?.ok!==true)throw new LeaderboardError('成绩未获确认，请稍后重试','response');

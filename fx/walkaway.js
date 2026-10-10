@@ -1,7 +1,7 @@
 export function canRequestWalkaway(state={}){return ['decision','playing','closing','day_end','resting','bankrupt'].includes(state.phase);}
 export function walkawayConfirmation(state={}){
  const openPositions=state.positions?.length||(state.position?1:0);
- return {title:'收手离场，结束这一局？',copy:`${openPositions?`现有 ${openPositions} 笔持仓将按当前报价平仓，并计入交易手续费。`:''}离场后，本局结束。`};
+ return {title:'销户离场，结束这一局？',copy:`${openPositions?`现有 ${openPositions} 笔持仓将按当前报价平仓，并计入交易手续费。`:''}离场后，本局结束。`};
 }
 // Confirmation delegates all account changes to the authoritative engine.
 export function requestWalkaway(state,{finishRunImmediately}={}){

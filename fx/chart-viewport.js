@@ -1,5 +1,5 @@
-import {movingAveragePath} from './moving-average.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.
@@ -51,13 +51,26 @@ export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=
 export function createChartViewport(doc,{count=12,onChange=()=>{}}={}){
  const baseHeight=doc.defaultView?.matchMedia?.('(max-width:690px)').matches?220:280;
  const state={count,offset:0,zoom:1,height:baseHeight},root=doc.createElement('div');root.className='candle-view-controls';root.setAttribute('aria-label','K线可视范围，不改变行情');
+ let total=0;
  const buttons=[];
  const button=(label,action)=>{const b=doc.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{action();sync();onChange(state);};root.append(b);return b;};
- for(const [size,label]of [[12,'近12根'],[30,'近30根'],[0,'全部']]){const b=button(label,()=>{state.count=size;state.offset=0;});buttons.push([size,b]);}
- const plus=button('纵轴＋',()=>state.zoom=Math.min(128,state.zoom*2));plus.setAttribute('aria-label','放大纵轴，超出范围的K线会标记');
- const minus=button('纵轴－',()=>state.zoom=Math.max(1,state.zoom/2));minus.setAttribute('aria-label','缩小纵轴');
+ for(const [size,label]of [[0,'全部']]){const b=button(label,()=>{state.count=size;state.offset=0;});buttons.push([size,b]);}
+ // Keep the rightmost visible candle anchored while changing the horizontal span.
+ const visibleSize=()=>state.count>0?Math.min(total,Math.max(1,state.count)):total;
+ function resizeHorizontal(enlarge){
+  const size=visibleSize();if(size<1)return;
+  const next=clamp(enlarge?Math.floor(size/1.5):Math.ceil(size*1.5),1,total);
+  if(next===size)return;
+  state.count=next===total?0:next;
+ }
+ const horizontalPlus=button('横轴＋',()=>resizeHorizontal(true));horizontalPlus.setAttribute('aria-label','放大横轴，减少可见K线根数');
+ const horizontalMinus=button('横轴－',()=>resizeHorizontal(false));horizontalMinus.setAttribute('aria-label','缩小横轴，增加可见K线根数');
  button('全幅',()=>state.zoom=1);button('拉高图表',()=>state.height=state.height===baseHeight?440:baseHeight);
  const label=doc.createElement('label'),slider=doc.createElement('input');label.className='candle-history';label.textContent='回看';slider.type='range';slider.min='0';slider.max='0';slider.value='0';slider.setAttribute('aria-label','回看较早K线，右端为最新');slider.oninput=()=>{state.offset=Number(slider.max)-Number(slider.value);onChange(state);};label.append(slider);root.append(label);
- function sync(){for(const [size,b]of buttons)b.setAttribute('aria-pressed',String(state.count===size));plus.disabled=state.zoom>=128;minus.disabled=state.zoom<=1;}
- sync();return{root,state,update(total){const max=state.count>0?Math.max(0,total-state.count):0;state.offset=clamp(state.offset,0,max);slider.max=String(max);slider.value=String(max-state.offset);slider.disabled=max===0;label.hidden=max===0;sync();}};
+ function sync(){
+  const max=state.count>0?Math.max(0,total-state.count):0;state.offset=clamp(state.offset,0,max);slider.max=String(max);slider.value=String(max-state.offset);slider.disabled=max===0;label.hidden=max===0;
+  for(const [size,b]of buttons)b.setAttribute('aria-pressed',String(state.count===size));
+  horizontalPlus.disabled=visibleSize()<=1;horizontalMinus.disabled=visibleSize()>=total;
+ }
+ sync();return{root,state,update(length){total=Math.max(0,Math.trunc(Number(length))||0);sync();}};
 }

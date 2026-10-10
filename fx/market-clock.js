@@ -1,10 +1,11 @@
 // One quotation per timer: never replay elapsed time after a hidden tab or modal.
 export class MarketClock{
- constructor({step,canRun,canStep=()=>true,interval=()=>1000,schedule=(fn,ms)=>setTimeout(fn,ms),cancel=id=>clearTimeout(id),now=()=>performance.now(),onError=()=>{}}){
-  Object.assign(this,{step,canRun,canStep,interval,schedule,cancel,now,onError});this.timer=null;this.generation=0;this.pulseStartedAt=null;
+ constructor({step,canRun,canStep=()=>true,interval=()=>1000,schedule=(fn,ms)=>setTimeout(fn,ms),cancel=id=>clearTimeout(id),now=()=>performance.now(),onError=()=>{},paint,paintInterval=()=>1000,minimumDelay=50}){
+  Object.assign(this,{step,canRun,canStep,interval,schedule,cancel,now,onError,minimumDelay});this.timer=null;this.generation=0;this.pulseStartedAt=null;
+  this.paintClock=typeof paint==='function'?new MarketClock({step:paint,canRun,canStep,interval:paintInterval,schedule,cancel,now,onError,minimumDelay:1}):null;
  }
- start(delay){if(this.timer!==null||!this.canRun())return;const generation=this.generation,cost=this.pulseStartedAt===null?0:Math.max(0,this.now()-this.pulseStartedAt);this.timer=this.schedule(()=>this.pulse(generation),Math.max(50,Number.isFinite(delay)?delay:this.interval()-cost));}
- stop(){this.generation++;if(this.timer!==null)this.cancel(this.timer);this.timer=null;this.pulseStartedAt=null;}
+ start(delay){if(this.timer!==null||!this.canRun())return;const generation=this.generation,cost=this.pulseStartedAt===null?0:Math.max(0,this.now()-this.pulseStartedAt);this.timer=this.schedule(()=>this.pulse(generation),Math.max(this.minimumDelay,Number.isFinite(delay)?delay:this.interval()-cost));this.paintClock?.start();}
+ stop(){this.paintClock?.stop();this.generation++;if(this.timer!==null)this.cancel(this.timer);this.timer=null;this.pulseStartedAt=null;}
  pulse(generation){
   if(generation!==this.generation)return;this.timer=null;
   if(!this.canRun())return;

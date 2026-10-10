@@ -1,10 +1,10 @@
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-import {quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=94d9f353e5b85a91b1fbe9811b5810dce412b461-23f2a20b7717';
-export const CANDLE_PERIODS=Object.freeze([{minutes:15,label:'15分钟',hz:1},{minutes:1440,label:'日K',hz:1},{minutes:5,label:'5分钟',hz:2},{minutes:1,label:'1分钟',hz:4}]);
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=6575cc7d8edebeb416dd2402d8cb30a676da677c-23f2a20b7717';
+export const CANDLE_PERIODS=Object.freeze([{minutes:15,label:'15分钟',hz:1},{minutes:1440,label:'日K',hz:1},{minutes:5,label:'5分钟',hz:1},{minutes:1,label:'1分钟',hz:1}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;
-export const candlePeriod=s=>{const m=requestedCandlePeriod(s),p=CANDLE_PERIODS.find(p=>p.minutes===m);return quotePackageState(s).ownedHz>=p.hz?m:15;};
+export const candlePeriod=s=>requestedCandlePeriod(s);
 export const candlePeriodLabel=s=>CANDLE_PERIODS.find(p=>p.minutes===candlePeriod(s)).label;
 export const candlePeriodNotice=(s,{includeTimeZone=true}={})=>`${includeTimeZone?'JST · ':''}${candlePeriodLabel(s)}${candlePeriod(s)===1440?'':' K线'}`;
 export function recordDisplayQuote(s,timestamp,price){
@@ -43,13 +43,17 @@ export function displayCandles(s){
  if(minutes===15&&!research)return source.map(c=>({...c,periodMinutes:15}));
  return aggregateCandles(source,minutes,now);
 }
-export function candlePeriodMarkup(s,{availableCash=s.cash,canPurchase=true}={}){
- const packageState=quotePackageState(s),selected=candlePeriod(s);
- return `<div class="candle-period-list" role="group" aria-label="K线时间周期">${CANDLE_PERIODS.map(p=>{
-  const offer=quotePackageOffer(s,p.hz,{availableCash,canPurchase}),active=selected===p.minutes;
-  const cost=p.hz===1?'免费'+(active?' · 已选':''):active?'已选':offer.owned?'今日可用':`¥${offer.totalPrice.toLocaleString('zh-CN')}/日`;
-  const supplement=offer.price>0&&offer.price<offer.totalPrice?`今日补付¥${offer.price.toLocaleString('zh-CN')}`:null;
-  const detail=offer.reason||(p.hz===1&&active&&packageState.renewalBlocked?'续租未成功':supplement);
-  return `<button type="button" class="candle-period-row" data-candle-period="${p.minutes}" aria-pressed="${active}" ${!offer.valid?'disabled':''}><span class="candle-period-name"><strong>${p.label}</strong>${p.hz>1?`<span>${quotePackageName(p.hz)}</span>`:''}</span><span class="candle-period-price">${cost}</span>${detail?`<small>${detail}</small>`:''}</button>`;
- }).join('')}</div><p class="candle-period-note">升级补差价，降档当天不退费</p>`;
+export function candlePeriodMarkup(s){
+ const selected=candlePeriod(s);
+ return `<div class="candle-period-list" role="group" aria-label="K线时间周期">${CANDLE_PERIODS.map(p=>`<button type="button" class="candle-period-row" data-candle-period="${p.minutes}" aria-pressed="${selected===p.minutes}"><span class="candle-period-name"><strong>${p.label}</strong></span><span class="candle-period-price">免费${selected===p.minutes?' · 已选':''}</span></button>`).join('')}</div>`;
+}
+// Refresh is selectable separately, including while viewing the free 15-minute chart.
+export function quoteRefreshMarkup(s,{availableCash=s.cash,canPurchase=true,busy=false}={}){
+ const state=quotePackageState(s),labels={1:'常速刷新',2:'高速刷新',4:'超高频刷新'};
+ return QUOTE_PACKAGES.map(p=>{
+  const offer=quotePackageOffer(s,p.hz,{availableCash,canPurchase}),active=state.selectedHz===p.hz;
+  const detail=offer.reason||(offer.price>0&&offer.price<p.dailyPrice?`今日补付¥${offer.price.toLocaleString('zh-CN')}`:active?'使用中':offer.owned?'今日可用':'按交易日续租');
+  const label=p.hz===1?'手机':p.label,cost=p.dailyPrice?'¥'+p.dailyPrice.toLocaleString('zh-CN')+'/日':'免费';
+  return `<button type="button" class="quote-refresh-choice" data-quote-hz="${p.hz}" aria-pressed="${active}" ${busy||!offer.valid?'disabled':''} title="${p.label} · ${labels[p.hz]} · ${detail}。只改刷新，不改K线周期；升级补差价，降档当天不退费。选手机可停止续租。"><strong>${label}</strong><small>${cost}</small></button>`;
+ }).join('');
 }
