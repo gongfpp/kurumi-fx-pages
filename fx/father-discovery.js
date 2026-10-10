@@ -140,7 +140,7 @@ export function applyFatherDiscovery(s,action={},options={}) {
 
 export function fatherDiscoveryHint(s,{reducedMotion=false}={}) {
   const d=fatherDiscoveryState(s);if(d.status!=='available'||!d.hintPending||hasTaken(s))return null;
-  return {eventId:d.eventId,itemId:'father',label:FATHER_DISCOVERY_POLICY.name,target:'[data-prop="father"]',effect:reducedMotion?'static-outline':'short-shake-and-arrow',maxDurationMs:reducedMotion?0:900,announce:d.purpose==='reminder'?'再次注意到尚未取用的父亲柜中存款。需要时请亲自点击原物品按钮；没有新增一笔钱。':'已发现父亲的柜中存款。需要时请亲自点击物品按钮；尚未取用。',autoActivate:false,audioCue:null};
+  return {eventId:d.eventId,itemId:'father',label:FATHER_DISCOVERY_POLICY.name,target:'[data-prop="father"]',effect:reducedMotion?'static-outline':'short-shake-and-arrow',maxDurationMs:reducedMotion?0:900,announce:d.purpose==='reminder'?'父亲的柜中存款还没有动过。需要时可以打开柜门。':'发现了父亲的柜中存款，还没有取用。',autoActivate:false,audioCue:null};
 }
 export function canTakeDiscoveredFatherSavings(s){const d=fatherDiscoveryState(s);return (d.status==='available'||d.status==='presenting'&&d.purpose==='reminder')&&!hasTaken(s);}
 

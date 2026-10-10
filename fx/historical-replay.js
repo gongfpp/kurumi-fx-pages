@@ -1,4 +1,4 @@
-import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
@@ -27,6 +27,7 @@ export function bindHistoricalDay(s,manifest,dayData){
  if(!Number.isSafeInteger(h.cursor)||h.cursor<0||h.cursor>dayData.ticks.length)throw Error('历史行情游标无效');
  if(h.cursor>0){const q=dayData.ticks[h.cursor-1];if(!h.lastQuote||q.some((v,i)=>v!==h.lastQuote[i])||s.price!==mid(q))throw Error('历史报价与存档不一致');}
  feeds.set(s,{manifest,dayData});
+ if(h.status==='gap'){h.status='ready';s.marketPaused=false;delete h.gap;h.acceptedGapCursor=null;}
  if(['loading','error','ready'].includes(h.status))h.status='ready';
  return s;
 }
@@ -45,15 +46,9 @@ export function peekHistoricalQuote(s){
  if(h.status!=='ready')return{blocked:true};
  const bar=isResearch(s)?feed.dayData.bars[h.cursor]:null;
  const q=isResearch(s)?(bar?[bar.availableAt,bar.close]:null):feed.dayData.ticks[h.cursor];if(!q)return{done:true};
- const gap=q[0]-(h.lastQuote?.[0]??q[0]);
- if(gap>feed.manifest.gapThresholdMs&&h.acceptedGapCursor!==h.cursor){
-  // A silent interval is not proof of missing data or of a closed exchange.
-  const all=[...(feed.dayData.gaps||[]),...(historicalDayInfo(s)?.gaps||[]),...(feed.dayData.gapBefore?[feed.dayData.gapBefore]:[])];
-  const known=all.find(g=>g.toMs===q[0]||g.afterMs===q[0]);
-  h.gap={fromMs:h.lastQuote[0],toMs:q[0],durationMs:gap,kind:known?.classification==='verified_closure'?'verified_closure':known?.classification==='weekend_closure_candidate'?'weekend_closure_candidate':isResearch(s)&&h.cursor===0&&h.skippedRemainder===true?'player_skipped_remainder':'unknown_observation_gap'};
-  h.status='gap';s.marketPaused=true;return{blocked:true,gap:h.gap};
- }
- return{quote:q,bar,last:h.cursor===(isResearch(s)?feed.dayData.bars:feed.dayData.ticks).length-1};
+ // Gaps contain no executable quote. Consume the next observed quote normally;
+ // never interpolate, pause for acknowledgement, or advance risk before consumption.
+ return{quote:q,bar,gapDurationMs:q[0]-(h.lastQuote?.[0]??q[0])>feed.manifest.gapThresholdMs?q[0]-h.lastQuote[0]:0,last:h.cursor===(isResearch(s)?feed.dayData.bars:feed.dayData.ticks).length-1};
 }
 export function continueHistoricalGap(s){if(!isHistorical(s)||s.historical.status!=='gap')return false;s.historical.acceptedGapCursor=s.historical.cursor;s.historical.status='ready';s.marketPaused=false;return true;}
 export function commitHistoricalQuote(s,q){const h=s.historical;if(h.cursor===0)h.dayOpeningAt=q[0];h.cursor++;h.lastQuote=[...q];h.acceptedGapCursor=null;delete h.gap;delete h.skippedRemainder;s.tradingClock.lastQuoteAt=q[0];s.tradingClock.lastQuoteDay=s.day;}
@@ -77,7 +72,8 @@ function bindResearchDay(s,manifest,data){
  if(manifest.schemaVersion!=='research-m1-close-v1'||data.schemaVersion!==manifest.schemaVersion||data.validated!==true||!entry||data.date!==h.date||data.sha256!==h.dayHash||data.sha256!==manifest.source.sha256||h.sourceHash!==manifest.source.sha256||h.datasetId!==manifest.id||h.sourceVersion!==String(manifest.version)||data.datasetVersion!==manifest.version||!researchMetadataEqual(h.research,manifest.research)||!Array.isArray(data.bars)||!data.bars.length)throw Error('分钟行情版本与存档不一致');
  if(!Number.isSafeInteger(h.cursor)||h.cursor<0||h.cursor>data.bars.length)throw Error('分钟行情游标无效');
  if(h.cursor>0){const b=data.bars[h.cursor-1];if(h.lastQuote?.length!==2||h.lastQuote[0]!==b.availableAt||h.lastQuote[1]!==b.close||s.price!==b.close)throw Error('分钟行情存档价格不符');}
- feeds.set(s,{manifest,dayData:data});if(['loading','error','ready'].includes(h.status))h.status='ready';return s;
+ feeds.set(s,{manifest,dayData:data});if(h.status==='gap'){h.status='ready';s.marketPaused=false;delete h.gap;h.acceptedGapCursor=null;}
+ if(['loading','error','ready'].includes(h.status))h.status='ready';return s;
 }
 function validResearchSave(s){const h=s.historical;return [11,12].includes(s.version)&&typeof h.datasetId==='string'&&typeof h.sourceVersion==='string'&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&h.dayHash===h.sourceHash&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='observed-close-only'&&h.research?.executionModel==='observed-close-only'&&h.research?.availabilityModel==='label-plus-60-seconds'&&h.research?.spreadModel==='none'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===2&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&s.price===h.lastQuote[1]&&s.script?.historical===true&&s.script.tracks?.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];}
 

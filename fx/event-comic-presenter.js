@@ -1,15 +1,16 @@
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {comicContinuity} from './comic-continuity.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {preserveScroll} from './preserve-scroll.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {setImage} from './assets.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {comicContinuity} from './comic-continuity.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {setImage} from './assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -55,15 +56,15 @@ export function createEventComicPresenter({root=document,artMemory=dailyArtMemor
   if(showing===signature&&dialog.open){next.textContent=state.pending.length?'下一幕':'回到游戏';return;}
   showing=signature;eyebrow.textContent=scene.automatic&&!manualReplay.has(scene.receiptKey)?'小剧场':Number.isFinite(scene.receipt?.day)?`第${scene.receipt.day}天 · 往事重看`:'往事重看';title.textContent=scene.title;dialog.dataset.scene=scene.id;dialog.dataset.receiptKey=scene.receiptKey;dialog.dataset.artReady=String(scene.ready);
   stopArtObservation();
-  image.hidden=!scene.ready;missing.hidden=scene.ready;
-  if(scene.ready){setImage(image,scene.art.path);image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;
+  const panelArtwork=usesPanelArtwork(scene);image.hidden=!scene.ready||panelArtwork;missing.hidden=scene.ready;
+  if(scene.ready&&!panelArtwork){setImage(image,scene.art.path);image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;
    const key=signature,failed=image.onerror;image.onerror=()=>{if(showing!==key)return;failed?.();if(image.classList.contains('image-unavailable')){image.hidden=true;missing.hidden=false;missing.textContent='画面暂时没载入';dialog.dataset.artReady='false';}};
   }else{image.removeAttribute('src');image.alt='';missing.textContent='画面待补';}
-  lines.replaceChildren();for(const [speaker,text] of scene.lines){const line=make('li'),name=make('b',null,speaker);line.append(name,root.createTextNode(`：${text}`));lines.append(line);}
+  lines.className=panelArtwork?'event-comic-lines comic-panel-cards':'event-comic-lines';const panelView=mountComicDialogue(lines,scene,{root});
   contextualView=mountContextualManga(contextual,scene.contextualManga,{manual:true,root,memory:artMemory});
   receipt.textContent=comicReceiptText(scene);receipt.hidden=!receipt.textContent;next.textContent=state.pending.length?'下一幕':'回到游戏';
   if(!dialog.open){opener=root.activeElement;preserveScroll(root.documentElement,()=>dialog.showModal());}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
-  if(scene.ready)stopArtObservation=observeSeenArtwork(image,{memory:artMemory,identities:[artIdentity(scene.art)].filter(Boolean)});
+  if(panelArtwork)stopArtObservation=panelView.observe({memory:artMemory});else if(scene.ready)stopArtObservation=observeSeenArtwork(image,{memory:artMemory,identities:[artIdentity(scene.art)].filter(Boolean)});
   if(scene.automatic&&!autoShown.has(scene.receiptKey)){autoShown.add(scene.receiptKey);markAutomaticComicShown(currentState,scene);onAutoShown();}
  }
  queue=createEventComicQueue({onChange:paint});

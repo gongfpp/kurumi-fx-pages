@@ -1,9 +1,9 @@
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){
@@ -27,11 +27,11 @@ export class HistoricalMarketLibrary{
 }
 // Pure chronological batching: all intermediate ticks execute, only paint is coalesced.
 export function advanceHistoricalBatch(state,step,{speed=1,maxTicks=256,budgetMs=8,now=()=>performance.now()}={}){
- const start=now(),until=state.historical.lastQuote[0]+7500*speed,exits=[];let result=null,count=0,candleClosed=false;
+ const start=now(),until=state.historical.lastQuote[0]+7500*speed,exits=[];let result=null,count=0,candleClosed=false,gapDurationMs=0;
  while(count<maxTicks&&now()-start<budgetMs){
   if(state.marketPaused||state.historical.status!=='ready')break;
-  result=step(state);count++;exits.push(...(result.exits||[]));candleClosed ||= !!result.candleClosed;
+  result=step(state);count++;exits.push(...(result.exits||[]));candleClosed ||= !!result.candleClosed;gapDurationMs=Math.max(gapDurationMs,result.gapDurationMs||0);
   if(result.blocked||result.dayEnded||state.historical.lastQuote[0]>=until||!['decision','playing'].includes(state.phase))break;
  }
- return result?{...result,exits,exit:exits[0]||null,candleClosed,batchTicks:count}:null;
+ return result?{...result,exits,exit:exits[0]||null,candleClosed,batchTicks:count,...(gapDurationMs?{gapDurationMs}:{})}:null;
 }

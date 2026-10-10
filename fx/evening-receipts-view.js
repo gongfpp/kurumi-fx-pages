@@ -1,5 +1,6 @@
-import {setImage} from './assets.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {comicReceiptText} from './event-comic-presenter.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {setImage} from './assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {comicReceiptText} from './event-comic-presenter.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 // The daily story already owns settlement, trade recap and the living receipt.
 // Keep other durable same-day events in that very window, not another modal.
 export function eveningReceiptScenes(scenes,{day,narrative}={}){
@@ -17,7 +18,7 @@ export function mountEveningReceipts(container,scenes){
   detail.open=oldOpen.has(scene.receiptKey)?oldOpen.get(scene.receiptKey):scene.id.startsWith('father-');
   const summary=doc.createElement('summary');summary.textContent=[scene.title,comicReceiptText(scene)].filter(Boolean).join(' · ');detail.append(summary);
   const content=doc.createElement('div');content.className='evening-receipt-content';
-  if(scene.ready){const image=doc.createElement('img');image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;setImage(image,scene.art.path);content.append(image);}
-  const lines=doc.createElement('div');for(const [speaker,text] of scene.lines){const p=doc.createElement('p');p.textContent=`${speaker}：${text}`;lines.append(p);}content.append(lines);detail.append(content);container.append(detail);
+  if(scene.ready&&!usesPanelArtwork(scene)){const image=doc.createElement('img');image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;setImage(image,scene.art.path);content.append(image);}
+  const lines=doc.createElement('ol');lines.className=usesPanelArtwork(scene)?'event-comic-lines comic-panel-cards':'event-comic-lines';mountComicDialogue(lines,scene,{root:doc});content.append(lines);detail.append(content);container.append(detail);
  }
 }

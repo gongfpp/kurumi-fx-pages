@@ -1,13 +1,13 @@
-import {recapImpact} from './recap-impact.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {createRecapStageChart} from './recap-stage-chart.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {setImage} from './assets.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {buildCurveScale} from './share-card.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {recapChoices} from './daily-recap.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {createRecapPlayer} from './recap-player.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {recapImpact} from './recap-impact.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {createRecapStageChart} from './recap-stage-chart.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {setImage} from './assets.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {recapChoices} from './daily-recap.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const typeWidth=text=>Array.from(text).reduce((sum,c)=>sum+(/[\u3400-\u9fff]/.test(c)?1:.64),0);
@@ -66,8 +66,16 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
  const punchDigits=profile=>{for(let i=0;i<digitNodes.length;i++){const n=digitNodes[i];if(!/\d/.test(n.textContent))continue;animate(n,[{transform:'none'},{transform:`translateY(${(i%2?-.7:-1)*profile.lift}px) rotate(${(i%2?-1:1)*profile.tilt*1.5}deg) scaleY(${1+(profile.scale-1)*.6})`,offset:.32},{transform:'translateY(2px) scaleY(.96)',offset:.7},{transform:'none'}],{duration:profile.duration+70,delay:(i%5)*13,easing:'cubic-bezier(.2,.7,.2,1)'});}};
  const start=({initial=false}={})=>{
   if(disposed)return;
+  // Scroll only this dialog's own content. scrollIntoView would also move the page.
+  if(!initial){
+   const modal=container.closest?.('dialog'),scroller=container.closest?.('.dialog-scroll');
+   if(modal?.open&&scroller?.closest?.('dialog')===modal){
+    const target=playback.getBoundingClientRect?.(),viewport=scroller.getBoundingClientRect?.();
+    if(target&&viewport){const top=Math.max(0,scroller.scrollTop+target.top-viewport.top-(scroller.clientTop||0));if(scroller.scrollTo)scroller.scrollTo({top,behavior:'instant'});else scroller.scrollTop=top;}
+   }
+  }
   const activeMotion=initial?motion:typeof replayMotion==='function'?replayMotion():replayMotion,systemReduced=reducedMotion||!!doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  player?.cancel();clearEffects();lastBeat=-1;lastAssetBeat=-1;lastEvent=-1;lastStage='';collapseUntil=0;assetDelta.textContent='';impactLabel.textContent='';
+  player?.cancel();clearEffects();lastBeat=-1;lastAssetBeat=-1;lastEvent=-1;lastStage='';collapseUntil=0;assetDelta.textContent='';impactLabel.textContent='';eventDelta.textContent='';eventCard.textContent='';eventCard.replaceChildren(eventDelta);eventCard.hidden=true;
   player=createRecapPlayer(snapshot,{...playerOptions,onTimeline,enabled:activeMotion,reducedMotion:systemReduced,render:f=>{
    const primaryValue=snapshot.primary.scope==='cumulative'?snapshot.primary.profit-snapshot.daily.tradingNet+f.realized:f.realized;
    profitCounter.textContent=signed(Math.round(primaryValue*100)/100);rollAmount(f.settlementAssets);step.textContent=f.complete?'交易收盘资产':'交易资产 · 结算中';step.title='按实际记录回放交易资产；收据净盈亏分拍计入，保留持仓浮动，借还款与生活消费不计入';running.dataset.direction=f.settlementAssets-snapshot.daily.openingNominal<-.005?'loss':f.settlementAssets-snapshot.daily.openingNominal>.005?'profit':'flat';realizedScore.dataset.direction=f.realized<-.005?'loss':f.realized>.005?'profit':'flat';
@@ -75,11 +83,11 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
    realizedValue.textContent=signed(Math.round(f.realized*100)/100);realizedScore.style.setProperty('--recap-score-width',typeWidth(realizedValue.textContent)*(recapImpact(presentation,{strength:1,landing:true}).scale+.08));assetLine.textContent='持仓浮动 '+signed(Math.round(f.unrealized*100)/100);clock.textContent=formatTradingTime(f.timestamp)+' JST';progressBar.style.width=(f.timeProgress*100)+'%';phaseLabel.textContent=f.complete?'收盘':f.stage==='anticipation'?'收盘前一拍':f.stage==='landing'?(presentation.direction==='loss'?'亏损落账':presentation.direction==='profit'?'收益落账':'今日收盘'):'当天回放';
    playback.dataset.eventDirection=f.complete||f.stage==='landing'?presentation.direction:f.event?.delta<0?'loss':f.event?.delta>0?'profit':'flat';
    catastropheNote.hidden=!presentation.catastrophic||!(f.complete||snapshot.trades.some(t=>t.type==='liquidation'&&t.timestamp<=f.timestamp));
-   if(f.event&&f.event.index!==lastEvent){lastEvent=f.event.index;eventCard.firstChild && (eventCard.firstChild.textContent='');eventCard.replaceChildren(el(doc,'span','recap-event-label',formatTradingTime(f.event.timestamp)+' · '+({open:'开仓',half:'部分平仓',stop:'止损',liquidation:'强制平仓',closing:'收盘平仓',summary:'收盘汇总 · 部分逐笔记录未留存'}[f.event.type]||'平仓')),eventDelta);eventDelta.textContent=f.event.type==='open'?'持仓入场':signed(f.complete?f.event.delta:0);
+   if(f.event&&f.event.index!==lastEvent){eventCard.hidden=false;lastEvent=f.event.index;eventCard.firstChild && (eventCard.firstChild.textContent='');eventCard.replaceChildren(el(doc,'span','recap-event-label',formatTradingTime(f.event.timestamp)+' · '+({open:'开仓',half:'部分平仓',stop:'止损',liquidation:'强制平仓',closing:'收盘平仓',summary:'收盘汇总 · 部分逐笔记录未留存'}[f.event.type]||'平仓')),eventDelta);eventDelta.textContent=f.event.type==='open'?'持仓入场':signed(f.complete?f.event.delta:0);
     if(activeMotion&&!systemReduced&&!f.complete){const loss=f.event.delta<0;animate(eventCard,[{opacity:.2,transform:'translateY(34px) rotate(-3deg) scale(.85)'},{opacity:1,transform:'translateY(-6px) rotate(1deg) scale(1.06)',offset:.55},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,.8,.2,1)'});const collapse=presentation.catastrophic&&f.event.type==='liquidation';if(collapse)collapseUntil=f.elapsed+1250;if(collapse)animate(running,[{transform:'translateY(-10px) scale(1.1)'},{transform:'translateY(42px) scale(.88)',offset:.35},{transform:'translateY(42px) scale(.88)',offset:.65},{transform:'none'}],{duration:1250,easing:'cubic-bezier(.2,.8,.2,1)'});}
    }if(f.event&&f.event.type!=='open')eventDelta.textContent=signed(Math.round((f.complete?f.event.delta:f.realized-f.event.before)*100)/100);skip.hidden=f.complete;playback.dataset.complete=String(f.complete);playback.dataset.stage=f.stage;container.dataset.animate=String(activeMotion&&!systemReduced&&!f.complete);
    const screenActive=presentation.rank>=2&&activeMotion&&!systemReduced&&!f.complete&&['anticipation','landing'].includes(f.stage);screen.dataset.active=String(screenActive);screen.dataset.stage=f.stage;if(screenActive)showScreen();
-   if(f.reconciled&&Math.abs(f.reconciliation)>.005){eventCard.replaceChildren(el(doc,'span','recap-event-label','收盘汇总 · 部分逐笔记录未留存'),eventDelta);eventDelta.textContent=signed(f.reconciliation);}
+   if(f.reconciled&&Math.abs(f.reconciliation)>.005){eventCard.hidden=false;eventCard.replaceChildren(el(doc,'span','recap-event-label','收盘汇总 · 部分逐笔记录未留存'),eventDelta);eventDelta.textContent=signed(f.reconciliation);}
    if(f.complete){assetDelta.textContent='';clearEffects();}
    if(!f.assetBeat||f.elapsed-f.assetBeat.atMs>800)assetDelta.textContent='';
    if(f.scoreBeat&&f.scoreBeat.index!==lastBeat&&!f.complete&&activeMotion&&!systemReduced){

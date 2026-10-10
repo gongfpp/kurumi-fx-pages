@@ -1,8 +1,8 @@
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=0fc415893c3cc501cee23f4ea0ff3604041d1337-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=78e90797c3d0aa74b03810c3e1bd3c2a9b6852ac-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.
@@ -20,6 +20,8 @@ function evidence(s,event){
   case 'activity':{
    if(!current(s,r)||!finite(r.cost)||r.cost<0||!Object.hasOwn(ACTIVITY_IDS,r.id))return null;
    const found=s.recapChoiceLedger?.find(x=>same(x,r,['id','day','cost','timestamp']));
+   // The approved curry conversation names the real total and today's profit.
+   if(r.id==='dinner-small'&&(r.cost!==1500||!current(s,s.dayReport)||!(s.dayReport.net>0)))return null;
    return found?proof(ACTIVITY_IDS[r.id],found,`activity:${r.day}:${r.id}`):null;
   }
   case 'item':{
@@ -104,12 +106,12 @@ export function selectComicScene(state,event={}, {assets={}}={}){
  const selected=evidence(state,event);if(!selected)return null;
  const text=ACTION_SCENES[selected.id];if(!text)return null;
  const candidate=assets[selected.id];
- const art=candidate?.reviewed===true&&(candidate.panels===4||(selected.id==='mochiko-watch'&&candidate.panels===1&&candidate.kind==='existing-game-illustration'&&candidate.independentComic===false))&&candidate.people===text.people&&typeof candidate.path==='string'&&candidate.path&&!candidate.grid?{...candidate}:null;
+ const art=(!text.dialogueId||candidate?.dialogueId===text.dialogueId)&&candidate?.reviewed===true&&(candidate.panels===4||(selected.id==='mochiko-watch'&&candidate.panels===1&&candidate.kind==='existing-game-illustration'&&candidate.independentComic===false))&&candidate.people===text.people&&typeof candidate.path==='string'&&candidate.path&&!candidate.grid?{...candidate}:null;
  const receipt={...selected.receipt};
- return {id:selected.id,title:text.title,characters:[...text.characters],people:text.people,lines:text.lines.map(line=>[...line]),art,ready:!!art,
+ return {id:selected.id,title:text.title,characters:[...text.characters],people:text.people,lines:text.lines.map(line=>[...line]),...(text.dialoguePanels?{dialogueId:text.dialogueId,dialoguePanels:structuredClone(text.dialoguePanels)}:{}),art,ready:!!art,
   contextualManga:selectEventContextualManga(state,event),receiptKey:`${state.runId||state.seed}:${selected.key}`,receipt,result:{amount:finite(receipt.cost)?receipt.cost:finite(receipt.amount)?receipt.amount:null,outstanding:finite(receipt.outstanding)?receipt.outstanding:null,netAssetsAfter:finite(receipt.netAssetsAfter)?receipt.netAssetsAfter:null,tradingNet:finite(receipt.tradingNet)?receipt.tradingNet:finite(receipt.pnl)?receipt.pnl:null}};
 }
 // Inventory only; runtime acceptance additionally needs real trigger and browser evidence.
 export function reviewedComicInventory(assets={}){
- return Object.entries(ACTION_SCENES).map(([id,scene])=>({id,people:scene.people,ready:!!(assets[id]?.reviewed===true&&assets[id]?.panels===4&&assets[id]?.people===scene.people&&assets[id]?.path&&!assets[id]?.grid)}));
+ return Object.entries(ACTION_SCENES).map(([id,scene])=>({id,people:scene.people,ready:!!((!scene.dialogueId||assets[id]?.dialogueId===scene.dialogueId)&&assets[id]?.reviewed===true&&assets[id]?.panels===4&&assets[id]?.people===scene.people&&assets[id]?.path&&!assets[id]?.grid)}));
 }
