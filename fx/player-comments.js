@@ -1,5 +1,13 @@
-import {serviceConfiguration} from './service-config.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+
+// Match the API's existing nickname rules without rewriting the player's input.
+const commentAliasError=value=>{
+ const alias=value.normalize('NFKC').trim().replace(/\s+/gu,' ');
+ if([...alias].length>16)return '昵称最多 16 字，请缩短后重试。';
+ if(!/^[\p{L}\p{N} ._-]*$/u.test(alias))return '昵称含不支持的符号，请使用文字、数字、空格或 . _ -。';
+ return '';
+};
 
 // Render every user-controlled value as text, never markup or links.
 export function renderPlayerComments(list,rows,{document=list.ownerDocument}={}){
@@ -25,7 +33,7 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
   if(error.kind==='timeout')return '发送结果暂未确认，重试不会重复留言。';
   if(error.kind==='invalid-response')return '留言未获确认，请重试';
   if(error.status===429)return '留言发送较快，请稍等 30 秒再试';
-  if(error.status===400)return '留言需为 1–200 字，昵称最多 16 字';
+  if(error.status===400)return '留言未通过校验，请检查内容和昵称后重试。';
   if(error.status===409)return '留言编号已使用，请重新发送';
   return '留言暂不可用，请稍后重试';
  };
@@ -54,11 +62,12 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
   event.preventDefault();if(pending||!configuration.configured)return;if(disposed)return;
   composerStatus=true;revision++;
   const text=input.value.trim(),alias=getAlias().trim();if(!text||[...text].length>200){status.textContent='请输入 1–200 字的留言。';return;}
+  const aliasError=commentAliasError(alias);if(aliasError){status.textContent=aliasError;return;}
   if(!attempt||attempt.text!==text||attempt.alias!==alias)attempt={id:crypto.randomUUID(),visitor,text,alias};
   pending=true;button.disabled=true;input.disabled=true;status.textContent='正在公开发送…';
   try{const result=await request({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(attempt)},attempt.id);if(disposed)return;
    revision++;const row=result.row,item=document.createElement('li'),name=document.createElement('strong'),message=document.createElement('span');name.textContent=`${row.alias}：`;message.textContent=row.text;item.dataset.commentId=row.id;for(const old of [...list.children])if(old.dataset.commentId===row.id)old.remove();item.append(name,message);list.prepend(item);while(list.children.length>50)list.lastElementChild.remove();publicRows=[row,...publicRows.filter(old=>old.id!==row.id)].slice(0,50);onPublicRows(publicRows);input.value='';attempt=null;status.textContent='已公开发送。';
-  }catch(error){if(!disposed)status.textContent=sendFailureCopy(error);}
+  }catch(error){if(error.kind==='http-error'&&error.status===409)attempt=null;if(!disposed)status.textContent=sendFailureCopy(error);}
   finally{pending=false;if(!disposed){button.disabled=false;input.disabled=false;}}
  });
  input.addEventListener('input',()=>{if(!pending){composerStatus=false;status.textContent='';}});

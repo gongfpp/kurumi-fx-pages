@@ -1,6 +1,6 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {sealedDailyTradeEvidence,retainedTimeline,validStatisticsShape} from './contextual-trade-evidence.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline,validStatisticsShape} from './contextual-trade-evidence.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
 const activitySpecs={'quiet-night':[0,undefined,-10000],'noodles-today':[150,undefined,null],'dinner-small':[1500,'dinner',3000],'dinner-friends':[8000,'dinner',40000],'dinner-feast':[30000,'dinner',200000],'dinner-banquet':[100000,'dinner',1000000]};
 const current=state=>state?.mode==='story'&&['day_end','resting'].includes(state.phase)&&!state.position&&Number.isSafeInteger(state.day)&&state.day>0&&sealedDailyMangaOutcome(state);
 // Validate both whole current-day activity multisets. Free choices are real

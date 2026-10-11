@@ -1,8 +1,8 @@
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
 
 export const DAILY_FALLBACK_MAX_DAY=50;
 const contexts=new Set(['quiet','roommate']),outcomes=new Set(['flat','profit','loss']);
@@ -38,13 +38,13 @@ export function inspectDailyFallbackCatalog(catalog=DAILY_FALLBACK_CATALOG){
  accepted.sort((a,b)=>a.order-b.order||a.id.localeCompare(b.id));
  return {accepted,rejected,readyCount:accepted.length};
 }
-export function dailyFallbackCandidates(state,narrative,{catalog=DAILY_FALLBACK_CATALOG,memory=dailyArtMemory}={}){
+export function dailyFallbackCandidates(state,narrative,{catalog=DAILY_FALLBACK_CATALOG,memory=dailyArtMemory,allowExhaustedActivity=false}={}){
  const outcome=sealedDailyMangaOutcome(state);
  if(narrative?.day!==undefined&&narrative.day!==state?.day)return [];
  if(state?.mode!=='story'||!outcome||state.day<1||state.day>DAILY_FALLBACK_MAX_DAY||isDailyFamilyNarrative(narrative))return [];
- // A paid activity, a family event or a specific scene owns the slot even if
- // its image is unavailable or already seen. Never replace its consequences.
- if((state.recapChoiceLedger||[]).some(r=>r.day===state.day))return [];
+ // Only the daily selector opens this route after validating a real activity.
+ // Its image can be exhausted; its receipt, bill and narrative stay untouched.
+ if(!allowExhaustedActivity&&(state.recapChoiceLedger||[]).some(r=>r.day===state.day))return [];
  const event=narrative?.event?.key,context=!event||event==='quietNight'?'quiet':event==='roommate'?'roommate':null;
  if(!context)return [];
  const trauma=tradingTrauma(state).active;

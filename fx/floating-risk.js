@@ -1,5 +1,6 @@
-import {closeAllModalOpen} from './close-all-control.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {bindFloatingDismissal} from './floating-dismissal.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
 
 // Existing position risk displays stay in the document; close uses a shared action gate.
 // Block complete trading panels as well as controls, so click-through is only a
@@ -100,6 +101,7 @@ export function createFloatingRisk({root=document,closeControl=null,getRiskConte
   const isDismissed=()=>dismissed&&dismissed.context===context&&dismissed.episode===episode;
   const dismissWarning=()=>{if(disposed||panel.hidden)return;dismissed={context,episode};hide();closeControl?.refresh();};
   listen(dismiss,'click',dismissWarning);
+  const unbindDismiss=bindFloatingDismissal({element:panel,root,getPresentation:()=>`${context}:${episode}`,dismiss:dismissWarning});
   listen(panel,'keydown',event=>{if(event.key==='Escape'){event.preventDefault?.();event.stopPropagation?.();dismissWarning();}});
   function layout(){
     if(disposed)return;
@@ -192,7 +194,7 @@ export function createFloatingRisk({root=document,closeControl=null,getRiskConte
     destroy(){
       if(disposed)return;disposed=true;hide();
       if(frame!==null)win?.cancelAnimationFrame?.(frame);
-      mutations?.disconnect();resize?.disconnect();listeners.forEach(remove=>remove());unbindClose?.();panel.remove();
+      mutations?.disconnect();resize?.disconnect();listeners.forEach(remove=>remove());unbindDismiss();unbindClose?.();panel.remove();
     }
   };
 }

@@ -4,7 +4,7 @@
  * The host owns the reversible portal ledger and restores nodes after dispose().
  */
 export function createPixelRenderer({document:doc}) {
-  let root=null, portals=null, controller=null, tabs=null;
+  let root=null, portals=null, controller=null, tabs=null, originalPercent=null, originalPercentHidden=null;
   const owned=[];
   const q=(selector,scope=root)=>scope?.querySelector(selector);
   const native=id=>doc.getElementById(id);
@@ -22,6 +22,7 @@ export function createPixelRenderer({document:doc}) {
     const mode=native('mode-open');
     if(mode){mode.classList.add('pixel-mode-button');moveNode(mode,right);}
     const source=make('span','pixel-source-status');source.setAttribute('aria-live','off');right.append(source);
+    const exit=make('div','pixel-exit-region');exit.setAttribute('role','group');exit.setAttribute('aria-label','结束本局');right.append(exit);moveNode(native('retire'),exit);
     for(const id of ['leaderboard-open','achievements-open'])moveNode(native(id),right);
     const settings=drawer('设置','pixel-settings');settings.summary.prepend(icon('settings'));right.append(settings.node);
     for(const id of ['sound','music-open','share-open','help','developer-open','privacy-toggle'])moveNode(native(id),settings.content);
@@ -81,6 +82,8 @@ export function createPixelRenderer({document:doc}) {
     moveNode(native('preview-fee'),fee);
     const debit=make('span','pixel-debit-label',' · 预计扣款 ');debit.setAttribute('aria-hidden','true');fee.append(debit);moveNode(native('preview-debit'),fee);
     for(const selector of ['.order-estimate','.liquidation-estimate','.risk-line','.emotion-pressure-panel'])moveNode(q(selector,order),details.content);
+    const percent=native('percent-slider-field');
+    if(percent){originalPercent=native('percent-field');if(originalPercent){originalPercentHidden=originalPercent.hidden;originalPercent.hidden=true;}percent.hidden=false;}
     const amount=native('amount-field');
     for(const selector of ['.amount-slider-heading','#amount-slider','.amount-slider-bounds'])moveNode(q(selector,amount),details.content);
     for(const id of ['amount-limit','emotion-order-rule','order-validation']){const node=native(id);if(node)moveNode(node,trade);}
@@ -103,13 +106,16 @@ export function createPixelRenderer({document:doc}) {
   }
   function render(){
     if(!root)return;
-    root.style.setProperty('--pixel-scale',String(doc.defaultView.innerWidth>700?Math.min(doc.defaultView.innerWidth/1536,1):1));
+    // Match the CSS breakpoint to the viewport, but fit the usable width after
+    // a classic scrollbar gutter. The two can differ by 15px on desktop.
+    const availableWidth=doc.documentElement.clientWidth||doc.defaultView.innerWidth;
+    root.style.setProperty('--pixel-scale',String(doc.defaultView.innerWidth>1200?Math.min(availableWidth/1536,1):1));
     syncMarketTabs();
     const mood=native('emotion-label')?.textContent?.trim()||'';root.dataset.pixelMood=mood;
     const mode=native('mode-open'),stage=native('stage-name')?.textContent||'';
     if(mode){const label=mode.textContent.replace(/[▾▼]/g,'').trim();const day=stage.match(/第\s*\d+\s*天/)?.[0]||'';mode.dataset.pixelLabel=[label,day].filter(Boolean).join('\n');}
     const disclosure=native('market-disclosure')?.textContent||'';
-    const source=q('.pixel-source-status');if(source){const kind=native('terminal')?.dataset.marketSource;source.textContent='本局已锁定 · '+({live:'实时',historical:'历史',simulated:'模拟'}[kind]||'行情');source.title=disclosure;}
+    const source=q('.pixel-source-status');if(source){const kind=native('terminal')?.dataset.marketSource;source.textContent=({live:'实时真实',historical:'历史真实',simulated:'模拟盘'}[kind]||'模拟盘');source.title=disclosure;}
     const pressure=native('emotion-pressure-panel');if(pressure&&!pressure.hidden){const drawer=pressure.closest('details');if(drawer)drawer.open=true;}
   }
   return {
@@ -128,6 +134,8 @@ export function createPixelRenderer({document:doc}) {
     render,
     dispose() {
       controller?.abort();
+      const percent=native('percent-slider-field');if(percent)percent.hidden=true;
+      if(originalPercent){originalPercent.hidden=originalPercentHidden;originalPercent=null;originalPercentHidden=null;}
       // Portal restoration follows this call. Do not remove a wrapper that owns live nodes.
       for(const id of ['mode-open','market-symbol','voice-library-open','life-open']){
         const node=native(id);node?.classList.remove('pixel-mode-button','pixel-market-native','pixel-voice-button','pixel-life-button');

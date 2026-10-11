@@ -1,3 +1,4 @@
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
@@ -902,6 +903,7 @@ export const DINNER_STORY_ASSETS=freeze({
    "party-2",
    "approved-style-expansion"
   ]
- }
+ },
+ ...DINNER_EXPANSION_16_18_ASSETS
 });
 export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));

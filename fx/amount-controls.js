@@ -14,6 +14,8 @@ export function randomOrderAmount(cap,random=Math.random){
 }
 
 export const ORDER_RATIOS=Object.freeze([.1,.25,.5,1]);
+// Legacy presets and the continuous percentage slider share the same quote path.
+export function validOrderRatio(value){return Number.isFinite(value)&&value>=0&&value<=1;}
 export function normalizeOrderAmount(value){
  if(!Number.isFinite(value)||value<0||!Number.isSafeInteger(Math.round(value*100)))return NaN;
  return Math.round(value*100)/100;
@@ -33,7 +35,7 @@ export function nearestOrderRatio(amount,availableMargin,{ratios=ORDER_RATIOS,to
  return distance<=tolerance+1e-12?winner:null;
 }
 export function ratioOrderAmount(ratio,availableMargin,cap){
- if(!ORDER_RATIOS.includes(ratio)||!Number.isFinite(availableMargin)||availableMargin<=0||!Number.isFinite(cap)||cap<100)return 0;
+ if(!validOrderRatio(ratio)||!Number.isFinite(availableMargin)||availableMargin<=0||!Number.isFinite(cap)||cap<100)return 0;
  return Math.max(0,Math.floor((Math.min(cap,availableMargin*ratio)+1e-8)*100)/100);
 }
 
@@ -41,7 +43,7 @@ export function ratioOrderAmount(ratio,availableMargin,cap){
 // Explicit typed amounts remain fixed. Ratio/max tickets re-quote on execution.
 export function orderDraftIntent(state={}){
  const intent=state.orderDraftIntent;
- return intent?.mode==='max'?{mode:'max'}:intent?.mode==='ratio'&&ORDER_RATIOS.includes(intent.ratio)?{mode:'ratio',ratio:intent.ratio}:null;
+ return intent?.mode==='max'?{mode:'max'}:intent?.mode==='ratio'&&validOrderRatio(intent.ratio)?{mode:'ratio',ratio:intent.ratio}:null;
 }
 export function orderIntentAction(state,amount){const intent=orderDraftIntent(state);return intent?.mode==='max'?{amountMode:'max'}:intent?.mode==='ratio'?{ratio:intent.ratio}:{amount};}
 export function quoteOrderIntent(action,availableMargin,maxMargin){

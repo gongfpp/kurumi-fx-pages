@@ -7,11 +7,11 @@ body[data-frontend="pixel"] #leaderboard-dialog {
   --hall-pink: #f7279b;
   --hall-line: #c394d3;
   --hall-muted: #575c86;
-  --hall-atlas: url('./pixel-assets/reference-atlas.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');
+  --hall-atlas: url('./pixel-assets/reference-atlas.png?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717');
   width: min(1028px, calc(100vw - 28px));
   max-width: calc(100vw - 28px);
   max-height: min(940px, calc(100dvh - 28px));
-  padding: 0 18px 18px;
+  padding: 0;
   border: 3px solid var(--hall-ink);
   border-radius: 15px;
   background: linear-gradient(120deg, #fff9fc, #fff 54%, #fff3fa);
@@ -25,19 +25,35 @@ body[data-frontend="pixel"] #leaderboard-dialog {
   scrollbar-color: #d79bc9 #fff5fc;
 }
 body[data-frontend="pixel"] #leaderboard-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+/* enhanceDialogs owns the persistent toolbar and scroll region in production. */
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-content: start;
   gap: 12px;
+  padding: 0 18px 18px;
+}
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-toolbar {
+  position: relative;
+  flex: 0 0 auto;
+  z-index: 4;
+  padding: 6px 12px;
+  min-height: 56px;
+  border-bottom: 1px solid var(--hall-line);
+  background: linear-gradient(110deg, #ffe9f7, #ffc6eb);
 }
 body[data-frontend="pixel"] #leaderboard-dialog::backdrop {
   background: #141339a8;
   backdrop-filter: none;
 }
-body[data-frontend="pixel"] #leaderboard-dialog > * {
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > * {
   min-width: 0;
   grid-column: 1 / -1;
 }
-body[data-frontend="pixel"] #leaderboard-dialog > h2 {
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2 {
   position: relative;
   grid-row: 1;
   display: flex;
@@ -57,7 +73,7 @@ body[data-frontend="pixel"] #leaderboard-dialog > h2 {
   text-shadow: 2px 2px #fff, -2px -2px #fff;
   isolation: isolate;
 }
-body[data-frontend="pixel"] #leaderboard-dialog > h2::before {
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2::before {
   content: '';
   flex: none;
   width: 43px;
@@ -67,7 +83,7 @@ body[data-frontend="pixel"] #leaderboard-dialog > h2::before {
   background-position: -990px -9px;
   image-rendering: pixelated;
 }
-body[data-frontend="pixel"] #leaderboard-dialog > h2::after {
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2::after {
   content: '';
   position: absolute;
   right: 0;
@@ -81,11 +97,12 @@ body[data-frontend="pixel"] #leaderboard-dialog > h2::after {
   z-index: -1;
   image-rendering: pixelated;
 }
-body[data-frontend="pixel"] #leaderboard-dialog > .x-close {
+body[data-frontend="pixel"] #leaderboard-dialog > .dialog-toolbar > .x-close {
   grid-row: 1;
   grid-column: 12;
-  position: sticky;
-  top: 10px;
+  position: static;
+  pointer-events: auto;
+  top: auto;
   right: auto;
   justify-self: end;
   align-self: start;
@@ -95,7 +112,7 @@ body[data-frontend="pixel"] #leaderboard-dialog > .x-close {
   width: 48px;
   height: 48px;
   min-height: 48px;
-  margin: 12px 0 0;
+  margin: 0;
   padding: 0;
   border: 2px solid var(--hall-ink);
   border-radius: 7px;
@@ -404,16 +421,17 @@ body[data-frontend="pixel"] #leaderboard-dialog #ranking-publish {
     width: calc(100vw - 20px);
     max-width: calc(100vw - 20px);
     max-height: calc(100dvh - 20px);
-    padding: 0 12px 12px;
+    padding: 0;
     border-width: 2px;
     border-radius: 10px;
     box-shadow: 0 0 0 2px #ffc6eb, 3px 4px 0 #09124f;
   }
-  body[data-frontend="pixel"] #leaderboard-dialog[open] { gap: 10px; }
-  body[data-frontend="pixel"] #leaderboard-dialog > h2 { margin: 0 -12px; min-height: 74px; padding: 12px 60px; gap: 9px; font-size: 28px; letter-spacing: .02em; }
-  body[data-frontend="pixel"] #leaderboard-dialog > h2::before { display: none; }
-  body[data-frontend="pixel"] #leaderboard-dialog > h2::after { opacity: .6; }
-  body[data-frontend="pixel"] #leaderboard-dialog > .x-close { width: 44px; height: 44px; min-height: 44px; margin-top: 12px; font-size: 34px; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll { gap: 10px; padding: 0 12px 12px; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-toolbar { padding: 4px 10px; min-height: 52px; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2 { margin: 0 -12px; min-height: 74px; padding: 12px 60px; gap: 9px; font-size: 28px; letter-spacing: .02em; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2::before { display: none; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2::after { opacity: .6; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-toolbar > .x-close { width: 44px; height: 44px; min-height: 44px; margin-top: 0; font-size: 34px; }
   body[data-frontend="pixel"] #leaderboard-dialog .ranking-modes button { font-size: 17px; padding: 10px 8px; }
   body[data-frontend="pixel"] #leaderboard-dialog .ranking-sort-label { grid-column: span 7; gap: 7px; font-size: 13px; }
   body[data-frontend="pixel"] #leaderboard-dialog #ranking-share { grid-column: span 5; font-size: 12px; padding: 8px 5px; }
@@ -429,7 +447,7 @@ body[data-frontend="pixel"] #leaderboard-dialog #ranking-publish {
   body[data-frontend="pixel"] #leaderboard-dialog #ranking-publish { grid-column: 1; grid-row: auto; }
 }
 @media (max-width: 420px) {
-  body[data-frontend="pixel"] #leaderboard-dialog > h2 { padding-left: 22px; padding-right: 55px; font-size: 26px; }
+  body[data-frontend="pixel"] #leaderboard-dialog > .dialog-scroll > h2 { padding-left: 22px; padding-right: 55px; font-size: 26px; }
   body[data-frontend="pixel"] #leaderboard-dialog .ranking-entry { grid-template-columns: minmax(0, 1fr); }
   body[data-frontend="pixel"] #leaderboard-dialog .ranking-return { text-align: left; }
   body[data-frontend="pixel"] #leaderboard-dialog .ranking-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }

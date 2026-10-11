@@ -1,7 +1,7 @@
-import {NEWS_2014} from './news-2014.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
 export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2]);
@@ -86,6 +86,6 @@ export function archiveNewsView(state,event,{flash=false}={}){
  const slot=historical?`history:${Math.floor(context.at/3600000)}`:`${state.day}:${beat}:${revealed?'reveal':'lead'}`;
  const selected=selectArchiveNews(state,{slot});
  if(!selected)return fallbackNews(event,context);
- const {entry,marketState}=selected,old=context.at-newsAvailableAt(entry)>7*86400000;
- return{...event,title:entry.title,copy:entry.summary,source:entry.sourceName,time:entry.date,archiveKind:old?'2014旧闻回顾':historical?'2014历史新闻':'2014新闻回顾',archiveId:entry.id,sourceUrl:entry.sourceUrl,marketState,contentKind:'historical_fact',archiveTags:entry.currencies.join(' / '),sourceAttribution:entry.sourceAttribution||null,sourceLicenseUrl:entry.sourceLicenseUrl||null,summaryNotice:entry.summaryNotice||null};
+ const {entry,marketState}=selected;
+ return{...event,title:entry.title,copy:entry.summary,source:entry.sourceName,time:entry.date,archiveKind:'新闻',archiveId:entry.id,sourceUrl:entry.sourceUrl,marketState,contentKind:'historical_fact',archiveTags:entry.currencies.join(' / '),sourceAttribution:entry.sourceAttribution||null,sourceLicenseUrl:entry.sourceLicenseUrl||null,summaryNotice:entry.summaryNotice||null};
 }

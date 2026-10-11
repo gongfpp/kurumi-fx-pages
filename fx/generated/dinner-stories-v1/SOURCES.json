@@ -646,6 +646,136 @@
       ],
       "tier": "dinner-small",
       "cost": 1500
+    },
+    {
+      "id": "dinner-new-16",
+      "file": "dinner-apple-curry.webp",
+      "sha256": "09e14b0e9a5969de785f03a789156d7afb798bb5618dfe8807af42c38b524c39",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "panels": 4,
+      "panelRects": [
+        [
+          5,
+          5,
+          612,
+          612
+        ],
+        [
+          639,
+          5,
+          610,
+          612
+        ],
+        [
+          5,
+          639,
+          612,
+          610
+        ],
+        [
+          639,
+          639,
+          610,
+          610
+        ]
+      ],
+      "characters": [
+        "久留美",
+        "安子"
+      ],
+      "tier": "dinner-small",
+      "cost": 1500,
+      "dialogueOrigin": "captured Gemini output; canonical character-name normalization only",
+      "artDirectionOrigin": "editorial single-moment adaptation"
+    },
+    {
+      "id": "dinner-new-18",
+      "file": "dinner-bonito-dance.webp",
+      "sha256": "491752445a12f6d53229df75d7455ab6f523bb92277cefe953b7748c174f4d24",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "panels": 4,
+      "panelRects": [
+        [
+          14,
+          14,
+          603,
+          603
+        ],
+        [
+          638,
+          14,
+          602,
+          603
+        ],
+        [
+          14,
+          638,
+          603,
+          601
+        ],
+        [
+          638,
+          638,
+          602,
+          601
+        ]
+      ],
+      "characters": [
+        "久留美",
+        "萌智子"
+      ],
+      "tier": "dinner-small",
+      "cost": 1500,
+      "dialogueOrigin": "captured Gemini output; selected verbatim lines",
+      "artDirectionOrigin": "editorial single-moment adaptation"
+    },
+    {
+      "id": "dinner-new-17",
+      "file": "dinner-seaweed-crunch.webp",
+      "sha256": "4324f04a75476710fcd64c60c2b2f513c834e1bfd44ac0d80f7a2edcc83a929a",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "panels": 4,
+      "panelRects": [
+        [
+          13,
+          13,
+          605,
+          605
+        ],
+        [
+          636,
+          13,
+          605,
+          605
+        ],
+        [
+          13,
+          636,
+          605,
+          605
+        ],
+        [
+          636,
+          636,
+          605,
+          605
+        ]
+      ],
+      "characters": [
+        "久留美",
+        "芽吹"
+      ],
+      "tier": "dinner-small",
+      "cost": 1500
     }
   ]
 }
