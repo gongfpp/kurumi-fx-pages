@@ -1,5 +1,5 @@
-import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 // The list is a headline entry. The existing detail dialog owns scrolling,
 // Escape, touch, focus return and the ordinary modal playback boundary.

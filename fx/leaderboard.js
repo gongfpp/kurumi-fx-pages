@@ -1,11 +1,11 @@
-import {notifyFailure} from './error-reporting.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {runPerformance} from './performance.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {runPerformance} from './performance.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;

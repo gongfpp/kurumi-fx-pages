@@ -1,6 +1,6 @@
-import {mountPixelReaders} from './pixel-reader.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {mountPixelSettlement} from './pixel-settlement.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {captureFocus,restoreFocus} from './frontend-host.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {mountPixelReaders} from './pixel-reader.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {mountPixelSettlement} from './pixel-settlement.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {captureFocus,restoreFocus} from './frontend-host.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 // These views never own a game action, snapshot, clock or save lifecycle.
 export function mountPixelDialogs({document=globalThis.document,getSettlement=()=>null}={}){

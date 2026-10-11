@@ -1,48 +1,48 @@
-import {recoverLifeAction,recoverRecapAction,recoverProp,recoverLifeSleep} from './life-recovery.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {STAMINA_RULES,newStamina,ensureStamina,validStamina,staminaStatus,consumeTradingStamina,consumeStamina} from './stamina.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {STAMINA_RULES,staminaStatus} from './stamina.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LIFE_ACTION_SAVE_VERSION,LIFE_ACTION_CATALOG,lifeActionDefinition,lifeActionRunId,lifeActionReceipt,lifeActionDialogue,lifeFriendKnown,validLifeActions} from './life-actions.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {LIFE_ACTION_CATALOG,LIFE_WORK_INCOME} from './life-actions.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {beginFatherTheftWatch,checkFatherTheftAtClose,validFatherTheftWatch} from './father-theft-discovery.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {isMultiHistory,consumeMultiHistoryEvent,multiHistoryTimestamp,multiHistoryTradeEvidence,multiHistoryQuoteCurrent,multiHistoryPositionsCurrent,multiHistorySymbolEnded,multiHistoryEntryOpen} from './multi-history-state.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LIVING_CHOICE_COPY,renderLivingCopy} from './copy/living-choices.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LIVE_MARKET_VERSION,LIVE_SYMBOLS,isLiveMarket,initializeLiveMarket,liveScript,liveQuote,liveTimestamp,liveTradingReady,livePositionsReady,liveQuoteReady,liveStatusLabel,liveTradeEvidence,validLiveQuote,validLiveMarket,markLiveRestored} from './live-market-state.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {newHallMetrics,recordHallPosition} from './hall-metrics.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {MULTI_MARKET_VERSION,activeMarket,marketSeed,positionMarket,marketPrice,captureMarket,createMarketBook,switchMarket,renewMarketScripts,advanceHiddenMarkets,validMarketBook} from './market-book.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {activeMarket,marketPrice} from './market-book.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {recoverLifeAction,recoverRecapAction,recoverProp,recoverLifeSleep} from './life-recovery.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {STAMINA_RULES,newStamina,ensureStamina,validStamina,staminaStatus,consumeTradingStamina,consumeStamina} from './stamina.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {STAMINA_RULES,staminaStatus} from './stamina.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LIFE_ACTION_SAVE_VERSION,LIFE_ACTION_CATALOG,lifeActionDefinition,lifeActionRunId,lifeActionReceipt,lifeActionDialogue,lifeFriendKnown,validLifeActions} from './life-actions.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {LIFE_ACTION_CATALOG,LIFE_WORK_INCOME} from './life-actions.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {beginFatherTheftWatch,checkFatherTheftAtClose,validFatherTheftWatch} from './father-theft-discovery.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {isMultiHistory,consumeMultiHistoryEvent,multiHistoryTimestamp,multiHistoryTradeEvidence,multiHistoryQuoteCurrent,multiHistoryPositionsCurrent,multiHistorySymbolEnded,multiHistoryEntryOpen} from './multi-history-state.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LIVING_CHOICE_COPY,renderLivingCopy} from './copy/living-choices.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LIVE_MARKET_VERSION,LIVE_SYMBOLS,isLiveMarket,initializeLiveMarket,liveScript,liveQuote,liveTimestamp,liveTradingReady,livePositionsReady,liveQuoteReady,liveStatusLabel,liveTradeEvidence,validLiveQuote,validLiveMarket,markLiveRestored} from './live-market-state.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {newHallMetrics,recordHallPosition} from './hall-metrics.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {MULTI_MARKET_VERSION,activeMarket,marketSeed,positionMarket,marketPrice,captureMarket,createMarketBook,switchMarket,renewMarketScripts,advanceHiddenMarkets,validMarketBook} from './market-book.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {activeMarket,marketPrice} from './market-book.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 export function selectMarket(s,symbol){const upgraded=s.version===LIFE_ACTION_SAVE_VERSION;const result=switchMarket(s,symbol,planDay);if(upgraded&&s.version!==LIFE_ACTION_SAVE_VERSION){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return result;}
 export function enableMarkets(s){const upgraded=s.version===LIFE_ACTION_SAVE_VERSION;if(!s.historical)createMarketBook(s,planDay);if(upgraded&&s.version!==LIFE_ACTION_SAVE_VERSION){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return s;}
-import {decodeSaveRaw} from './save-codec.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {validOrderRatio,quoteOrderIntent} from './amount-controls.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {livingChargeParts,paidLivingService,applyPaidLivingRecovery,scheduleHousingSelection,activateSelectedHousing,validLivingServices} from './living-services.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {quotePackageState} from './quote-packages.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {dailyReturnMetrics} from './daily-performance.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {decodeSaveRaw} from './save-codec.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {validOrderRatio,quoteOrderIntent} from './amount-controls.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {livingChargeParts,paidLivingService,applyPaidLivingRecovery,scheduleHousingSelection,activateSelectedHousing,validLivingServices} from './living-services.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {quotePackageState} from './quote-packages.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {dailyReturnMetrics} from './daily-performance.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
-import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {recapChoices} from './recap-choices.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {recapChoices} from './recap-choices.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 
-import {creditTerms} from './credit-policy.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {NEWS_CHAINS,PROPS} from './content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {BLACK_SWANS} from './story-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {creditTerms} from './credit-policy.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {NEWS_CHAINS,PROPS} from './content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {BLACK_SWANS} from './story-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 export const VERSION = 9;
 export const STORY_CAPITAL_VERSION = 12;
 export const ENDLESS_CAPITAL_VERSION = 13;
@@ -235,7 +235,8 @@ export function restrictions(s){
 }
 export function tradingOpen(s){return (!isLiveMarket(s)||liveTradingReady(s))&&multiHistoryEntryOpen(s)&&historicalReady(s)&&(s.phase==='decision'||s.realtime===true&&s.phase==='playing');}
 export const marketPlaybackOpen=s=>isMultiHistory(s)?historicalReady(s)&&['decision','playing'].includes(s.phase):tradingOpen(s);
-export function canCloseAtKnownQuote(s,positionId=null){if(isMultiHistory(s))return (positionId?(s.positions||[]).filter(p=>p.id===positionId).every(p=>multiHistoryQuoteCurrent(s,positionMarket(p))):multiHistoryPositionsCurrent(s))&&['decision','playing'].includes(s.phase);return tradingOpen(s)||(isHistorical(s)&&['decision','playing'].includes(s.phase)&&Number.isFinite(s.historical.lastQuote?.[0]));}
+function positionQuoteCurrent(s,p){return (!isLiveMarket(s)||liveQuoteReady(s,positionMarket(p)))&&multiHistoryQuoteCurrent(s,positionMarket(p));}
+export function canCloseAtKnownQuote(s,positionId=null){if(isLiveMarket(s)&&positionId)return positionsOf(s).some(p=>p.id===positionId&&positionQuoteCurrent(s,p))&&['decision','playing'].includes(s.phase);if(isMultiHistory(s))return (positionId?(s.positions||[]).filter(p=>p.id===positionId).every(p=>multiHistoryQuoteCurrent(s,positionMarket(p))):multiHistoryPositionsCurrent(s))&&['decision','playing'].includes(s.phase);return tradingOpen(s)||(isHistorical(s)&&['decision','playing'].includes(s.phase)&&Number.isFinite(s.historical.lastQuote?.[0]));}
 export function orderPreview(s,action={}){
   const a=accountMetrics(s),limits=restrictions(s),leverage=action.leverage;
   const factor=Number.isFinite(leverage)?leverage*FEE_RATE:0;
@@ -355,19 +356,18 @@ function protectBalance(s,trades){
   recordOrderExits(s,trades);samplePerformance(s);trimEndlessLedgers(s);
 }
 function enforceMargin(s){
-  if(isLiveMarket(s)&&!livePositionsReady(s))return [];
   const exits=[];
   while(s.positions.length&&accountMetrics(s).marginLevel<=STOP_OUT_LEVEL){
     // A missing quote in one pair cannot suspend risk in another pair.
     // Stale positions remain pending until their next observed price.
-    const worst=s.positions.filter(p=>multiHistoryQuoteCurrent(s,positionMarket(p))).sort((a,b)=>positionUnrealized(s,a)-positionUnrealized(s,b))[0];
+    const worst=s.positions.filter(p=>positionQuoteCurrent(s,p)).sort((a,b)=>positionUnrealized(s,a)-positionUnrealized(s,b))[0];
     if(!worst)break;
     exits.push(closePosition(s,1,'liquidation',worst.id));
   }
   protectBalance(s,exits);return exits;
 }
 function closeOrders(s,fraction,reason,positionId){
-  if(isLiveMarket(s)&&!livePositionsReady(s)||isMultiHistory(s)&&!(positionId?s.positions.filter(p=>p.id===positionId):s.positions).every(p=>multiHistoryQuoteCurrent(s,positionMarket(p))))throw Error('行情暂缓，暂不能平仓');
+  if(!(positionId?positionsOf(s).filter(p=>p.id===positionId):positionsOf(s)).every(p=>positionQuoteCurrent(s,p)))throw Error('行情暂缓，暂不能平仓');
   ensureOrders(s);const targets=positionId?s.positions.filter(p=>p.id===positionId):[...s.positions];
   if(!targets.length)throw Error('没有可平仓位');
   const trades=targets.map(p=>closePosition(s,fraction,reason,p.id));
@@ -989,9 +989,9 @@ export function restoreGame(raw) {
       ids.add(p.id);
     }
     // In cross margin, realizing the losing hedge can make cash negative while
-    // its still-open winner covers it. Historical losses awaiting a missing pair
-    // quote also preserve their ledger until execution is possible.
-    if(s.cash<0&&(!s.positions.length||!Number.isFinite(accountMetrics(s).tradingEquity)||accountMetrics(s).tradingEquity<=0&&!(isMultiHistory(s)&&!multiHistoryPositionsCurrent(s))))return null;
+    // its still-open winner covers it. Observed-source losses awaiting a missing
+    // pair quote also preserve their ledger until execution is possible.
+    if(s.cash<0&&(!s.positions.length||!Number.isFinite(accountMetrics(s).tradingEquity)||accountMetrics(s).tradingEquity<=0&&!(isMultiHistory(s)&&!multiHistoryPositionsCurrent(s)||isLiveMarket(s)&&!livePositionsReady(s))))return null;
     if(!Number.isFinite(s.feesPaid)||s.feesPaid<0||!Number.isInteger(s.nextOrderId)||s.nextOrderId<1)return null;
     while(ids.has('order-'+s.nextOrderId))s.nextOrderId++;
     if(!Number.isFinite(s.reserve)||s.reserve<0||!Number.isFinite(s.externalFunding)||!Array.isArray(s.equityTrail)||!s.chat?.group||!s.chat?.friend)return null;
@@ -1089,9 +1089,9 @@ function migrateInverseQuotes(s){
 }
 
 function processQuoteRisk(s,lastSubtick=true){
-  if(isLiveMarket(s)&&!livePositionsReady(s))return [];
   ensureOrders(s);const exits=[];
   for(const pos of s.positions){
+   if(isLiveMarket(s)&&!positionQuoteCurrent(s,pos))continue;
    const unreal=positionNetUnrealized(s,pos),last=pos.lastDirectionalFloating??pos.lastFloating??0;pos.maxUnrealized=Math.max(pos.maxUnrealized,unreal);
    if(!lastSubtick)continue;
    const meaningful=Math.max(5,(pos.notional||0)*.00003);
@@ -1101,7 +1101,7 @@ function processQuoteRisk(s,lastSubtick=true){
    pos.lastFloating=unreal;if(Math.abs(unreal)>meaningful)pos.lastDirectionalFloating=unreal;
   }
   exits.push(...enforceMargin(s));
-  for(const pos of [...s.positions])if(multiHistoryQuoteCurrent(s,positionMarket(pos))&&(Object.hasOwn(pos,'stopPips')&&Number.isFinite(pos.stopPrice)?(marketPrice(s,positionMarket(pos))-pos.stopPrice)*pos.direction<=0:pos.stop<1&&positionUnrealized(s,pos)<=-pos.margin*pos.stop))exits.push(closePosition(s,1,'stop',pos.id));
+  for(const pos of [...s.positions])if(positionQuoteCurrent(s,pos)&&(Object.hasOwn(pos,'stopPips')&&Number.isFinite(pos.stopPrice)?(marketPrice(s,positionMarket(pos))-pos.stopPrice)*pos.direction<=0:pos.stop<1&&positionUnrealized(s,pos)<=-pos.margin*pos.stop))exits.push(closePosition(s,1,'stop',pos.id));
   exits.push(...enforceMargin(s));protectBalance(s,exits);return exits;
 }
 

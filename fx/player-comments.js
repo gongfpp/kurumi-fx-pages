@@ -1,5 +1,5 @@
-import {serviceConfiguration} from './service-config.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 // Match the API's existing nickname rules without rewriting the player's input.
 const commentAliasError=value=>{
@@ -39,14 +39,19 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
  };
  const validRow=row=>row&&typeof row==='object'&&typeof row.id==='string'&&typeof row.alias==='string'&&typeof row.text==='string';
  const request=async(options={},expectedId=null)=>{
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000),writing=options.method==='POST';let status=0;
+  const controller=new AbortController(),writing=options.method==='POST';let timeout,status=0;
+  // Bound fetch and body decoding even if an embedded transport ignores abort.
+  // The late result is consumed by the race but can never update composer state.
+  const deadline=new Promise((_resolve,reject)=>{timeout=setTimeout(()=>{reject(failure('timeout',status));controller.abort();},12000);});
   try{
-   const response=await fetch(configuration.origin+'/api/fx/comments',{credentials:'omit',cache:'no-store',...options,signal:controller.signal});
-   status=Number.isInteger(response.status)&&response.status>=100&&response.status<=599?response.status:0;
-   if(!response.ok)throw failure('http-error',status);
-   const result=await response.json();
-   if(!result||typeof result!=='object'||(writing?result.ok!==true||!result.row||!validRow(result.row)||result.row.id!==expectedId:!Array.isArray(result.rows)||!result.rows.every(validRow)))throw failure('invalid-response',status);
-   return result;
+   return await Promise.race([deadline,(async()=>{
+    const response=await fetch(configuration.origin+'/api/fx/comments',{credentials:'omit',cache:'no-store',...options,signal:controller.signal});
+    status=Number.isInteger(response.status)&&response.status>=100&&response.status<=599?response.status:0;
+    if(!response.ok)throw failure('http-error',status);
+    const result=await response.json();
+    if(!result||typeof result!=='object'||(writing?result.ok!==true||!result.row||!validRow(result.row)||result.row.id!==expectedId:!Array.isArray(result.rows)||!result.rows.every(validRow)))throw failure('invalid-response',status);
+    return result;
+   })()]);
   }catch(error){
    const classified=requestFailures.has(error)?error:failure(error?.name==='AbortError'?'timeout':error?.name==='SyntaxError'?'invalid-response':'network-error',status);
    reportFailure(writing?'comments-write':'comments-read',classified);throw classified;

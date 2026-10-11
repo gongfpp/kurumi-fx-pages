@@ -1,5 +1,5 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const PLAYER_COMMENT_MAX_LENGTH=30;
@@ -26,28 +26,88 @@ export function marketCommentActivity(state={}){
  const score=clamp(Math.max(movement/.0015,trades/5,(state.heat||0)/5,revealedShock?1:0));
  return score>=.66?{level:'hot',interval:2000,pixelsPerSecond:100,lanes:4}:score>=.25?{level:'active',interval:3600,pixelsPerSecond:72,lanes:3}:{level:'quiet',interval:9000,pixelsPerSecond:48,lanes:2};
 }
-// New-batch review distinguishes timeless quoted expressions from concrete
-// personal events. Publication year alone does not date a generic thought.
-// The preserved legacy 16 records are unchanged and not reclassified here.
+// Compatibility belongs only to unchanged canonical legacy records. New
+// records, copied rows and colliding IDs must use the shared admission gates.
+const LEGACY_COMMENT_IDS=["se-profit-01","se-costs-01","se-risk-01","se-leverage-01","se-short-01","se-suspicious-01","se-returns-01","se-walkaway-01","se-participants-01","se-orderbook-01","se-spreads-01","se-new-01","se-margin-01","se-stopout-01","se-pips-01","se-ask-01"];
+const LEGACY_COMMENT_RECORDS=new WeakSet(LEGACY_COMMENT_IDS.flatMap((id,index)=>{
+ const row=MARKET_COMMENTS[index];
+ return row?.id===id&&row.source_batch===undefined&&Object.isFrozen(row)?[row]:[];
+}));
+const commentText=value=>typeof value==='string'&&value.trim().length>0;
+const commentSourceRef=row=>commentText(row.source_ref)?row.source_ref.trim():row.id.trim();
+const commentTextKey=value=>value.normalize('NFC').replace(/\s+/gu,' ').trim();
+const COMMENT_KEYS=new WeakMap();
+function commentKeys(row){
+ const cached=COMMENT_KEYS.get(row);
+ if(cached&&cached.id===row.id&&cached.source_ref===row.source_ref&&cached.original===row.original&&cached.zh_translation===row.zh_translation)return cached.keys;
+ const keys=[row.id.trim(),commentSourceRef(row),commentTextKey(row.original),commentTextKey(row.zh_translation)];
+ COMMENT_KEYS.set(row,{id:row.id,source_ref:row.source_ref,original:row.original,zh_translation:row.zh_translation,keys});return keys;
+}
+function uniqueMarketComments(rows){
+ // Keep the canonical legacy objects if a later import reuses their identity.
+ // Otherwise the first admitted record owns its attribution; never mix fields.
+ const ids=new Set(),refs=new Set(),originals=new Set(),translations=new Set(),accepted=new Set();
+ const accept=row=>{
+  const [id,ref,original,translation]=commentKeys(row);
+  if(ids.has(id)||refs.has(ref)||originals.has(original)||translations.has(translation))return;
+  ids.add(id);refs.add(ref);originals.add(original);translations.add(translation);accepted.add(row);
+ };
+ for(const row of rows)if(LEGACY_COMMENT_RECORDS.has(row))accept(row);
+ for(const row of rows)if(!LEGACY_COMMENT_RECORDS.has(row))accept(row);
+ return rows.filter(row=>accepted.delete(row));
+}
+function commentLink(value){
+ if(!commentText(value))return null;
+ try{const url=new URL(value);return url.protocol==='https:'&&!url.username&&!url.password?url:null;}catch{return null;}
+}
+function commentSourceName(row){
+ const name=[row.source_platform,row.source_name].find(commentText);
+ if(name)return name.trim();
+ const host=commentLink(row.source_url)?.hostname;
+ return host==='money.stackexchange.com'?'Personal Finance & Money Stack Exchange':host||'来源未标明';
+}
+function commentTimestamp(value){
+ // Require an ISO date, with an explicit zone when a time is supplied. Reject
+ // calendar normalization (for example February 30) and ambiguous local time.
+ if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,3})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d))?$/.test(value))return NaN;
+ const date=value.slice(0,10),midnight=Date.parse(`${date}T00:00:00Z`),timestamp=Date.parse(value);
+ return Number.isFinite(midnight)&&new Date(midnight).toISOString().slice(0,10)===date?timestamp:NaN;
+}
+const COMMENT_DATES=new WeakMap();
+function commentDates(row){
+ const cached=COMMENT_DATES.get(row);
+ if(cached&&cached.source_date===row.source_date&&cached.source_updated===row.source_updated)return cached;
+ const created=commentTimestamp(row.source_date),updated=row.source_updated==null?created:commentTimestamp(row.source_updated);
+ const dates={source_date:row.source_date,source_updated:row.source_updated,created,updated};
+ COMMENT_DATES.set(row,dates);return dates;
+}
+// Review distinguishes timeless quotes from dated personal events; a generic
+// thought is not a contemporaneous historical or currency-pair claim.
 function recentRealizedLoss(state,cutoff){
  const trade=state.lastTrade,beat=state.beat;
  return !!trade&&['close','half','stop','liquidation','rescue','closing'].includes(trade.type)&&Number.isFinite(trade.pnl)&&trade.pnl<0&&Number.isFinite(trade.timestamp)&&trade.timestamp<=cutoff&&trade.day===state.day&&Number.isFinite(beat)&&Number.isFinite(trade.beat)&&trade.beat<=beat&&trade.beat>=Math.max(0,beat-1);
 }
 export function eligibleMarketComments(comments=MARKET_COMMENTS,state=null){
  const cutoff=state===null?Infinity:currentTradingTimestamp(state);
- return comments.filter(row=>{
-  if(!row||row.release_enabled!==true||!/^CC-BY-SA-(3\.0|4\.0)$/.test(row.license)||!row.attribution_display||!row.source_title||!row.source_url?.startsWith('https://')||!row.license_url?.startsWith('https://creativecommons.org/')||!row.original||!row.zh_translation||!row.translation_note)return false;
-  const created=Date.parse(row.source_date),updated=row.source_updated?Date.parse(row.source_updated):created;
+ const admitted=(Array.isArray(comments)?comments:[]).filter(row=>{
+  if(!row||row.source==='player'||row.playerText!==undefined||row.release_enabled!==true||!['id','license','attribution_display','source_title','source_url','license_url','original','zh_translation','translation_note'].every(key=>commentText(row[key]))||!/^CC-BY-SA-(3\.0|4\.0)$/.test(row.license)||!row.source_url.startsWith('https://')||!row.license_url.startsWith('https://creativecommons.org/'))return false;
+  const {created,updated}=commentDates(row);
   if(!Number.isFinite(created)||!Number.isFinite(updated))return false;
-  if(row.source_batch==='ccse-20261010'){
-   // Unreviewed edits, pair-specific material, unknown contexts and anything
-   // presented as contemporaneous history still fail closed.
-   if(row.edited_contributors_review_required!==false||row.source_updated!==null||row.context_reviewed!==true||row.asset_scope!=='general_trading'||row.contemporaneous_replay_allowed!==false||!Array.isArray(row.candidate_currency_pairs)||row.candidate_currency_pairs.length||!row.reuse_rationale_zh)return false;
-   if(row.reuse_scope==='timeless_general_expression')return row.scene_gate==='general_expression';
-   if(row.reuse_scope==='dated_personal_event'&&row.scene_gate==='recent_realized_loss')return state===null||Math.max(created,updated)<=cutoff&&recentRealizedLoss(state,cutoff);
-   return false;
-  }
-  return true;
+  if(LEGACY_COMMENT_RECORDS.has(row))return true;
+  // Shared admission for all additional sources. Batch names never grant a
+  // bypass. Pair-specific/other-asset quotes need a separate supported scene.
+  if(row.edited_contributors_review_required!==false||row.source_updated!==null||row.context_reviewed!==true||row.asset_scope!=='general_trading'||row.contemporaneous_replay_allowed!==false||!Array.isArray(row.candidate_currency_pairs)||row.candidate_currency_pairs.length||!commentText(row.reuse_rationale_zh))return false;
+  if(row.reuse_scope==='timeless_general_expression')return row.scene_gate==='general_expression';
+  if(row.reuse_scope==='dated_personal_event'&&row.scene_gate==='recent_realized_loss')return true;
+  return false;
+ });
+ // Resolve the aggregate before temporal filtering so the source identity is
+ // stable between the credits index and scene changes. Duplicates need review,
+ // not an attribution switch when a different scene happens to become eligible.
+ return uniqueMarketComments(admitted).filter(row=>{
+  if(state===null||LEGACY_COMMENT_RECORDS.has(row)||row.reuse_scope!=='dated_personal_event')return true;
+  const {created,updated}=commentDates(row);
+  return Math.max(created,updated)<=cutoff&&recentRealizedLoss(state,cutoff);
  });
 }
 // A lane keeps its speed until empty. A following line may enter once the
@@ -101,7 +161,7 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
    if(!frame.row)return;
    if(reducedMotion)root.replaceChildren();
    const line=document.createElement('li');line.className='investor-danmaku-line';line.textContent=frame.row.zh_translation;
-   line.dataset.source=frame.row.source||'excerpt';line.dataset.sourceRef=frame.row.source_ref||frame.row.id;line.dataset.commentId=frame.row.id;line.dataset.lane=String(frame.row.lane);line.dataset.speed=String(frame.row.speed);line.dataset.expires=String(frame.row.expires);
+   line.dataset.source=frame.row.source||'excerpt';line.dataset.sourceRef=frame.row.source==='player'?frame.row.id:commentSourceRef(frame.row);line.dataset.commentId=frame.row.id;line.dataset.lane=String(frame.row.lane);line.dataset.speed=String(frame.row.speed);line.dataset.expires=String(frame.row.expires);
    line.style.setProperty('--comment-width',`${frame.row.textWidth}px`);line.style.setProperty('--comment-lane',frame.row.lane);line.style.setProperty('--comment-duration',`${frame.row.duration}ms`);line.style.setProperty('--comment-travel',`${Math.max(200,root.clientWidth||400)}px`);
    line.addEventListener('animationend',()=>line.remove(),{once:true});root.append(line);
   },
@@ -110,15 +170,19 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
 }
 export function mountCommentCredits(root,{document=root.ownerDocument,comments=MARKET_COMMENTS}={}){
  root.replaceChildren();
- const intro=document.createElement('p');intro.textContent='这些短评摘自 Personal Finance & Money Stack Exchange 的公开交易与投资讨论，由英文节选翻译。它们不是剧情年代的实时聊天；提问、设想与作者自述均不代表已核验的交易经历。各条节选及译文按所列 CC BY-SA 许可共享，不代表作者或平台背书。';root.append(intro);
+ const intro=document.createElement('p');intro.textContent='这些短评摘自下列来源的公开交易与投资讨论，由英文节选翻译。它们不是剧情年代的实时聊天；提问、设想与作者自述均不代表已核验的交易经历。各条节选及译文按所列 CC BY-SA 许可共享，不代表作者或平台背书。';root.append(intro);
+ const policies=new Map();
  for(const row of eligibleMarketComments(comments)){
   const section=document.createElement('section'),title=document.createElement('h3'),quote=document.createElement('p'),original=document.createElement('p'),credit=document.createElement('p'),source=document.createElement('a'),license=document.createElement('a'),changes=document.createElement('p');
-  section.id=`comment-source-${row.source_ref||row.id}`;title.textContent=row.zh_translation;original.textContent=row.original;original.lang='en';credit.textContent=`${row.attribution_display} · ${row.source_date.slice(0,10)} · Personal Finance & Money Stack Exchange`;
+  const sourceName=commentSourceName(row);
+  section.id=`comment-source-${commentSourceRef(row)}`;title.textContent=row.zh_translation;original.textContent=row.original;original.lang='en';credit.textContent=`${row.attribution_display} · ${row.source_date.slice(0,10)} · ${sourceName}`;
   source.href=row.source_url;source.textContent=row.source_title;license.href=row.license_url;license.textContent=row.license;license.rel='license noopener noreferrer';source.rel='noopener noreferrer';source.target=license.target='_blank';
   changes.textContent=`${row.translation_note} ${row.translation_credit}，按 ${row.translation_license||row.license} 共享。`;quote.append(source,document.createTextNode(' · '),license);section.append(title,original,credit,quote,changes);
-  if(row.source_author_url){const author=document.createElement('a');author.href=row.source_author_url;author.textContent=row.attribution_display;author.target='_blank';author.rel='noopener noreferrer';section.append(author);}
+  if(commentLink(row.source_author_url)){const author=document.createElement('a');author.href=row.source_author_url;author.textContent=row.attribution_display;author.target='_blank';author.rel='noopener noreferrer';section.append(author);}
   if(row.context){const context=document.createElement('p');context.textContent=row.context;section.append(context);}
   root.append(section);
+  const policyUrl=commentLink(row.license_policy_url)?.href;
+  if(policyUrl){if(!policies.has(policyUrl))policies.set(policyUrl,new Set());policies.get(policyUrl).add(sourceName);}
  }
- const policy=document.createElement('a');policy.href='https://stackoverflow.com/help/licensing';policy.textContent='Stack Exchange 内容许可说明';policy.target='_blank';policy.rel='noopener noreferrer';root.append(policy);
+ for(const [url,names] of policies){const policy=document.createElement('a');policy.href=url;policy.textContent=`${[...names].join(' / ')} 内容许可说明`;policy.target='_blank';policy.rel='noopener noreferrer';root.append(policy);}
 }

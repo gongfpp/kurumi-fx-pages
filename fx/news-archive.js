@@ -1,10 +1,12 @@
-import {NEWS_2014} from './news-2014.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
-export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2]);
+export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED]);
 const byId=new Map(NEWS_ARCHIVE.map(e=>[e.id,e]));
 const DIRECTIONS=['up','down','range'],VOLATILITY=['normal','high'];
 const validState=s=>s&&DIRECTIONS.includes(s.direction)&&VOLATILITY.includes(s.volatility);
@@ -43,16 +45,26 @@ function ensureMemory(state,context,eligible){
  return {memory,scope};
 }
 const family=entry=>entry.eventFamily||new URL(entry.sourceUrl).hostname+':'+entry.catalyst;
-function diverseChoice(bag,memory){
+function diverseChoice(bag,memory,revealedTopics){
  const last=byId.get(memory.recent.at(-1));
  const recent=memory.recent.slice(-Math.max(1,Math.floor(bag.length/2)));
- let index=bag.findIndex(id=>!recent.includes(id)&&(!last||family(byId.get(id))!==family(last)&&byId.get(id).sourceName!==last.sourceName));
- if(index<0)index=bag.findIndex(id=>!recent.includes(id)&&(!last||family(byId.get(id))!==family(last)));
- if(index<0)index=bag.findIndex(id=>!recent.includes(id));
- if(index<0)index=bag.findIndex(id=>id!==last?.id);
- return index<0?0:index;
+ const tiers=[
+  id=>!recent.includes(id)&&(!last||family(byId.get(id))!==family(last)&&byId.get(id).sourceName!==last.sourceName),
+  id=>!recent.includes(id)&&(!last||family(byId.get(id))!==family(last)),
+  id=>!recent.includes(id),
+  id=>id!==last?.id
+ ];
+ for(const accepts of tiers){
+  let index=-1,score=-1;
+  for(let i=0;i<bag.length;i++)if(accepts(bag[i])){
+   const match=archiveTopicMatch(byId.get(bag[i]),revealedTopics);
+   if(match>score){index=i;score=match;}
+  }
+  if(index>=0)return index;
+ }
+ return 0;
 }
-export function selectArchiveNews(state,{slot,marketState=observedNewsState(state)}={}){
+export function selectArchiveNews(state,{slot,marketState=observedNewsState(state),revealedTopics=[]}={}){
  if(!validState(marketState)||typeof slot!=='string')return null;
  const context=newsContext(state),eligible=matchingNews(marketState,context);
  // Don't create save data in a context with no dated, currency-matched facts.
@@ -65,7 +77,7 @@ export function selectArchiveNews(state,{slot,marketState=observedNewsState(stat
  if(!bag.length)bag=shuffled(ids,hash(`${state.seed}:${scope}:${memory.serial}`));
  if(context.mode==='historical')bag.sort((a,b)=>newsAvailableAt(byId.get(b))-newsAvailableAt(byId.get(a)));
  const next=bag.findIndex(id=>id!==memory.recent.at(-1));
- const index=context.mode==='historical'?Math.max(0,next):diverseChoice(bag,memory);
+ const index=context.mode==='historical'?Math.max(0,next):diverseChoice(bag,memory,revealedTopics);
  const [id]=bag.splice(index,1);memory.bags[scope]=bag;
  memory.serial=memory.serial===Number.MAX_SAFE_INTEGER?0:memory.serial+1;
  memory.recent.push(id);memory.recent=memory.recent.slice(-NEWS_ARCHIVE.length);
@@ -84,7 +96,7 @@ export function archiveNewsView(state,event,{flash=false}={}){
  const beat=Number.isInteger(state.beat)?state.beat:0;
  const revealed=flash||state.lastEvent?.beat===beat||state.pending?.beat===beat&&state.pending.flashShown;
  const slot=historical?`history:${Math.floor(context.at/3600000)}`:`${state.day}:${beat}:${revealed?'reveal':'lead'}`;
- const selected=selectArchiveNews(state,{slot});
+ const selected=selectArchiveNews(state,{slot,revealedTopics:historical?[]:revealedNewsTopics(state,event,{flash})});
  if(!selected)return fallbackNews(event,context);
  const {entry,marketState}=selected;
  return{...event,title:entry.title,copy:entry.summary,source:entry.sourceName,time:entry.date,archiveKind:'新闻',archiveId:entry.id,sourceUrl:entry.sourceUrl,marketState,contentKind:'historical_fact',archiveTags:entry.currencies.join(' / '),sourceAttribution:entry.sourceAttribution||null,sourceLicenseUrl:entry.sourceLicenseUrl||null,summaryNotice:entry.summaryNotice||null};

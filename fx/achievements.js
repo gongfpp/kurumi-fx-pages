@@ -1,8 +1,8 @@
-import {marketPrice,positionMarket} from './market-book.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {setImage} from './assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {setImage} from './assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -70,7 +70,7 @@ const UI_STYLES=`
 .fx-ach-badge{position:relative;overflow:hidden;display:grid;place-items:center;width:48px;height:48px;background:#344743;border:1px solid #7d9b70;color:#c4e18e;border-radius:4px;font-weight:800;font-size:18px}
 .fx-ach-badge-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#fff}.fx-ach-badge-image[hidden],.fx-ach-badge-text[hidden]{display:none}.fx-ach-content{min-width:0;overflow-wrap:anywhere}
 .fx-ach-label{font-size:11px;color:#b5ca99;letter-spacing:.08em}.fx-ach-name{font-weight:750;font-size:16px;margin:3px 0}.fx-ach-copy{font-size:12px;color:#c5cfd6}.fx-ach-close{color:#bfcbd1;border:0;background:none;cursor:pointer;font-size:20px;align-self:start;padding:0;min-width:24px;min-height:24px}
-.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
+.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;object-fit:contain;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
 @keyframes fx-ach-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.fx-ach-host{right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.fx-ach-toast{width:310px;padding:12px;gap:9px}}
 @media(prefers-reduced-motion:reduce){body:not(.motion-full) .fx-ach-toast{animation:none}}

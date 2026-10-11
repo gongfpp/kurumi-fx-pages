@@ -4403,9 +4403,9 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
   "./manga/contextual-links/48.jpg": {
     "sourceRecord": 48,
     "primaryUse": "story-dialogue",
-    "character": "久留美",
+    "character": "画中仅手部；久留美身份来自剧情上下文",
     "characters": [
-      "久留美"
+      "久留美（上下文身份，非单帧人脸确认）"
     ],
     "emotion": "剧情",
     "intensity": null,
@@ -4413,13 +4413,19 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "directions": [],
     "hasEmbeddedText": true,
     "textOriginal": null,
-    "faceClarity": "scene-scale",
+    "faceClarity": "no-face",
     "textClarity": "not-transcribed",
     "minDisplayWidth": 320,
-    "identityStatus": "pixel-reviewed-primary-character",
-    "identityDescription": "久留美",
+    "identityStatus": "context-attributed-no-visible-face",
+    "identityDescription": "画中仅手部；久留美身份来自剧情上下文",
     "status": "verified",
-    "tags": [],
+    "tags": [
+      "story-only",
+      "drawer",
+      "funding-idea",
+      "no-face",
+      "not-cash-receipt"
+    ],
     "exclusions": [
       "story-only",
       "never-crop-dialogue"
@@ -4675,6 +4681,64 @@ export const ORIGINAL_ASSET_USAGE_REVIEWS=Object.freeze({
     "identityDescription": "萌智子",
     "status": "verified",
     "tags": [],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/borrowing-continuation/230.jpg": {
+    "sourceRecord": 230,
+    "primaryUse": "story-dialogue",
+    "character": "小金萌智子",
+    "characters": [
+      "小金萌智子"
+    ],
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "pending",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-and-existing-story-context-reviewed",
+    "identityDescription": "小金萌智子",
+    "status": "pending",
+    "tags": [
+      "story-only",
+      "mochiko",
+      "borrowing-offer",
+      "quoted-interest",
+      "proposal-not-disbursement"
+    ],
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue"
+    ]
+  },
+  "./manga/borrowing-continuation/238.jpg": {
+    "sourceRecord": 238,
+    "primaryUse": "story-dialogue",
+    "character": "小金萌智子",
+    "characters": [
+      "小金萌智子"
+    ],
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": true,
+    "textOriginal": null,
+    "faceClarity": "pending",
+    "textClarity": "not-transcribed",
+    "minDisplayWidth": 320,
+    "identityStatus": "pixel-and-existing-story-context-reviewed",
+    "identityDescription": "小金萌智子",
+    "status": "pending",
+    "tags": [
+      "story-only",
+      "mochiko",
+      "borrowing-offer",
+      "cash-on-table",
+      "proposal-not-disbursement"
+    ],
     "exclusions": [
       "story-only",
       "never-crop-dialogue"

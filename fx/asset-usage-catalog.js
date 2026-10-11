@@ -1,34 +1,48 @@
-import {PROP_STORY_ASSETS,PROP_STORY_REVIEWS} from './prop-story-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {FATHER_THEFT_ASSETS,FATHER_THEFT_REVIEWS} from './father-theft-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {DAILY_LIFE_ART_ASSETS,DAILY_LIFE_ART_REVIEWS} from './daily-life-art-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {DINNER_STORY_ASSETS,DINNER_STORY_REVIEWS} from './dinner-story-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS,APPROVED_FOUR_SKIT_REVIEWS} from './approved-four-skit-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {PROP_STORY_ASSETS,PROP_STORY_REVIEWS} from './prop-story-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {FATHER_THEFT_ASSETS,FATHER_THEFT_REVIEWS} from './father-theft-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DAILY_LIFE_ART_ASSETS,DAILY_LIFE_ART_REVIEWS} from './daily-life-art-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DINNER_STORY_ASSETS,DINNER_STORY_REVIEWS} from './dinner-story-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS,APPROVED_FOUR_SKIT_REVIEWS} from './approved-four-skit-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 // Classification is additive. Existing story/daily consumers retain their own
 // source chronology and gates; this catalogue never rewrites those registries.
 const freeze=v=>{if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 export const ASSET_PRIMARY_USES=freeze({'trading-expression':'交易表情','story-dialogue':'剧情对话'});
 const sources=new Map();
+// Exact existing image provenance; no private audit index is bundled.
+const originalSourceProvenance=freeze({
+  "./manga/characters-v1/26.jpg": {
+    "sha256": "2dd504d62668a9d72dc8dd6aa4e21db48ae380aa902d4a1746c6db223e92003d",
+    "url": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E5%85%A5%E5%9C%BA_%E4%B9%A6%E6%A1%8C_%E5%8F%91%E5%B0%84_%E4%B8%8A%E5%90%A7%E4%B9%B0%E5%85%A550%E6%9E%9A.jpg",
+    "commit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59"
+  },
+  "./manga/characters-v1/75.jpg": {
+    "sha256": "af4e2d4382f4129f8241d77d94c5f1232e4116927cb06c38cdf317080c5b5bb9",
+    "url": "https://github.com/gongfpp/manga-panel-extractor/blob/b37bbf7efe7caa05621946879dcd8e4ada56ae59/memes/%E4%B9%85%E7%95%99%E7%BE%8E_%E6%AD%A2%E7%9B%88_%E7%BB%93%E7%AE%97_%E5%A4%A7%E8%83%9C%E5%88%A9_%E5%88%A9%E7%9B%8A%E7%A1%AE%E5%AE%9A131%E4%B8%87.jpg",
+    "commit": "b37bbf7efe7caa05621946879dcd8e4ada56ae59"
+  }
+});
 function register(registry,id,asset){
  const path=asset.path||asset.original;if(!path)return;
+ const provenance=originalSourceProvenance[path];if(provenance&&provenance.sha256!==asset.sha256)throw Error(`Provenance hash mismatch: ${path}`);
  const previous=sources.get(path),ref=`${registry}:${id}`;
  if(previous){if(previous.sha256!==asset.sha256)throw Error(`Conflicting asset hash: ${path}`);previous.metadataRefs.push(ref);if(asset.record)previous.record=asset.record;return;}
- sources.set(path,{path,sha256:asset.sha256,dimensions:asset.dimensions||asset.imageSize||[asset.width,asset.height],record:asset.record??null,id,character:asset.character??null,kind:registry==='MANGA_PANELS'||registry.includes('STORY_ASSETS')||registry==='CONTEXTUAL_MANGA_ASSETS'?'original-manga':asset.kind||'original-fan-art',metadataRefs:[ref],sourceURL:asset.sourceURL??null,sourceCommit:asset.sourceCommit??null});
+ sources.set(path,{path,sha256:asset.sha256,dimensions:asset.dimensions||asset.imageSize||[asset.width,asset.height],record:asset.record??null,id,character:asset.character??null,kind:registry==='MANGA_PANELS'||registry.includes('STORY_ASSETS')||registry==='CONTEXTUAL_MANGA_ASSETS'?'original-manga':asset.kind||'original-fan-art',metadataRefs:[ref],sourceURL:asset.sourceURL??provenance?.url??null,sourceCommit:asset.sourceCommit??provenance?.commit??null});
 }
 for(const [id,a]of Object.entries(PROP_STORY_ASSETS))register('PROP_SCENE_ART',id,a);
 for(const [id,a]of Object.entries(FATHER_THEFT_ASSETS))register('FATHER_THEFT_ASSETS',id,a);

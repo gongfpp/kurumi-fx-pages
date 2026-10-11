@@ -1,5 +1,5 @@
-import {accountingValues} from './accounting-journal.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({

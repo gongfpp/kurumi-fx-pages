@@ -1,5 +1,5 @@
-import {createGameStorage} from './storage.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
 // Content identity is independent of day, event receipt, and file cache query.
 export function artIdentity(art){return art?.sha256?'sha256:'+art.sha256:art?.path?'path:'+art.path.split('?')[0]:null;}
