@@ -1,5 +1,5 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const PLAYER_COMMENT_MAX_LENGTH=30;

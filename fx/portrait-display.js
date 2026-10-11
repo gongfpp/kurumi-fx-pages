@@ -1,4 +1,4 @@
-import {setImage,retryImage} from './assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {setImage,retryImage} from './assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 const notices=new WeakMap();
 export function showGeneratedPortrait(image,portrait){
  image.alt=`久留美 · ${portrait.label}`;image.dataset.mood=portrait.emotion;image.loading='eager';image.decoding='async';

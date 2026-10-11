@@ -1,9 +1,9 @@
-import {LIVING_MOVE_SCENE_IDS} from './living-services.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {LIVING_MOVE_SCENE_IDS} from './living-services.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // Presentation frequency is run-local. Receipts and manual replay are untouched.
 export const COMIC_PROFIT_MULTIPLIER=2;
-const FIRST_ONLY=new Set([...Object.values(LIVING_MOVE_SCENE_IDS),'shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);
+const FIRST_ONLY=new Set([...Object.values(LIVING_MOVE_SCENE_IDS),'prop-daily-drink-first-use','shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);
 const MANUAL_RESULTS=new Set(['closed-loss','half-loss','closed-flat','half-flat','settled-small-loss','settled-no-trade','loan-interest']);
 const PROFIT=new Set(['closed-profit','half-profit','settled-gain']);
 const settledTrades=state=>(state.history||[]).filter(row=>['close','half','closing','stop','liquidation'].includes(row.type)&&Number.isFinite(row.pnl));
@@ -57,12 +57,16 @@ export function ensureComicAutoplay(state){
  const value=emptyComicAutoplay();
  // Older saves never autoplay their historical receipts. Seed only known past
  // successful purchases; don't manufacture a first-use flag from click intent.
- const items={noodles:'noodles-today',takeaway:'takeaway',energy:'energy',celebration:'spa',mochiko:'mochiko-watch'};
+ const items={dailyDrink:'prop-daily-drink-first-use',noodles:'noodles-today',takeaway:'takeaway',energy:'energy',celebration:'spa',mochiko:'mochiko-watch'};
  const activities={'quiet-night':'shrine-walk','noodles-today':'noodles-today','dinner-small':'dinner-small','dinner-friends':'dinner-friends','dinner-feast':'dinner-feast','dinner-banquet':'dinner-banquet'};
  const shown=new Set();
  for(const move of state.livingMoves||[]){const id=LIVING_MOVE_SCENE_IDS[move.toId];if(id)shown.add(id);}
- for(const [id,scene] of Object.entries(items))if(state.itemsUsed?.[id]===true)shown.add(scene);
- for(const row of state.consumptionLedger||[])if(row.kind==='item'&&row.amount>0){const id=items[row.id?.split(':').at(-1)];if(id)shown.add(id);}
+ // The drink always had a debit ledger. A legacy flag alone is not payment evidence.
+ for(const [id,scene] of Object.entries(items))if(id!=='dailyDrink'&&state.itemsUsed?.[id]===true)shown.add(scene);
+ for(const row of state.consumptionLedger||[])if(row.kind==='item'&&row.amount>0){const prop=row.id?.split(':').at(-1),id=items[prop];
+  if(prop==='dailyDrink'&&(!Number.isFinite(row.amount)||!Number.isSafeInteger(row.day)||row.day<1||row.day>state.day||row.id!==`item:${row.day}:dailyDrink`))continue;
+  if(id)shown.add(id);
+ }
  for(const row of state.recapChoiceLedger||[]){const id=activities[row.id];if(id)shown.add(id);}
  const trades=(state.history||[]).filter(row=>['close','half','closing','stop','liquidation'].includes(row.type)&&Number.isFinite(row.pnl));
  for(const row of trades)if(row.pnl<0&&['stop','liquidation'].includes(row.type))shown.add(row.type==='stop'?'stop-loss':'liquidation');

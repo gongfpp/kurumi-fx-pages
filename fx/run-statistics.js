@@ -1,6 +1,6 @@
-import {safeLiveTradeEvidence} from './live-market-state.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {MARKETS,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals

@@ -1,6 +1,8 @@
-import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // Simulated market information is separate from user-approved character dialogue.
-import {approvedQuote,dialogueFacts} from './dialogue.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {approvedQuote,dialogueFacts} from './dialogue.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // USD/JPY is quoted in JPY per USD: positive = stronger USD / weaker JPY.
 // Bias is a simulated tendency; seeded noise and reversals can outweigh it.
 // Quote convention: https://www.boj.or.jp/about/education/oshiete/intl/g18.htm
@@ -138,7 +140,11 @@ export function getStory(s,key){
   }
   if(key==='fatherDiscover'){event.original=true;event.lines=SCENE_LINES.fatherDiscover.map(line=>[...line]);}
   if(key==='quietNight'){event.original=true;event.lines=SCENE_LINES.quietNight.map(line=>[...line]);}
-  if(key==='fatherFound')event.lines=lines(['V2-E04-01','V2-E04-03']);
+  if(key==='fatherFound'){
+    const receipt=fatherTheftReceipt(s),script=FATHER_THEFT_SCENES[receipt?.sceneId];
+    if(script){event.original=false;event.title=script.title;event.lines=script.lines.map(line=>[...line]);event.theftDiscoveryId=receipt.id;event.theftSceneId=receipt.sceneId;}
+    else event.lines=lines(['V2-E04-01','V2-E04-03']);
+  }
   if(key==='repayPartial')event.lines=lines(['V2-E05-05','V2-E05-01','V2-E05-03']);
   if(key==='repayFull')event.lines=lines(['V2-E06-01']);
   return event;

@@ -1,12 +1,13 @@
-import {marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {buildResultsReport} from './results-report.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {runPerformance} from './performance.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {achievementMangaThumbnail} from './manga-achievements.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {assetURL} from './assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {runPerformance} from './performance.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {achievementMangaThumbnail} from './manga-achievements.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {assetURL} from './assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -63,6 +64,26 @@ async function achievementImages(achievements,doc){
  const paths=[...new Set(achievements.map(a=>achievementThumbnail(a.id)).filter(Boolean))];
  return new Map(await Promise.all(paths.map(async path=>[path,await portraitImage(path,doc)])));
 }
+const validImageSize=size=>Array.isArray(size)&&size.length===2&&size.every(n=>Number.isFinite(n)&&n>0);
+function imageResourceKey(path){
+ if(!path)return null;
+ try{const url=new URL(assetURL(path));url.search='';url.hash='';return url.href;}catch{return null;}
+}
+// Catalogue cropPixels remain in original-image coordinates. A smaller encoded
+// image has its own natural dimensions; never change source metadata to fit it.
+// Existing callers can resolve the source size from the same catalogue URL.
+export function sharePortraitCrop(image,{portraitUrl,portraitCrop,portraitImageSize}={}){
+ const natural=[image?.naturalWidth,image?.naturalHeight];if(!validImageSize(natural))return null;
+ if(portraitCrop==null)return [0,0,...natural];
+ let source=portraitImageSize;
+ if(source==null){const key=imageResourceKey(portraitUrl);source=key?Object.values(MANGA_PANELS).find(panel=>imageResourceKey(panel.original)===key)?.imageSize:null;source??=natural;}
+ if(!validImageSize(source)||!Array.isArray(portraitCrop)||portraitCrop.length!==4||!portraitCrop.every(Number.isFinite))return null;
+ const [x0,y0,x1,y1]=portraitCrop,[width,height]=source;
+ if(x0<0||y0<0||x1<=x0||y1<=y0||x1>width||y1>height)return null;
+ // Independent axis ratios account for the final integer resize rounding.
+ const scaleX=natural[0]/width,scaleY=natural[1]/height;
+ return [x0*scaleX,y0*scaleY,x1*scaleX,y1*scaleY];
+}
 async function portraitImage(url,doc){
  if(!url)return null;const ImageClass=doc.defaultView?.Image||globalThis.Image;if(!ImageClass)return null;
  return new Promise(resolve=>{const image=new ImageClass();let timer;const done=value=>{clearTimeout(timer);image.onload=image.onerror=null;resolve(value);};image.onload=()=>done(image);image.onerror=()=>done(null);timer=setTimeout(()=>done(null),5000);image.crossOrigin='anonymous';image.src=url;});
@@ -80,7 +101,8 @@ export async function createShareCard(state,options={}) {
  const rule=y=>{ctx.strokeStyle=line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(48,y);ctx.lineTo(1032,y);ctx.stroke();};
  num('FX韭留美',48,87,42);label(`${s.mode==='endless'?'操盘 · 无尽':'剧情模式'} / ${s.kind}`,48,129,23,darkPink);if(s.edited)label('开发测试数据',770,85,22,red);
  const [image,achievementArt]=await Promise.all([portraitImage(options.portraitUrl,doc),achievementImages(s.completedAchievements,doc)]);ctx.fillStyle='#ffe0ed';ctx.fillRect(48,169,178,178);
- if(image){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const crop=options.portraitCrop||[0,0,image.naturalWidth,image.naturalHeight],cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else {num('久留美',66,266,28,darkPink);if(options.portraitUrl)label('画像未载入',66,300,18,muted);}
+ const crop=sharePortraitCrop(image,options);
+ if(crop){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else {num('久留美',66,266,28,darkPink);if(options.portraitUrl)label('画像未载入',66,300,18,muted);}
  label(`${s.moodLabel} · ${s.recap.primary.label}`,252,196,22,darkPink);num(signed(s.recap.primary.profit),252,253,52,s.recap.primary.profit>=0?green:red,780);label(`收益率 ${s.recap.primary.returnRate===null?'—':(s.recap.primary.returnRate>=0?'+':'')+(s.recap.primary.returnRate*100).toFixed(2)+'%'}`,252,291,26,s.recap.primary.profit>=0?green:red);label(`第 ${s.day} 个游戏交易日 · 心理承受力 ${s.sanity} / 100`,252,329,20); 
  rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red);
  label('账户总资产 / 净资产',660,429,21);num(knownAmount(a.nominalAssets),660,474,34);num(knownAmount(a.netAssets),660,516,29);

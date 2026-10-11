@@ -1,9 +1,10 @@
-import {livingMoveEvidence} from './living-services.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {livingMoveEvidence} from './living-services.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.
@@ -13,7 +14,7 @@ const positions=s=>Array.isArray(s.positions)?s.positions:s.position?[s.position
 const same=(a,b,keys)=>!!a&&!!b&&keys.every(k=>a[k]===b[k]);
 const current=(s,r)=>r&&r.day===s.day;
 const ACTIVITY_IDS=Object.freeze({'quiet-night':'shrine-walk','noodles-today':'noodles-today','dinner-small':'dinner-small','dinner-friends':'dinner-friends','dinner-feast':'dinner-feast','dinner-banquet':'dinner-banquet'});
-const ITEM_IDS=Object.freeze({noodles:'noodles-today',takeaway:'takeaway',energy:'energy',celebration:'spa',mochiko:'mochiko-watch'});
+const ITEM_IDS=Object.freeze({dailyDrink:'prop-daily-drink-first-use',noodles:'noodles-today',takeaway:'takeaway',energy:'energy',celebration:'spa',mochiko:'mochiko-watch'});
 const proof=(id,receipt,key)=>({id,receipt,key});
 function evidence(s,event){
  const r=event.receipt;
@@ -45,7 +46,9 @@ function evidence(s,event){
   }
   case 'father-found':{
    const found=s.story?.log?.findLast(x=>x.id==='fatherFound'&&x.day===s.day);
-   return s.family?.discovered&&s.fatherUsed&&found?proof('father-found',found,`father-found:${found.day}`):null;
+   if(!s.family?.discovered||!s.fatherUsed||!found)return null;
+   const receipt=fatherTheftReceipt(s);
+   return receipt&&found.theftDiscoveryId===receipt.id?proof(receipt.sceneId,{...receipt,day:found.day,tradingNet:receipt.tradingNet},receipt.id):proof('father-found',found,`father-found:${found.day}`);
   }
   case 'father-repayment':{
    const found=s.family?.lastRepayment;

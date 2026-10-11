@@ -1,4 +1,4 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 export function recapChoices(snapshot,{cash=0,loanUnlocked=false,loanTerms=null}={}){
  if(!snapshot.sealed||snapshot.mode==='endless')return[];
  const net=snapshot.daily.tradingNet,choices=[];

@@ -908,5 +908,77 @@ export const DINNER_STORIES=freeze({
   "tier": "dinner-banquet",
   "requiresMebuki": true,
   "requiresYasuko": true
+ },
+ "dinner-new-15": {
+  "title": "藏在碗底的小猫",
+  "characters": [
+   "久留美",
+   "萌智子"
+  ],
+  "people": 2,
+  "dialogueId": "dinner-expansion16-20261010:dinner-new-15",
+  "dialoguePanels": [
+   {
+    "lines": [
+     [
+      "久留美",
+      "走了一路，总算能吃上热面了。"
+     ]
+    ]
+   },
+   {
+    "lines": [
+     [
+      "久留美",
+      "你看，碗底居然藏着个猫脸。"
+     ]
+    ]
+   },
+   {
+    "lines": [
+     [
+      "久留美",
+      "萌智子，这个可爱的鱼板让给你。"
+     ],
+     [
+      "萌智子",
+      "……真的给我？谢谢久留美。"
+     ]
+    ]
+   },
+   {
+    "lines": [
+     [
+      "萌智子",
+      "印得好精致，都有点舍不得咬了。"
+     ]
+    ]
+   }
+  ],
+  "lines": [
+   [
+    "久留美",
+    "走了一路，总算能吃上热面了。"
+   ],
+   [
+    "久留美",
+    "你看，碗底居然藏着个猫脸。"
+   ],
+   [
+    "久留美",
+    "萌智子，这个可爱的鱼板让给你。"
+   ],
+   [
+    "萌智子",
+    "……真的给我？谢谢久留美。"
+   ],
+   [
+    "萌智子",
+    "印得好精致，都有点舍不得咬了。"
+   ]
+  ],
+  "tier": "dinner-small",
+  "requiresMebuki": false,
+  "requiresYasuko": false
  }
 });

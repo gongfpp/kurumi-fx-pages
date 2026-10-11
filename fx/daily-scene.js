@@ -1,5 +1,5 @@
-import {pendingStory} from './story.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {TRANSITION_COPY} from './copy/transitions.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {pendingStory} from './story.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {TRANSITION_COPY} from './copy/transitions.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // One scene per closing screen. Item/family events take priority; a quiet night
 // can instead show the day's reversal or one original-work quotation.
 export function selectDailyScene(state){

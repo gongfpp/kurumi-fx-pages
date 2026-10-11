@@ -1,6 +1,6 @@
-import {encodeProgress} from './save-encoder.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {storageFailure} from './storage.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {storageFailure} from './storage.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -68,6 +68,11 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
             let previousLivingVersion;try{previousLivingVersion=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.lifestyle?.version;}catch{}
             if(baseline.raw!==null&&state.lifestyle?.version===2&&previousLivingVersion!==2){
               const backupKey=key+':pre-living-v2',backup=storage.readItem(backupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
+            }
+            let previousTheft;try{previousTheft=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.family?.theftDiscovery;}catch{}
+            if(baseline.raw!==null&&state.mode==='story'&&state.family?.theftDiscovery?.version===1&&!previousTheft){
+              const backupKey=key+':pre-father-theft-v1',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
             if(!storage.setItem(key,durableText))return fail('memory','storage',storage.failureFor?.(key));

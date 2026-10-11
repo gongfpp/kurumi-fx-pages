@@ -1,5 +1,5 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // Configurable game balance, not a claim about real living costs or behavior.
 export const LIVING_SETTLEMENT_VERSION=1;
 export const LIVING_POLICY=Object.freeze({gainThreshold:20000,openingNetRatio:.25,feastChance:.12,feastMultiplier:1.5,friendChance:.15,cooldownDays:3});

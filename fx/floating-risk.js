@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {liquidationMeter,renderLiquidationMeter} from './liquidation-meter.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {liquidationMeter,renderLiquidationMeter} from './liquidation-meter.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // The account meter stays in the document; optional close uses a shared action gate.
 // Block complete trading panels as well as controls, so click-through is only a

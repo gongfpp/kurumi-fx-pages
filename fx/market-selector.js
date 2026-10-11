@@ -1,4 +1,4 @@
-import {MARKETS,activeMarket,marketInfo} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {MARKETS,activeMarket,marketInfo} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 export function mountMarketSelector({select,name,getState,canInteract,onSelect}){
  const doc=select.ownerDocument||globalThis.document;
  select.replaceChildren(...MARKETS.map(m=>{const option=doc.createElement('option');option.value=m.symbol;option.textContent=m.symbol;return option;}));

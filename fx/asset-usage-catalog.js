@@ -1,20 +1,23 @@
-import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {DINNER_STORY_ASSETS,DINNER_STORY_REVIEWS} from './dinner-story-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS,APPROVED_FOUR_SKIT_REVIEWS} from './approved-four-skit-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {PROP_STORY_ASSETS,PROP_STORY_REVIEWS} from './prop-story-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {FATHER_THEFT_ASSETS,FATHER_THEFT_REVIEWS} from './father-theft-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {DAILY_LIFE_ART_ASSETS,DAILY_LIFE_ART_REVIEWS} from './daily-life-art-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {DINNER_STORY_ASSETS,DINNER_STORY_REVIEWS} from './dinner-story-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS,APPROVED_FOUR_SKIT_REVIEWS} from './approved-four-skit-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {SUPPLEMENTAL_ASSET_SOURCES} from './asset-usage-supplemental.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {ASSET_USAGE_REVIEWS} from './asset-usage-reviews.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {ORIGINAL_ASSET_USAGE_REVIEWS} from './asset-usage-original-reviews.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // Classification is additive. Existing story/daily consumers retain their own
 // source chronology and gates; this catalogue never rewrites those registries.
@@ -27,6 +30,8 @@ function register(registry,id,asset){
  if(previous){if(previous.sha256!==asset.sha256)throw Error(`Conflicting asset hash: ${path}`);previous.metadataRefs.push(ref);if(asset.record)previous.record=asset.record;return;}
  sources.set(path,{path,sha256:asset.sha256,dimensions:asset.dimensions||asset.imageSize||[asset.width,asset.height],record:asset.record??null,id,character:asset.character??null,kind:registry==='MANGA_PANELS'||registry.includes('STORY_ASSETS')||registry==='CONTEXTUAL_MANGA_ASSETS'?'original-manga':asset.kind||'original-fan-art',metadataRefs:[ref],sourceURL:asset.sourceURL??null,sourceCommit:asset.sourceCommit??null});
 }
+for(const [id,a]of Object.entries(PROP_STORY_ASSETS))register('PROP_SCENE_ART',id,a);
+for(const [id,a]of Object.entries(FATHER_THEFT_ASSETS))register('FATHER_THEFT_ASSETS',id,a);
 for(const [id,a]of Object.entries(MANGA_PANELS))register('MANGA_PANELS',id,a);
 for(const [id,a]of Object.entries(CHARACTER_STORY_ASSETS))register('CHARACTER_STORY_ASSETS',id,a);
 for(const [id,a]of Object.entries(CONTEXTUAL_MANGA_ASSETS))register('CONTEXTUAL_MANGA_ASSETS',id,a);
@@ -34,6 +39,7 @@ for(const [id,a]of Object.entries(COMIC_SCENE_ASSETS))register('COMIC_SCENE_ASSE
 for(const [id,a]of Object.entries(DINNER_STORY_ASSETS))register('DINNER_STORY_ART',id,a);
 for(const [id,a]of Object.entries(APPROVED_FOUR_SKIT_ASSETS))register('APPROVED_FOUR_SKIT_ASSETS',id,a);
 for(const [id,a]of Object.entries(LIVING_MOVE_ASSETS))register('LIVING_MOVE_ASSETS',id,a);
+for(const [id,a]of Object.entries(DAILY_LIFE_ART_ASSETS))register('DAILY_LIFE_ART_ASSETS',id,a);
 for(const a of SUPPLEMENTAL_ASSET_SOURCES)register('SUPPLEMENTAL_ASSET_SOURCES',a.id,a);
 const livingMoveReviews=Object.fromEntries(Object.entries(LIVING_MOVE_ASSETS).filter(([,art])=>art.reviewed).map(([id,art])=>[art.path,{primaryUse:'story-dialogue',character:LIVING_MOVE_SCENES[id].characters[0],characters:LIVING_MOVE_SCENES[id].characters,emotion:'moving-home',intensity:null,events:[],directions:[],hasEmbeddedText:false,textOriginal:null,faceClarity:'scene-scale',textClarity:'no-text',status:'verified',identityStatus:'verified',exclusions:['story-only','confirmed-housing-move-only','not-live-trading-expression']} ]));
 const storyNodes=[...FIRSTDAY_BACKSTORY_NODES,{id:'opposite-open-opinions',panels:[OPPOSITE_IMAGINATION_PANEL]},...BORROWING_CONTINUATION_NODES,...LINK_DAILY_NODES,{id:'daily-links-panels',panels:Object.values(LINK_DAILY_PANELS)},...REVERSAL_DAILY_NODES,...CHARACTER_STORY_NODES,...CONTEXTUAL_MANGA_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES,{id:'daily-interleaved-panels',panels:Object.values(VERIFIED_DAILY_PANELS)}];
@@ -50,7 +56,7 @@ const eventRules=freeze({
 });
 export const TRADING_EXPRESSION_EVENTS=freeze(Object.keys(eventRules));
 export const ASSET_USAGE_CATALOG=freeze([...sources.values()].map(source=>{
- const r=livingMoveReviews[source.path]||DINNER_STORY_REVIEWS[source.path]||APPROVED_FOUR_SKIT_REVIEWS[source.path]||ORIGINAL_ASSET_USAGE_REVIEWS[source.path]||ASSET_USAGE_REVIEWS[source.path],record=source.record??r?.sourceRecord??null,nodes=record?storyNodes.filter(n=>n.panels?.some(p=>p.record===record)).map(n=>n.id):[];
+ const r=PROP_STORY_REVIEWS[source.path]||FATHER_THEFT_REVIEWS[source.path]||livingMoveReviews[source.path]||DAILY_LIFE_ART_REVIEWS[source.path]||DINNER_STORY_REVIEWS[source.path]||APPROVED_FOUR_SKIT_REVIEWS[source.path]||ORIGINAL_ASSET_USAGE_REVIEWS[source.path]||ASSET_USAGE_REVIEWS[source.path],record=source.record??r?.sourceRecord??null,nodes=record?storyNodes.filter(n=>n.panels?.some(p=>p.record===record)).map(n=>n.id):[];
  const primaryUse=r?.primaryUse||'story-dialogue',status=r?.status||'pending';
  const events=primaryUse==='trading-expression'&&status==='verified'?(r.events||[]):[];
  const applicability={events,directions:r?.directions||[],positions:[...new Set(events.flatMap(e=>eventRules[e]?.positions||[]))],profitBases:[...new Set(events.flatMap(e=>eventRules[e]?.profitBases||[]))],rules:Object.fromEntries(events.map(e=>[e,{...eventRules[e],...(r.eventRules?.[e]||{})}])),exclusions:r?.exclusions|| (primaryUse==='story-dialogue'?['story-only','never-crop-dialogue']:['unverified-account-event','direction-mismatch','profit-basis-mismatch'])};

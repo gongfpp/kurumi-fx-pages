@@ -1,5 +1,5 @@
-import {serviceConfiguration} from './service-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // Render every user-controlled value as text, never markup or links.
 export function renderPlayerComments(list,rows,{document=list.ownerDocument}={}){

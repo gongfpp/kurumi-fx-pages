@@ -1,4 +1,4 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 // Consumption is a separate, itemized cash ledger. Legacy totals are retained;
 // missing old item names are never reconstructed from guesses.
 export const LIFESTYLES=Object.freeze([

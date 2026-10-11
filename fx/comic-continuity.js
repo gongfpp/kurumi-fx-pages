@@ -2,7 +2,7 @@
 // Current balances come from the latest successful save, never an unsaved click.
 const money=n=>`¥${n.toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 export function comicContinuity(scene,state){
- const family=['father-borrow','father-found','father-repay-part','father-repaid'].includes(scene.id),loan=['loan-funded','loan-repay-part','loan-repaid'].includes(scene.id);
+ const family=scene.id?.startsWith('father-discovery-')||['father-borrow','father-found','father-repay-part','father-repaid'].includes(scene.id),loan=['loan-funded','loan-repay-part','loan-repaid'].includes(scene.id);
  if(!family&&!loan)return scene;
  const account=family?state?.family:state?.loan,remaining=account?.outstanding;
  const result={...scene.result};

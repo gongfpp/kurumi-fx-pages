@@ -842,6 +842,66 @@ export const DINNER_STORY_ASSETS=freeze({
    "party-4",
    "approved-style-expansion"
   ]
+ },
+ "dinner-new-15": {
+  "path": "./generated/dinner-stories-v1/dinner-cat-fishcake.webp",
+  "width": 1254,
+  "height": 1254,
+  "sha256": "84f50e4eeb03b14dfd3419af899892fcb6dbf3955a62857b53b4186b2261283a",
+  "people": 2,
+  "characters": [
+   "久留美",
+   "萌智子"
+  ],
+  "panels": 4,
+  "panelRects": [
+   [
+    13,
+    14,
+    604,
+    604
+   ],
+   [
+    637,
+    14,
+    604,
+    604
+   ],
+   [
+    13,
+    635,
+    604,
+    604
+   ],
+   [
+    637,
+    635,
+    604,
+    604
+   ]
+  ],
+  "reviewed": true,
+  "independentComic": true,
+  "kind": "original-fan-art",
+  "dialogueId": "dinner-expansion16-20261010:dinner-new-15",
+  "alt": "藏在碗底的小猫，久留美、萌智子的四格吃饭故事。",
+  "tier": "dinner-small",
+  "cost": 1500,
+  "food": "udon-cat-fishcake",
+  "storyBeats": [
+   "eat-udon",
+   "discover-cat-fishcake",
+   "share-fishcake",
+   "treasure-small-gift"
+  ],
+  "tags": [
+   "dinner-story",
+   "receipt-backed",
+   "dinner-small",
+   "udon-cat-fishcake",
+   "party-2",
+   "approved-style-expansion"
+  ]
  }
 });
 export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));

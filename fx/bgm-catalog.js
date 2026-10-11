@@ -18,7 +18,7 @@ export const BGM_CATALOG=Object.freeze([
       "focus"
     ],
     "duration": 159.137959,
-    "sha256": "0c42eb44ed039fffb6565eaac667185784f67585c27c0f40c776d6d812517879",
+    "sha256": "ab466d8d629c79125e0ff67695c0260561b357f06e0a2eb599567de6ea2656f9",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
   },
   {
@@ -37,7 +37,7 @@ export const BGM_CATALOG=Object.freeze([
       "gain"
     ],
     "duration": 267.781224,
-    "sha256": "c9e7f578f2a34f0a232139499d813b13fed9388b040a1c6829ea591c7773821f",
+    "sha256": "4ddea0aafcd3326325d7c3db79b51bb5b2be3961e8370fa031d5e3213b39b69c",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
   },
   {
@@ -56,7 +56,7 @@ export const BGM_CATALOG=Object.freeze([
       "crisis"
     ],
     "duration": 239.072653,
-    "sha256": "56cba61d6711a17405ca61141e29cbb68885740f084efa4c8e3d5924e87289d2",
+    "sha256": "a3142c0865c58c203f9063574fad66d8a7caacd3d542cd97316899f970bf1df4",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
   },
   {
@@ -74,7 +74,7 @@ export const BGM_CATALOG=Object.freeze([
       "numb"
     ],
     "duration": 75.781224,
-    "sha256": "c4b32d6bb607845c7d6e7d0c3bb80ca8a823c13ca01d612aefb0f1fe0018bb4c",
+    "sha256": "467c6a47b74f7b694e91d23eb885a3e0a1482662f8b5b56809456988a1dd810a",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
   },
   {
@@ -93,7 +93,195 @@ export const BGM_CATALOG=Object.freeze([
       "neutral"
     ],
     "duration": 218.409796,
-    "sha256": "e88c7cc4a5b6a7ea4fcf30dc1fdb88c553dc8ca74b1630e240802da0785b93c7",
+    "sha256": "37404e5b6119d05580ad0ec1363f82fffd910eb6f0e53e2696ad917f81064e8b",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "airport-lounge",
+    "title": "Airport Lounge",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/airport-lounge.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100806",
+    "credit": "\"Airport Lounge\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "neutral",
+      "relief"
+    ],
+    "duration": 307.696327,
+    "sha256": "9ef726b5fb213e7731513caf6aaa5cd918484d9091eb0bd367e7a85798dae8e1",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "spy-glass",
+    "title": "Spy Glass",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/spy-glass.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500058",
+    "credit": "\"Spy Glass\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "focus"
+    ],
+    "duration": 227.004082,
+    "sha256": "819476eaead42493a9f7a805f77cfe66a0cb60d58b469c6725b1fc3e8b3af1ec",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "deep-haze",
+    "title": "Deep Haze",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/deep-haze.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100886",
+    "credit": "\"Deep Haze\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "focus",
+      "tension"
+    ],
+    "duration": 122.096327,
+    "sha256": "fc37a4978d2732c16ae6ae6d14eae763d167b2fa568c565e01d9bbad01cfccd9",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "cipher",
+    "title": "Cipher",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/cipher.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100844",
+    "credit": "\"Cipher\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "gain"
+    ],
+    "duration": 231.288163,
+    "sha256": "2a0078c16d60227e0a8b5a3f81a0a09fa7934423fee853f1d4afde570a4d5019",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "district-four",
+    "title": "District Four",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/district-four.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600039",
+    "credit": "\"District Four\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "gain",
+      "tension"
+    ],
+    "duration": 248.267755,
+    "sha256": "724727ccf1f660a0052b2f40c81ca15ed4087b3442647cb1c20e69d38959762a",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "crypto",
+    "title": "Crypto",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/crypto.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600013",
+    "credit": "\"Crypto\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "tension",
+      "crisis"
+    ],
+    "duration": 204.094694,
+    "sha256": "c11fb5afacbb5d6399d2697aba7c2c57f0cbde286bd550676444c87bbd91b72d",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "night-on-the-docks-piano",
+    "title": "Night on the Docks - Piano",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/night-on-the-docks-piano.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+    "credit": "\"Night on the Docks - Piano\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "loss",
+      "numb"
+    ],
+    "duration": 174.08,
+    "sha256": "0806b9e5e0c37573dc29b67cc003f98033ead643437d9621e3f8bca1e095a1dd",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "floating-cities",
+    "title": "Floating Cities",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/floating-cities.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600018",
+    "credit": "\"Floating Cities\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "numb",
+      "loss"
+    ],
+    "duration": 184.084898,
+    "sha256": "83358bbc5dc7b991bf396557123118a982e99e9bede4408c50b31049d61b9c92",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "long-stroll",
+    "title": "Long Stroll",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/long-stroll.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100174",
+    "credit": "\"Long Stroll\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "neutral",
+      "relief"
+    ],
+    "duration": 254.72,
+    "sha256": "91361f06ffe68ab12a0ae2b869d55e87cc36b29329f9ef3340684be7494b86d5",
+    "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "impact-moderato",
+    "title": "Impact Moderato",
+    "artist": "Kevin MacLeod",
+    "src": "./bgm/impact-moderato.mp3",
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    "sourceUrl": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100618",
+    "credit": "\"Impact Moderato\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. https://creativecommons.org/licenses/by/4.0/",
+    "sceneTags": [
+      "focus",
+      "relief"
+    ],
+    "duration": 75.702857,
+    "sha256": "b2aeeccef2ea514111aa98386d6b02be3013dc58bb7b8c90e60b738791420d2c",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
   }
 ]);

@@ -1,5 +1,5 @@
-import {LIFESTYLES} from './consumption-ledger.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {renderLivingCopy} from './copy/living-choices.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {LIFESTYLES} from './consumption-ledger.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {renderLivingCopy} from './copy/living-choices.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 const yen=value=>'¥'+value.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export const fillLivingCopy=renderLivingCopy;
 const planValues=(plan,option,extra={})=>({label:option?.label||plan.label,dailyBasics:yen(plan.dailyBasics),dailyRent:yen(plan.dailyRent),dailyTotal:yen(plan.dailyCost),extraStressRelief:plan.extraStressRelief,extraRestRecovery:plan.extraRestRecovery,restRecoveryCap:32,...extra});
@@ -14,7 +14,7 @@ export function mountLivingChoiceDetails(doc,statement,copy,{onLifestyle=()=>{}}
  adjustment.append(make('p','living-current-arrangement',fillLivingCopy(currentCopy.currentStatusTemplate,planValues(current,currentCopy))));
  const choices=make('div','living-plan-choices');
  for(const plan of LIFESTYLES){
-  const option=options.get(plan.id),short=shortOptions.get(plan.id),values=planValues(plan,option),button=make('button','secondary');button.type='button';
+  const option=options.get(plan.id),short=shortOptions.get(plan.id),values=planValues(plan,option),button=make('button','secondary');button.type='button';button.value=plan.id;
   button.append(make('span','living-plan-label',fillLivingCopy(short.buttonTemplate,values)),make('small','living-plan-effect',fillLivingCopy(short.subtitleTemplate||option.recoveryDescription,values)));
   const pending=statement.scheduledHousing;
   if(pending?.toId===plan.id)button.append(make('small','living-pending-arrangement',fillLivingCopy(short.scheduledNextDayTemplate,planValues(plan,option,{effectiveDay:pending.effectiveDay}))));

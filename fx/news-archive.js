@@ -1,7 +1,7 @@
-import {NEWS_2014} from './news-2014.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
 export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2]);

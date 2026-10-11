@@ -604,6 +604,48 @@
       ],
       "tier": "dinner-banquet",
       "cost": 100000
+    },
+    {
+      "id": "dinner-new-15",
+      "file": "dinner-cat-fishcake.webp",
+      "sha256": "84f50e4eeb03b14dfd3419af899892fcb6dbf3955a62857b53b4186b2261283a",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "panels": 4,
+      "panelRects": [
+        [
+          13,
+          14,
+          604,
+          604
+        ],
+        [
+          637,
+          14,
+          604,
+          604
+        ],
+        [
+          13,
+          635,
+          604,
+          604
+        ],
+        [
+          637,
+          635,
+          604,
+          604
+        ]
+      ],
+      "characters": [
+        "久留美",
+        "萌智子"
+      ],
+      "tier": "dinner-small",
+      "cost": 1500
     }
   ]
 }
