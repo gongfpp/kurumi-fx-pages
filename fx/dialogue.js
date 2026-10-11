@@ -1,7 +1,7 @@
-import {marketPrice,positionMarket} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {DIALOGUE_BANK} from './dialogue-bank.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {DIALOGUE_BANK} from './dialogue-bank.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 
 export const DIALOGUE_VERSION=7;
 const quotes=new Map(DIALOGUE_BANK.flatMap(q=>[[q.id,q],[q.alias,q]]));
@@ -17,7 +17,7 @@ export function dialogueFacts(s){
   const p=positions[0],grossUnrealized=positions.reduce((sum,p)=>sum+n(grossPnlAt(p,marketPrice(s,positionMarket(p)))),0);
   const unrealized=positions.reduce((sum,p)=>sum+netUnrealized(p,marketPrice(s,positionMarket(p))),0);
   const equity=Math.max(0,n(s.cash)+positions.reduce((sum,p)=>sum+n(p.margin),0)+grossUnrealized)+n(s.reserve);
-  const profit=equity-(Number.isFinite(s.startEquity)?s.startEquity:100000)-n(s.externalFunding)+n(s.expenses)-n(s.developer?.profitOffset);
+  const profit=equity-(Number.isFinite(s.startEquity)?s.startEquity:100000)-n(s.externalFunding)-n(s.nonTradingIncome)+n(s.expenses)-n(s.developer?.profitOffset);
   const netProfit=profit-positions.reduce((sum,p)=>sum+estimatedCloseFee(p),0);
   const trades=(s.history||[]).filter(t=>Number.isFinite(t.pnl));
   const loss=netProfit<-.01||unrealized<-.01||trades.some(t=>t.pnl<-.01);

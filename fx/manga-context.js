@@ -1,5 +1,5 @@
-import {RESTRAINT_MANGA_ASSETS} from './contextual-manga-restraint-content.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {RESTRAINT_MANGA_ASSETS} from './contextual-manga-restraint-content.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 
 // Card matching is intentionally independent of the portrait's emotion rules.
 // An illustration is evidence for a scene, never the ledger for this account.

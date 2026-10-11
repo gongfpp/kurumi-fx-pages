@@ -1,6 +1,6 @@
-import {marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {tradingTimestamp} from './trading-time.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -26,7 +26,11 @@ export function applyDeveloperPatch(current,patch){
   s.family.unlocked ||= v.debt>0;s.fatherUsed ||= v.debt>0;
   if(v.debt>0&&s.family.borrowedAt===null)s.family.borrowedAt=(v.day-1)*4+v.beat;
   if(!v.debt)s.effects=s.effects.filter(e=>e.id!=='guilt');
-  s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-initialCapital(s)-s.externalFunding+s.expenses-v.profit};
+  // The editor explicitly starts a synthetic baseline (as it already does for
+  // trades). Retain the original life ledger for recovery, not as new-day income.
+  const lifeActionArchive=s.lifeActions?{actions:structuredClone(s.lifeActions),nonTradingIncome:s.nonTradingIncome,dayOpeningIncome:s.dayOpeningIncome}:s.developer?.lifeActionArchive;
+  if(s.lifeActions){s.version=s.lifeActions.sourceVersion;delete s.lifeActions;delete s.nonTradingIncome;delete s.dayOpeningIncome;}
+  s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-initialCapital(s)-s.externalFunding+s.expenses-v.profit,...(lifeActionArchive?{lifeActionArchive}:{})};
   s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
   s.settlementPresentation=null;s.settlementNarrative=null;s.accountingJournal=null;s.recapChoiceLedger=[];delete s.nextDayLivingDiscount;
   if(s.tradingClock)s.tradingClock={...s.tradingClock,lastQuoteAt:tradingTimestamp(s,{day:s.day,beat:s.beat}),lastQuoteDay:s.day};

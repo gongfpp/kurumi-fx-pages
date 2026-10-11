@@ -1,10 +1,17 @@
-import {setImage} from './assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {setImage} from './assets.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 const bindings=new WeakMap();
+// The main game may observe actual reading; archived consumers remain isolated.
+let observeArtwork=null;
+export function configureMangaImageObserver(observer){
+ if(observer!==null&&typeof observer!=='function')throw new TypeError('Artwork observer must be a function or null');
+ observeArtwork=observer;
+}
 // Lazy non-primary art and an explicit text fallback retain the ledger/context
 // even if both the original request and its one ordinary retry fail.
 export function setMangaImage(image,path,{loading='lazy'}={}){
  image.loading=loading;image.decoding='async';
  setImage(image,path);
+ observeArtwork?.(image,path);
  const current=bindings.get(image),asset=image.dataset.asset;
  if(current?.asset===asset)return;
  current?.note?.remove();

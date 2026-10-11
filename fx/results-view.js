@@ -1,5 +1,5 @@
-import {downloadResults} from './results-report.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {downloadResults} from './results-report.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';
@@ -17,6 +17,7 @@ export function mountResultsReport(root,report,options={}){
  for(const [label,value] of entries){const cell=make('div');cell.append(make('dt',label),make('dd',value));grid.append(cell);}root.append(grid);
  const fees=make('details',undefined,'results-details');fees.append(make('summary','费用与统计口径'),make('p','收益率按初始本金计算，使用借款后亏损可能超过 100%。胜率按完整平仓订单计算。'));
  for(const [label,value] of [['累计交易手续费（已计入净盈亏）',f.trading],['已付网贷利息',f.interestPaid],['累计未付、计入债务利息',f.interestAccrued],['已付生活费',f.living],['可选消费',f.consumption]])fees.append(make('p',`${label}：${amount(value)}`));
+ if(report.income?.work)fees.append(make('p',`累计工作收入：${amount(report.income.work)}`));
  fees.append(make('p',report.definitions.maxOrderLoss),make('p',report.definitions.maxDrawdown));root.append(fees);
  if(report.specialRecords.length){const section=make('section',undefined,'results-special');section.append(make('h4','特别记录'));const list=make('ul');for(const record of report.specialRecords)list.append(make('li',`${record.label}：${['negative-net-assets','loss-over-initial'].includes(record.id)?amount(record.value):record.value+(record.id==='max-leverage'?'×':'')}`));section.append(list);root.append(section);}
  for(const warning of report.dataQuality.warnings)root.append(make('p',warning,'results-warning'));

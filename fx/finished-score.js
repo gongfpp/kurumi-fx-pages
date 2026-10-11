@@ -1,5 +1,5 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

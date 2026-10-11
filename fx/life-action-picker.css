@@ -1,0 +1,105 @@
+/* Life illustrations reuse only the user-approved proposal pixels. All labels,
+   balances, conditions and choices are accessible live DOM, never screenshot text. */
+.life-action-picker{--life-ink:#10134e;--life-pink:#ff2296;--life-line:#171764;color:var(--life-ink);width:min(1060px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);padding:9px;border:2px solid var(--life-line);border-radius:13px;background:#fff8fd;box-shadow:0 0 0 5px #fff0fa,5px 5px 0 5px #35204744;overflow:hidden;font-family:inherit;box-sizing:border-box}
+.life-action-picker::backdrop{background:rgba(24,15,41,.63)}
+.life-action-picker *{box-sizing:border-box}
+.life-action-picker [hidden]{display:none!important}
+.life-action-picker button{font-family:inherit;cursor:pointer;min-height:44px;touch-action:manipulation}
+.life-action-picker button:disabled{cursor:not-allowed;opacity:.52}
+.life-action-picker button:focus-visible{outline:3px solid #135dc1;outline-offset:3px}
+.life-picker-shell{display:flex;flex-direction:column;max-height:calc(100dvh - 56px);border:1px solid var(--life-line);border-radius:8px;overflow:hidden;background:#fff}
+.life-picker-header{flex-shrink:0;display:flex;align-items:center;gap:20px;min-height:70px;padding:8px 12px;border-bottom:1px solid var(--life-line);background:linear-gradient(105deg,#ffeef8,#ffe6f2 58%,#ffd6eb);position:relative}
+.life-picker-header:after{content:'';position:absolute;right:54px;top:0;width:205px;height:100%;background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:1113.04348% 1969.23077%;background-position:78.68383% 20.16461%;pointer-events:none;opacity:.75}
+.life-picker-title{display:flex;align-items:center;gap:13px;position:relative;z-index:1;font-size:36px;line-height:1.15;margin:0;font-weight:850;flex:1;color:var(--life-ink)}
+.life-picker-close{width:47px;padding:0;flex:none;font-size:46px;line-height:1;background:transparent;border:0;color:var(--life-ink);position:relative;z-index:1;border-radius:6px}
+.life-picker-back,.life-picker-return{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--life-ink);background:linear-gradient(130deg,#ffe3f3,#fff4fa);border:1px solid var(--life-line);border-radius:6px;font-size:24px;line-height:1.2;font-weight:750;padding:8px 19px;position:relative;z-index:1;white-space:nowrap}
+.life-picker-arrow{font-size:39px;line-height:.7}
+.life-picker-content{padding:12px;overflow:auto;min-height:0;overscroll-behavior:contain;scrollbar-gutter:stable}
+.life-picker-consequence{margin:0 0 12px;padding:10px 12px;text-align:center;border-radius:7px;background:#ffe2f1;color:var(--life-ink);font-weight:750;font-size:22px;line-height:1.4}
+.life-picker-feedback{margin:0 0 12px;padding:10px;border:1px solid #ad3776;border-radius:6px;background:#fff2f7;color:#8c235f;line-height:1.5}
+.life-picker-section-title{display:flex;align-items:center;gap:12px;font-size:29px;line-height:1.3;font-weight:850;color:var(--life-ink);margin:8px 0}
+.life-picker-housing{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(140px,.85fr) minmax(160px,.9fr);align-items:center;gap:22px;padding:10px;border:1px solid var(--life-line);border-radius:8px;background:linear-gradient(110deg,#fffaff,#ffe9f5);margin-bottom:12px}
+.life-picker-housing .life-picker-art{aspect-ratio:408 / 132}
+.life-picker-housing-copy h3{display:flex;align-items:center;gap:10px;font-size:29px;margin:0 0 5px;color:var(--life-ink)}
+.life-picker-housing-copy p{font-size:19px;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.life-picker-today>.life-picker-section-title{border:1px solid var(--life-line);border-bottom:0;border-radius:8px 8px 0 0;margin:0;padding:8px;background:#ffeff9}
+.life-picker-menu-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.life-picker-menu-card,.life-picker-option-card{min-width:0;display:flex;flex-direction:column;gap:8px;border:1px solid var(--life-line);border-radius:7px;padding:10px;background:#fff}
+.life-picker-menu-card h4{display:flex;align-items:center;justify-content:center;gap:8px;font-size:24px;line-height:1.2;margin:0;color:var(--life-ink)}
+.life-picker-art{width:100%;aspect-ratio:1.33;background-color:#ffedf7;background-repeat:no-repeat;border-radius:6px;border:1px solid #e45baf;flex:none}
+.life-picker-primary{display:flex;align-items:center;justify-content:center;gap:17px;min-width:0;width:100%;border:1px solid var(--life-line);border-radius:7px;background:linear-gradient(135deg,#ff1d95,#ff2d9d);box-shadow:inset 0 1px 1px #ff83c0;color:#fff;font-size:25px;font-weight:800;line-height:1.25;padding:10px 7px;margin-top:auto;overflow-wrap:anywhere}
+.life-picker-primary:hover:enabled{background:#e90b84;box-shadow:inset 0 0 0 1px #fff8}
+.life-picker-chevron{font-size:39px;line-height:.7;font-weight:400}
+.life-picker-footer{border:0;padding:0;display:flex;align-items:center;justify-content:flex-start;margin-top:12px}
+.life-picker-footer .life-picker-return{min-width:228px;text-decoration:none}
+.life-picker-option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.life-picker-friend-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.life-picker-option-card{padding:12px;gap:10px}
+.life-picker-option-title{display:flex;align-items:center;justify-content:center;gap:16px;font-size:28px;line-height:1.2;margin:0;color:var(--life-ink)}
+.life-picker-friend-grid .life-picker-option-title{justify-content:flex-start;font-size:30px}
+.life-picker-friend-badge{font-size:16px;font-weight:750;border-radius:6px;padding:7px 19px;background:#84f6d9;white-space:nowrap}
+.life-picker-friend-badge[data-locked='true']{background:#ede7ef;color:#62576a}
+.life-picker-friend-grid .life-picker-art{aspect-ratio:1.51}
+.life-picker-friend-grid .life-picker-primary{font-size:29px;min-height:58px}
+.life-picker-income{font-size:18px;text-align:center;margin:0;color:#80556d}
+.life-picker-option-reason{font-size:17px;line-height:1.4;margin:0;color:#80556d}
+.life-picker-empty{padding:30px 10px;text-align:center}
+.life-picker-icon{display:inline-block;flex:none;width:38px;height:40px;background-repeat:no-repeat}
+.life-picker-menu-card .life-picker-icon{width:32px;height:35px}
+.life-action-picker[data-category='menu'] .life-picker-consequence{font-size:19px;font-weight:500;background:#fff0f8}
+@media(max-width:800px){
+ .life-action-picker{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:6px}
+ .life-picker-header{gap:10px;min-height:62px;padding:7px 10px}
+ .life-picker-title{font-size:29px;gap:8px}
+ .life-picker-back{font-size:20px;padding:8px 12px;gap:7px}
+ .life-picker-housing{gap:12px;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+ .life-picker-housing>.life-picker-primary{grid-column:2}
+ .life-picker-housing>.life-picker-art{grid-row:1 / 3;aspect-ratio:408 / 132;background-size:376.47% 775.758%;background-position:25.266% 30.83%}
+ .life-picker-housing-copy h3{font-size:25px}.life-picker-housing-copy p{font-size:17px}
+ .life-picker-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .life-picker-option-title{font-size:24px}.life-picker-friend-grid .life-picker-option-title{font-size:26px;gap:10px}
+ .life-picker-friend-badge{padding:5px 10px;font-size:14px}
+ .life-picker-consequence{font-size:18px}.life-picker-primary{font-size:21px;gap:8px}
+ .life-picker-option-card{padding:9px}.life-picker-content{padding:10px}
+}
+@media(max-width:560px){
+ .life-action-picker{width:calc(100vw - 16px);max-height:calc(100dvh - 20px);padding:4px;border-radius:9px;box-shadow:0 0 0 2px #fff0fa,3px 3px 0 2px #35204744}
+ .life-picker-header{gap:6px;padding:6px;flex-wrap:wrap}.life-picker-header:after{opacity:.4;width:150px}
+ .life-picker-shell{max-height:calc(100dvh - 36px)}
+ .life-picker-title{font-size:25px;gap:6px;min-width:0}.life-picker-title .life-picker-icon{width:28px;height:31px}
+ .life-picker-close{width:39px;font-size:37px;min-height:44px}.life-picker-back{font-size:17px;gap:4px;padding:6px 9px;min-height:44px}
+ .life-picker-content{padding:8px}.life-picker-consequence,.life-action-picker[data-category='menu'] .life-picker-consequence{font-size:14px;line-height:1.5;padding:8px;margin-bottom:9px}
+ .life-picker-section-title{font-size:23px;gap:8px}.life-picker-housing{gap:8px;padding:8px}.life-picker-housing-copy h3{font-size:22px;gap:5px}.life-picker-housing-copy h3 .life-picker-icon{display:none}
+ .life-picker-housing-copy p{font-size:14px}.life-picker-housing>.life-picker-primary{font-size:18px;padding:8px 5px}
+ .life-picker-menu-card{padding:7px;gap:7px}.life-picker-menu-card h4{font-size:18px;gap:4px}.life-picker-menu-card .life-picker-icon{width:25px;height:28px}
+ .life-picker-primary{font-size:18px;padding:8px 5px;min-height:44px;gap:7px}.life-picker-chevron{font-size:28px}
+ .life-picker-option-grid{grid-template-columns:minmax(0,1fr);gap:10px}.life-picker-option-card{padding:10px;gap:8px}
+ .life-picker-option-card .life-picker-art{aspect-ratio:1.5}.life-picker-friend-grid .life-picker-art{aspect-ratio:1.51}
+ .life-picker-option-title,.life-picker-friend-grid .life-picker-option-title{font-size:24px}.life-picker-friend-grid .life-picker-primary{font-size:23px;min-height:47px}
+ .life-picker-option-title{justify-content:flex-start}.life-picker-income{text-align:left;font-size:16px}.life-picker-friend-badge{font-size:14px}
+ .life-picker-footer .life-picker-return{font-size:20px;min-width:0;width:100%}
+}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full) .life-action-picker *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Crop bounds are measured against the approved 1536 × 1024 reference images. */
+.life-picker-art-housing{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:376.47059% 775.75758%;background-position:25.26596% 30.82960%}
+.life-picker-art-dinner{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:679.64602% 605.91716%;background-position:21.14504% 63.04094%}
+.life-picker-art-friend{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:676.65198% 605.91716%;background-position:40.71811% 63.04094%}
+.life-picker-art-work{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:704.58716% 605.91716%;background-position:59.86343% 63.04094%}
+.life-picker-art-relax{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:676.65198% 605.91716%;background-position:79.37357% 63.04094%}
+.life-picker-art-mochiko{background-image:url('./pixel-assets/life-friends-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:350.68493% 349.48805%;background-position:28.14208% 62.24350%}
+.life-picker-art-yasuko{background-image:url('./pixel-assets/life-friends-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:331.74946% 349.48805%;background-position:74.46412% 62.24350%}
+.life-picker-art-convenience{background-image:url('./pixel-assets/life-work-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:505.26316% 432.06751%;background-position:22.32143% 50.19060%}
+.life-picker-art-cafe{background-image:url('./pixel-assets/life-work-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:503.60656% 432.06751%;background-position:50.04062% 50.19060%}
+.life-picker-art-bookstore{background-image:url('./pixel-assets/life-work-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:503.60656% 432.06751%;background-position:77.82291% 50.19060%}
+.life-picker-art-shrine{background-image:url('./pixel-assets/life-relax-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:505.26316% 414.57490%;background-position:22.97078% 57.27156%}
+.life-picker-art-river{background-image:url('./pixel-assets/life-relax-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:529.65517% 414.57490%;background-position:50.08026% 57.27156%}
+.life-picker-art-park{background-image:url('./pixel-assets/life-relax-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:505.26316% 414.57490%;background-position:77.11039% 57.27156%}
+.life-picker-icon-house{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:2953.84615% 2048.00000%;background-position:18.19407% 20.43121%}
+.life-picker-icon-chat{background-image:url('./pixel-assets/life-friends-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:2953.84615% 2133.33333%;background-position:44.00270% 21.20902%}
+.life-picker-icon-work{background-image:url('./pixel-assets/life-work-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:3134.69388% 2226.08696%;background-position:33.49025% 21.47239%}
+.life-picker-icon-leaf{background-image:url('./pixel-assets/life-relax-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:3746.34146% 2226.08696%;background-position:33.17726% 21.77914%}
+.life-picker-icon-bag{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:4042.10526% 2767.56757%;background-position:18.55808% 44.07295%}
+.life-picker-icon-dinner{background-image:url('./pixel-assets/life-menu-approved.png?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717');background-size:4042.10526% 2625.64103%;background-position:20.89453% 49.84772%}
+
+@media(max-width:380px){.life-picker-title{font-size:22px}.life-picker-title .life-picker-icon{display:none}.life-picker-back{font-size:15px;padding:6px;gap:3px}.life-picker-arrow{font-size:28px}.life-picker-header{flex-wrap:nowrap}.life-picker-menu-card h4{font-size:16px}.life-picker-menu-card .life-picker-icon{width:22px;height:25px}}

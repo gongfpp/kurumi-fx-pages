@@ -1,6 +1,6 @@
-import {encodeProgress} from './save-encoder.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {storageFailure} from './storage.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {storageFailure} from './storage.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -73,6 +73,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
             let previousTheft;try{previousTheft=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.family?.theftDiscovery;}catch{}
             if(baseline.raw!==null&&state.mode==='story'&&state.family?.theftDiscovery?.version===1&&!previousTheft){
               const backupKey=key+':pre-father-theft-v1',backup=storage.readItem(backupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
+            }
+            // The first life-action write preserves the exact prior durable state.
+            // Older clients reject v17; the scoped backup remains a recovery path.
+            let previousLife;try{previousLife=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.lifeActions;}catch{}
+            if(baseline.raw!==null&&state.lifeActions?.version===1&&!previousLife){
+              const backupKey=key+':pre-life-actions-v1',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
             if(!storage.setItem(key,durableText))return fail('memory','storage',storage.failureFor?.(key));

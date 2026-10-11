@@ -1,13 +1,13 @@
-import {marketPrice,positionMarket} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {buildResultsReport} from './results-report.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {runPerformance} from './performance.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {achievementMangaThumbnail} from './manga-achievements.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {assetURL} from './assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {runPerformance} from './performance.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {achievementMangaThumbnail} from './manga-achievements.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {assetURL} from './assets.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -25,7 +25,7 @@ export function buildShareSummary(state={},options={}) {
   const recap=options.recap||buildRecapSnapshot(state,options);
   return {recap,results:buildResultsReport(state,{recap}),title:'FX韭留美',day,kind:options.variant==='ranking'?'完整战绩':state.mode==='endless'?'操盘战报':report?report.livingSettlement?.status==='pending'?'交易复盘 · 生活费待结':'收盘战报':'盘中战报',equity:eq,...performance,
     realizedProfit:total,dayRealizedProfit:daily,unrealized:floating,
-    tradingProfit:finite(options.tradingProfit,eq-finite(state.startEquity,100000)-finite(state.externalFunding)+finite(state.expenses)-finite(state.developer?.profitOffset)),
+    tradingProfit:finite(options.tradingProfit,eq-finite(state.startEquity,100000)-finite(state.externalFunding)-finite(state.nonTradingIncome)+finite(state.expenses)-finite(state.developer?.profitOffset)),
     dayTradingProfit:report?finite(report.net):null,
     feesPaid:totalFees, debt:Math.max(0,finite(state.family?.outstanding)+finite(state.loan?.outstanding)),livingCost:finite(report?.livingCost),funding:finite(state.externalFunding),
     tradeCount:performance.closedTrades,winRate:performance.winRate===null?null:performance.winRate*100,

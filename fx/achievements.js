@@ -1,8 +1,8 @@
-import {marketPrice,positionMarket} from './market-book.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
-import {setImage} from './assets.js?v=65e2635d8030c8021817a92850bb902eaac3e601-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
+import {setImage} from './assets.js?v=b3055da3d740f3dcd2fbd61cba1846712bfec8b6-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -80,7 +80,7 @@ function styles(doc){if(doc.getElementById('fx-ach-style'))return;const css=doc.
 function el(doc,tag,className,text){const node=doc.createElement(tag);node.className=className;if(text!==undefined)node.textContent=text;return node;}
 function badge(doc,def,{locked=false}={}){
  const node=el(doc,'span','fx-ach-badge'),fallback=el(doc,'span','fx-ach-badge-text',locked?'锁':def.badge);node.append(fallback);
- const path=!locked&&achievementMangaThumbnail(def.id);
+ const path=!locked&&!def.legacyUnlocked&&achievementMangaThumbnail(def.id);
  if(path){
   const image=el(doc,'img','fx-ach-badge-image');image.alt='';image.setAttribute('aria-hidden','true');image.width=image.height=48;image.decoding='async';image.loading='eager';image.hidden=true;node.append(image);
   setImage(image,path,{onStatus:status=>{const ready=status==='ready'&&image.naturalWidth>0&&image.naturalHeight>0;image.hidden=!ready;fallback.hidden=ready;}});
@@ -107,7 +107,7 @@ export function renderAchievementBook(container,profile={},state={}) {
     text.append(el(doc,'small','fx-ach-meta',status));card.append(text);
     // Keep provenance in the catalog; the book shows only the achievement and its art.
     const source=achievementManga(def.id);
-    if(source){
+    if(source&&def.unlocked&&!def.legacyUnlocked&&def.id!=='fully-repaid'){
       const art=el(doc,'div','fx-ach-manga'),image=el(doc,'img','fx-ach-source-image');
       setMangaImage(image,source.panel.original);image.alt=`${def.name} · 成就插图`;
       art.append(image);card.append(art);
