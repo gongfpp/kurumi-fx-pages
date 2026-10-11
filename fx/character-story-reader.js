@@ -1,5 +1,5 @@
-import {CHARACTER_STORY_ASSETS,createCharacterStorySession} from './character-story-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {setImage} from './assets.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,createCharacterStorySession} from './character-story-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {setImage} from './assets.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
 
 // A presentation-only reader. No engine, story queue, persistence, or account imports.
 export function mountCharacterStoryReader({root=document,getState,getContext,canOpen=()=>true}){

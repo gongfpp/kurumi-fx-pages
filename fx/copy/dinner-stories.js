@@ -1,4 +1,4 @@
-import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
 // Original game dialogue authorized in the approved dinner-story style, not manga quotations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORIES=freeze({

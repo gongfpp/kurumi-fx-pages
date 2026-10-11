@@ -23,9 +23,9 @@ export function createPixelRenderer({document:doc}) {
     if(mode){mode.classList.add('pixel-mode-button');moveNode(mode,right);}
     const source=make('span','pixel-source-status');source.setAttribute('aria-live','off');right.append(source);
     const exit=make('div','pixel-exit-region');exit.setAttribute('role','group');exit.setAttribute('aria-label','结束本局');right.append(exit);moveNode(native('retire'),exit);
-    for(const id of ['leaderboard-open','achievements-open'])moveNode(native(id),right);
+    for(const id of ['leaderboard-open','achievements-open','share-open'])moveNode(native(id),right);
     const settings=drawer('设置','pixel-settings');settings.summary.prepend(icon('settings'));right.append(settings.node);
-    for(const id of ['sound','music-open','share-open','help','developer-open','privacy-toggle'])moveNode(native(id),settings.content);
+    for(const id of ['sound','music-open','help','developer-open','privacy-toggle'])moveNode(native(id),settings.content);
     moveNode(q('.stock-game-link',top),settings.content);
     moveNode(native('saved'),settings.content);
   }

@@ -1,12 +1,12 @@
-import {FIRSTDAY_BACKSTORY_ASSETS} from './contextual-manga-firstday-backstory.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {LINK_DAILY_ASSETS} from './contextual-manga-links-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {REVERSAL_DAILY_ASSETS} from './contextual-manga-reversal-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {VERIFIED_DAILY_ASSETS} from './contextual-manga-verified-daily.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {DAILY_EXTENSION_ASSETS} from './contextual-manga-daily-extension.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {RESTRAINT_MANGA_ASSETS,RESTRAINT_MANGA_NODES,RESTRAINT_MANGA_ARCS} from './contextual-manga-restraint-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {PROFIT_MANGA_ASSETS,PROFIT_MANGA_NODES,PROFIT_MANGA_ARCS} from './contextual-manga-profit-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
-import {BORROWED_MANGA_ASSETS,BORROWED_MANGA_NODES,BORROWED_MANGA_ARCS} from './contextual-manga-borrowed-content.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_ASSETS} from './contextual-manga-firstday-backstory.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {LINK_DAILY_ASSETS} from './contextual-manga-links-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {REVERSAL_DAILY_ASSETS} from './contextual-manga-reversal-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {VERIFIED_DAILY_ASSETS} from './contextual-manga-verified-daily.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {DAILY_EXTENSION_ASSETS} from './contextual-manga-daily-extension.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {RESTRAINT_MANGA_ASSETS,RESTRAINT_MANGA_NODES,RESTRAINT_MANGA_ARCS} from './contextual-manga-restraint-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {PROFIT_MANGA_ASSETS,PROFIT_MANGA_NODES,PROFIT_MANGA_ARCS} from './contextual-manga-profit-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
+import {BORROWED_MANGA_ASSETS,BORROWED_MANGA_NODES,BORROWED_MANGA_ARCS} from './contextual-manga-borrowed-content.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
 // Reviewed, fixed character history. No triggers, live prices, or game-account mutations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const CONTEXTUAL_MANGA_ASSETS=freeze({

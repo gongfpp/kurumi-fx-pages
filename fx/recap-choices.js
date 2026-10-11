@@ -1,4 +1,4 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=7295dd97231ffa03bc87b361540e8dbf099adc8a-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=d55c17553b9e51d3617f435b9cad3227d3cd6fcc-23f2a20b7717';
 export const DINNER_OPTIONS=Object.freeze([['dinner-small','请吃一顿饭',1500,3000],['dinner-friends','请朋友聚餐',8000,40000],['dinner-feast','今晚好好庆祝',30000,200000],['dinner-banquet','大方请客一次',100000,1000000]].map(([id,label,cost,minGain])=>Object.freeze({id,label,cost,minGain})));
 export function recapChoices(snapshot,{cash=0,loanUnlocked=false,loanTerms=null}={}){
  if(!snapshot.sealed||snapshot.mode==='endless')return[];

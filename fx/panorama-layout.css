@@ -17,7 +17,7 @@ body[data-frontend="pixel"]{background:#fff4f9}
 #pixel-frontend .pixel-exit-region{display:flex;align-items:center;margin-left:auto;padding:0 16px;border-left:1px solid #f4b8d5;border-right:1px solid #f4b8d5}
 #pixel-frontend .pixel-exit-region #retire{display:flex;align-items:center;gap:9px;min-height:44px;padding:0;border:0;background:none;font-size:18px;font-weight:700;color:var(--px-ink);box-shadow:none}
 #pixel-frontend .pixel-exit-region #retire:before{content:'↪';display:grid;place-items:center;width:29px;height:31px;border:2px solid var(--px-ink);border-radius:3px;color:#ed438d;font-size:29px;line-height:1}
-#pixel-frontend :is(#leaderboard-open,#achievements-open){font-size:19px;gap:7px}
+#pixel-frontend :is(#leaderboard-open,#achievements-open,#share-open){font-size:19px;gap:7px}
 #pixel-frontend .pixel-settings{margin-right:115px}
 #pixel-frontend .pixel-settings>summary{font-size:19px;gap:6px;border-left:1px solid #f4b8d5;padding-left:13px}
 #pixel-frontend .pixel-drawer-content{border:1px solid var(--px-line);box-shadow:0 8px 24px #52243b14;background:#fffafd}
@@ -152,7 +152,7 @@ body[data-frontend="pixel"]{background:#fff4f9}
  #pixel-frontend .pixel-exit-region{margin-left:auto;padding:0 7px}
  #pixel-frontend .pixel-exit-region #retire{font-size:13px;gap:4px;min-height:44px}
  #pixel-frontend .pixel-exit-region #retire:before{width:21px;height:25px;font-size:21px}
- #pixel-frontend :is(#leaderboard-open,#achievements-open){font-size:14px;gap:2px;min-height:44px}
+ #pixel-frontend :is(#leaderboard-open,#achievements-open,#share-open){font-size:14px;gap:2px;min-height:44px}
  #pixel-frontend .pixel-settings{margin:0;position:static}
  #pixel-frontend .pixel-settings>.pixel-drawer-content{right:10px;top:100%;width:min(310px,calc(100vw - 20px))}
  #pixel-frontend .pixel-settings>summary{font-size:14px;gap:0;padding-left:5px;min-height:44px}

@@ -50,7 +50,7 @@ body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .dialo
  #pixel-frontend .topbar{padding-inline:max(10px,env(safe-area-inset-left,0px)) max(10px,env(safe-area-inset-right,0px))}
  #pixel-frontend .brand{max-width:calc(100% - 124px);font-size:clamp(24px,6.4vw,30px)}
  #pixel-frontend .top-right{gap:6px}
- #pixel-frontend :is(#leaderboard-open,#achievements-open),#pixel-frontend .pixel-settings>summary{height:44px;min-height:44px}
+ #pixel-frontend :is(#leaderboard-open,#achievements-open,#share-open),#pixel-frontend .pixel-settings>summary{height:44px;min-height:44px}
  #pixel-frontend .pixel-settings>.pixel-drawer-content{top:48px}
  #pixel-frontend .pixel-life-actions>.pixel-drawer>summary,#pixel-frontend .pixel-voice-button,#pixel-frontend .pixel-life-button{height:44px;min-height:44px;font-size:16px}
  #pixel-frontend #terminal>.candle-view-controls{grid-template-columns:repeat(6,minmax(0,1fr))}
