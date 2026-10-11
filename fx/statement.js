@@ -1,13 +1,14 @@
-import {consumptionStatement} from './consumption-ledger.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {formatQuote as quote,directionLabel} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {TRANSITION_COPY} from './copy/transitions.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketInfo,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {formatQuote as quote,directionLabel} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {TRANSITION_COPY} from './copy/transitions.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const yen=value=>`${value<0?'−':''}¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const signed=value=>`${value>0?'+':''}${yen(value)}`;
 export function buildFXReceipt(report,state={}){
   const labels={half:'减半平仓',close:'平仓',rescue:'提前平仓',stop:'止损',liquidation:'强平',closing:'收盘平仓'};
   const net=report.net;
-  const rows=report.trades.filter(t=>Number.isFinite(t.pnl)).map(t=>({label:`#${t.positionId||'—'} · ${directionLabel(t.direction)}${t.pnlModel==='legacy-inverse-v5'?'（旧约兼容）':''} · ${labels[t.type]||'交易'}`,amount:t.pnl,formula:`${yen(t.margin)} 保证金 · ${Number((t.leverage||0).toFixed(1))}× · USD/JPY ${quote(t.entry)} → ${quote(t.exit)} 日元/美元 · 费用 ${yen((t.openFee||0)+(t.closeFee||0))}${t.lossReduction?' · 萌智子减免 '+yen(t.lossReduction):''}`}));
+  const rows=report.trades.filter(t=>Number.isFinite(t.pnl)).map(t=>({label:`#${t.positionId||'—'} · ${directionLabel(t.direction,positionMarket(t))}${t.pnlModel==='legacy-inverse-v5'?'（旧约兼容）':''} · ${labels[t.type]||'交易'}`,amount:t.pnl,formula:`${yen(t.margin)} 保证金 · ${Number((t.leverage||0).toFixed(1))}× · ${positionMarket(t)} ${quote(t.entry)} → ${quote(t.exit)} 日元/${marketInfo(positionMarket(t)).name} · 费用 ${yen((t.openFee||0)+(t.closeFee||0))}${t.lossReduction?' · 萌智子减免 '+yen(t.lossReduction):''}`}));
   if(report.funding)rows.push({label:'借还款变动',amount:report.funding});
   const statement=consumptionStatement(state,report);
   if(statement.rows.some(row=>!row.legacy)){for(const row of statement.rows)if(row.amount)rows.push({label:row.label,amount:-row.amount,formula:row.kind==='interest'&&report.interestAccrued?'其中 '+yen(report.interestAccrued)+' 计入欠款':undefined});}

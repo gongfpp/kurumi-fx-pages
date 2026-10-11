@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // The sole public service-origin value. Production is intentionally unconfigured.
 // tools/build-fx.mjs writes the explicitly supplied KURUMI_SERVICE_ORIGIN into
 // the exported bundle only; tests can inject serviceOrigin without editing it.

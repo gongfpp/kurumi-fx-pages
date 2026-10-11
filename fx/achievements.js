@@ -1,6 +1,8 @@
-import {grossPnlAt} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {setImage} from './assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -23,7 +25,7 @@ export const ACHIEVEMENTS = Object.freeze([
 const finite = (n, fallback=0) => Number.isFinite(n) ? n : fallback;
 const positions = s => Array.isArray(s.positions) ? s.positions : s.position ? [s.position] : [];
 const closed = s => (s.history || []).filter(t => t.type !== 'open' && Number.isFinite(t.pnl));
-const pnl = (s,p) => finite(p.unrealized,finite(grossPnlAt(p,s.price)));
+const pnl = (s,p) => finite(p.unrealized,finite(grossPnlAt(p,marketPrice(s,positionMarket(p)))));
 function evidence(s) {
   const trades=closed(s), active=positions(s), realized=Number.isFinite(s.performance?.totalProfit)&&s.performance.closedTrades>0?s.performance.totalProfit:trades.reduce((sum,t)=>sum+t.pnl,0);
   return {
@@ -64,10 +66,11 @@ export function evaluateAchievements(state,profile={}, {now=Date.now()}={}) {
 }
 const UI_STYLES=`
 .fx-ach-host{position:fixed;right:24px;bottom:24px;z-index:1100;pointer-events:none;max-width:calc(100vw - 32px)}
-.fx-ach-toast{width:340px;max-width:100%;box-sizing:border-box;display:grid;grid-template-columns:52px 1fr 24px;gap:12px;padding:16px;background:linear-gradient(115deg,#24303a,#151e25);color:#f5f7f9;border:1px solid #617481;border-top:3px solid #a4c967;box-shadow:0 8px 30px #0007;border-radius:5px;pointer-events:auto;font:14px/1.45 system-ui,sans-serif;animation:fx-ach-enter .28s ease-out}
-.fx-ach-badge{display:grid;place-items:center;width:48px;height:48px;background:#344743;border:1px solid #7d9b70;color:#c4e18e;border-radius:4px;font-weight:800;font-size:18px}
+.fx-ach-toast{width:340px;max-width:100%;box-sizing:border-box;display:grid;grid-template-columns:52px minmax(0,1fr) 24px;gap:12px;padding:16px;background:linear-gradient(115deg,#24303a,#151e25);color:#f5f7f9;border:1px solid #617481;border-top:3px solid #a4c967;box-shadow:0 8px 30px #0007;border-radius:5px;pointer-events:auto;font:14px/1.45 system-ui,sans-serif;animation:fx-ach-enter .28s ease-out}
+.fx-ach-badge{position:relative;overflow:hidden;display:grid;place-items:center;width:48px;height:48px;background:#344743;border:1px solid #7d9b70;color:#c4e18e;border-radius:4px;font-weight:800;font-size:18px}
+.fx-ach-badge-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;background:#fff}.fx-ach-badge-image[hidden],.fx-ach-badge-text[hidden]{display:none}.fx-ach-content{min-width:0;overflow-wrap:anywhere}
 .fx-ach-label{font-size:11px;color:#b5ca99;letter-spacing:.08em}.fx-ach-name{font-weight:750;font-size:16px;margin:3px 0}.fx-ach-copy{font-size:12px;color:#c5cfd6}.fx-ach-close{color:#bfcbd1;border:0;background:none;cursor:pointer;font-size:20px;align-self:start;padding:0;min-width:24px;min-height:24px}
-.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
+.fx-ach-manga{grid-column:1/-1;min-width:0;font-size:12px;line-height:1.6}.fx-ach-source-image{display:block;width:100%;max-width:580px;height:auto;margin:10px auto}.fx-ach-book{display:grid;gap:12px}.fx-ach-entry{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;padding:14px;background:#18232b;color:#eaf0f4;border:1px solid #4a5d69;border-radius:5px}.fx-ach-entry.locked{background:#eff0f0;color:#46545e;border-color:#c2c9ce}.fx-ach-entry.locked .fx-ach-badge{background:#d3d8da;border-color:#a0aaaf;color:#667780}.fx-ach-entry .fx-ach-copy{color:inherit;opacity:.82}.fx-ach-meta{display:block;font-size:11px;margin-top:6px;opacity:.7}
 @keyframes fx-ach-enter{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:640px){.fx-ach-host{right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px))}.fx-ach-toast{width:310px;padding:12px;gap:9px}}
 @media(prefers-reduced-motion:reduce){body:not(.motion-full) .fx-ach-toast{animation:none}}
@@ -75,12 +78,21 @@ const UI_STYLES=`
 const queues=new WeakMap();
 function styles(doc){if(doc.getElementById('fx-ach-style'))return;const css=doc.createElement('style');css.id='fx-ach-style';css.textContent=UI_STYLES;doc.head.append(css);}
 function el(doc,tag,className,text){const node=doc.createElement(tag);node.className=className;if(text!==undefined)node.textContent=text;return node;}
+function badge(doc,def,{locked=false}={}){
+ const node=el(doc,'span','fx-ach-badge'),fallback=el(doc,'span','fx-ach-badge-text',locked?'锁':def.badge);node.append(fallback);
+ const path=!locked&&achievementMangaThumbnail(def.id);
+ if(path){
+  const image=el(doc,'img','fx-ach-badge-image');image.alt='';image.setAttribute('aria-hidden','true');image.width=image.height=48;image.decoding='async';image.loading='eager';image.hidden=true;node.append(image);
+  setImage(image,path,{onStatus:status=>{const ready=status==='ready'&&image.naturalWidth>0&&image.naturalHeight>0;image.hidden=!ready;fallback.hidden=ready;}});
+ }
+ return node;
+}
 export function createAchievementToast(def,{document:doc=globalThis.document,duration=5500}={}) {
   if(!doc?.body||!def)return;
   styles(doc);let q=queues.get(doc);if(!q){const host=el(doc,'div','fx-ach-host');host.setAttribute('aria-live','polite');host.setAttribute('aria-atomic','true');doc.body.append(host);q={host,items:[],active:null};queues.set(doc,q);}
   q.items.push({def,duration:Math.max(1500,finite(duration,5500))});
   const show=()=>{if(q.active||!q.items.length)return;const item=q.items.shift(), toast=el(doc,'div','fx-ach-toast');
-    toast.append(el(doc,'span','fx-ach-badge',item.def.badge));const content=el(doc,'div','fx-ach-content');content.append(el(doc,'div','fx-ach-label','成就已解锁'),el(doc,'div','fx-ach-name',item.def.name),el(doc,'div','fx-ach-copy',item.def.description));toast.append(content);
+    toast.append(badge(doc,item.def));const content=el(doc,'div','fx-ach-content');content.append(el(doc,'div','fx-ach-label','成就已解锁'),el(doc,'div','fx-ach-name',item.def.name),el(doc,'div','fx-ach-copy',item.def.description));toast.append(content);
     const close=el(doc,'button','fx-ach-close','×');close.type='button';close.setAttribute('aria-label','关闭成就提示');toast.append(close);q.active=toast;
     let timer;const dismiss=()=>{if(q.active!==toast)return;clearTimeout(timer);toast.remove();q.active=null;setTimeout(show,200);};close.addEventListener('click',dismiss);q.host.append(toast);timer=setTimeout(dismiss,item.duration);
   };show();
@@ -88,7 +100,7 @@ export function createAchievementToast(def,{document:doc=globalThis.document,dur
 export function renderAchievementBook(container,profile={},state={}) {
   const doc=container.ownerDocument;styles(doc);container.replaceChildren();container.classList.add('fx-ach-book');
   for(const def of achievementProgress(state,profile)){
-    const card=el(doc,'article','fx-ach-entry'+(def.unlocked?'':' locked'));card.append(el(doc,'span','fx-ach-badge',def.unlocked?def.badge:'锁'));
+    const card=el(doc,'article','fx-ach-entry'+(def.unlocked?'':' locked'));card.append(badge(doc,def,{locked:!def.unlocked}));
     const text=el(doc,'div','fx-ach-content');text.append(el(doc,'div','fx-ach-name',def.name),el(doc,'div','fx-ach-copy',def.description));
     const status=def.unlocked?`已解锁 · ${new Date(def.unlockedAt).toLocaleDateString('zh-CN')}`:def.goal>1?`未解锁 · ${Math.floor(def.progress).toLocaleString('zh-CN')} / ${def.goal.toLocaleString('zh-CN')}`:'未解锁';
     if(def.legacyUnlocked)text.append(el(doc,'small','fx-ach-meta','旧版已解锁记录保留；未重新计算当时账单，新规则仅用于今后的解锁。'));

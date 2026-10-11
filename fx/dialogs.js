@@ -1,4 +1,4 @@
-import {preserveScroll} from './preserve-scroll.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Every modal owns one fixed control strip and one scrollable content region.
 // Closing a narrative window dismisses its presentation, never chooses a story.
 export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={}) {

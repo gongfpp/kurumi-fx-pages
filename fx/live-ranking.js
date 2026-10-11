@@ -1,5 +1,5 @@
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 const sameScore=(a,b)=>a&&a.closedTrades===b.closedTrades&&a.day===b.day&&Math.abs(a.totalProfit-b.totalProfit)<1000&&a.daysSurvived===b.daysSurvived&&a.netAssets===b.netAssets&&a.openPositionCount===b.openPositionCount;
@@ -26,7 +26,7 @@ export class LiveRanking {
   Object.assign(this,{client,storage,getState,persist,report,isBlocked,enabled,visible,online,now,schedule,cancel,onSubmitted});this.interval=Math.max(90000,Math.min(120000,interval));this.timer=null;this.pending=null;this.runs=new Map();
  }
  clear(){if(this.timer!==null)this.cancel(this.timer);this.timer=null;}
- eligible(){try{const s=this.getState();return this.enabled()&&!this.isBlocked()&&this.online()&&s?.phase!=='ending'&&s?.historical?.version!==2&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
+ eligible(){try{const s=this.getState();return this.enabled()&&!this.isBlocked()&&this.online()&&s?.phase!=='ending'&&![2,3].includes(s?.historical?.version)&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
  update(){if(!this.eligible()||!this.visible()){this.clear();return;}const run=this.record();if(run.attempts>=3){this.clear();return;}if(this.timer!==null)return;this.timer=this.schedule(()=>{this.timer=null;void this.submit().finally(()=>this.update());},Math.max(1000,run.nextAt-this.now()));}
  record(){const id=this.getState().runId;if(!this.runs.has(id)){
   let r;try{r=receipts(this.storage).find(r=>r.id===id);}catch{r={attempts:3,storageBlocked:true};}

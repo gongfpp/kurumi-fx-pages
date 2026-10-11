@@ -89,7 +89,7 @@
 .recap-phase-label{order:0;text-transform:uppercase;font-size:12px;font-weight:800;color:#ffd58a;letter-spacing:.12em}.recap-replay-clock{order:1;margin-left:auto;color:#ddcdec;font:600 14px/1.5 ui-monospace,monospace}
 .recap-stage-chart{order:3;flex:1 1 100%;width:100%;min-width:0;border-top:1px solid #ffffff18;border-bottom:1px solid #ffffff18;background:#120f1d44;border-radius:7px}.recap-stage-chart svg{display:block;width:100%;height:auto;min-height:155px}.recap-stage-chart p{font-size:12px;padding:0 12px}
 .recap-event-card{order:4;flex:1 1 100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:7px;border:1px solid #bb9dd04d;background:#ffffff0d;min-height:34px;font-size:12px;box-sizing:border-box}.recap-event-delta{font-size:clamp(20px,3.7vw,34px);font-variant-numeric:tabular-nums;white-space:nowrap}.recap-playback[data-event-direction=profit] .recap-event-card{border-left:5px solid #78eabb;color:#a6ffdb}.recap-playback[data-event-direction=loss] .recap-event-card{border-left:5px solid #ff779f;color:#ffb4cb}
-.recap-progress-track{order:5;flex:1 1 100%;height:4px;background:#ffffff17;overflow:hidden;margin:6px 0;border-radius:5px}.recap-progress-track>i{display:block;height:100%;background:linear-gradient(90deg,#b294ff,#ffe19b);width:0}.recap-chart-details{font-size:12px;margin:10px 0}.recap-heading{padding:8px 0}.recap-primary .recap-profit{font-size:clamp(23px,4vw,34px)}
+.recap-chart-details{font-size:12px;margin:10px 0}.recap-heading{padding:8px 0}.recap-primary .recap-profit{font-size:clamp(23px,4vw,34px)}
 .daily-recap[data-tier=large] .recap-playback{border-color:#c4965c}.daily-recap[data-tier=large][data-direction=loss] .recap-playback{border-color:#b85b83;background:radial-gradient(ellipse at 50% 0,#713044,#201827 75%)}
 .daily-recap[data-tier=small] .recap-playback{border-color:#766985}.daily-recap[data-tier=medium] .recap-counter{font-size:clamp(30px,5vw,50px)}
 .recap-digit{display:inline-block;min-width:.60em;text-align:center;transform-origin:center bottom}.recap-punctuation{display:inline-block}
@@ -166,3 +166,88 @@ html:has(.daily-recap[data-animate=true]){overflow-x:clip}
 /* Keep the label out of the numeral fit budget, rather than shrinking both to tiny type. */
 .recap-realized-label{display:block;font:600 11px/1.3 system-ui;color:#d9c6e5}
 .recap-realized-value{display:block;line-height:1.35}
+
+/* 200ms entry, then 240ms stillness: the replay clock starts at 440ms. */
+.daily-recap[data-animate=true] .recap-playback[data-stage=opening]{animation:recap-entry 200ms ease-out both}
+@keyframes recap-entry{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Approved B: one live profit-first report. Existing cue/WAAPI lifecycle owns motion. */
+#day-dialog[data-recap-layout="profit-first"]{width:min(540px,calc(100vw - 28px));border-radius:20px;background:#fffbfc;box-shadow:7px 7px 0 #f7a8c9}
+#day-dialog[data-recap-layout="profit-first"] .dialog-toolbar{position:absolute;right:0;top:0;min-height:54px;padding:6px 10px 0;background:transparent;border:0;pointer-events:none}
+#day-dialog[data-recap-layout="profit-first"] .dialog-toolbar .x-close{pointer-events:auto;width:36px;min-width:36px;height:36px;min-height:36px;flex-basis:36px;border-radius:10px;background:#f8edf3;color:#27222f}
+#day-dialog[data-recap-layout="profit-first"] .dialog-scroll{padding:0 0 22px;scrollbar-gutter:auto}
+#day-dialog[data-recap-layout="profit-first"] #day-stage-label{display:none}
+#day-dialog[data-recap-layout="profit-first"] #day-title{background:#f7a8c9;padding:18px 62px 8px 18px;margin:0;font-size:24px;line-height:1.3;color:#27222f}
+#day-dialog[data-recap-layout="profit-first"] #day-subtitle{background:#f7a8c9;padding:0 18px 4px;margin:0;color:#704657;font-size:12px;line-height:1.6}
+.daily-recap[data-layout="profit-first"]{padding:0;border:0;color:#27222f}
+.daily-recap[data-layout="profit-first"]>.recap-heading{display:none}
+.daily-recap[data-layout="profit-first"] .recap-playback{display:block;border:0;border-radius:0;padding:0;margin:0;background:none;box-shadow:none;overflow:visible;color:#27222f}
+.daily-recap[data-layout="profit-first"] .recap-profit-hero{padding:24px 18px 16px;background:#f7a8c9;text-align:center;position:relative}
+.daily-recap[data-layout="profit-first"] .recap-step-group{display:block;margin:0 auto 5px}
+.daily-recap[data-layout="profit-first"] .recap-step{font-size:14px;color:#704657;font-weight:700;letter-spacing:0}
+.daily-recap[data-layout="profit-first"] .recap-counter{display:block;color:#27222f!important;text-shadow:none;font-size:min(50px,calc((100cqw - 48px)/var(--recap-character-width,8)));padding:10px 0 4px;margin:0;min-height:1.55em;line-height:1.35;letter-spacing:-.06em;text-align:center;transform-origin:center}
+.daily-recap[data-layout="profit-first"] .recap-stage-rate-group{display:flex;align-items:center;justify-content:center;gap:3px;min-height:36px;margin:4px auto 20px}
+.daily-recap[data-layout="profit-first"] .recap-stage-rate{display:inline-block;padding:5px 16px;border-radius:20px;background:#27222f;color:#fffbfc;font:750 15px/1.5 ui-monospace,monospace}
+.daily-recap[data-layout="profit-first"] .recap-stage-rate-group .return-formula-trigger{min-width:28px!important;min-height:28px!important;background:transparent!important;border-color:#bc7897!important;font-size:12px!important}
+.daily-recap[data-layout="profit-first"] .recap-stage-profit{margin:0;padding:13px 0 0;border-top:1px solid #db89ac;text-align:left}
+.daily-recap[data-layout="profit-first"] .recap-realized-score{display:flex;align-items:baseline;justify-content:space-between;gap:12px;color:#27222f!important;font-size:23px;line-height:1.3;width:100%;min-width:0}
+.daily-recap[data-layout="profit-first"] .recap-realized-label{font:500 14px/1.5 system-ui,sans-serif;color:#27222f;flex:0 0 auto}
+.daily-recap[data-layout="profit-first"] .recap-realized-value{font-size:min(24px,calc((100cqw - 100px)/var(--recap-score-width,10)));font-weight:800;white-space:nowrap}
+.daily-recap[data-layout="profit-first"] .recap-chart-heading{margin:24px 18px 14px;font-size:17px;line-height:1.4;color:#27222f}
+.daily-recap[data-layout="profit-first"] .recap-stage-chart{width:calc(100% - 32px);margin:0 16px;border:0;border-radius:12px;background:#27222f;overflow:hidden}
+.daily-recap[data-layout="profit-first"] .recap-stage-chart svg{width:100%;height:auto;min-height:0}
+.daily-recap[data-layout="profit-first"] .recap-chart-caption{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 13px 11px;color:#d4c2d5}
+.daily-recap[data-layout="profit-first"] .recap-phase-label{font-size:11px;font-weight:500;letter-spacing:0;color:#d4c2d5}
+.daily-recap[data-layout="profit-first"] .recap-replay-clock{font-size:11px;color:#d4c2d5;margin:0}
+.daily-recap[data-layout="profit-first"] .recap-playback-controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 16px 0}
+.daily-recap[data-layout="profit-first"] .recap-replay{flex:1 1 100%;min-height:44px;border:0!important;border-radius:9px;background:#f6edf2;color:#27222f;font-size:14px;font-weight:700}
+.daily-recap[data-layout="profit-first"] .recap-skip{position:static;flex:0 0 auto;min-height:32px;border:0!important;background:#f6edf2;color:#704657;order:1;margin-left:auto}
+.daily-recap[data-layout="profit-first"] .recap-event-card{margin:10px 16px 0;padding:8px 10px;border:0;border-radius:8px;background:#f6edf2;color:#27222f;min-height:0;box-sizing:border-box}
+.daily-recap[data-layout="profit-first"] .recap-event-card[hidden]{display:none}
+.daily-recap[data-layout="profit-first"] .recap-playback[data-event-direction="profit"] .recap-event-card{border-left:3px solid #297e60;color:#24533f}
+.daily-recap[data-layout="profit-first"] .recap-playback[data-event-direction="loss"] .recap-event-card{border-left:3px solid #ae3d69;color:#973c5f}
+.daily-recap[data-layout="profit-first"] .recap-event-delta{font-size:18px}
+.daily-recap[data-layout="profit-first"] .recap-event-label{flex-basis:auto;font-size:11px}
+.daily-recap[data-layout="profit-first"] .recap-asset-line{margin:5px 18px;color:#704657;font-size:12px}
+.daily-recap[data-layout="profit-first"] .recap-asset-delta{position:absolute;top:156px;left:18px;right:18px;min-height:0;font-size:11px;color:#704657;pointer-events:none}
+.daily-recap[data-layout="profit-first"] .recap-impact-label{top:43px;right:14px;background:#27222f;color:#fff4f8;font-size:10px}
+.daily-recap[data-layout="profit-first"] .recap-catastrophe-note{margin:10px 16px;background:#442335;color:#ffe8f1}
+.daily-recap[data-layout="profit-first"] .recap-playback>.recap-note{margin:8px 18px;color:#704657}
+#day-dialog[data-recap-layout="profit-first"] #recap-next{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 32px);margin:28px 16px 0;padding:14px 18px;border-radius:12px;background:#27222f;color:#fffbfc;font-size:17px;line-height:1.5;min-height:54px;text-align:left;box-shadow:4px 4px 0 #f7a8c9}
+#day-dialog[data-recap-layout="profit-first"] #day-share{width:calc(100% - 32px);margin:18px 16px 0;border-radius:9px;color:#704657}
+#day-recap-extras{margin:22px 18px 0;text-align:left}
+#day-recap-extras[hidden]{display:none}
+#day-dialog[data-recap-layout="profit-first"] .recap-heading{display:none}
+@media(max-width:360px){.daily-recap[data-layout="profit-first"] .recap-profit-hero{padding-left:14px;padding-right:14px}.daily-recap[data-layout="profit-first"] .recap-counter{font-size:min(43px,calc((100cqw - 40px)/var(--recap-character-width,8)))}.daily-recap[data-layout="profit-first"] .recap-realized-value{font-size:min(21px,calc((100cqw - 90px)/var(--recap-score-width,10)))}}
+@media(max-height:700px){
+ #day-dialog[data-recap-layout="profit-first"] #day-title{padding-top:14px;font-size:22px}
+ .daily-recap[data-layout="profit-first"] .recap-profit-hero{padding-top:12px;padding-bottom:12px}
+ .daily-recap[data-layout="profit-first"] .recap-counter{padding-top:4px;padding-bottom:2px;min-height:1.35em;font-size:min(42px,calc((100cqw - 48px)/var(--recap-character-width,8)))}
+ .daily-recap[data-layout="profit-first"] .recap-stage-rate-group{margin:1px auto 10px;min-height:30px}
+ .daily-recap[data-layout="profit-first"] .recap-stage-rate{padding-block:3px}
+ .daily-recap[data-layout="profit-first"] .recap-stage-profit{padding-top:10px}
+ .daily-recap[data-layout="profit-first"] .recap-chart-heading{margin-top:16px;margin-bottom:10px}
+ .daily-recap[data-layout="profit-first"] .recap-stage-chart svg{max-height:158px}
+ .daily-recap[data-layout="profit-first"] .recap-chart-caption{padding-bottom:7px}
+ #day-dialog[data-recap-layout="profit-first"] #recap-next{margin-top:18px;min-height:48px;padding-block:11px}
+}
+/* The B card owns its shell in every loss tier; loss FX keep their own layers. */
+.daily-recap[data-layout="profit-first"][data-tier][data-direction] .recap-playback{border:0;background:none;box-shadow:none}
+.daily-recap[data-layout="profit-first"] .recap-stage-chart p{color:#d4c2d5}
+.daily-recap[data-layout="profit-first"] .recap-realized-value{display:inline-block;transform-origin:right center}
+.daily-recap[data-layout="profit-first"][data-tier][data-direction] .recap-playback[data-stage] .recap-counter{color:#27222f!important}
+
+
+/* Temporary audition controls; keep all three rates until the user selects one. */
+.daily-recap[data-layout="profit-first"] .recap-speeds{display:flex;align-items:center;gap:4px;flex-wrap:wrap;order:1}
+.daily-recap[data-layout="profit-first"] .recap-speed{min-width:46px;min-height:36px;padding:5px 10px;border:1px solid #db89ac!important;border-radius:8px;background:#f6edf2;color:#704657;font:700 13px/1.4 system-ui,sans-serif}
+.daily-recap[data-layout="profit-first"] .recap-speed[aria-pressed="true"]{background:#27222f;color:#fffbfc;border-color:#27222f!important}
+.daily-recap[data-layout="profit-first"] .recap-speed:focus-visible{outline:2px solid #ae3d69;outline-offset:2px}
+
+.living-plan-label{display:block;font-weight:700}
+.living-plan-effect,.living-pending-arrangement{display:block;font-size:11px;line-height:1.5;font-weight:400;margin-top:3px}
+.living-pending-arrangement{color:#704057;font-weight:600}
+.living-choice-details{margin-top:8px;min-width:0;font-size:11px;line-height:1.6}
+.living-choice-details>summary{cursor:pointer;width:fit-content;max-width:100%;min-height:32px;padding:5px 0;box-sizing:border-box;color:#8e3a62}
+.living-choice-details>summary:focus-visible{outline:2px solid #a34670;outline-offset:3px;border-radius:3px}
+.living-choice-details p{margin:5px 0;overflow-wrap:anywhere}

@@ -1,4 +1,5 @@
-import {APPROVED_FOUR_SKITS} from './approved-four-skits.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {LIVING_MOVE_SCENES} from './living-move-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './approved-four-skits.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Original four-panel game dialogue. Receipt gating lives in ../comic-scenes.js.
 // Keep this text aligned with the reviewed pixels; art/source records stay separate.
 const ORIGINAL_ACTION_SCENES = Object.freeze({
@@ -862,7 +863,7 @@ const ORIGINAL_ACTION_SCENES = Object.freeze({
 });
 
 // The approved revision owns both its exact dialogue and matching artwork.
-export const ACTION_SCENES=Object.freeze({...ORIGINAL_ACTION_SCENES,
+export const ACTION_SCENES=Object.freeze({...ORIGINAL_ACTION_SCENES,...LIVING_MOVE_SCENES,
  'dinner-small':APPROVED_FOUR_SKITS['dinner-small'],
  'shrine-walk':APPROVED_FOUR_SKITS['shrine-walk'],
 });

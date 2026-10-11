@@ -1,5 +1,5 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -9,7 +9,7 @@ const cents=n=>Math.round((n+Number.EPSILON)*100)/100;
 // Fixed score projection, never the full JSON export, names, transactions,
 // accounting journal, open-position details, seed, or browser storage.
 function projectLeaderboardScore(state,report,{storage,live=false}={}){
- const eligible=live?{eligible:state?.historical?.version!==2&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
+ const eligible=live?{eligible:![2,3].includes(state?.historical?.version)&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
  if(!eligible.eligible)throw Object.assign(Error(eligible.reason==='developer'?'开发测试局不能自动上榜':'本局尚不可自动上榜'),{code:eligible.reason});
  if(report.schemaVersion!=='1.0.0'||!['story','endless'].includes(report.mode)||report.mode!==state.mode)throw Error('终局成绩版本或模式不正确');
  if(!live&&((state.positions?.length||state.position)||report.account?.openPositions?.length))throw Error('尚有未平仓订单，不能提交终局成绩');
@@ -29,6 +29,8 @@ function projectLeaderboardScore(state,report,{storage,live=false}={}){
  score.maxOrderLoss=nullable(p.maxOrderLoss,v=>cents(finite(v,'maxOrderLoss',-1e10,0)));
  score.maxOrderProfit=nullable(p.maxOrderProfit,v=>cents(finite(v,'maxOrderProfit',0,1e10)));
  score.maxLeverage=nullable(p.maxLeverage,v=>finite(v,'maxLeverage',0,100));
+ for(const key of ['maxPositionMargin','maxOrderMargin'])score[key]=nullable(p[key],v=>cents(finite(v,key,0,1e10)));
+ score.playSeconds=nullable(p.playSeconds,v=>integer(v,'playSeconds',0,1e10));
  for(const key of ['fatherDebt','networkDebt','totalDebt'])score[key]=nullable(a[key],v=>cents(finite(v,key,0,1e10)));
  score.netAssets=nullable(a.netAssets,v=>cents(finite(v,'netAssets')));
  if(p.complete&&knownRequired.some(k=>score[k]===null))throw Error('完整统计缺少订单指标');

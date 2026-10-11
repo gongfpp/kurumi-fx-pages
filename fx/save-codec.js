@@ -1,4 +1,4 @@
-import LZString from './vendor/lz-string.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import LZString from './vendor/lz-string.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 export const SAVE_FORMAT='kurumi-save-lz-v1';
 export const SAVE_ENVELOPE_VERSION=14;
 export const SAVE_COMPRESSION_THRESHOLD=256*1024;
@@ -30,7 +30,7 @@ export function inspectSave(raw){
  if(parts.some(p=>!Number.isSafeInteger(p?.length)||p.length<1)||parts.reduce((sum,p)=>sum+p.length,0)>MAX_TOTAL_CHARACTERS)throw new RangeError('Save total length limit');
  const currentRaw=decompress(parsed.current),recoveryRaw=parsed.recovery===null?null:decompress(parsed.recovery),importRaws=imports.map(decompress);
  // Never permit recursive envelopes or unknown future state versions inside one.
- for(const value of [currentRaw,recoveryRaw,...importRaws])if(value!==null){const state=JSON.parse(value);if(!state||typeof state!=='object'||Array.isArray(state)||!Number.isInteger(state.version)||state.version<2||state.version>=SAVE_ENVELOPE_VERSION||state.format)throw new TypeError('Invalid enclosed game state');}
+ for(const value of [currentRaw,recoveryRaw,...importRaws])if(value!==null){const state=JSON.parse(value);if(!state||typeof state!=='object'||Array.isArray(state)||!Number.isInteger(state.version)||state.version<2||(state.version>=SAVE_ENVELOPE_VERSION&&![15,16].includes(state.version))||state.format)throw new TypeError('Invalid enclosed game state');}
  const result={currentRaw,recoveryRaw,importRaws,compressed:true};decodedCache.set(raw,result);if(decodedCache.size>2)decodedCache.delete(decodedCache.keys().next().value);return {...result,importRaws:[...importRaws]};
 }
 export function decodeSaveRaw(raw){return inspectSave(raw).currentRaw;}
@@ -38,7 +38,7 @@ let cachedRecoveryRaw=null,cachedRecovery=null;
 export function encodeSaveRaw(currentRaw,previousRaw=null,{replacement=false}={}){
  checkRaw(currentRaw);
  const previous=previousRaw===null?null:inspectSave(previousRaw);
- if(currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!previous?.compressed&&!replacement)return currentRaw;
+ if(![15,16].includes(JSON.parse(currentRaw)?.version)&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!previous?.compressed&&!replacement)return currentRaw;
  // The first durable original is retained forever; never nest old envelopes.
  const recoveryRaw=previous?.compressed?previous.recoveryRaw:previousRaw;
  if(recoveryRaw!==cachedRecoveryRaw){cachedRecoveryRaw=recoveryRaw;cachedRecovery=recoveryRaw===null?null:compress(recoveryRaw);}

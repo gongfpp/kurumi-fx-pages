@@ -1,17 +1,19 @@
-import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {activeMarket,positionMarket,marketPrice} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 export {ORIGINAL_DIALOGUE_BANK};
 // All market/stance/swan directions refer to the USD/JPY quote, not yen strength.
 // Only public, already-rendered market observations are read here. Never inspect script/tracks.
-function marketMove(s){
-  const open=s.candles?.at(-4)?.open;
-  if(!(s.beat>0)||s.pending||!Number.isFinite(open)||open<=0||!Number.isFinite(s.price))return null;
-  return s.price/open-1;
+function marketMove(s,symbol=activeMarket(s)){
+  const candles=symbol===activeMarket(s)?s.candles:s.marketBook?.markets?.[symbol]?.candles,price=marketPrice(s,symbol);
+  const open=candles?.at(-4)?.open;
+  if(!(s.beat>0)||s.pending||!Number.isFinite(open)||open<=0||!Number.isFinite(price))return null;
+  return price/open-1;
 }
 function eligible(gate,s,f){
   if(!gate)return true;
   if(gate.startsWith('used.')){const id=gate.slice(5);return s.itemsUsed?.[id]===true||s.skills?.[id]===true;}
   if(gate.startsWith('promise.'))return s.promise===gate.slice(8);
-  const move=marketMove(s),profit=Number.isFinite(f.netProfit)?f.netProfit:f.profit;
+  const move=marketMove(s,gate.startsWith('stance.')?positionMarket(s.publicStance):activeMarket(s)),profit=Number.isFinite(f.netProfit)?f.netProfit:f.profit;
   switch(gate){
     case 'laterDay':return s.day>1;
     case 'dinner':return s.dinner===true;
@@ -37,7 +39,8 @@ function eligible(gate,s,f){
   }
 }
 export function originalCandidates(s,trigger,facts={}){
-  return ORIGINAL_DIALOGUE_BANK.filter(entry=>entry.trigger===trigger&&eligible(entry.gate,s,facts)).map(entry=>({
+  const symbol=trigger.startsWith('group.stance.')?positionMarket(s.publicStance):activeMarket(s);
+  return ORIGINAL_DIALOGUE_BANK.filter(entry=>entry.trigger===trigger&&(symbol==='USD/JPY'||!entry.lines.some(([,text])=>/美元|USD\/JPY/.test(text)))&&eligible(entry.gate,s,facts)).map(entry=>({
     id:entry.id,lines:entry.lines.map(([from,text],index)=>({id:entry.id+':'+index,from,text,origin:'original'}))
   }));
 }

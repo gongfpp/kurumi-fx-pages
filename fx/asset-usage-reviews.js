@@ -679,7 +679,7 @@ export const ASSET_USAGE_REVIEWS=Object.freeze({
     "textClarity": "no-text",
     "status": "verified"
   },
-  "./generated/character-profit-v1/mochiko-watch-v2.webp": {
+  "./generated/character-profit-v1/mochiko-watch-v3.webp": {
     "primaryUse": "story-dialogue",
     "character": "久留美",
     "characters": [
@@ -694,7 +694,33 @@ export const ASSET_USAGE_REVIEWS=Object.freeze({
     "textOriginal": null,
     "faceClarity": "scene-scale",
     "textClarity": "no-text",
-    "status": "verified"
+    "status": "verified",
+    "identityStatus": "verified",
+    "identityDescription": "Kurumi has short pink hair and pink eyes. Mochiko has purple side-parted hair with curled tips and purple eyes. Four panels show asking for help, checking holdings together, pointing to the chart, and a quiet nod. No fixed profit or loss is depicted."
+  },
+  "./generated/character-profit-v1/mochiko-watch-v2.webp": {
+    "primaryUse": "story-dialogue",
+    "character": "久留美",
+    "characters": [
+      "久留美"
+    ],
+    "emotion": "多阶段剧情",
+    "intensity": null,
+    "events": [],
+    "directions": [],
+    "hasEmbeddedText": false,
+    "textOriginal": null,
+    "faceClarity": "scene-scale",
+    "textClarity": "no-text",
+    "status": "pending",
+    "identityStatus": "rejected",
+    "identityDescription": "Archived incorrect identity: the brown-haired grey-eyed companion is not Mochiko. Preserved unchanged; replaced by mochiko-watch-v3.",
+    "exclusions": [
+      "story-only",
+      "never-crop-dialogue",
+      "identity-mismatch",
+      "archived-replaced-by-mochiko-watch-v3"
+    ]
   },
   "./generated/character-profit-v1/profit-hundred-thousand-v1.webp": {
     "primaryUse": "story-dialogue",

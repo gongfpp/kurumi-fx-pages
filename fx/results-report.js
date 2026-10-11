@@ -1,10 +1,13 @@
-import {classifyEnding} from './ending-classifier.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {runPerformance} from './performance.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {orderPerformance,readRunStatistics} from './run-statistics.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {accountingValues} from './accounting-journal.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {readHallMetrics} from './hall-metrics.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {classifyEnding} from './ending-classifier.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {runPerformance} from './performance.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {orderPerformance,readRunStatistics} from './run-statistics.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 export const RESULTS_SCHEMA_VERSION='1.0.0';
 const number=v=>Number.isFinite(v)?v:null;
@@ -14,7 +17,7 @@ const endings=['million','walkaway','broke','crisis'];
 const eventTypes=['open','half','close','rescue','stop','liquidation','closing'];
 const positionId=v=>typeof v==='string'&&/^order-\d{1,15}$/.test(v)?v:null;
 function pickNumbers(row,keys){return Object.fromEntries(keys.map(key=>[key,number(row?.[key])]));}
-function exportTrade(t={}){t=t||{};return {...pickNumbers(t,['sequence','day','beat','timestamp','direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection']),positionId:positionId(t.positionId),type:eventTypes.includes(t.type)?t.type:'unknown',positionClosed:t.positionClosed===true,timePrecision:t.timePrecision==='game-clock'?'game-clock':'day-and-beat-only'};}
+function exportTrade(t={}){t=t||{};const liveQuote=safeLiveTradeEvidence(t.liveQuote);return {...(liveQuote?{liveQuote}:{}),symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null,...pickNumbers(t,['sequence','day','beat','timestamp','direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection']),positionId:positionId(t.positionId),type:eventTypes.includes(t.type)?t.type:'unknown',positionClosed:t.positionClosed===true,timePrecision:liveQuote?'provider-quote':t.timePrecision==='game-clock'?'game-clock':'day-and-beat-only'};}
 function exportPoint(p={}){p=p||{};return {...pickNumbers(p,['day','observation','timestamp','nominalAssets','netAssets','debt','realizedProfit','unrealized','expenses','netFunding','tradingAssets']),...(p.executions?{executions:{...pickNumbers(p.executions,['from','to']),types:(p.executions.types||[]).filter(type=>eventTypes.includes(type))}}:{}),kind:['opening','update','settled','closing','current','start'].includes(p.kind)?p.kind:'observation'};}
 export function buildResultsReport(state={},options={}){
  const p=runPerformance(state),orders=orderPerformance(state),stats=readRunStatistics(state),values=accountingValues(state),recap=state.ending?.immediate?null:options.recap;
@@ -22,13 +25,13 @@ export function buildResultsReport(state={},options={}){
  const fatherDebt=number(state.family?.outstanding),networkDebt=number(state.loan?.outstanding);
  const totalDebt=fatherDebt===null||networkDebt===null?null:fatherDebt+networkDebt;
  const nominalAssets=number(recap?.account?.nominalAssets??values.nominalAssets),netAssets=nominalAssets===null||totalDebt===null?null:nominalAssets-totalDebt;
- const unrealized=currentPositions.reduce((n,pos)=>n+zero(grossPnlAt(pos,state.price)),0),unallocatedOpenFees=currentPositions.reduce((n,pos)=>n+zero(pos.openFeeRemaining),0);
+ const unrealized=currentPositions.reduce((n,pos)=>n+zero(grossPnlAt(pos,marketPrice(state,positionMarket(pos)))),0),unallocatedOpenFees=currentPositions.reduce((n,pos)=>n+zero(pos.openFeeRemaining),0);
  const interestPaid=number(state.loan?.interestPaid),interestAccrued=number(state.loan?.interestAccrued??(stats.complete?0:null));
  const interestTotal=interestPaid===null||interestAccrued===null?null:interestPaid+interestAccrued;
  const living=number(state.livingPaid??(state.mode==='endless'||(state.day===1&&!state.dayReport)?0:null)),expenses=number(state.expenses);
  const consumption=expenses===null||living===null||interestTotal===null?null:Math.max(0,expenses-living-interestTotal);
  const gameFinished=state.phase==='ending'&&endings.includes(state.ending?.id),developmentTaint=!!(state.developmentTaint||state.developer?.edited);
- const performance={initialCapital:p.initialEquity,realizedNetTradingPnl:p.totalProfit,returnRate:p.returnRate,dailyReturnRate:p.dailyReturnRate,elapsedSimulatedDays:p.elapsedSimulatedDays,daysSurvived:p.daysSurvived,completedCandles:p.completedCandles,closeExecutions:p.closedTrades,...orders,maxDrawdown:stats.drawdownRecorded===true&&state.performance&&Number.isFinite(state.performance.maxDrawdown)?state.performance.maxDrawdown:null};
+ const performance={...readHallMetrics(state),initialCapital:p.initialEquity,realizedNetTradingPnl:p.totalProfit,returnRate:p.returnRate,dailyReturnRate:p.dailyReturnRate,elapsedSimulatedDays:p.elapsedSimulatedDays,daysSurvived:p.daysSurvived,completedCandles:p.completedCandles,closeExecutions:p.closedTrades,...orders,maxDrawdown:stats.drawdownRecorded===true&&state.performance&&Number.isFinite(state.performance.maxDrawdown)?state.performance.maxDrawdown:null};
  const netFunding=number(state.externalFunding),adjustment=number(state.developer?.profitOffset??0);
  const expectedNominalAssets=[netFunding,expenses,adjustment].every(Number.isFinite)?p.initialEquity+p.totalProfit+unrealized-unallocatedOpenFees+netFunding-expenses+adjustment:null;
  const residual=expectedNominalAssets===null?null:nominalAssets-expectedNominalAssets;
@@ -51,18 +54,18 @@ export function buildResultsReport(state={},options={}){
  const events=[];
  if(gameFinished)events.push({type:'ending',reason:state.ending.id,day:state.day,timestamp:currentTradingTimestamp(state)});
  for(const trade of transactions)if(['liquidation','stop'].includes(trade.type))events.push({type:trade.type,positionId:trade.positionId,day:trade.day,timestamp:trade.timestamp,pnl:trade.pnl});
- const report={schemaVersion:RESULTS_SCHEMA_VERSION,version:1,game:'kurumi-fx',mode:state.mode==='endless'?'endless':'story',day:Number.isSafeInteger(state.day)?state.day:null,seed:Number.isSafeInteger(state.seed)?state.seed:null,currency:'JPY',gameTimeZone:GAME_TIME_ZONE,gameTimestamp:currentTradingTimestamp(state),gameFinished,completionReason:gameFinished?state.ending.id:null,
+ const report={...(isLiveMarket(state)?{marketSource:'live',marketData:{provider:'biquote',priceBasis:'provider-indicative-mid',execution:'game-fees-applied-to-provider-mid',timeBasis:'provider-quote-UTC',dayProgress:'observed-ready-minute-boundaries'}}:{}),schemaVersion:RESULTS_SCHEMA_VERSION,version:1,game:'kurumi-fx',mode:state.mode==='endless'?'endless':'story',day:Number.isSafeInteger(state.day)?state.day:null,seed:Number.isSafeInteger(state.seed)?state.seed:null,currency:'JPY',gameTimeZone:GAME_TIME_ZONE,gameTimestamp:currentTradingTimestamp(state),gameFinished,completionReason:gameFinished?state.ending.id:null,
   ending:classifyEnding(state),
   eligibility:{gameFinished,developmentTaint,rankingEligible:gameFinished&&!developmentTaint},performance,
   daily:recap?{day:recap.day,tradingNetPartial:!!recap.daily?.tradingNetPartial,livingStatus:recap.daily?.livingStatus||null,tradingNet:money(recap.daily?.tradingNet),returnRate:number(recap.daily?.returnRate),returnDenominator:money(recap.daily?.returnDenominator),netResult:money(recap.daily?.netResult),sealed:!!recap.sealed}:null,
-  account:{nominalAssets:money(nominalAssets),netAssets:money(netAssets),fatherDebt:money(fatherDebt),networkDebt:money(networkDebt),totalDebt:money(totalDebt),cash:money(state.cash),reservedLivingCash:money(state.reserve),unrealized:money(unrealized),unallocatedOpenFees:money(unallocatedOpenFees),openPositions:currentPositions.map(pos=>({positionId:positionId(pos.id),...pickNumbers(pos,['direction','entry','margin','leverage','openFeeRemaining']),unrealized:money(grossPnlAt(pos,state.price))}))},
+  account:{nominalAssets:money(nominalAssets),netAssets:money(netAssets),fatherDebt:money(fatherDebt),networkDebt:money(networkDebt),totalDebt:money(totalDebt),cash:money(state.cash),reservedLivingCash:money(state.reserve),unrealized:money(unrealized),unallocatedOpenFees:money(unallocatedOpenFees),openPositions:currentPositions.map(pos=>({symbol:positionMarket(pos),positionId:positionId(pos.id),...pickNumbers(pos,['direction','entry','margin','leverage','openFeeRemaining']),unrealized:money(grossPnlAt(pos,marketPrice(state,positionMarket(pos))))}))},
   fees:{trading:money(state.feesPaid),interestPaid:money(interestPaid),interestAccrued:money(interestAccrued),interestTotal:money(interestTotal),living:money(living),consumption:money(consumption),nonTradingTotal:money(expenses)},
   funding:{netFundingIncludingAccruedInterest:money(netFunding),netBorrowingPrincipal:netFunding===null||interestAccrued===null?null:money(netFunding-interestAccrued),fatherRepaid:money(state.family?.repaid),networkBorrowed:money(state.loan?.borrowed),networkRepaid:money(state.loan?.repaid)},
   protections:{balanceProtection:money(state.balanceProtection??0),liquidationReduction:money(state.protectionPaid??0)},
   specialRecords,transactions,events,timeline:{start,points:retainedPoints.points.map(exportPoint),days:daily,end},
   reconciliation:{status:residual===null?'unavailable':Math.abs(residual)<=.02?'matched':'mismatch',expectedNominalAssets:money(expectedNominalAssets),actualNominalAssets:money(nominalAssets),residual:money(residual),formula:'initialCapital + realizedNetTradingPnl + unrealized - unallocatedOpenFees + netFundingIncludingAccruedInterest - nonTradingTotal + developerAdjustment',developerAdjustment:money(adjustment)},
   dataQuality:{orderStatisticsComplete:orders.complete,metricCoverage:{orders:orders.complete,highestLeverage:orders.maxLeverage!==null,drawdown:performance.maxDrawdown!==null,realizedPath:orders.realizedPathComplete===true},transactionsPartial:!!stats.timelinePartial,retainedTransactions:transactions.length,transactionLimit:2048,accountingTimelinePartial:dailyPartial||intradayPartial,accountingDailyPartial:dailyPartial,accountingIntradayPartial:intradayPartial,missingAccountingDays:missingDailyCount,accountingStartKnown:!!start,retainedAccountingDays:daily.length,accountingDayLimit:null,accountingPointLimit:ACCOUNTING_POINT_LIMIT,accountingSampled:sampled,accountingSampling:sampled?{policy:journal?.sampling?.policy||'observed-priority-sequence-buckets-v1',omittedPoints:!samplingExact?null:(journal?.sampling?.omittedPoints||0)+retainedPoints.removed.length,omittedKnownPoints:(journal?.sampling?.omittedPoints||0)+retainedPoints.removed.length,omittedTradePoints:journal?.executionAnchorsComplete===true&&samplingExact?(journal?.sampling?.omittedTradePoints||0)+retainedPoints.removed.filter(point=>point.executions).length:null,omittedKnownTradePoints:(journal?.sampling?.omittedTradePoints||0)+retainedPoints.removed.filter(point=>point.executions).length,tradeAnchorCoverage:journal?.executionAnchorsComplete===true&&samplingExact?'observed':'legacy-unknown'}:null,unknownFieldsUseNull:true,warnings:[]},
-  definitions:{returnRate:'累计已实现净交易盈亏 / 初始游戏本金。开平仓费已扣除；借款、生活费、利息、消费、未平仓浮盈亏不计分子。借入资金也能亏损，所以结果可以低于 -100%。',winRate:'盈利完整订单数 / 已全部平仓订单数。同一 positionId 的全部减半平仓与最终平仓先合并，盈亏绝对值不超过 ¥0.005 算保本，保本计入分母。未完全平仓不计胜负。',maxOrderLoss:'最差完整订单的累计已实现净盈亏，包含同订单全部分批平仓及开平仓费用；没有亏损为 0，记录不足为 null。',maxDrawdown:'引擎记录的交易权益最大回撤：初始本金加净交易盈亏与浮盈亏，剔除借还款和非交易支出，权益下限为 0，因此上限 100%。它不是最大整单亏损。',assets:'账户总资产是现金、预留生活费及按现价计量持仓的总和；净资产 = 账户总资产 - 父亲欠款 - 网贷欠款。网贷欠款包含已资本化的未付利息。',fees:'已实现交易净盈亏已扣开平仓手续费，分析时不可再次扣 trading。interestAccrued 已进入债务，不是已支付现金。',time:'全部时间为虚构游戏交易钟，JST；不是玩家真实活动时间。历史缺失不补造，时间精度不足时 timestamp 为 null。'},
+  definitions:{returnRate:'累计已实现净交易盈亏 / 初始游戏本金。开平仓费已扣除；借款、生活费、利息、消费、未平仓浮盈亏不计分子。借入资金也能亏损，所以结果可以低于 -100%。',winRate:'盈利完整订单数 / 已全部平仓订单数。同一 positionId 的全部减半平仓与最终平仓先合并，盈亏绝对值不超过 ¥0.005 算保本，保本计入分母。未完全平仓不计胜负。',maxOrderLoss:'最差完整订单的累计已实现净盈亏，包含同订单全部分批平仓及开平仓费用；没有亏损为 0，记录不足为 null。',maxDrawdown:'引擎记录的交易权益最大回撤：初始本金加净交易盈亏与浮盈亏，剔除借还款和非交易支出，权益下限为 0，因此上限 100%。它不是最大整单亏损。',assets:'账户总资产是现金、预留生活费及按现价计量持仓的总和；净资产 = 账户总资产 - 父亲欠款 - 网贷欠款。网贷欠款包含已资本化的未付利息。',fees:'已实现交易净盈亏已扣开平仓手续费，分析时不可再次扣 trading。interestAccrued 已进入债务，不是已支付现金。',time:isLiveMarket(state)?'实时报价时间采用提供方 UTC 时间戳，界面显示 JST；剧情天数仅为游戏进度。成交是基于券商指示中间价和游戏费用的模拟结算，不代表可执行盘口。未收到报价时 timestamp 为 null，不补造历史。':'全部时间为虚构游戏交易钟，JST；不是玩家真实活动时间。历史缺失不补造，时间精度不足时 timestamp 为 null。'},
   privacy:{scope:'本地游戏复盘数据',automaticAIUpload:false,excluded:['玩家昵称与账号身份','排行榜能力凭证与令牌','浏览器存储原文','聊天与内部提示词','本地路径']}
  };
  if(!orders.complete)report.dataQuality.warnings.push('旧档缺少部分交易，完整订单胜率、极值和特殊战绩未知；knownSample 仅表示保留样本。');
@@ -74,7 +77,7 @@ export function buildResultsReport(state={},options={}){
  if(developmentTaint)report.dataQuality.warnings.push('开发者测试局，不能用于真实排行榜比较。');
  return JSON.parse(JSON.stringify(report,(_k,value)=>typeof value==='number'&&!Number.isFinite(value)?null:value));
 }
-export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 export function resultsFilename(report){return `kurumi-fx-${report?.mode==='endless'?'endless':'story'}-day-${Number.isSafeInteger(report?.day)&&report.day>0?report.day:1}-results-v1.json`;}
 export function serializeResults(report){return JSON.stringify(report,null,2)+'\n';}
 export function downloadResults(report,{document=globalThis.document,URL=globalThis.URL,Blob=globalThis.Blob,schedule=globalThis.setTimeout}={}){

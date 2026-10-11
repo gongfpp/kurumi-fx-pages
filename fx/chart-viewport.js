@@ -1,5 +1,6 @@
-import {movingAveragePath} from './moving-average.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketInfo} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.
@@ -23,13 +24,13 @@ export function spacedTimeTicks(points,x,{maxTicks=4,gap=84}={}){
  for(const tick of candidates.slice(1,-1))if(x(tick)-x(result.at(-1))>=gap&&x(last)-x(tick)>=gap)result.push(tick);
  if(x(last)-x(result.at(-1))>=gap)result.push(last);return result;
 }
-export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=280,width=660,dark=true,id='market',visibleCount=Infinity,currentPrice}={}){
- const window=candleWindow(candles,{count,offset}),bars=window.candles,ma=averages.map(a=>({...a,values:a.values.slice(window.start,window.end)}));
+export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=280,width=660,dark=true,id='market',visibleCount=Infinity,currentPrice,symbol='USD/JPY',timeLabel='游戏时间 JST'}={}){
+ const market=marketInfo(symbol),window=candleWindow(candles,{count,offset}),bars=window.candles,ma=averages.map(a=>({...a,values:a.values.slice(window.start,window.end)}));
  const scale=candleScale(bars,ma,{zoom}),w=Math.max(280,Math.min(660,Number.isFinite(width)?width:660)),left=12,right=75,top=20,bottom=38,h=height,plotBottom=h-bottom;
  const y=v=>top+(scale.high-v)/(scale.high-scale.low)*(plotBottom-top),dx=(w-left-right)/Math.max(1,bars.length),x=i=>left+dx*(i+.5),labelColor=dark?'#c9c2d2':'#705565',grid=dark?'#494454':'#dcc3d0';
  // Cap sparse bodies without moving their timestamp slots or changing price geometry.
  const bodyWidth=Math.min(24,Math.max(1,dx*.54));
- const clip=`candle-clip-${id}`,parts=[`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="已发生行情，纵轴日元/美元，横轴游戏时间 JST"><defs><clipPath id="${clip}"><rect x="${left}" y="${top}" width="${w-left-right}" height="${plotBottom-top}"/></clipPath></defs>`];
+ const clip=`candle-clip-${id}`,parts=[`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${market.symbol} 已发生行情，纵轴日元/${market.name}，横轴${timeLabel}"><defs><clipPath id="${clip}"><rect x="${left}" y="${top}" width="${w-left-right}" height="${plotBottom-top}"/></clipPath></defs>`];
  for(let i=0;i<5;i++){const value=scale.high-(scale.high-scale.low)*i/4,Y=y(value);parts.push(`<line x1="${left}" x2="${w-right}" y1="${Y}" y2="${Y}" stroke="${grid}" stroke-dasharray="3 5"/><text x="${w-right+8}" y="${Y+4}" fill="${labelColor}" font-size="11">${price(value)}</text>`);}
  bars.forEach((c,i)=>{const X=x(i),color=c.close>=c.open?(dark?'#8ae4bf':'#248b68'):(dark?'#f58cba':'#bc4276'),globalIndex=window.start+i;
   const title=`${formatTradingTime(c.timestamp,{full:true})} · 开 ${price(c.open)} / 高 ${price(c.high)} / 低 ${price(c.low)} / 收 ${price(c.close)}`;

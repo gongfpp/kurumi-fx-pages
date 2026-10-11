@@ -1,10 +1,11 @@
-import {grossPnlAt} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 export function accountingValues(state){
  const positions=state.positions?.length?state.positions:state.position?[state.position]:[];
- const floating=positions.reduce((sum,p)=>sum+finite(grossPnlAt(p,state.price)),0),margin=positions.reduce((sum,p)=>sum+finite(p.margin),0);
+ const floating=positions.reduce((sum,p)=>sum+finite(grossPnlAt(p,marketPrice(state,positionMarket(p)))),0),margin=positions.reduce((sum,p)=>sum+finite(p.margin),0);
  const nominalAssets=Math.max(0,finite(state.cash)+margin+floating)+finite(state.reserve);
  const debt=finite(state.family?.outstanding)+finite(state.loan?.outstanding);
  const realized=finite(state.performance?.totalProfit,(state.history||[]).filter(t=>t.type!=='open').reduce((sum,t)=>sum+finite(t.pnl),0));
@@ -24,6 +25,7 @@ export function ensureAccountingJournal(state){
 export function recordAccountingPoint(state,kind='update'){
  const j=ensureAccountingJournal(state),v=accountingValues(state),timestamp=currentTradingTimestamp(state),last=j.points.at(-1);
  if(j.dayOpening?.day!==state.day){const retainedToday=(state.history||[]).filter(t=>t.day===state.day&&t.type!=='open').reduce((n,t)=>n+finite(t.pnl),0);j.dayOpening={day:state.day,realizedProfit:v.realizedProfit-retainedToday,partial:j.legacyPartial&&j.startedDay===state.day};}
+ if(!Number.isFinite(timestamp))return null;
  const cursor=Math.max(0,state.runStatistics?.executions||0),newExecutions=cursor>j.executionCursor;
  if(last&&last.day===state.day&&Object.keys(v).every(key=>last[key]===v[key])&&!newExecutions&&(!['settled','closing'].includes(kind)||last.timestamp===timestamp))return last;
  const point={day:state.day||1,timestamp,kind,observation:++j.observationSequence,...v};

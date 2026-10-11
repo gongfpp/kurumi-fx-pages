@@ -1,6 +1,7 @@
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const FAMILY_EVENTS=new Set(['fatherDiscover','fatherUnlock','fatherFound','repayPartial','repayFull']);
 const positive=n=>Number.isFinite(n)&&n>0;
 const taken=s=>!!s.fatherUsed||!!s.family?.takenConfirmed||positive(s.family?.outstanding)||positive(s.family?.repaid)||positive(s.family?.withdrawal?.amount);
@@ -34,7 +35,7 @@ export function selectDailyFamilyArtwork(state,narrative,{assets=COMIC_SCENE_ASS
  }
  const art=assets[id],text=ACTION_SCENES[id];
  if(!id||!text||!art?.reviewed||art.panels!==4||art.people!==text.people||art.grid||typeof art.path!=='string'||!art.path)return null;
- return {id,title:text.title,art:{...art}};
+ return applyApprovedContextDialogue({id,title:text.title,art:{...art}});
 }
 
 // Frozen dialogue may be replayed after the money was taken or repaid. Retain

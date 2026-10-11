@@ -1,6 +1,7 @@
-import {kurumiStorage} from './storage-namespace.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {safeFailure,ERROR_REPORT_LIMITS} from './error-reporting.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
@@ -66,6 +67,7 @@ export class FXTelemetry {
     this.requireExplicitConsent = options.requireExplicitConsent === true;
     this.explicitConsent = false;
     this.chapterConsent = null; this.globalPreferenceOff = false;
+    this.mainOffLatched = false; this.mainChoiceUnsaved = false;
     this.chapterOffLatched = false; this.chapterChoiceUnsaved = false; this.chapterStorageVerified = false; this.chapterTrackingFailed = false;
     this.getMetrics = typeof options.getMetrics==='function' ? options.getMetrics : null;
     this.wallAnchor=this.now();this.monoAnchor=this.monotonic();
@@ -103,8 +105,8 @@ export class FXTelemetry {
     this.window?.addEventListener('pageshow', this.onShow);
     this.window?.addEventListener('online', this.onOnline);
     // Error categories only. Stack/message/filename may contain private data.
-    this.onError = () => this.emit('error', 'runtime', {detail: {code: 'runtime-error'}, dedupeKey: 'runtime-error'});
-    this.onRejection = () => this.emit('error', 'runtime', {detail: {code: 'unhandled-rejection'}, dedupeKey: 'unhandled-rejection'});
+    this.onError = () => this.failure('runtime', 'runtime-error');
+    this.onRejection = () => this.failure('runtime', 'unhandled-rejection');
     this.window?.addEventListener('error', this.onError);
     this.window?.addEventListener('unhandledrejection', this.onRejection);
     this.timer = options.autoTimer === false ? null : setInterval(() => { this.clock(); if (this.monotonic()-this.checkpointAt >= 120000) this.beat(); this.flush(); }, 5000);
@@ -115,13 +117,13 @@ export class FXTelemetry {
     return this.serverPrivacy ? 'server-privacy' : this.browserPrivacyReason;
   }
   blockReason() {
-    return this.privacyReason() || (!this.preferenceEnabled ? 'statistics-disabled' : this.chapterChoiceUnsaved ? 'privacy-choice-unsaved' : this.chapterConsent==='off' ? 'statistics-disabled' : (this.preferencesUnavailable || this.testModeUnavailable) ? 'privacy-storage-unavailable' : this.suspended ? 'developer-test' :
+    return this.privacyReason() || (this.mainChoiceUnsaved ? 'privacy-choice-unsaved' : !this.preferenceEnabled ? 'statistics-disabled' : this.chapterChoiceUnsaved ? 'privacy-choice-unsaved' : this.chapterConsent==='off' ? 'statistics-disabled' : (this.preferencesUnavailable || this.testModeUnavailable) ? 'privacy-storage-unavailable' : this.suspended ? 'developer-test' :
       this.requireExplicitConsent && !this.explicitConsent ? 'consent-required' : !this.configuration.configured ? 'service-unconfigured' : this.destroyed ? 'destroyed' : !this.enabled ? 'statistics-disabled' : null);
   }
-  readPrivacyItem(key) {
-    if(!this.storage?.getItem)throw new Error('privacy-unavailable');
-    if(!this.storage.readItem)return this.storage.getItem(key);
-    const entry=this.storage.readItem(key);if(!entry.available)throw new Error('privacy-unavailable');return entry.value;
+  readPrivacyItem(key, storage = this.storage) {
+    if(!storage?.getItem)throw new Error('privacy-unavailable');
+    if(!storage.readItem)return storage.getItem(key);
+    const entry=storage.readItem(key);if(!entry.available)throw new Error('privacy-unavailable');return entry.value;
   }
   pruneTaintedRuns() {
     const runs=new Set([...this.queue.map(e=>e.run),this.context.run].filter(Boolean));
@@ -142,7 +144,12 @@ export class FXTelemetry {
     // opt-out stays off until this page receives an explicit setEnabled(true).
     try {
       if(this.chapterTrackingFailed)throw new Error('privacy-unavailable');
-      this.globalPreferenceOff=this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off';
+      const durableMainOff=this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off';
+      // Reuse the existing consent key in sessionStorage as a same-tab guard.
+      // A failed durable opt-out must survive refresh and navigation to a chapter.
+      const sessionMainOff=this.readPrivacyItem('fx-api-v1-telemetry-consent',this.sessionStorage)==='off';
+      this.mainChoiceUnsaved=this.mainOffLatched || sessionMainOff && !durableMainOff;
+      this.globalPreferenceOff=durableMainOff || sessionMainOff || this.mainOffLatched;
       if(this.surface)this.preferenceEnabled=!this.globalPreferenceOff;
       else if(this.globalPreferenceOff)this.preferenceEnabled=false;
       this.chapterConsent=this.surface ? this.readPrivacyItem('fx-api-v1-chapter-01-consent') : null;
@@ -178,7 +185,7 @@ export class FXTelemetry {
     const privacy=this.privacyReason();
     if(privacy && privacy!=='server-privacy')this.browserPrivacyReason=privacy;
     this.dnt=!!this.browserPrivacyReason;
-    this.enabled=this.preferenceEnabled && !this.chapterChoiceUnsaved && this.chapterConsent!=='off' && (!this.requireExplicitConsent || this.explicitConsent) && !privacy && !this.preferencesUnavailable && !this.testModeUnavailable && this.configuration.configured && !this.destroyed;
+    this.enabled=this.preferenceEnabled && !this.mainChoiceUnsaved && !this.chapterChoiceUnsaved && this.chapterConsent!=='off' && (!this.requireExplicitConsent || this.explicitConsent) && !privacy && !this.preferencesUnavailable && !this.testModeUnavailable && this.configuration.configured && !this.destroyed;
     let reason=this.blockReason();
     if(this.privacyCleanupPending || reason && (this.queue.length || this.visitor || this.session || this.controller && !this.controller.signal.aborted))this.clearTracking(reason || 'privacy-storage-unavailable');
     if(this.privacyCleanupPending){this.preferencesUnavailable=true;this.enabled=false;reason=this.blockReason();}
@@ -223,7 +230,7 @@ export class FXTelemetry {
       if(!this.session){this.session=uid();put(this.sessionStorage,this.trackingKey('anon-session'),this.session);}
     }
     try { this.seen = new Set(JSON.parse(get(this.sessionStorage, this.trackingKey('telemetry-seen')) || '[]').filter(k => typeof k === 'string').slice(-1200)); } catch { this.seen = new Set(); }
-    try { const own=JSON.parse(get(this.outboxStorage,this.trackingKey('telemetry-outbox'))||'[]'),legacy=this.playerAnalytics?JSON.parse(get(this.storage,this.trackingKey('telemetry-outbox'))||'[]'):[];const saved=[...new Map([...legacy,...own].map(e=>[e.id,e])).values()]; this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && e.queuedAt<=this.now()+300000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),...(e.v===2?{v:2,at:e.at,seq:e.seq,foregroundMs:e.foregroundMs,engagedMs:e.engagedMs,loss:e.loss,clockUncertain:e.clockUncertain===true}:{}),queuedAt:e.queuedAt})); } catch { this.queue = []; }
+    try { const own=JSON.parse(get(this.outboxStorage,this.trackingKey('telemetry-outbox'))||'[]'),legacy=this.playerAnalytics?JSON.parse(get(this.storage,this.trackingKey('telemetry-outbox'))||'[]'):[];const saved=[...new Map([...legacy,...own].map(e=>[e.id,e])).values()]; this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && e.queuedAt<=this.now()+300000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),...(e.v===2?{v:2,at:e.at,seq:e.seq,foregroundMs:e.foregroundMs,engagedMs:e.engagedMs,loss:e.loss,clockUncertain:e.clockUncertain===true}:{}),queuedAt:e.queuedAt,...(e.name==='error'&&Number.isInteger(e.errorAttempts)?{errorAttempts:Math.max(0,Math.min(ERROR_REPORT_LIMITS.attempts,e.errorAttempts))}:{})})); } catch { this.queue = []; }
     const previous = Number(get(this.storage, this.trackingKey('last-visit')) || 0), gap = this.now() - previous;
     put(this.storage, this.trackingKey('last-visit'), String(this.now()));
     const mobile = (this.window?.innerWidth || 1024) < 640;
@@ -259,7 +266,7 @@ export class FXTelemetry {
   }
   setEnabled(value) {
     if(value===true && this.requireExplicitConsent){
-      try {if(this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off'){this.report(this.syncPrivacy() || 'statistics-disabled');return false;}}
+      try {if(this.readPrivacyItem('fx-telemetry-enabled')==='false' || this.readPrivacyItem('fx-girl-analytics')==='off' || this.readPrivacyItem('fx-api-v1-telemetry-consent',this.sessionStorage)==='off'){this.report(this.syncPrivacy() || 'statistics-disabled');return false;}}
       catch {this.report(this.syncPrivacy() || 'privacy-storage-unavailable');return false;}
     }
     const was=this.enabled;
@@ -281,10 +288,26 @@ export class FXTelemetry {
         this.chapterChoiceUnsaved=false;this.chapterOffLatched=false;this.chapterTrackingFailed=false;
       }catch{this.chapterChoiceUnsaved=true;}
     }else{
-      put(this.storage,'fx-telemetry-enabled',value===true?'true':'false');
-      // Only a deliberate main enable writes shared consent.
-      if(value===true)put(this.storage,'fx-api-v1-telemetry-consent','on');
-      else remove(this.storage,'fx-api-v1-telemetry-consent');
+      // Stop first, like chapter opt-out. Keep the session guard out of ordinary
+      // tracking cleanup; only a verified explicit choice may clear it.
+      this.mainOffLatched=true;
+      put(this.sessionStorage,'fx-api-v1-telemetry-consent','off');
+      try {
+        if(!this.storage?.setItem)throw new Error('privacy-unavailable');
+        if(value===true){
+          // The game's separate saved preference is still authoritative.
+          if(this.readPrivacyItem('fx-girl-analytics')==='off')throw new Error('privacy-unsaved');
+          this.storage.setItem('fx-api-v1-telemetry-consent','on');
+          if(this.readPrivacyItem('fx-api-v1-telemetry-consent')!=='on')throw new Error('privacy-unsaved');
+        }
+        const choice=value===true?'true':'false';
+        this.storage.setItem('fx-telemetry-enabled',choice);
+        if(this.readPrivacyItem('fx-telemetry-enabled')!==choice)throw new Error('privacy-unsaved');
+        if(value!==true)remove(this.storage,'fx-api-v1-telemetry-consent');
+        const guardCleared=remove(this.sessionStorage,'fx-api-v1-telemetry-consent');
+        if(value===true && !guardCleared)throw new Error('privacy-unsaved');
+        this.mainOffLatched=false;this.mainChoiceUnsaved=false;
+      }catch{this.mainChoiceUnsaved=true;this.preferenceEnabled=false;}
     }
     const blocked=this.syncPrivacy();
     if(!blocked && !was && !this.visitor){this.lastScreen='';this.start();this.view(this.context);}
@@ -337,11 +360,30 @@ export class FXTelemetry {
     // Ignore all caller detail/target fields. Only a local dedupe key is accepted.
     return this.emit(hook.name,hook.target,{detail:hook.detail,dedupeKey:options?.dedupeKey ? `hook:${key}:${options.dedupeKey}` : undefined});
   }
+  failure(scope, kind, status = 0) {
+    // Privacy checks happen before identifiers, queue writes or error-budget state.
+    // Reuse the existing session dedupe store; no new storage namespace or DB schema.
+    try {
+      const blocked=this.syncPrivacy();if(blocked)return this.filtered(blocked);
+      const value=safeFailure(scope,kind,status);if(!value)return false;
+      const now=this.now(),signature=[value.target,value.detail.code,value.detail.reason||''].join(':');
+      let count=0;
+      for(const key of this.seen){
+        if(typeof key!=='string'||!key.startsWith('error:failure:'))continue;
+        const parts=key.split(':'),at=Number(parts[2]);
+        if(!Number.isFinite(at)||at<=now-3600000||at>now){this.seen.delete(key);continue;}
+        count++;
+        if(parts.slice(3).join(':')===signature && now-at<ERROR_REPORT_LIMITS.cooldownMs)return this.filtered('error-cooldown');
+      }
+      if(count>=ERROR_REPORT_LIMITS.hourly)return this.filtered('error-budget');
+      return this.emit('error',value.target,{detail:value.detail,dedupeKey:`failure:${now}:${signature}`});
+    } catch { return false; }
+  }
   action(name, target = '', detail = {}) { this.clock(); const result = this.emit(name, target, {activeMs: this.decision, detail}); if (['trade_open','trade_close','story_choice','item_used'].includes(name)) this.decision = 0; return result; }
   async flush(lifecycle = false) {
     if (this.syncPrivacy() || !this.queue.length || this.pending) return false;
     const before=this.queue.length;
-    this.queue=this.queue.filter(e=>this.now()-e.queuedAt<86400000&&e.queuedAt<=this.now()+300000);
+    this.queue=this.queue.filter(e=>this.now()-e.queuedAt<(e.name==='error'?ERROR_REPORT_LIMITS.maxAgeMs:86400000)&&e.queuedAt<=this.now()+300000&&(e.name!=='error'||(e.errorAttempts||0)<ERROR_REPORT_LIMITS.attempts));
     const expired=before-this.queue.length;
     if(expired){this.diagnostics.dropped+=expired;this.filtered('expired',expired);this.persist();}
     if(!this.queue.length || this.now()<this.retryAt)return false;
@@ -351,8 +393,8 @@ export class FXTelemetry {
     const generation=this.generation,controller=new AbortController();this.controller=controller;
     // Old offline sessions are sent separately; the backend enforces a single session per batch.
     const session=this.queue[0].session,rows=this.queue.filter(e=>e.session===session).slice(0,40);
-    let data=JSON.stringify({events:rows.map(({queuedAt,...e})=>e)});
-    while(new TextEncoder().encode(data).byteLength>47000 && rows.length>1){rows.pop();data=JSON.stringify({events:rows.map(({queuedAt,...e})=>e)});}
+    let data=JSON.stringify({events:rows.map(({queuedAt,errorAttempts,...e})=>e)});
+    while(new TextEncoder().encode(data).byteLength>47000 && rows.length>1){rows.pop();data=JSON.stringify({events:rows.map(({queuedAt,errorAttempts,...e})=>e)});}
     const ids=new Set(rows.map(e=>e.id));this.inflightIDs=ids;
     let timeout,abortListener,timedOut=false,status=0,failure='network-error';
     // Race both fetch and JSON decoding. Abort alone cannot settle a stalled adapter.
@@ -394,6 +436,12 @@ export class FXTelemetry {
     } catch {
       if(this.syncPrivacy() || generation!==this.generation)return false;
       this.diagnostics.lastStatus=status;this.diagnostics.failed++;this.diagnostics.retries++;
+      // Error rows have a hard attempt ceiling, including lost ACKs. Persist it
+      // locally, never in the wire payload; other gameplay telemetry keeps its policy.
+      for(const event of this.queue)if(ids.has(event.id)&&event.name==='error')event.errorAttempts=(event.errorAttempts||0)+1;
+      const exhausted=this.queue.filter(e=>e.name==='error'&&(e.errorAttempts||0)>=ERROR_REPORT_LIMITS.attempts).length;
+      if(exhausted){this.queue=this.queue.filter(e=>e.name!=='error'||(e.errorAttempts||0)<ERROR_REPORT_LIMITS.attempts);this.diagnostics.dropped+=exhausted;this.filtered('error-retry-limit',exhausted);}
+      this.persist();
       this.attempts=Math.min(8,this.attempts+1);this.retryAt=this.now()+Math.min(300000,5000*2**this.attempts);
       this.report(timedOut?'timeout':failure);return false;
     } finally {

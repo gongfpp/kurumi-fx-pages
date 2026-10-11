@@ -49,3 +49,13 @@ export function quoteOrderIntent(action,availableMargin,maxMargin){
  if(Object.hasOwn(action||{},'ratio'))return ratioOrderAmount(action.ratio,availableMargin,maxMargin);
  return null;
 }
+
+// Five fixed amounts per asset decade, plus the separate live Max control.
+// Only the offered amounts scale: choosing/typing an amount stays an explicit
+// ticket, and affordability is checked separately rather than clipping presets.
+export function orderAmountPresets(totalAssets){
+ // Cap the unit so every offered amount remains safe at cent precision.
+ let unit=100;
+ if(Number.isFinite(totalAssets))while(totalAssets>=unit*1000&&unit<1e11)unit*=10;
+ return [1,5,10,50,100].map(multiplier=>unit*multiplier);
+}

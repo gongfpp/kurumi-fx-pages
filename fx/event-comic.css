@@ -48,3 +48,9 @@
 .comic-panel-cards>li{min-width:0;padding:0!important}
 .comic-panel-art{position:relative;overflow:hidden;width:100%;margin:0 0 9px;background:#fff;border:1px solid #4d3840;box-sizing:border-box}
 .comic-panel-art .comic-panel-crop[hidden]{display:none}
+
+/* Wide single panels remain legible; pan the original artwork rather than
+   shrinking all four friends and their meal into a thumbnail on a phone. */
+.comic-panel-viewport{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;touch-action:pan-x pan-y;border-radius:2px}
+.comic-panel-viewport:focus-visible{outline:2px solid #7d365a;outline-offset:3px}
+.comic-panel-panorama{width:max(100%,560px)}

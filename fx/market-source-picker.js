@@ -29,7 +29,7 @@ export function mountMarketSourcePicker({document,library,onSelect=()=>{},import
    if(token!==generation)return;if(!rowFor(prefix,mode))throw Error(mode==='story'?'缺少2014年2月14日历史行情，无法开始剧情':'这一年暂无可用的历史行情');status('');show(prefix);
   }catch(error){if(token!==generation)return;failed=true;status(error.name==='TimeoutError'?'历史行情载入超时，请重试。':error.message||'历史行情暂时无法读取，请重试。');}finally{if(token===generation){busy=false;request=null;paint();}}})();return request;
  }
- for(const b of document.querySelectorAll('[data-market-prefix]'))b.onclick=()=>b.dataset.market==='historical'?activate(b.dataset.marketPrefix):choose(b.dataset.marketPrefix,'simulated');
+ for(const b of document.querySelectorAll('[data-market-prefix]'))b.onclick=()=>b.dataset.market==='historical'?activate(b.dataset.marketPrefix):choose(b.dataset.marketPrefix,b.dataset.market);
  for(const prefix of ['mode','restart'])$(prefix+'-dialog').addEventListener?.('close',()=>{if(target===prefix){cancel();panel.hidden=true;}});
  $('history-choice-retry').onclick=()=>{ready=false;return activate(target,requestMode||undefined);};
  $('history-file-open').onclick=()=>$('history-local-file').click();

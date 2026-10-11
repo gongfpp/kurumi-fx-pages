@@ -11,7 +11,7 @@ export function recapImpact(presentation,{delta=0,strength=.5,asset=false,landin
 // Keep the final landing and receipt endings before thinning optional market ticks.
 export function boundedRecapCues(cues,limit=64){
  const spaced=[];
- for(const cue of cues){const previous=spaced.at(-1);if(previous&&cue.atMs-previous.atMs<65){if(cue.final||cue.trade&&!previous.trade)spaced[spaced.length-1]=cue;continue;}spaced.push(cue);}
+ for(const cue of cues){const previous=spaced.at(-1);if(previous&&cue.atMs-previous.atMs<65){if(cue.final||!previous.final&&cue.trade&&!previous.trade)spaced[spaced.length-1]=cue;continue;}spaced.push(cue);}
  if(spaced.length<=limit)return Object.freeze(spaced);
  const final=spaced.filter(c=>c.final),endings=spaced.filter(c=>!c.final&&c.trade&&['terminal-fill','terminal-close'].includes(c.kind)),optional=spaced.filter(c=>!final.includes(c)&&!endings.includes(c));
  const sample=(items,count)=>count<=0?[]:count>=items.length?items:count===1?[items.at(-1)]:Array.from({length:count},(_,i)=>items[Math.round(i*(items.length-1)/(count-1))]);

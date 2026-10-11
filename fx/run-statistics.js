@@ -1,4 +1,6 @@
-import {currentTradingTimestamp} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals
@@ -10,8 +12,9 @@ const positions=s=>s.positions?.length?s.positions:s.position?[s.position]:[];
 const validId=id=>typeof id==='string'&&/^order-\d{1,15}$/.test(id);
 const fresh=()=>({version:1,complete:true,closedOrders:0,winningOrders:0,losingOrders:0,breakevenOrders:0,maxOrderProfit:0,maxOrderLoss:0,liquidatedOrders:0,stopLossOrders:0,partialCloseExecutions:0,maxLeverage:0,maxWinningStreak:0,maxLosingStreak:0,winningStreak:0,losingStreak:0,profitGivebackOrders:0,openOrders:{},trades:[],executions:0,timelinePartial:false,realizedCumulative:0,realizedPeak:0,realizedTrough:0,realizedPathComplete:true,maxLeverageComplete:true,profitGivebackComplete:true,drawdownRecorded:true});
 function safeTrade(t,s,{legacy=false}={}){
- const result={sequence:0,type:['open','half','close','rescue','stop','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
+ const result={...(s.marketBook||t.symbol?{symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null}:{}),sequence:0,type:['open','half','close','rescue','stop','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
  for(const key of ['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'])result[key]=Number.isFinite(t[key])?t[key]:null;
+ const evidence=safeLiveTradeEvidence(t.liveQuote);if(evidence){result.liveQuote=evidence;result.timePrecision='provider-quote';}
  result.positionClosed=t.positionClosed===true;return result;
 }
 function append(stats,trade){trade.sequence=++stats.executions;stats.trades.push(trade);if(stats.trades.length>RUN_TRADE_LIMIT){stats.trades=stats.trades.slice(-RUN_TRADE_LIMIT);stats.timelinePartial=true;}}

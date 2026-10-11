@@ -1,3 +1,4 @@
+import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // A deterministic fictional market clock. Playback milliseconds never enter it.
 const MINUTE=60000,DAY=86400000;
 export const TRADING_CLOCK_VERSION=1;
@@ -10,11 +11,12 @@ const integer=(n,fallback=0)=>Number.isSafeInteger(n)&&n>=0?n:fallback;
 function businessDate(epoch,days){let offset=Math.floor(days/5)*7,remainder=days%5;const weekday=new Date(epoch+9*60*MINUTE).getUTCDay();while(remainder){offset++;const dow=(weekday+offset)%7;if(dow!==0&&dow!==6)remainder--;}return epoch+offset*DAY;}
 export function tradingClock(state={}){
  const existing=state.tradingClock;
- if(existing?.version===1&&Number.isFinite(existing.epochMs)&&Math.abs(existing.epochMs)<8e15)return{...existing,timeZone:GAME_TIME_ZONE,candleMinutes:state.historical?.version===2?1:CANDLE_MINUTES};
+ if(existing?.version===1&&Number.isFinite(existing.epochMs)&&Math.abs(existing.epochMs)<8e15)return{...existing,timeZone:GAME_TIME_ZONE,candleMinutes:[2,3].includes(state.historical?.version)?1:CANDLE_MINUTES};
  return{version:1,epochMs:FIRST_DAY,timeZone:GAME_TIME_ZONE,candleMinutes:CANDLE_MINUTES,source:'game-calendar'};
 }
 export function ensureTradingClock(state){state.tradingClock=tradingClock(state);return state.tradingClock;}
 export function tradingTimestamp(state,{day=state.day||1,beat=0,candle=0,tick=0}={}){
+ if(isLiveMarket(state))return day===state.day?state.liveMarket.openingAt??liveTimestamp(state):state.accountingJournal?.days?.find(row=>row.day===day)?.timestamp??null;
  const clock=tradingClock(state),date=businessDate(clock.epochMs,Math.max(0,integer(day,1)-1));
  const b=integer(beat),start=SESSION_MINUTES[b]??SESSION_MINUTES.at(-1)+(b-4)*60;
  return date+(start+integer(candle)*CANDLE_MINUTES+Math.min(6,integer(tick))*CANDLE_MINUTES/6)*MINUTE;
@@ -27,7 +29,8 @@ function lastObservedTimestamp(state,day=state.day,cursor=state.pending||state.e
  return start;
 }
 export function currentTradingTimestamp(state){
- if([1,2].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
+ if(isLiveMarket(state))return state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase)&&Number.isFinite(state.dayReport.closedAt)?state.dayReport.closedAt:liveTimestamp(state);
+ if([1,2,3].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
  if(state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase))return reportTradingTimestamp(state,state.dayReport);
  if(state.earlyClose?.day===state.day&&state.phase==='closing')return Number.isFinite(state.earlyClose.timestamp)?state.earlyClose.timestamp:tradingTimestamp(state,state.earlyClose);
  if(state.tradingClock&&state.tradingClock.lastQuoteDay===state.day&&Number.isFinite(state.tradingClock.lastQuoteAt))return state.tradingClock.lastQuoteAt;
@@ -38,6 +41,7 @@ export function currentTradingTimestamp(state){
  return tradingTimestamp(state,{day:state.day,beat:state.beat||0});
 }
 export function reportTradingTimestamp(state,report=state.dayReport){
+ if(isLiveMarket(state))return Number.isFinite(report?.closedAt)?report.closedAt:liveTimestamp(state);
  if(Number.isFinite(report?.closedAt))return report.closedAt;
  if(report?.earlyClose)return Number.isFinite(report.earlyClose.timestamp)?report.earlyClose.timestamp:lastObservedTimestamp(state,report.day,report.earlyClose)??tradingTimestamp(state,report.earlyClose);
  return tradingTimestamp(state,{day:report?.day||state.day||1,beat:Math.max(0,(report?.beat||4)-1),candle:3,tick:6});
@@ -77,4 +81,4 @@ export function timeAxisTicks(points,{maxTicks=5,showDate=false}={}){
 }
 export const TRADING_TIME_NOTICE='JST · 15分钟 K线';
 
-export const tradingTimeNotice=state=>state.historical?.version===2?'JST · 1分钟已完成线':TRADING_TIME_NOTICE;
+export const tradingTimeNotice=state=>isLiveMarket(state)?'报价时间 · JST · 已接收的一分钟观察线':[2,3].includes(state.historical?.version)?'JST · 1分钟已完成线':TRADING_TIME_NOTICE;

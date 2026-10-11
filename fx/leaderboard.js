@@ -1,9 +1,11 @@
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {runPerformance} from './performance.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {runPerformance} from './performance.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -63,28 +65,42 @@ export class FXLeaderboard {
     const location=options.location??globalThis.location;
     this.configuration=serviceConfiguration({serviceOrigin:options.serviceOrigin,location});
     this.endpoint=this.configuration.leaderboardEndpoint;
-    this.onStatus=options.onStatus??(()=>{});this.timeout=options.timeout??10000;
-    this.registered=new Set();this.pending=false;this.capabilities=new Map();this.session=null;
+    this.onStatus=options.onStatus??(()=>{});this.onFailure=options.onFailure??(()=>{});this.timeout=options.timeout??10000;
+    this.registered=new Set();this.hallSupported=new Set();this.pending=false;this.capabilities=new Map();this.session=null;
   }
   status(value){try{this.onStatus(value);}catch{}}
   assertConfigured() {if(!this.configuration.configured)throw new LeaderboardError(SERVICE_UNCONFIGURED_MESSAGE,'service-unconfigured');}
   async request(path,{method='GET',data,keepalive=false}={}) {
     this.assertConfigured();
-    if(!this.fetch||this.navigator?.onLine===false)throw new LeaderboardError('当前离线，联网后可查看或提交排行榜','offline');
+    const scope=path==='/run'?'leaderboard-run':path==='/snapshot'?'leaderboard-snapshot':path==='/name'?'leaderboard-name':method==='GET'?'leaderboard-read':'leaderboard-publish';
+    if(!this.fetch||this.navigator?.onLine===false){notifyFailure(this.onFailure,scope,'network-error');throw new LeaderboardError('当前离线，联网后可查看或提交排行榜','offline');}
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),this.timeout);
     try{
       const response=await this.fetch(this.endpoint+path,{method,keepalive,credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal,...(data?{headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}:{})});
       let result;try{result=await response.json();}catch{throw new LeaderboardError('排行榜响应不完整，请稍后重试','response',response.status);}
       if(!response.ok)throw new LeaderboardError(result?.error||'排行榜暂时不可用，请稍后重试',response.status===429?'rate-limited':response.status===409?'conflict':'rejected',response.status);
       return result;
-    }catch(error){if(error instanceof LeaderboardError)throw error;throw new LeaderboardError(error?.name==='AbortError'?'排行榜连接超时，请重试':'排行榜连接失败，请检查网络后重试',error?.name==='AbortError'?'timeout':'network');}
+    }catch(error){
+      notifyFailure(this.onFailure,scope,error instanceof LeaderboardError?(error.status>=400?'http-error':'invalid-response'):controller.signal.aborted?'timeout':'network-error',error instanceof LeaderboardError?error.status:0);
+      if(error instanceof LeaderboardError)throw error;throw new LeaderboardError(error?.name==='AbortError'?'排行榜连接超时，请重试':'排行榜连接失败，请检查网络后重试',error?.name==='AbortError'?'timeout':'network');
+    }
     finally{clearTimeout(timer);}
+  }
+  async requestScore(path,options) {
+    try{return await this.request(path,options);}
+    catch(error){
+      // A rolling API rollback can outlive a tab's capability cache. Retry only
+      // an explicit schema rejection, with the same identity and core score.
+      if(error.status!==400||!HALL_FIELDS.some(key=>Object.hasOwn(options.data,key)))throw error;
+      this.hallSupported.delete(options.data.campaign);
+      return this.request(path,{...options,data:hallScoreForServer(options.data,false)});
+    }
   }
   async read({mode='daily',gameMode,sort,limit=20}={}) {
     if(!['daily','total'].includes(mode)||(gameMode!==undefined&&!['story','endless'].includes(gameMode))||(sort!==undefined&&!['survival','returnRate','dailyReturnRate','totalProfit','maxProfit','winRate','maxOrderLoss'].includes(sort))||!Number.isInteger(limit)||limit<1||limit>50)throw new LeaderboardError('排行榜参数不正确','input');
     this.status({state:'loading',mode,gameMode});
     const query=new URLSearchParams({mode,limit:String(limit)});if(gameMode!==undefined)query.set('gameMode',gameMode);if(sort!==undefined)query.set('sort',sort);
-    try{const result=await this.request(`?${query}`);if(!Array.isArray(result?.rows)||result.verification!=='client-submitted'||(gameMode!==undefined&&result.gameMode!==gameMode))throw new LeaderboardError('排行榜响应不完整，请稍后重试','response');this.status({state:result.rows.length?'ready':'empty',mode,gameMode});return result;}
+    try{const result=await this.request(`?${query}`);if(!Array.isArray(result?.rows)||result.verification!=='client-submitted'||(gameMode!==undefined&&result.gameMode!==gameMode)){notifyFailure(this.onFailure,'leaderboard-read','invalid-response',200);throw new LeaderboardError('排行榜响应不完整，请稍后重试','response');}this.status({state:result.rows.length?'ready':'empty',mode,gameMode});return result;}
     catch(error){this.status({state:'error',code:error.code,message:error.message});throw error;}
   }
   storedToken(campaign) {
@@ -132,11 +148,11 @@ export class FXLeaderboard {
       if(!this.registered.has(campaign)){
         const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
         if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
-        this.registered.add(campaign);
+        if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);this.registered.add(campaign);
       }
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       if(!isAllowed())throw new LeaderboardError('进度更新已暂停','ineligible');
-      return await this.request('/snapshot',{method:'POST',keepalive,data:{campaign,token,...score,alias:'',snapshotVersion}});
+      return await this.requestScore('/snapshot',{method:'POST',keepalive,data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign)),alias:'',snapshotVersion}});
     }finally{this.pending=false;}
   }
   async publishFinished(state,report,{alias='',campaign=state?.runId}={}) {
@@ -147,10 +163,11 @@ export class FXLeaderboard {
     this.pending=true;this.status({state:'publishing'});
     try{
       const token=await this.ensureToken(campaign);
-      await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
+      const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
+      if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
-      const result=await this.request('',{method:'POST',data:{campaign,token,...score,alias:name}});
-      if(result?.ok!==true)throw new LeaderboardError('成绩未获确认，请稍后重试','response');
+      const result=await this.requestScore('',{method:'POST',data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign)),alias:name}});
+      if(result?.ok!==true){notifyFailure(this.onFailure,'leaderboard-publish','invalid-response',200);throw new LeaderboardError('成绩未获确认，请稍后重试','response');}
       this.status({state:'published',duplicate:!!result.duplicate});return result;
     }finally{this.pending=false;}
   }

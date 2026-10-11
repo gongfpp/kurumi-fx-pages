@@ -356,6 +356,14 @@ export const SUPPLEMENTAL_ASSET_SOURCES=Object.freeze([
     "sourceMetadata": null
   },
   {
+    "id": "generated-character-profit-v1-mochiko-watch-v3",
+    "path": "./generated/character-profit-v1/mochiko-watch-v3.webp",
+    "sha256": "ac634151bc1ef04bf713299056ef2e2c6d2bf0a3617df96133de0f40f8ca5eab",
+    "dimensions": [1086, 1448],
+    "kind": "original-fan-art",
+    "sourceMetadata": null
+  },
+  {
     "id": "generated-character-profit-v1-mochiko-watch-v2",
     "path": "./generated/character-profit-v1/mochiko-watch-v2.webp",
     "sha256": "8e3b14869952d018c0fb7984823299c563faf1191cf341d2199b016fc2a693ee",

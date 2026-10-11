@@ -1,8 +1,9 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {LIVING_MOVE_SCENE_IDS} from './living-services.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Presentation frequency is run-local. Receipts and manual replay are untouched.
 export const COMIC_PROFIT_MULTIPLIER=2;
-const FIRST_ONLY=new Set(['shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);
+const FIRST_ONLY=new Set([...Object.values(LIVING_MOVE_SCENE_IDS),'shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);
 const MANUAL_RESULTS=new Set(['closed-loss','half-loss','closed-flat','half-flat','settled-small-loss','settled-no-trade','loan-interest']);
 const PROFIT=new Set(['closed-profit','half-profit','settled-gain']);
 const settledTrades=state=>(state.history||[]).filter(row=>['close','half','closing','stop','liquidation'].includes(row.type)&&Number.isFinite(row.pnl));
@@ -59,6 +60,7 @@ export function ensureComicAutoplay(state){
  const items={noodles:'noodles-today',takeaway:'takeaway',energy:'energy',celebration:'spa',mochiko:'mochiko-watch'};
  const activities={'quiet-night':'shrine-walk','noodles-today':'noodles-today','dinner-small':'dinner-small','dinner-friends':'dinner-friends','dinner-feast':'dinner-feast','dinner-banquet':'dinner-banquet'};
  const shown=new Set();
+ for(const move of state.livingMoves||[]){const id=LIVING_MOVE_SCENE_IDS[move.toId];if(id)shown.add(id);}
  for(const [id,scene] of Object.entries(items))if(state.itemsUsed?.[id]===true)shown.add(scene);
  for(const row of state.consumptionLedger||[])if(row.kind==='item'&&row.amount>0){const id=items[row.id?.split(':').at(-1)];if(id)shown.add(id);}
  for(const row of state.recapChoiceLedger||[]){const id=activities[row.id];if(id)shown.add(id);}

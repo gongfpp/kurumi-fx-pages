@@ -2,7 +2,7 @@
 // Stored/baseline strings are recovery evidence, never an implicit import choice.
 export const MAX_BACKUP_BYTES=32*1024*1024;
 const MAX_NODES=1000000,MAX_DEPTH=100;
-export function parseProgressBackup(text,{key,mode,historical,restore,isHistorical}) {
+export function parseProgressBackup(text,{key,mode,historical,source,restore,isHistorical,marketSourceOf}) {
  if(typeof text!=='string'||text.length>MAX_BACKUP_BYTES)throw Error('备份文件过大。');
  let backup;try{backup=JSON.parse(text);}catch{throw Error('无法读取备份，请选择完整的进度备份 JSON 文件。');}
  const stack=[[backup,0]];let nodes=0;
@@ -11,7 +11,7 @@ export function parseProgressBackup(text,{key,mode,historical,restore,isHistoric
  const original=backup.local;
  if(!Number.isSafeInteger(original.day)||original.day<1||!Number.isSafeInteger(original.version))throw Error('备份进度不完整，未恢复。');
  const candidate=restore(JSON.stringify(original));
- if(!candidate||candidate.mode!==mode||isHistorical(candidate)!==historical)throw Error('备份损坏、模式不匹配，或来自更新版本。');
+ if(!candidate||candidate.mode!==mode||isHistorical(candidate)!==historical||source&&marketSourceOf&&marketSourceOf(candidate)!==source)throw Error('备份损坏、模式不匹配，或来自更新版本。');
  return candidate;
 }
 export async function readProgressBackup(file,options){
@@ -20,7 +20,7 @@ export async function readProgressBackup(file,options){
 }
 
 // One preview/confirmation dialog; stale reads and repeated clicks cannot apply twice.
-export function mountProgressRestore({document,getContext,restore,isHistorical,apply,onError}) {
+export function mountProgressRestore({document,getContext,restore,isHistorical,marketSourceOf,apply,onError}) {
  const dialog=document.getElementById('save-restore-dialog'),input=document.getElementById('save-restore-file'),copy=document.getElementById('save-restore-copy'),confirm=document.getElementById('save-restore-confirm'),cancel=document.getElementById('save-restore-cancel');
  let ticket=0,preview=null,busy=false;
  const clear=()=>{ticket++;preview=null;input.value='';confirm.disabled=true;};
@@ -32,7 +32,7 @@ export function mountProgressRestore({document,getContext,restore,isHistorical,a
  input.onchange=async()=>{
   const file=input.files?.[0];if(!file){close();return;}const id=++ticket,context=getContext();preview=null;confirm.disabled=true;copy.textContent='正在核对备份…';
   try{
-   const candidate=await readProgressBackup(file,{...context,restore,isHistorical});
+   const candidate=await readProgressBackup(file,{...context,restore,isHistorical,marketSourceOf});
    if(id!==ticket||!dialog.open)return;
    const current=getContext();if(current.session!==context.session||current.generation!==context.generation||current.session.blocked||!current.session.check())throw Error('当前进度已变化，请取消后重新选择备份。');
    const expectedRaw=current.session.raw,stored=expectedRaw===null?null:restore(expectedRaw);

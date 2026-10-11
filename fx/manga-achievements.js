@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Trophy references are labelled as inspiration, not screenshots of this save.
 const mappings=Object.freeze({
  "profit-receipt":{"panel":{"id":"cafe-meal-anime","original":"./manga/achievement-anime/cafe-meal.jpg","imageSize":[450,220],"kind":"original-anime-frame","sourceURL":"https://www.bilibili.com/video/BV1eqH96AEtJ/","sourceTimeSeconds":387.254264,"sha256":"e1683e04f61c2cefd310efbc3801066ae85ffacd8d368d473d5252ab878bba90"},"note":"原动画久留美和萌智子在快餐店用餐，呼应把钱用在一顿饭上；外卖下单与先盈利条件属于本局，不称原作已完成该条件。"},
@@ -17,3 +17,13 @@ const mappings=Object.freeze({
  'twenty-million':{panel:'recovery-vow',note:'游戏自拟成就名。原作第 1 话第 11 页是“想赚回两千万”的目标，并非原作已经赚到钱；本局以累计已实现净利润兑现这个 IF。'}
 });
 export function achievementManga(id){const map=mappings[id],panel=map&&(typeof map.panel==='string'?MANGA_PANELS[map.panel]:map.panel);return panel?{panel,note:map.note}:null;}
+// Badge-sized art shares the achievement's existing manga mapping. Anime-only
+// references keep the text badge; no generated image or unrelated panel is used.
+export function achievementMangaThumbnail(id){
+ // This source explicitly says 130万 profit, so it cannot stand for repaying debt.
+ // Keep the repayment letter; its pre-existing large source mapping is unchanged.
+ if(id==='fully-repaid')return null;
+ const panel=achievementManga(id)?.panel;
+ const manga=panel?.kind==='original-manga'||(!panel?.kind&&Number.isFinite(panel?.chapter)&&Number.isFinite(panel?.page));
+ return manga&&panel.original?panel.original:null;
+}

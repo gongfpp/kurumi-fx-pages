@@ -1,5 +1,6 @@
 // Separate research contract. M1 observations are never coerced into bid/ask ticks.
 const MAX=16*1024*1024;
+export const RESEARCH_SYMBOLS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);
 const HASH=/^[a-f0-9]{64}$/;const JST=32400000,DAY=86400000;
 const date=ms=>new Date(ms+JST).toISOString().slice(0,10);
 const fail=message=>{throw Error('分钟研究行情：'+message);};
@@ -13,14 +14,17 @@ export async function readResearchBytes(stream,expected){
 }
 export class ResearchProvider{
  #fetch;#base;#raw;#month=null;#pending=null;
- constructor(raw,{baseURL,fetch=globalThis.fetch}={}){
-  if(raw?.format!=='kurumi-private-fx-research-m1-v1'||raw.symbol!=='USDJPY'||raw.precision!=='M1-OHLC'||raw.timestampMeaning!=='unknown-open-or-close-label'||raw.quoteSide!=='unverified-single-price-OHLC'||!HASH.test(raw.csv?.sha256)||!HASH.test(raw.gzip?.sha256)||!Array.isArray(raw.days))fail('不支持的数据契约');
+ constructor(raw,{baseURL,fetch=globalThis.fetch,multiCurrency=false}={}){
+  // Legacy single-month imports must remain USD-only; the three-pair adapter
+  // explicitly owns symbol identity before enabling the broader parser.
+  if(raw?.format!=='kurumi-private-fx-research-m1-v1'||!(multiCurrency?RESEARCH_SYMBOLS:['USDJPY']).includes(raw.symbol)||raw.precision!=='M1-OHLC'||raw.timestampMeaning!=='unknown-open-or-close-label'||raw.quoteSide!=='unverified-single-price-OHLC'||!HASH.test(raw.csv?.sha256)||!HASH.test(raw.gzip?.sha256)||!Array.isArray(raw.days))fail('不支持的数据契约');
   if(!Number.isSafeInteger(raw.rows)||raw.rows<1||raw.rows>31*1440||raw.days.length<1||raw.days.length>31||!/^\d{4}-(0[1-9]|1[0-2])$/.test(raw.utcMonth)||![raw.csv.bytes,raw.gzip.bytes].every(n=>Number.isSafeInteger(n)&&n>0&&n<=MAX)||!/^[-\w.]+\.csv\.gz$/.test(raw.gzip.file)||raw.gaps!=null&&(!Array.isArray(raw.gaps)||raw.gaps.length>raw.rows))fail('月份尺寸或路径无效');
   const base=new URL(baseURL);if(!['https:','http:'].includes(base.protocol)||base.username||base.password||!/^\/admin\/research\/months\/[-\w.]+\.json$/.test(base.pathname)||base.search||base.hash)fail('月份来源路径无效');
   this.#raw=JSON.parse(JSON.stringify(raw));this.#fetch=fetch;this.#base=baseURL;
   const dates=new Set();for(const d of raw.days){let first=Date.parse(d.firstLabelUTC)+60000,last=Date.parse(d.lastLabelUTC)+60000;if(!Number.isFinite(first+last)||last<first||last-first>=DAY||new Date(first-60000).toISOString().slice(0,7)!==raw.utcMonth||new Date(last-60000).toISOString().slice(0,7)!==raw.utcMonth)fail('日期无效');for(let t=Math.floor((first+JST)/DAY)*DAY-JST;t<=last;t+=DAY)dates.add(date(t));}
-  this.manifest=Object.freeze({schemaVersion:'research-m1-close-v1',id:'research-forexite-'+raw.utcMonth,version:raw.csv.sha256,symbol:'USDJPY',timeZone:'Asia/Tokyo',quoteType:'observed-single-close',gapThresholdMs:60000,source:{sha256:raw.csv.sha256,url:'https://www.forexite.com/free_forex_quotes/forex_history_arhiv.html'},research:{timestampMeaning:raw.timestampMeaning,quoteSide:raw.quoteSide,availabilityModel:'label-plus-60-seconds',executionModel:'observed-close-only',spreadModel:'none',feesModel:'game-fee-rate'},days:[...dates].sort().map(day=>({date:day,sha256:raw.csv.sha256,gaps:(raw.gaps||[]).filter(g=>date(Date.parse(g.to)+60000)===day).map(g=>({fromMs:Date.parse(g.from)+60000,toMs:Date.parse(g.to)+60000,classification:g.classification}))}))});
+  this.manifest=Object.freeze({schemaVersion:'research-m1-close-v1',id:'research-forexite-'+(raw.symbol==='USDJPY'?'':raw.symbol.toLowerCase()+'-')+raw.utcMonth,version:raw.csv.sha256,symbol:raw.symbol,timeZone:'Asia/Tokyo',quoteType:'observed-single-close',gapThresholdMs:60000,source:{sha256:raw.csv.sha256,url:'https://www.forexite.com/free_forex_quotes/forex_history_arhiv.html'},research:{timestampMeaning:raw.timestampMeaning,quoteSide:raw.quoteSide,availabilityModel:'label-plus-60-seconds',executionModel:'observed-close-only',spreadModel:'none',feesModel:'game-fee-rate'},days:[...dates].sort().map(day=>({date:day,sha256:raw.csv.sha256,gaps:(raw.gaps||[]).filter(g=>date(Date.parse(g.to)+60000)===day).map(g=>({fromMs:Date.parse(g.from)+60000,toMs:Date.parse(g.to)+60000,classification:g.classification}))}))});
  }
+ clear(){this.#month=null;}
  get cachedDates(){return this.#month?[...this.#month.keys()]:[];}
  async #load(){
   if(this.#month)return this.#month;if(this.#pending)return this.#pending;

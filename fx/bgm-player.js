@@ -1,10 +1,15 @@
-import {AudioEnvelope} from './audio-envelope.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {assetURL} from './assets.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {assetURL} from './assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 const clamp=(value,min,max,fallback)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
 const gesture=event=>event?.isTrusted===true&&!event.repeat&&['click','pointerdown','keydown'].includes(event.type);
 const progress=(now,start,duration)=>Math.min(1,Math.max(0,(now-start)/duration));
+// Prefer another recording with the same tag. Sparse catalogs can continue in
+// a neighboring mood without jumping from a profit scene straight into crisis.
+const companionTags=Object.freeze({neutral:['neutral','focus'],focus:['focus','neutral'],
+  tension:['tension','focus'],gain:['gain','relief'],loss:['loss','crisis','numb'],
+  crisis:['crisis','loss','numb'],numb:['numb','loss'],relief:['relief','neutral']});
 
 // No media source, preload, audio graph or playback is started by construction.
 // Scene tags are supplied by the host. This player never interprets money or plot.
@@ -21,16 +26,17 @@ export class BgmPlayer {
     this.duckFactor=clamp(duckFactor,.05,1,.28);this.loadTimeoutMs=clamp(loadTimeoutMs,1000,60000,15000);
     this.sceneStableMs=clamp(sceneStableMs,0,30000,4000);this.sceneCooldownMs=clamp(sceneCooldownMs,0,120000,20000);
     this.sceneTimer=null;this.pendingScene=null;this.lastSceneSwitch=-Infinity;
-    this.mode='follow';this.scene='neutral';this.selectedId=this.tracks.find(t=>t.sceneTags.includes(this.scene))?.id||this.tracks[0]?.id||null;
+    this.mode='follow';this.scene='neutral';this.followedScene='neutral';this.selectedId=this.tracks.find(t=>t.sceneTags.includes(this.scene))?.id||this.tracks[0]?.id||null;
     this.onPreference=()=>{};this.muted=true;this.wanted=false;this.unlocked=false;this.hidden=false;this.destroyed=false;
     this.voiceActive=false;this.duckLevel=1;this.generation=0;this.error=null;this.fade=null;this.duck=null;this.timers=new Set();this.frame=null;
     this.listeners=new Set([onUpdate]);this.decks=Array.from({length:2},()=>{
-      const media=makeAudio();media.preload='none';media.volume=0;media.loop=true;
+      const media=makeAudio();media.preload='none';media.volume=0;media.loop=false;
       const deck={media,track:null,record:null,weight:0,playing:false,pending:false,token:0};
       deck.onError=()=>{if(deck.pending||deck.playing)this._failed(deck,deck.token,new Error('Media unavailable'));};
       // Some browsers accept a zero-volume play(), then pause when its fade becomes audible.
-      deck.onPause=()=>{if(deck.playing&&media.paused&&this._allowed())this._failed(deck,deck.token,{name:'NotAllowedError'});};
-      media.addEventListener('error',deck.onError);media.addEventListener('pause',deck.onPause);return deck;
+      deck.onPause=()=>{if(deck.playing&&media.paused&&!media.ended&&this._allowed())this._failed(deck,deck.token,{name:'NotAllowedError'});};
+      deck.onEnded=()=>this._ended(deck);
+      media.addEventListener('error',deck.onError);media.addEventListener('pause',deck.onPause);media.addEventListener('ended',deck.onEnded);return deck;
     });
   }
   getState() {
@@ -95,6 +101,27 @@ export class BgmPlayer {
       if(fallback){this.selectedId=fallback.track.id;this._fadeTo(fallback);}
     }
     this._emit();return false;
+  }
+  _playlist(tag) {
+    const exact=this.tracks.filter(track=>track.sceneTags.includes(tag));
+    if(exact.length>1)return exact;
+    const tags=companionTags[tag]||[tag];
+    const nearby=this.tracks.filter(track=>track.sceneTags.some(scene=>tags.includes(scene)));
+    return nearby.length?nearby:exact;
+  }
+  _ended(deck) {
+    // An outgoing deck can finish during a crossfade. It must never replace the
+    // newer manual pick, nor can a late ended event revive a paused/hidden player.
+    if(this.destroyed||!deck.playing||!deck.media.ended)return;
+    const current=deck.track?.id===this.selectedId;
+    const previous=deck.track?.id;
+    this._release(deck,{unload:true});
+    if(!current||!this._allowed()){this._emit();return;}
+    const playlist=this.mode==='follow'?this._playlist(this.followedScene):this.tracks;
+    const index=playlist.findIndex(track=>track.id===previous);
+    const next=playlist[(index+1)%playlist.length];
+    if(next)void this.selectTrack(next.id,{manual:this.mode==='manual'});
+    else this._emit();
   }
   async _begin(track) {
     if(!track||!this._allowed())return false;
@@ -175,6 +202,7 @@ export class BgmPlayer {
     if(this.destroyed||this.mode!=='follow')return Promise.resolve(false);
     const track=this.tracks.find(item=>item.id===this.selectedId&&item.sceneTags.includes(tag))||this.tracks.find(item=>item.sceneTags.includes(tag));
     if(!track)return Promise.resolve(false);
+    this.followedScene=tag;
     if(track.id!==this.selectedId)this.lastSceneSwitch=this.now();
     return this.selectTrack(track.id,{manual:false});
   }
@@ -191,6 +219,11 @@ export class BgmPlayer {
     if(tag===this.scene&&this.error)return Promise.resolve(false);
     const changed=tag!==this.scene;this.scene=tag;if(changed)this._emit();
     if(this.mode!=='follow'){this._cancelScene();return Promise.resolve(true);}
+    // Natural continuation owns the current playlist until the scene changes.
+    // Repeated render ticks must not switch a neighboring recording back again.
+    if(this.followedScene===tag&&this._playlist(tag).some(track=>track.id===this.selectedId)){
+      this._cancelScene();return Promise.resolve(true);
+    }
     const compatible=this.tracks.find(item=>item.id===this.selectedId)?.sceneTags.includes(tag);
     if(!stabilize||compatible){this._cancelScene();return this._followScene(tag);}
     if(this.pendingScene===tag)return Promise.resolve(true);
@@ -219,7 +252,7 @@ export class BgmPlayer {
   }
   destroy() {
     if(this.destroyed)return;this._cancelScene();this.wanted=false;this.muted=true;this._silence({unload:true});this.destroyed=true;
-    for(const deck of this.decks){deck.media.removeEventListener('error',deck.onError);deck.media.removeEventListener('pause',deck.onPause);deck.graph?.source?.disconnect();deck.graph?.gain?.disconnect();deck.graph=null;}
+    for(const deck of this.decks){deck.media.removeEventListener('error',deck.onError);deck.media.removeEventListener('pause',deck.onPause);deck.media.removeEventListener('ended',deck.onEnded);deck.graph?.source?.disconnect();deck.graph?.gain?.disconnect();deck.graph=null;}
     this._emit();this.listeners.clear();
   }
 }

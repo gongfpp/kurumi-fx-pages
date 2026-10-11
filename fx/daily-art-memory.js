@@ -1,5 +1,5 @@
-import {createGameStorage} from './storage.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
 // Content identity is independent of day, event receipt, and file cache query.
 export function artIdentity(art){return art?.sha256?'sha256:'+art.sha256:art?.path?'path:'+art.path.split('?')[0]:null;}
@@ -10,8 +10,9 @@ export function createDailyArtMemory(storage=createGameStorage(()=>kurumiStorage
  return {
   has(id){return !!id&&read().seen.includes(id);},
   seen(ids){const x=read();x.seen=[...new Set([...x.seen,...ids.filter(id=>typeof id==='string'&&id.length<256)])].slice(-2000);return save(x);},
+  peek(dayKey,candidates){const x=read();if(Object.hasOwn(x.days,dayKey))return candidates.find(c=>c.identity===x.days[dayKey])||null;return candidates.find(c=>!c.preserveLockedOnly&&!x.seen.includes(c.identity)&&(!c.arcIdentity||!x.seen.includes(c.arcIdentity)))||null;},
   pick(dayKey,candidates){const x=read();if(Object.hasOwn(x.days,dayKey)){save(x);return candidates.find(c=>c.identity===x.days[dayKey])||null;}
-   const chosen=candidates.find(c=>!x.seen.includes(c.identity)&&(!c.arcIdentity||!x.seen.includes(c.arcIdentity)))||null;
+   const chosen=candidates.find(c=>!c.preserveLockedOnly&&!x.seen.includes(c.identity)&&(!c.arcIdentity||!x.seen.includes(c.arcIdentity)))||null;
    x.days[dayKey]=chosen?.identity||null;const keys=Object.keys(x.days);for(const key of keys.slice(0,-256))delete x.days[key];save(x);return chosen;
   }
  };

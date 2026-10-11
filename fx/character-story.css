@@ -15,3 +15,5 @@
 #character-story-controls button{min-height:44px;padding:8px 12px;min-width:0;font-size:14px}
 #character-story-position{white-space:nowrap;font-size:12px;color:#715d64}
 @media(max-width:390px){#character-story-dialog .dialog-scroll{padding:14px 14px 20px}#character-story-controls{padding:8px;gap:5px}#character-story-controls button{padding:8px 7px;font-size:12px}#character-story-dialog h2{font-size:22px}}
+
+.story-library-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:8px 0}.story-library-actions #character-story-entry{margin:0;padding:0;border:0;background:none}.story-library-actions button{width:auto;min-height:44px;margin:0;font-size:12px;padding:8px 14px}.story-library-actions #character-story-entry button{text-align:center}

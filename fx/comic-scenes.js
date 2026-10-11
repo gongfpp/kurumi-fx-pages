@@ -1,8 +1,9 @@
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {livingMoveEvidence} from './living-services.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.
@@ -17,6 +18,7 @@ const proof=(id,receipt,key)=>({id,receipt,key});
 function evidence(s,event){
  const r=event.receipt;
  switch(event.type){
+  case 'housing-move':return livingMoveEvidence(s,r);
   case 'activity':{
    if(!current(s,r)||!finite(r.cost)||r.cost<0||!Object.hasOwn(ACTIVITY_IDS,r.id))return null;
    const found=s.recapChoiceLedger?.find(x=>same(x,r,['id','day','cost','timestamp']));
@@ -64,6 +66,9 @@ function evidence(s,event){
    // Old random feasts do not become a new, explicitly chosen life tier.
    if(found.kind==='feast'||found.kind==='legacy')return null;
    if(found.kind==='thrifty'||s.livingDiscount>0)return null; // Already shown for the actual noodle purchase.
+   // Housing service receipts certify daily basics and rent, not an upgraded
+   // meal. Keep old receipt-based meal replays without relabeling their history.
+   if(found.service)return null;
    const tier=found.lifestyleId; // Never infer an old receipt from today's changed settings.
    return ['basic','comfortable','generous'].includes(tier)?proof(`living-${tier}`,found,found.id):null;
   }
@@ -101,12 +106,14 @@ function evidence(s,event){
   default:return null;
  }
 }
-export function selectComicScene(state,event={}, {assets={}}={}){
+export function selectComicScene(state,event={}, {assets={},sceneText=ACTION_SCENES}={}){
  if(!state||state.mode!=='story')return null;
  const selected=evidence(state,event);if(!selected)return null;
- const text=ACTION_SCENES[selected.id];if(!text)return null;
+ const text=sceneText[selected.id];if(!text)return null;
  const candidate=assets[selected.id];
  const art=(!text.dialogueId||candidate?.dialogueId===text.dialogueId)&&candidate?.reviewed===true&&(candidate.panels===4||(selected.id==='mochiko-watch'&&candidate.panels===1&&candidate.kind==='existing-game-illustration'&&candidate.independentComic===false))&&candidate.people===text.people&&typeof candidate.path==='string'&&candidate.path&&!candidate.grid?{...candidate}:null;
+ // A move is never presented with an empty, unreviewed or unrelated image.
+ if(selected.id.startsWith('move-home-')&&!art)return null;
  const receipt={...selected.receipt};
  return {id:selected.id,title:text.title,characters:[...text.characters],people:text.people,lines:text.lines.map(line=>[...line]),...(text.dialoguePanels?{dialogueId:text.dialogueId,dialoguePanels:structuredClone(text.dialoguePanels)}:{}),art,ready:!!art,
   contextualManga:selectEventContextualManga(state,event),receiptKey:`${state.runId||state.seed}:${selected.key}`,receipt,result:{amount:finite(receipt.cost)?receipt.cost:finite(receipt.amount)?receipt.amount:null,outstanding:finite(receipt.outstanding)?receipt.outstanding:null,netAssetsAfter:finite(receipt.netAssetsAfter)?receipt.netAssetsAfter:null,tradingNet:finite(receipt.tradingNet)?receipt.tradingNet:finite(receipt.pnl)?receipt.pnl:null}};

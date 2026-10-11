@@ -1,4 +1,5 @@
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Original fan-art game assets. Only pixel-reviewed complete independent four-panel sheets are listed.
 export const COMIC_SCENE_ASSETS=Object.freeze({
   "closed-profit": {
@@ -346,7 +347,7 @@ export const COMIC_SCENE_ASSETS=Object.freeze({
 
 // Supplemental presentation preserves the locked inventory. The replacement
 // Mochiko asset is a separately reviewed complete four-panel story.
-export const COMIC_PRESENTATION_ASSETS=Object.freeze({...COMIC_SCENE_ASSETS,...Object.fromEntries(Object.entries(APPROVED_FOUR_SKIT_ASSETS).filter(([id])=>['dinner-small','shrine-walk'].includes(id))),
-"mochiko-watch":{"path": "./generated/character-profit-v1/mochiko-watch-v2.webp", "width": 1086, "height": 1448, "sha256": "8e3b14869952d018c0fb7984823299c563faf1191cf341d2199b016fc2a693ee", "people": 2, "panels": 4, "reviewed": true, "kind": "generated-game-art", "alt": "久留美请萌智子帮忙，两人核对持仓；萌智子指着屏幕，久留美点头回应。", "independentComic": true},"walkaway":{"path": "./comics/ending-walkaway.webp", "width": 768, "height": 1024, "sha256": "f113007acf7d854ae618bea07d7db8d71b5699bbf3b89f71dc41ed5f38d2639d", "people": 2, "panels": 4, "reviewed": true, "kind": "existing-game-illustration", "alt": "久留美放下交易手机，和萌智子喝咖啡散步，交易桌前空了下来。", "independentComic": false},
+export const COMIC_PRESENTATION_ASSETS=Object.freeze({...COMIC_SCENE_ASSETS,...LIVING_MOVE_ASSETS,...Object.fromEntries(Object.entries(APPROVED_FOUR_SKIT_ASSETS).filter(([id])=>['dinner-small','shrine-walk'].includes(id))),
+"mochiko-watch":{"path": "./generated/character-profit-v1/mochiko-watch-v3.webp", "width": 1086, "height": 1448, "sha256": "ac634151bc1ef04bf713299056ef2e2c6d2bf0a3617df96133de0f40f8ca5eab", "people": 2, "panels": 4, "reviewed": true, "kind": "generated-game-art", "alt": "久留美请萌智子帮忙，两人核对持仓；萌智子指着屏幕，久留美点头回应。", "independentComic": true},"walkaway":{"path": "./comics/ending-walkaway.webp", "width": 768, "height": 1024, "sha256": "f113007acf7d854ae618bea07d7db8d71b5699bbf3b89f71dc41ed5f38d2639d", "people": 2, "panels": 4, "reviewed": true, "kind": "existing-game-illustration", "alt": "久留美放下交易手机，和萌智子喝咖啡散步，交易桌前空了下来。", "independentComic": false},
 "half-profit":{...COMIC_SCENE_ASSETS["closed-profit"],alt:"久留美确认盈利的半仓成交，剩余仓位仍继续持有。",independentComic:false,reusedFrom:"closed-profit"}
 });

@@ -129,8 +129,12 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
  footer{padding-block:10px;gap:8px;flex-wrap:wrap}footer button{min-height:36px}#scene-resume{margin-bottom:10px;padding:8px 12px}
 }
 
+/* Quote changes sit on the dark terminal; retain the existing mint/pink palette. */
+.terminal #change.positive{color:var(--mint)!important}
+.terminal #change.negative{color:var(--pink)!important}
+
 /* Cabinet presets select only; the separate confirmation performs the withdrawal. */
-#father-take-dialog{width:min(540px,calc(100vw - 28px));max-height:90dvh;overflow:auto;box-sizing:border-box}
+#father-take-dialog{width:min(540px,calc(100vw - 28px));box-sizing:border-box}
 #father-take-dialog h2{font-size:24px;overflow-wrap:anywhere}
 #father-take-limit{font-size:14px;margin:14px 0 10px}
 #father-take-dialog label{font-size:14px}
@@ -139,7 +143,7 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 #father-take-dialog .father-amount-presets button{margin:0;min-height:44px;font-size:14px}
 #father-take-dialog .father-amount-presets button[aria-pressed="true"]{background:#f0c4d9;border-color:#a7547e;box-shadow:inset 0 0 0 1px #a7547e}
 #father-confirm-art figcaption:empty{display:none}
-@media(max-width:390px){#father-take-dialog{padding:18px}#father-take-dialog h2{font-size:21px}}
+@media(max-width:390px){#father-take-dialog h2{font-size:21px}}
 
 #news-archive-details{font-size:11px;color:#775b6e}#news-archive-source{color:#87425f;text-underline-offset:3px}.news-meta{flex-wrap:wrap;gap:4px 8px}
 
@@ -194,3 +198,6 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
  .game-grid>.market-stack>.news{order:5;grid-column:1/-1}
  .terminal #chart.chart{min-height:180px}
 }
+
+/* Three independent source slots; game modes retain their existing two columns. */
+.market-source-buttons[aria-label="交易K线"]{grid-template-columns:repeat(3,minmax(0,1fr))}

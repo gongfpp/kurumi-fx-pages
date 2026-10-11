@@ -1,6 +1,7 @@
-import {DIALOGUE_BANK} from './dialogue-bank.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {DIALOGUE_BANK} from './dialogue-bank.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 export const DIALOGUE_VERSION=7;
 const quotes=new Map(DIALOGUE_BANK.flatMap(q=>[[q.id,q],[q.alias,q]]));
@@ -13,8 +14,8 @@ const estimatedCloseFee=p=>Math.round(n(p.notional??n(p.margin)*n(p.leverage))*.
 const netUnrealized=(p,price)=>n(grossPnlAt(p,price))-n(p.openFeeRemaining)-estimatedCloseFee(p);
 export function dialogueFacts(s){
   const positions=Array.isArray(s.positions)&&s.positions.length?s.positions:s.position?[s.position]:[];
-  const p=positions[0],grossUnrealized=positions.reduce((sum,p)=>sum+n(grossPnlAt(p,s.price)),0);
-  const unrealized=positions.reduce((sum,p)=>sum+netUnrealized(p,s.price),0);
+  const p=positions[0],grossUnrealized=positions.reduce((sum,p)=>sum+n(grossPnlAt(p,marketPrice(s,positionMarket(p)))),0);
+  const unrealized=positions.reduce((sum,p)=>sum+netUnrealized(p,marketPrice(s,positionMarket(p))),0);
   const equity=Math.max(0,n(s.cash)+positions.reduce((sum,p)=>sum+n(p.margin),0)+grossUnrealized)+n(s.reserve);
   const profit=equity-(Number.isFinite(s.startEquity)?s.startEquity:100000)-n(s.externalFunding)+n(s.expenses)-n(s.developer?.profitOffset);
   const netProfit=profit-positions.reduce((sum,p)=>sum+estimatedCloseFee(p),0);
@@ -44,7 +45,7 @@ function permitted(q,s){
     case 'Q11':return true;
     case 'Q12':return f.p?.direction===1||s.intent==='long';
     case 'Q13':return s.publicMarketSpeaker?.direction===1&&s.publicMarketSpeaker?.losing===true;
-    case 'Q15':return (s.positions?.length?s.positions:s.position?[s.position]:[]).some(p=>n(p.maxUnrealized)>0&&netUnrealized(p,s.price)<=0);
+    case 'Q15':return (s.positions?.length?s.positions:s.position?[s.position]:[]).some(p=>n(p.maxUnrealized)>0&&netUnrealized(p,marketPrice(s,positionMarket(p)))<=0);
     case 'Q16':return s.ending?.id==='crisis'||s.pendingEnding==='crisis';
     case 'Q17':return !!f.p&&(n(s.sanity)<=20||(s.positions?.length?s.positions:[f.p]).some(p=>n(p.risk)>=25));
     case 'Q18':return (s.history||[]).some(t=>t.day<s.day&&t.pnl<=-30000);
@@ -52,7 +53,7 @@ function permitted(q,s){
     case 'Q20':case 'Q21':case 'Q22':return !!disclosed.debt&&hasDebt;
     case 'Q23':case 'Q24':return false; // No approved prerequisite scene exists yet.
     case 'Q25':return !!disclosed.debt&&hasDebt&&family.opposed===true;
-    case 'W01':return (s.positions?.length?s.positions:s.position?[s.position]:[]).some(p=>p.direction===1&&n(s.price)<n(p.entry));
+    case 'W01':return (s.positions?.length?s.positions:s.position?[s.position]:[]).some(p=>p.direction===1&&n(marketPrice(s,positionMarket(p)))<n(p.entry));
     case 'W03':return !!f.p&&f.unrealized<0;
     case 'W04':case 'W05':return !!f.p&&currentDisclosure('position');
     case 'W06':return taken&&!family.informed;

@@ -1,3 +1,4 @@
+import {CCSE_MARKET_COMMENTS} from './market-comments-ccse.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Licensed quotation data; each Chinese translation shares its source license.
 export const MARKET_COMMENTS=Object.freeze([
   {
@@ -451,5 +452,6 @@ export const MARKET_COMMENTS=Object.freeze([
     "verified_at": "2026-10-09",
     "translation_credit": "FX韭留美项目译文",
     "source_title": "Why are stoploss values calculated from the bid when buying based on the ask?"
-  }
+  },
+  ...CCSE_MARKET_COMMENTS
 ].map(row=>Object.freeze(row)));

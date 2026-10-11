@@ -1,9 +1,10 @@
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {MultiHistoryProvider} from './multi-history-provider.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){
@@ -19,8 +20,8 @@ export class HistoricalMarketLibrary{
  }
  async provider(dataset){
   const url=dataset.manifestURL;if(this.providers.has(url))return this.providers.get(url);
-  const res=await this.fetch(url,{credentials:dataset.research?'same-origin':'omit',cache:'no-store',redirect:dataset.research?'error':'follow'});if(!res.ok)throw Error('历史行情载入失败，请重试');
-  const manifest=await res.json();const provider=dataset.research?new ResearchProvider(manifest,{fetch:this.fetch,baseURL:url}):new HistoricalProvider(manifest,{fetch:this.fetch,baseURL:url});this.providers.set(url,provider);return provider;
+  const res=await this.fetch(url,{credentials:dataset.research?'same-origin':'omit',cache:'no-store',redirect:dataset.research||dataset.multiHistorical?'error':'follow'});if(!res.ok)throw Error('历史行情载入失败，请重试');
+  const manifest=await res.json();const provider=dataset.multiHistorical?new MultiHistoryProvider(manifest,{fetch:this.fetch,baseURL:url}):dataset.research?new ResearchProvider(manifest,{fetch:this.fetch,baseURL:url}):new HistoricalProvider(manifest,{fetch:this.fetch,baseURL:url});this.providers.set(url,provider);return provider;
  }
  async options(id,date){const dataset=this.datasets.find(d=>d.id===id);if(!dataset)throw Error('暂时没有可用的历史行情');const p=await this.provider(dataset);return{manifest:p.manifest,dayData:await p.loadDay(date),startDate:date,manifestURL:dataset.manifestURL};}
  async restore(state){if(!isHistorical(state))return;const dataset=this.datasets.find(d=>d.manifestURL===state.historical.manifestURL);if(!dataset)throw Error('此存档的历史行情源暂不可用');const p=await this.provider(dataset);bindHistoricalDay(state,p.manifest,await p.loadDay(state.historical.date));}

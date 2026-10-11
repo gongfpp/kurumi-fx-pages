@@ -1,8 +1,9 @@
-import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {recordComicProfitBatch,comicTradeKey} from './comic-autoplay.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Presentation candidates come only from records the engine has already written.
 // No balance differences, click intent, market predictions or historical replay.
 export function recordedComicEvents(state) {
  const events=[],today=receipt=>receipt?.day===state.day;
+ for(const receipt of state.livingMoves||[])events.push({type:'housing-move',receipt});
  for(const receipt of state.recapChoiceLedger||[])if(today(receipt))events.push({type:'activity',receipt});
  for(const receipt of state.consumptionLedger||[]){
   if(!today(receipt))continue;

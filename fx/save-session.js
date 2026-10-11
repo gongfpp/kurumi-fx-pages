@@ -1,6 +1,6 @@
-import {encodeProgress} from './save-encoder.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {storageFailure} from './storage.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {storageFailure} from './storage.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -48,7 +48,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
         if(options.replacement&&raw!==options.expectedRaw)return false;
         if(!locks?.request)return fail('memory','coordination');
         let durableText;
-        try{const encoded=encode(text,baseline.raw,{replacement:!!options.replacement});durableText=typeof encoded==='string'?encoded:await encoded;}catch{return generation===epoch?fail('memory','encoding'):false;}
+        try{const encoded=encode(text,baseline.raw,{replacement:!!options.replacement});durableText=typeof encoded==='string'?encoded:await encoded;}catch{return generation===epoch&&!blocked()?fail('memory','encoding'):false;}
         try {
           return await locks.request('fx-progress:'+key,{mode:'exclusive'},()=>{
             // Let an in-flight snapshot of this run land even when newer ticks
@@ -63,13 +63,20 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
               const backupKey=key+':pre-v9',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
+            // Preserve the exact pre-housing bytes once, including compressed
+            // envelopes. The namespace allows only known save-slot backups.
+            let previousLivingVersion;try{previousLivingVersion=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.lifestyle?.version;}catch{}
+            if(baseline.raw!==null&&state.lifestyle?.version===2&&previousLivingVersion!==2){
+              const backupKey=key+':pre-living-v2',backup=storage.readItem(backupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
+            }
             if(!storage.setItem(key,durableText))return fail('memory','storage',storage.failureFor?.(key));
             // After migration, the current slot is authoritative. Never delete
             // the legacy slot, which is still a recovery source for the user.
             baseline={current:{available:true,value:durableText},legacy:null,raw:durableText};
             raw=durableText;savedText=text;status='saved';reason='';failure=null;return true;
           });
-        } catch(error) {return generation===epoch?fail('memory','coordination',storageFailure(error,'lock')):false;}
+        } catch(error) {return generation===epoch&&!blocked()?fail('memory','coordination',storageFailure(error,'lock')):false;}
       };
       queue=queue.then(write,write);return queue;
     },

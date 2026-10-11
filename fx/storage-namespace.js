@@ -1,12 +1,12 @@
-import {RESEARCH_BUILD} from './research-config.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
 export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
-const historicalKeys=['fx-girl-historical-story-v1','fx-girl-historical-endless-v1','fx-girl-market-source'];
+const historicalKeys=['fx-girl-live-story-v1','fx-girl-live-endless-v1','fx-girl-historical-story-v1','fx-girl-historical-endless-v1','fx-girl-market-source'];
 const allowed=new Set(['fx-api-v1-comment-visitor','fx-api-v1-live-ranking-receipts','fx-daily-art-memory-v1',...historicalKeys,'fx-api-v1-telemetry-budget','fx-api-v1-chapter-01-telemetry-budget','fx-bgm-preferences-v1','fx-api-v1-chapter-01-storage-check','fx-api-v1-chapter-01-consent','fx-api-v1-telemetry-consent','fx-api-v1-chapter-01-anon-session','fx-api-v1-chapter-01-last-visit','fx-api-v1-chapter-01-telemetry-outbox','fx-api-v1-chapter-01-telemetry-seen','fx-moving-averages','fx-girl-campaign-v2','fx-girl-campaign-v3','fx-girl-endless-v1','fx-girl-mode','fx-girl-settings','fx-girl-voice','fx-girl-motion','fx-girl-analytics','fx-girl-developer-backup-v3','fx-endless-developer-backup-v1','fx-jiuliumei-achievements-v1','fx-leaderboard-submit-session','fx-anon-visitor','fx-anon-session','fx-last-visit','fx-telemetry-enabled','fx-telemetry-outbox','fx-telemetry-seen','fx-api-v1-leaderboard-submit-session','fx-api-v1-anon-visitor','fx-api-v1-anon-session','fx-api-v1-last-visit','fx-api-v1-telemetry-outbox','fx-api-v1-telemetry-seen']);
 // Migration backups are exact recovery bytes for the two current save slots.
 // They never fall back to another project's unscoped storage.
-const migrationBackups=new Set(['fx-girl-campaign-v3:pre-v9','fx-girl-endless-v1:pre-v9']);
+const migrationBackups=new Set(['fx-girl-campaign-v3:pre-v9','fx-girl-endless-v1:pre-v9',...['fx-girl-campaign-v3','fx-girl-endless-v1','fx-girl-historical-story-v1','fx-girl-historical-endless-v1','fx-girl-live-story-v1','fx-girl-live-endless-v1'].map(key=>key+':pre-living-v2')]);
 // Pending telemetry is deliberately not replayed from the old site's outbox.
 const noLegacy=new Set(['fx-daily-art-memory-v1','fx-bgm-preferences-v1','fx-moving-averages','fx-telemetry-outbox','fx-telemetry-seen','fx-anon-visitor','fx-anon-session','fx-last-visit','fx-leaderboard-submit-session']);
 const serviceOnly=key=>historicalKeys.includes(key)||migrationBackups.has(key)||key.startsWith('fx-api-v1-')||key.startsWith('fx-leaderboard-capability-')||noLegacy.has(key);

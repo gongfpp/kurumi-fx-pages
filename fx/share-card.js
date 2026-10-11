@@ -1,9 +1,12 @@
-import {buildResultsReport} from './results-report.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {runPerformance} from './performance.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {runPerformance} from './performance.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {achievementMangaThumbnail} from './manga-achievements.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {assetURL} from './assets.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -11,7 +14,7 @@ const records=s=>(s.history||[]).filter(t=>t.type!=='open'&&Number.isFinite(t.pn
 // Completed-trade net P/L, live mark-to-market P/L and debt are deliberately separate.
 export function buildShareSummary(state={},options={}) {
   const positions=Array.isArray(state.positions)?state.positions:state.position?[state.position]:[];
-  const floating=finite(options.unrealized,positions.reduce((sum,p)=>sum+finite(p.unrealized,finite(grossPnlAt(p,state.price))),0));
+  const floating=finite(options.unrealized,positions.reduce((sum,p)=>sum+finite(p.unrealized,finite(grossPnlAt(p,marketPrice(state,positionMarket(p))))),0));
   const realized=records(state), day=Math.max(1,Math.floor(finite(state.day,1))), candidate=options.report===null?null:options.report||state.dayReport;
   const report=['day_end','resting','ending'].includes(state.phase)&&candidate?.day===day?candidate:null;
   const eq=finite(options.equity,Math.max(0,finite(state.cash)+finite(state.reserve)+positions.reduce((sum,p)=>sum+finite(p.margin),0)+floating));
@@ -50,6 +53,16 @@ function axisAmount(value,step){
 }
 function wrap(ctx,text,x,y,maxWidth,lineHeight,maxLines=4){let line='',count=0;for(const char of String(text)){if(ctx.measureText(line+char).width>maxWidth&&line){ctx.fillText(line,x,y);y+=lineHeight;if(++count>=maxLines)return y;line=char;}else line+=char;}if(line)ctx.fillText(line,x,y);return y+lineHeight;}
 const fonts={body:'system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif'};
+// Reuse only the same achievement's verified manga. Anime-only mappings retain
+// their original badge; no generated art or unrelated scene is substituted.
+export function achievementThumbnail(id){
+ const original=achievementMangaThumbnail(id);
+ return original?assetURL(original):null;
+}
+async function achievementImages(achievements,doc){
+ const paths=[...new Set(achievements.map(a=>achievementThumbnail(a.id)).filter(Boolean))];
+ return new Map(await Promise.all(paths.map(async path=>[path,await portraitImage(path,doc)])));
+}
 async function portraitImage(url,doc){
  if(!url)return null;const ImageClass=doc.defaultView?.Image||globalThis.Image;if(!ImageClass)return null;
  return new Promise(resolve=>{const image=new ImageClass();let timer;const done=value=>{clearTimeout(timer);image.onload=image.onerror=null;resolve(value);};image.onload=()=>done(image);image.onerror=()=>done(null);timer=setTimeout(()=>done(null),5000);image.crossOrigin='anonymous';image.src=url;});
@@ -66,7 +79,7 @@ export async function createShareCard(state,options={}) {
  const num=(text,x,y,size=32,color=ink,maxWidth=1032-x)=>{font(size,800);while(size>18&&ctx.measureText(String(text)).width>maxWidth){size--;font(size,800);}ctx.fillStyle=color;ctx.fillText(String(text),x,y);};
  const rule=y=>{ctx.strokeStyle=line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(48,y);ctx.lineTo(1032,y);ctx.stroke();};
  num('FX韭留美',48,87,42);label(`${s.mode==='endless'?'操盘 · 无尽':'剧情模式'} / ${s.kind}`,48,129,23,darkPink);if(s.edited)label('开发测试数据',770,85,22,red);
- const image=await portraitImage(options.portraitUrl,doc);ctx.fillStyle='#ffe0ed';ctx.fillRect(48,169,178,178);
+ const [image,achievementArt]=await Promise.all([portraitImage(options.portraitUrl,doc),achievementImages(s.completedAchievements,doc)]);ctx.fillStyle='#ffe0ed';ctx.fillRect(48,169,178,178);
  if(image){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const crop=options.portraitCrop||[0,0,image.naturalWidth,image.naturalHeight],cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else {num('久留美',66,266,28,darkPink);if(options.portraitUrl)label('画像未载入',66,300,18,muted);}
  label(`${s.moodLabel} · ${s.recap.primary.label}`,252,196,22,darkPink);num(signed(s.recap.primary.profit),252,253,52,s.recap.primary.profit>=0?green:red,780);label(`收益率 ${s.recap.primary.returnRate===null?'—':(s.recap.primary.returnRate>=0?'+':'')+(s.recap.primary.returnRate*100).toFixed(2)+'%'}`,252,291,26,s.recap.primary.profit>=0?green:red);label(`第 ${s.day} 个游戏交易日 · 心理承受力 ${s.sanity} / 100`,252,329,20); 
  rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red);
@@ -95,7 +108,13 @@ export async function createShareCard(state,options={}) {
  label(`累计生活费 ${knownAmount(report.fees.living)} · 累计可选消费 ${knownAmount(report.fees.consumption)}`,48,1390,18);ctx.translate(0,110);
  rule(1346);num('已完成成就',48,1394,27);label(`${s.completedAchievements.length} / ${ACHIEVEMENTS.length}`,930,1394,22,darkPink);
  if(!s.completedAchievements.length)label('暂无已完成成就',48,1468,23);
- s.completedAchievements.forEach((a,i)=>{const x=48+(i%2)*502,y=1430+Math.floor(i/2)*80;ctx.fillStyle='#ffe4ef';ctx.fillRect(x,y,482,64);ctx.fillStyle=darkPink;ctx.fillRect(x,y,64,64);ctx.textAlign='center';num(a.badge,x+32,y+42,22,'#fff7fb',56);ctx.textAlign='left';num(a.name,x+82,y+41,24,ink,384);});
+ s.completedAchievements.forEach((a,i)=>{const x=48+(i%2)*502,y=1430+Math.floor(i/2)*80;ctx.fillStyle='#ffe4ef';ctx.fillRect(x,y,482,64);const art=achievementArt.get(achievementThumbnail(a.id));
+  if(art&&art.naturalWidth>0&&art.naturalHeight>0){
+   // Contain the full source panel, preserving its scene and aspect ratio.
+   ctx.fillStyle='#fff';ctx.fillRect(x,y,64,64);const scale=Math.min(64/art.naturalWidth,64/art.naturalHeight),w=art.naturalWidth*scale,h=art.naturalHeight*scale;
+   ctx.drawImage(art,x+(64-w)/2,y+(64-h)/2,w,h);
+  }else{ctx.fillStyle=darkPink;ctx.fillRect(x,y,64,64);ctx.textAlign='center';num(a.badge,x+32,y+42,22,'#fff7fb',56);ctx.textAlign='left';}
+  num(a.name,x+82,y+41,24,ink,384);});
  rule(footerY);label('FX韭留美 · 交易战报',48,footerY+48,20);label(formatTradingTime(s.recap.timestamp,{full:true}),48,footerY+82,16);font(18);ctx.fillStyle=muted;wrap(ctx,s.gameUrl,320,footerY+48,710,25,2);
  ctx.restore();
  const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('战报图片生成失败')),'image/png'));return{blob,url:URL.createObjectURL(blob),filename:`FX韭留美-${s.mode==='endless'?'操盘':'剧情'}-第${s.day}天-${s.kind}${s.edited?'-测试':''}.png`,summary:s};

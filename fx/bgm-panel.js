@@ -1,4 +1,4 @@
-import {bindBgmLifecycle} from './bgm-player.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {bindBgmLifecycle} from './bgm-player.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 const STATUS={empty:'曲目还在准备中',muted:'背景音乐已静音',paused:'背景音乐已暂停',loading:'正在载入曲目…',hidden:'切到后台，音乐已暂停',playing:'正在播放',destroyed:'播放器已关闭'};
 const TAGS={neutral:'日常',focus:'专注',tension:'紧张',gain:'盈利',loss:'亏损',crisis:'危机',numb:'麻木',relief:'缓和'};
@@ -26,7 +26,7 @@ export function mountBgmPanel(root,player,{lifecycle=true}={}) {
   const modes=node('div','bgm-modes');modes.setAttribute('role','group');modes.setAttribute('aria-label','背景音乐选曲方式');
   modes.append(button('follow','自动切换',()=>void player.setMode('follow')),button('manual','手动选曲',()=>void player.setMode('manual')));panel.append(modes);
   const sceneLabel=node('p','bgm-scene');sceneLabel.setAttribute('aria-live','polite');panel.append(sceneLabel);
-  const hint=node('p','bgm-hint','背景音乐默认开启；浏览器限制时，点击页面后播放。静音、暂停和音量会记住。自动切换会跟随交易、结算和剧情换曲；手动选曲或下一首会暂停自动切换。');panel.append(hint);
+  const hint=node('p','bgm-hint','背景音乐默认开启；浏览器限制时，点击页面后播放。静音、暂停和音量会记住。自动切换会跟随交易、结算和剧情换曲，播完后续播相近曲目；手动选曲或下一首会改为按列表顺序播放。');panel.append(hint);
   const catalog=node('details','bgm-catalog'),summary=node('summary','','曲目列表与授权信息'),list=node('ul','bgm-tracks');catalog.append(summary,list);panel.append(catalog);
   const trackButtons=new Map();
   for(const track of player.tracks){
@@ -42,7 +42,7 @@ export function mountBgmPanel(root,player,{lifecycle=true}={}) {
   root.append(panel);
   const unsubscribe=player.subscribe(state=>{
     const disabled=!state.tracks.length||state.destroyed;
-    panel.dataset.status=state.status;panel.dataset.mode=state.mode;sceneLabel.textContent=state.mode==='follow'?`自动切换 · ${TAGS[state.scene]||'日常'}`:'手动选曲 · 当前曲目保持不变';status.textContent=state.error==='blocked'?'点击页面后播放背景音乐':state.error?'曲目暂时无法播放，请重试或换一首':STATUS[state.status]||'';
+    panel.dataset.status=state.status;panel.dataset.mode=state.mode;sceneLabel.textContent=state.mode==='follow'?`自动切换 · ${TAGS[state.scene]||'日常'}`:'手动选曲 · 按曲目列表顺序播放';status.textContent=state.error==='blocked'?'点击页面后播放背景音乐':state.error?'曲目暂时无法播放，请重试或换一首':STATUS[state.status]||'';
     title.textContent=state.track?.title||'暂无已核验曲目';artist.textContent=state.track?`${state.track.artist}${state.voiceActive?' · 对白期间自动降低音量':''}`:'';
     for(const el of Object.values(controls))el.disabled=disabled;
     controls.play.textContent=canPause(state)?'暂停':state.error?'重试':'播放';controls.play.setAttribute('aria-label',canPause(state)?'暂停背景音乐':state.error?'重试背景音乐':'播放背景音乐');

@@ -1,5 +1,6 @@
-import {tradingTimestamp} from './trading-time.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=42c930e045346f5238de61e26817354270fdaf41-23f2a20b7717';
+import {marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=4f745316754629a1313e6e17e8974c897bc3bf11-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -14,7 +15,7 @@ export function applyDeveloperPatch(current,patch){
   if(current.phase==='playing'&&!(current.realtime&&current.marketPaused)||current.position)throw Error('请先平仓并等行情暂停，再修改数据');
   const v={...developerValues(current),...patch};
   range(v.cash,0,1e10,'可用资金');range(v.reserve,0,1e8,'备用金');range(v.profit,-1e10,1e10,'交易净收益');
-  range(v.day,1,10000,'日期',true);range(v.beat,0,3,'决策段',true);range(v.price,.001,100000,'USD/JPY 报价（日元/美元）');
+  range(v.day,1,10000,'日期',true);range(v.beat,0,3,'决策段',true);range(v.price,.001,100000,'当前货币对报价（日元）');
   range(v.stress,0,100,'压力');range(v.debt,0,3000000,'父亲欠款');
   if(v.sanity!==null)range(v.sanity,0,100,'心理承受力');
   if(!['decision','closing','day_end','resting'].includes(v.phase))throw Error('请选择有效阶段');
@@ -30,12 +31,21 @@ export function applyDeveloperPatch(current,patch){
   s.settlementPresentation=null;s.settlementNarrative=null;s.accountingJournal=null;s.recapChoiceLedger=[];delete s.nextDayLivingDiscount;
   if(s.tradingClock)s.tradingClock={...s.tradingClock,lastQuoteAt:tradingTimestamp(s,{day:s.day,beat:s.beat}),lastQuoteDay:s.day};
   s.dayReport=null;s.ending=null;s.pending=null;s.phase='decision';s.lastEvent=null;s.swanSeen=false;s.lastTrade=null;s.recent=[];s.lastReaction=null;s.emotionBias=null;
-  s.script=planDay(s.seed,s.day,s.price);
+  s.script=planDay(marketSeed(s),s.day,s.price);
   s.candles.push({open:s.price,close:s.price,high:s.price,low:s.price,closed:true,day:s.day,beat:s.beat,developer:true});
   s.candles=s.candles.slice(-100);s.history=[];
   // Edited runs start a new synthetic performance baseline. They remain marked
   // as developer data and cannot enter leaderboards or player achievements.
   s.startEquity=initialCapital(s);s.bonusBeats=0;s.completedDays=v.day-1;
+  if(s.marketBook){
+    // An explicit developer edit starts a new synthetic quote timeline for all
+    // markets. Do not leave hidden books replaying the former day or bonus beat.
+    s.displayMinutes=[];delete s.displayMinutesPartial;
+    s.candles=s.candles.filter(c=>c.historical||c.day<=s.day);
+    renewMarketScripts(s,planDay);
+    for(const book of Object.values(s.marketBook.markets)){book.displayMinutes=[];delete book.displayMinutesPartial;book.candles=book.candles.filter(c=>c.historical||c.day<=s.day);}
+    captureMarket(s);
+  }
   s.completedCandles=((v.day-1)*BEATS_PER_DAY+v.beat)*CANDLES_PER_BEAT;
   const netEquity=Math.max(0,initialCapital(s)+v.profit),peakEquity=Math.max(initialCapital(s),netEquity);
   s.performance={totalProfit:v.profit,closedTrades:0,maxLoss:0,maxProfit:0,peakEquity,maxDrawdown:1-netEquity/peakEquity};
