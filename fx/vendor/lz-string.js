@@ -1,4 +1,4 @@
-// Vendored lz-string 1.5.0 (MIT). Changes: ESM export and bounded decoder output.
+// Vendored lz-string 1.5.0 (MIT). Changes: ESM export and bounded decoder output/dictionary.
 // Source: https://registry.npmjs.org/lz-string/-/lz-string-1.5.0.tgz
 // Copyright (c) 2013 Pieroxy <pieroxy@pieroxy.net>
 // This work is free. You can redistribute it and/or modify it
@@ -333,7 +333,33 @@ var LZString = {
 
   _decompress: function (length, resetValue, getNextValue, maxOutputLength = 16777216) {
     // Kurumi safety patch: bound output before appending each decoded segment.
+    if (!Number.isSafeInteger(maxOutputLength) || maxOutputLength < 0 || maxOutputLength > 16777216) throw new RangeError('Save decompression limit');
+    var bitsPerCharacter = Math.log2(resetValue) + 1;
+    if (!Number.isSafeInteger(length) || length < 0 || !Number.isInteger(bitsPerCharacter) || bitsPerCharacter < 1 || bitsPerCharacter > 16) throw new RangeError('Save dictionary limit');
     var outputLength = 0;
+    // A decoded phrase adds at most one literal and one previous-phrase entry.
+    // Thus N output characters need at most 2N+3 slots and 3N dictionary
+    // characters (previous phrases total <= N; literals/extra characters <= 2N).
+    // Derive both budgets from the already bounded output, rather than rejecting
+    // valid long saves at an unrelated fixed number of dictionary entries.
+    var maxDictionaryEntries = 2 * maxOutputLength + 3,
+        maxDictionaryCharacters = 3 * maxOutputLength,
+        dictionaryCharacters = 1;
+    // Bound slot/object overhead by available input bits as well. For a new
+    // slot i, b=floor(log2(i)): a reference costs >= b bits for one slot, and
+    // a literal costs >= b+8 bits for two slots. Charging each slot at least
+    // min(b,(b+8)/2) bits is conservative even across a code-width boundary.
+    // Sum those costs in power-of-two buckets (half-bits keep this integral).
+    var remainingHalfBits = 2 * length * bitsPerCharacter, inputEntries = 4;
+    for (var width = 2; inputEntries < maxDictionaryEntries; width++) {
+      var entryHalfBits = Math.min(2 * width, width + 8);
+      var bucket = Math.min(Math.pow(2, width + 1), maxDictionaryEntries) - inputEntries;
+      var count = Math.min(bucket, Math.floor(remainingHalfBits / entryHalfBits));
+      inputEntries += count;
+      remainingHalfBits -= count * entryHalfBits;
+      if (count < bucket) break;
+    }
+    maxDictionaryEntries = Math.min(maxDictionaryEntries, inputEntries);
     var dictionary = [],
         next,
         enlargeIn = 4,
@@ -346,6 +372,11 @@ var LZString = {
         bits, resb, maxpower, power,
         c,
         data = {val:getNextValue(0), position:resetValue, index:1};
+
+    function reserveDictionary(entryLength) {
+      if (dictSize >= maxDictionaryEntries || entryLength > maxDictionaryCharacters - dictionaryCharacters) throw new RangeError('Save dictionary limit');
+      dictionaryCharacters += entryLength;
+    }
 
     for (i = 0; i < 3; i += 1) {
       dictionary[i] = i;
@@ -406,7 +437,6 @@ var LZString = {
     if (++outputLength > maxOutputLength) throw new RangeError('Save decompression limit');
     result.push(c);
     while (true) {
-      if (dictSize > 262144) throw new RangeError('Save dictionary limit');
       if (data.index > length) {
         return "";
       }
@@ -441,6 +471,7 @@ var LZString = {
             power <<= 1;
           }
 
+          reserveDictionary(1);
           dictionary[dictSize++] = f(bits);
           c = dictSize-1;
           enlargeIn--;
@@ -459,6 +490,7 @@ var LZString = {
             bits |= (resb>0 ? 1 : 0) * power;
             power <<= 1;
           }
+          reserveDictionary(1);
           dictionary[dictSize++] = f(bits);
           c = dictSize-1;
           enlargeIn--;
@@ -487,6 +519,7 @@ var LZString = {
       result.push(entry);
 
       // Add w+entry[0] to the dictionary.
+      reserveDictionary(w.length + 1);
       dictionary[dictSize++] = w + entry.charAt(0);
       enlargeIn--;
 

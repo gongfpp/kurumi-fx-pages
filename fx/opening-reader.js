@@ -1,5 +1,7 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setImage} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {openingCompanionArt} from './opening-anime-stills.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 
 export function mountOpeningReader({root=document,frame,getState,guard,save,onFinish,openSource,startingCapital=100000,targetProfit=20000000}){
   const $=id=>root.getElementById(id),dialog=$('opening-dialog'),footer=$('opening-nav');
@@ -22,6 +24,13 @@ export function mountOpeningReader({root=document,frame,getState,guard,save,onFi
       const figure=root.createElement('figure');figure.className='opening-panel';
       const img=root.createElement('img');img.alt=page.alt;img.width=panel.imageSize[0];img.height=panel.imageSize[1];
       setMangaImage(img,panel.original,{loading:'eager'});figure.append(img);frame.append(figure);
+      const companion=openingCompanionArt(page);
+      if(companion){
+        const extra=root.createElement('figure');extra.className='opening-panel opening-companion';
+        const art=root.createElement('img');art.alt=companion.alt;art.width=companion.imageSize[0];art.height=companion.imageSize[1];art.loading='eager';art.decoding='async';
+        // Optional source view never registers a manga unlock or blocks reading.
+        setImage(art,companion.original,{onStatus:status=>{extra.hidden=status==='unavailable';}});extra.append(art);frame.append(extra);
+      }
     }else{
       const sheet=root.createElement('section');sheet.className='opening-terminal-sheet';sheet.setAttribute('aria-label','本局的起点');
       const caption=root.createElement('span');caption.className='opening-terminal-kicker';caption.textContent='FX / USD・JPY';

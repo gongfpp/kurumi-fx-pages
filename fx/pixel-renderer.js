@@ -71,7 +71,7 @@ export function createPixelRenderer({document:doc}) {
     const today=native('pnl-period')?.closest('.account-row');moveNode(today,account);
     const details=drawer('账户与订单明细','pixel-financial-details');positionsSlot.after(details.node);
     for(const [id,label] of [['day-return','对应收益率'],['stake-value','实际投入比例'],['leverage-value','当前杠杆'],['stop-value','止损距离']]){
-      const node=native(id);if(!node)continue;const row=make('div','account-row pixel-original-detail'),caption=make('span','',label);row.append(caption);details.content.append(row);moveNode(node,row);
+      const node=id==='day-return'?(native('day-return-group')||native(id)):native(id);if(!node)continue;const row=make('div','account-row pixel-original-detail'),caption=make('span','',label);row.append(caption);details.content.append(row);moveNode(node,row);
     }
     const help=make('div','pixel-order-help');details.content.append(help);
     for(const [key,label] of [['leverage','杠杆说明'],['stop','止损说明']]){const button=q(`[data-help="${key}"]`,order);if(button){const row=make('div','pixel-help-row');row.append(make('span','',label));help.append(row);moveNode(button,row);}}

@@ -1,7 +1,7 @@
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {setImage} from './assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setImage} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 const mountedViews=new WeakMap();
 // Inline presentation only. Reading memory never changes game/account state.
 export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){

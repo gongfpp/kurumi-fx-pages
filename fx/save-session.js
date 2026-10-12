@@ -1,10 +1,13 @@
-import {encodeProgress} from './save-encoder.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {storageFailure} from './storage.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {storageFailure} from './storage.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
-export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress}) {
+export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress,lifeSceneMigration=null}) {
+  // Main-game migration policy is injected; archived runtimes stay isolated.
+  const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
+  const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
   const read=()=>{
     const current=storage.readItem(key);
     const legacy=current.available&&current.value===null&&legacyKey?storage.readItem(legacyKey):null;
@@ -42,7 +45,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
       if(importPending&&!options.replacement)return Promise.resolve(false);
       const text=JSON.stringify(state),run=String(state.runId??`seed:${state.seed}:${state.mode}`);
       if(latestRun!==null&&latestRun!==run)epoch++;latestRun=run;
-      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD;localRaw=text;if(!blocked())status='pending';
+      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD,sceneSource=!!sceneBackupKey&&hasLifeSceneSource(state);localRaw=text;if(!blocked())status='pending';
       const write=async()=>{
         if(generation!==epoch||large&&ticket!==revision||!check())return false;
         if(options.replacement&&raw!==options.expectedRaw)return false;
@@ -82,6 +85,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
               const backupKey=key+':pre-life-actions-v1',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
+            // Preserve the full latest v17 state before its first registered scene
+            // source is written. The older pre-life-actions backup can be much older.
+            // Capture the queued snapshot's decision, not later mutations of state.
+            if(sceneSource&&baseline.raw!==null&&!hasLifeSceneSource(JSON.parse(inspectSave(baseline.raw).currentRaw))){
+              const backup=storage.readItem(sceneBackupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(sceneBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(sceneBackupKey));
+            }
             if(!storage.setItem(key,durableText))return fail('memory','storage',storage.failureFor?.(key));
             // After migration, the current slot is authoritative. Never delete
             // the legacy slot, which is still a recovery source for the user.
@@ -111,7 +121,12 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
     backup(state) {
       const latest=read();
       let recoveryRaw=null,importRaws=[];try{const archive=raw===null?null:inspectSave(raw);recoveryRaw=archive?.recoveryRaw??null;importRaws=archive?.importRaws??[];}catch{}
-      return {recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
+      // Expose this first-boundary archive through the existing download only.
+      // readItem bypasses failed-write overlays: cached/unreadable bytes are not
+      // advertised as a durable recovery. It may belong to an earlier run.
+      const sceneBackup=sceneBackupKey?storage.readItem(sceneBackupKey):null;
+      const sceneRecovery=sceneBackup?.available&&sceneBackup.value!==null?{lifeSceneRecoveryRaw:sceneBackup.value}:{};
+      return {...sceneRecovery,recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
         storedRaw:latest.current.available?latest.current.value:null,
         legacyRaw:latest.legacy?.available?latest.legacy.value:null,
         storageReadable:available(latest),saveDiagnostic:{status:status==='saved'&&savedText!==localRaw?'pending':status,reason,failure:failure?{...failure}:null,localCharacters:localRaw?.length??0,storedCharacters:latest.current.value?.length??0}};

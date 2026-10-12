@@ -1,4 +1,5 @@
-import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
@@ -786,7 +787,8 @@ export const DINNER_STORY_ASSETS=freeze({
   "path": "./generated/dinner-stories-v1/dinner-napkin-swan.webp",
   "width": 1254,
   "height": 1254,
-  "sha256": "0e4a3874e5f9ded15af5216b6590d3fffd8520cf977650b851c7e7013fafc76a",
+  "sha256": "0ecb7a61ebecb4e880a301d295376c7696fd54c9ea4e3c348afd8a64fb59f34d",
+  "contentIdentity": "sha256:0e4a3874e5f9ded15af5216b6590d3fffd8520cf977650b851c7e7013fafc76a",
   "people": 4,
   "characters": [
    "久留美",
@@ -904,6 +906,7 @@ export const DINNER_STORY_ASSETS=freeze({
    "approved-style-expansion"
   ]
  },
- ...DINNER_EXPANSION_16_18_ASSETS
+ ...DINNER_EXPANSION_16_18_ASSETS,
+ ...DINNER_EXPANSION_19_ASSETS
 });
 export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));

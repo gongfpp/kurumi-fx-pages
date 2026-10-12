@@ -251,3 +251,6 @@ html:has(.daily-recap[data-animate=true]){overflow-x:clip}
 .living-choice-details>summary{cursor:pointer;width:fit-content;max-width:100%;min-height:32px;padding:5px 0;box-sizing:border-box;color:#8e3a62}
 .living-choice-details>summary:focus-visible{outline:2px solid #a34670;outline-offset:3px;border-radius:3px}
 .living-choice-details p{margin:5px 0;overflow-wrap:anywhere}
+
+/* The percentage and its help travel together into the pixel account drawer. */
+.day-return-group{display:inline-flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:4px;min-width:0;max-width:100%}.day-return-group .return-formula{margin-left:0}.day-return-group .return-formula-trigger{min-width:28px!important;min-height:28px!important}.day-return-group .day-return{max-width:100%;white-space:normal;overflow-wrap:anywhere}

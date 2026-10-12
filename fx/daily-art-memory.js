@@ -1,13 +1,15 @@
-import {createGameStorage} from './storage.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
-// Content identity is independent of day, event receipt, and file cache query.
-export function artIdentity(art){return art?.sha256?'sha256:'+art.sha256:art?.path?'path:'+art.path.split('?')[0]:null;}
+// A visual-only revision can retain its original read/locked-day identity.
+// The actual sha256 still verifies the image bytes; no saved records are migrated.
+export function artIdentity(art){return typeof art?.contentIdentity==='string'&&/^sha256:[a-f0-9]{64}$/.test(art.contentIdentity)?art.contentIdentity:art?.sha256?'sha256:'+art.sha256:art?.path?'path:'+art.path.split('?')[0]:null;}
 export function createDailyArtMemory(storage=createGameStorage(()=>kurumiStorage()),recoveryStorage=null){
  const parse=raw=>{try{const x=JSON.parse(raw);return x?.version===1&&Array.isArray(x.seen)&&x.seen.every(id=>typeof id==='string')&&x.days&&typeof x.days==='object'&&!Array.isArray(x.days)?x:{version:1,seen:[],days:{}};}catch{return {version:1,seen:[],days:{}};}};
  const read=()=>{const main=parse(storage.getItem(DAILY_ART_MEMORY_KEY)),recovery=parse(recoveryStorage?.getItem(DAILY_ART_MEMORY_KEY));return {version:1,seen:[...new Set([...main.seen,...recovery.seen])],days:{...main.days,...recovery.days}};};
  const save=x=>{const value=JSON.stringify(x),saved=storage.setItem(DAILY_ART_MEMORY_KEY,value);if(saved)recoveryStorage?.removeItem(DAILY_ART_MEMORY_KEY);else recoveryStorage?.setItem(DAILY_ART_MEMORY_KEY,value);return saved;};
  return {
+  day(key){const x=read();return {locked:Object.hasOwn(x.days,key),identity:x.days[key]??null};},
   has(id){return !!id&&read().seen.includes(id);},
   seen(ids){const x=read();x.seen=[...new Set([...x.seen,...ids.filter(id=>typeof id==='string'&&id.length<256)])].slice(-2000);return save(x);},
   peek(dayKey,candidates){const x=read();if(Object.hasOwn(x.days,dayKey))return candidates.find(c=>c.identity===x.days[dayKey])||null;return candidates.find(c=>!c.preserveLockedOnly&&!x.seen.includes(c.identity)&&(!c.arcIdentity||!x.seen.includes(c.arcIdentity)))||null;},

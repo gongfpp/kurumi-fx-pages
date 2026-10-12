@@ -1,4 +1,4 @@
-import {DAILY_LIFE_SCRIPTS} from './copy/daily-life-scripts.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DAILY_LIFE_SCRIPTS} from './copy/daily-life-scripts.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // Reviewed original life-scene artwork; relationship gates belong to the catalogue.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DAILY_LIFE_ART_ASSETS=freeze({
@@ -708,7 +708,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-papercut-crease.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "08e405870488bf2eea42216d5077568edd5464f71df725643add8cd208dd9497",
+    "sha256": "8b113ca8815f784a4a7359052620e85d85f9629276aca6afdcdfd80b2c64897e",
+    "contentIdentity": "sha256:08e405870488bf2eea42216d5077568edd5464f71df725643add8cd208dd9497",
     "people": 2,
     "panels": 4,
     "panelRects": [
@@ -747,7 +748,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-wobbly-table.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "4fef2ca02caa782f39fdadd85351806b4a0356d3bbfe8dabf909ec1a4c2a26d6",
+    "sha256": "760f3d889146a083f182a7b84254c44f32f00b0aba8680d7049f0337e6bacaa3",
+    "contentIdentity": "sha256:4fef2ca02caa782f39fdadd85351806b4a0356d3bbfe8dabf909ec1a4c2a26d6",
     "people": 3,
     "panels": 4,
     "panelRects": [
@@ -942,7 +944,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-wind-fluttering-flyer.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "0a540e7e3357c00fbb81a184fa5ea8035b72db53968a86889ddfcb8046dfb73e",
+    "sha256": "32fbb47f1a5052009b2bd455e1eae45f97923455f18012abf6372c1ac6ed5e48",
+    "contentIdentity": "sha256:0a540e7e3357c00fbb81a184fa5ea8035b72db53968a86889ddfcb8046dfb73e",
     "people": 2,
     "panels": 4,
     "panelRects": [
@@ -981,7 +984,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-shifting-sunset.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "82759ca9256335e9ed6c9a553656917eb34a9bc3c813ab1fdb12e3594fe4870d",
+    "sha256": "4da158e78bb363e4c998533f5ffed4664605d2c28d5ced7c156c6e23dcc99154",
+    "contentIdentity": "sha256:82759ca9256335e9ed6c9a553656917eb34a9bc3c813ab1fdb12e3594fe4870d",
     "people": 3,
     "panels": 4,
     "panelRects": [
@@ -1102,7 +1106,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-hair-cowlick.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "505abaaefb33a1925681fa59ff4ff6b2d3ee3d3d02c4a9e95f1aece55787141c",
+    "sha256": "2643a49b7b9e20dc923c583d0001a8d9379fb5343ad3105ea832a1fff3876f75",
+    "contentIdentity": "sha256:505abaaefb33a1925681fa59ff4ff6b2d3ee3d3d02c4a9e95f1aece55787141c",
     "people": 2,
     "panels": 4,
     "panelRects": [
@@ -1652,7 +1657,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-paper-cup-tower.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "231ca43a8265429c14ff53765e6a81f79a6f86a72203704fe6d9b6335c47352a",
+    "sha256": "5b520ccf61addce21d652753d1c34b324c802230300495edd60150c10e44643d",
+    "contentIdentity": "sha256:231ca43a8265429c14ff53765e6a81f79a6f86a72203704fe6d9b6335c47352a",
     "people": 2,
     "panels": 4,
     "panelRects": [
@@ -1847,7 +1853,8 @@ export const DAILY_LIFE_ART_ASSETS=freeze({
     "path": "./generated/daily-life-v1/daily-life-bulletin-lost-found.webp",
     "width": 1086,
     "height": 1448,
-    "sha256": "abf4d54293b9922d163d81248eb848ff700308613dfda4dfe0eff832c99e1100",
+    "sha256": "ef32525f908d04c6128f8800451b768530dc1e3a13b8d87c3a34a7c30b912f50",
+    "contentIdentity": "sha256:abf4d54293b9922d163d81248eb848ff700308613dfda4dfe0eff832c99e1100",
     "people": 2,
     "panels": 4,
     "panelRects": [

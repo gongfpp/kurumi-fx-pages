@@ -1,4 +1,4 @@
-import {setImage} from './assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {setImage} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 const bindings=new WeakMap();
 // The main game may observe actual reading; archived consumers remain isolated.
 let observeArtwork=null;

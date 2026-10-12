@@ -1,4 +1,5 @@
-import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DINNER_EXPANSION_19_STORIES} from '../dinner-expansion-19.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // Original game dialogue authorized in the approved dinner-story style, not manga quotations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORIES=freeze({
@@ -982,5 +983,6 @@ export const DINNER_STORIES=freeze({
   "requiresMebuki": false,
   "requiresYasuko": false
  },
- ...DINNER_EXPANSION_16_18_STORIES
+ ...DINNER_EXPANSION_16_18_STORIES,
+ ...DINNER_EXPANSION_19_STORIES
 });

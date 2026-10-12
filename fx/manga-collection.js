@@ -1,7 +1,7 @@
-import {mangaCollectionProgress} from './manga-collection-model.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {assetURL} from './assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {mangaCollectionProgress} from './manga-collection-model.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {assetURL} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 
 const mounts=new WeakMap();
 const put=(node,text)=>{if(node.textContent!==text)node.textContent=text;};

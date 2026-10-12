@@ -1,8 +1,8 @@
-import {marketPrice,positionMarket} from './market-book.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {setImage} from './assets.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setImage} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -12,7 +12,7 @@ export const ACHIEVEMENTS = Object.freeze([
   define('liquidated','祈祷没有成交价','第一次因保证金不足被强制平仓。','祈','游戏真实强平成交；插图呼应原作电脑前祈求神明的动作。'),
   define('hold-loss','关掉屏幕仍在亏','选择继续持有后，实际播放至少一根 K 线，仍持有亏损超过保证金 25% 的订单。','暗','本局继续持亏并经历行情；插图呼应原作短暂没看屏幕后发现价格下跌。'),
   define('hundred-times','杠杆把心跳放大','实际持有 100× 仓位经历一次行情变化。','100','借原作杠杆放大心跳的主题，100×门槛为游戏设计；图中10枚为原作订单数量，不是100倍。'),
-  define('father-funds','柜子里的存款','实际取用一笔父亲的柜中存款。','柜','父亲柜中存款的游戏改编；原动画抽屉信封只作对象呼应。'),
+  define('father-funds','柜子里的存款','实际取用一笔父亲的柜中存款。','柜','父亲柜中存款的游戏改编；官方场面图只作原作事件呼应，金额只读本局账本。'),
   define('tell-everything','今晚把事情说清楚','实际向朋友披露欠款，或在父亲发现前主动归还一笔。','话','本作加入实际披露与还款；原作芽吹向萌智子披露借贷消息的画面呼应主动开口。'),
   define('fully-repaid','借多少，还多少','取用父亲的柜中存款后，将欠款全部归还。','还','归还实际取用金额是游戏账本中的行为；借原作落袋后含泪发抖的情绪呼应，不表示原作已还款。'),
   define('accept-stop','不顾一切，进行止损！','实际执行一次止损平仓。','止','原作第 4 话第 2 页的止损决心，由游戏真实止损成交践行。'),

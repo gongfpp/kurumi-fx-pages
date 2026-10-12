@@ -1,5 +1,6 @@
-import {DINNER_OPTIONS} from './recap-choices.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 // Initial game-balance value, not a real-world wage or a claim about the manga.
 // One completed life action per story day. Workplaces differ only in presentation.
 export const LIFE_WORK_INCOME=2200;
@@ -18,7 +19,11 @@ export const lifeActionReceipt=s=>s.lifeActions?.receipts?.find(row=>row.day===s
 export function lifeFriendKnown(s,id){
  const event=id==='mochiko'?'friendStudy':id==='yasuko'?'roommate':null;
  const name=LIFE_ACTION_CATALOG.friend.find(row=>row.id===id)?.label;if(!event||!name)return false;
- return !!(s.story?.seen?.includes(event)||s.story?.log?.some(row=>row.id===event)||['friend','campus'].some(channel=>(s.chat?.[channel]||[]).some(line=>line.from===name&&(typeof line.dialogueId==='string'||typeof line.storyId==='string'))));
+ // A completed, fully validated new-source friend action remains evidence after
+ // bounded chat history drops the original name. New display names alone do
+ // not establish a relationship; historical receipt text is never rewritten.
+ return !!(s.story?.seen?.includes(event)||s.story?.log?.some(row=>row.id===event)||['friend','campus'].some(channel=>(s.chat?.[channel]||[]).some(line=>line.from===name&&(typeof line.dialogueId==='string'||typeof line.storyId==='string')))||
+  LIFE_SCENE_DIALOGUE_SOURCES.length>0&&validLifeActions(s)&&s.lifeActions?.receipts?.some(receipt=>receipt.category==='friend'&&receipt.optionId===id&&LIFE_SCENE_DIALOGUE_SOURCES.some(row=>row.category==='friend'&&row.optionId===id&&row.dialogue?.sourceId===receipt.dialogue?.sourceId)));
 }
 // Reuse reviewed game text verbatim. The short Yasuko exchange is an explicitly
 // identified contiguous excerpt; speakers are never renamed or substituted.

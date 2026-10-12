@@ -564,7 +564,8 @@
     {
       "id": "dinner-napkin-swan",
       "file": "dinner-napkin-swan.webp",
-      "sha256": "0e4a3874e5f9ded15af5216b6590d3fffd8520cf977650b851c7e7013fafc76a",
+      "sha256": "0ecb7a61ebecb4e880a301d295376c7696fd54c9ea4e3c348afd8a64fb59f34d",
+      "contentIdentity": "sha256:0e4a3874e5f9ded15af5216b6590d3fffd8520cf977650b851c7e7013fafc76a",
       "dimensions": [
         1254,
         1254
@@ -776,6 +777,49 @@
       ],
       "tier": "dinner-small",
       "cost": 1500
+    },
+    {
+      "id": "dinner-new-19",
+      "file": "dinner-scallion-wraps.webp",
+      "sha256": "7823a880badf5a6eb5e8303fe3175d2d1b2f1358aebf14dffa750c5ff3b4f1fe",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "panels": 4,
+      "panelRects": [
+        [
+          10,
+          10,
+          609,
+          609
+        ],
+        [
+          635,
+          10,
+          609,
+          609
+        ],
+        [
+          10,
+          635,
+          609,
+          609
+        ],
+        [
+          635,
+          635,
+          609,
+          609
+        ]
+      ],
+      "characters": [
+        "久留美",
+        "萌智子",
+        "康子"
+      ],
+      "tier": "dinner-friends",
+      "cost": 8000
     }
   ]
 }

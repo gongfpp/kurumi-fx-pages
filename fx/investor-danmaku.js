@@ -1,7 +1,10 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=fde8b066cd90352731088a2dc5be6b259e507266-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
+export const ORIGINAL_THEME_REPEAT_GAP=90000;
 export const PLAYER_COMMENT_MAX_LENGTH=30;
 // Input is only the existing public comments API response, never composer text.
 // Keep the nickname in the same text-only line; Unicode code points match the API.
@@ -90,7 +93,7 @@ function recentRealizedLoss(state,cutoff){
 export function eligibleMarketComments(comments=MARKET_COMMENTS,state=null){
  const cutoff=state===null?Infinity:currentTradingTimestamp(state);
  const admitted=(Array.isArray(comments)?comments:[]).filter(row=>{
-  if(!row||row.source==='player'||row.playerText!==undefined||row.release_enabled!==true||!['id','license','attribution_display','source_title','source_url','license_url','original','zh_translation','translation_note'].every(key=>commentText(row[key]))||!/^CC-BY-SA-(3\.0|4\.0)$/.test(row.license)||!row.source_url.startsWith('https://')||!row.license_url.startsWith('https://creativecommons.org/'))return false;
+  if(!row||row.source==='player'||row.source==='fictional'||row.original_fictional===true||row.real_quote===false||row.playerText!==undefined||row.release_enabled!==true||!['id','license','attribution_display','source_title','source_url','license_url','original','zh_translation','translation_note'].every(key=>commentText(row[key]))||!/^CC-BY-SA-(3\.0|4\.0)$/.test(row.license)||!row.source_url.startsWith('https://')||!row.license_url.startsWith('https://creativecommons.org/'))return false;
   const {created,updated}=commentDates(row);
   if(!Number.isFinite(created)||!Number.isFinite(updated))return false;
   if(LEGACY_COMMENT_RECORDS.has(row))return true;
@@ -113,8 +116,8 @@ export function eligibleMarketComments(comments=MARKET_COMMENTS,state=null){
 // A lane keeps its speed until empty. A following line may enter once the
 // preceding tail has cleared the right edge by 42px, so it cannot catch up.
 export const COMMENT_LANE_GAP=42;
-export function createCommentSchedule({comments=MARKET_COMMENTS,measureWidth=text=>text.length*14}={}){
- const catalogue=eligibleMarketComments(comments),seen=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,cursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,viewport=null;
+export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS,measureWidth=text=>text.length*14}={}){
+ const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,viewport=null;
  return{
   // Replace the public snapshot, rather than append on every poll or resume.
   setPlayerComments(rows){playerPool=eligiblePlayerComments(rows);},
@@ -122,10 +125,10 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,measureWidth=tex
    if(wall!==null&&!paused&&!pause)clock+=Math.max(0,Math.min(2000,now-wall)); // no replay after a sleeping tab
    wall=now;paused=pause;
    width=Math.max(200,width||400);
-   const pool=eligibleMarketComments(catalogue,state),run=`${state.mode}:${state.runId||state.seed}:${pool.map(row=>row.id).join(',')}`,scopeChanged=key!==run,reset=scopeChanged||reduced!==reduce||viewport!==width;
+   const pool=eligibleMarketComments(catalogue,state),originalPool=eligibleOriginalComments(state,originalComments),run=`${state.mode}:${state.runId||state.seed}:${pool.map(row=>row.id).join(',')}:${originalPool.map(row=>row.id).join(',')}`,scopeChanged=key!==run,reset=scopeChanged||reduced!==reduce||viewport!==width;
    if(reset){key=run;reduced=reduce;viewport=width;lanes.fill(null);laneCursor=0;nextAt=clock;}
    const activity=marketCommentActivity(state),result={clock,reset,scopeChanged,paused:pause,reduced:reduce,activity,row:null};
-   if(pause||clock<nextAt||!pool.length)return result;
+   if(pause||clock<nextAt||!pool.length&&!originalPool.length)return result;
    let lane=reduce?0:-1;
    if(!reduce)for(let n=0;n<activity.lanes;n++){
     const index=(laneCursor+n)%activity.lanes,previous=lanes[index];
@@ -134,22 +137,40 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,measureWidth=tex
    if(lane<0)return result;
    let row=null;
    if(marketSincePlayer>=3)row=playerPool.find(candidate=>!shownPlayerIds.has(candidate.id)&&(!seen.has(candidate.playerText)||clock-seen.get(candidate.playerText)>=COMMENT_REPEAT_GAP))||null;
+   // Player priority is unchanged. Fictional dialogue shares these existing lanes,
+   // alternates with excerpts, and cannot increase density by paraphrasing one scene.
+   if(!row&&marketSinceOriginal>=1)for(let n=0;n<originalPool.length;n++){
+    const index=(originalCursor+n)%originalPool.length,candidate=originalPool[index];
+    if((!seen.has(candidate.originalText)||clock-seen.get(candidate.originalText)>=COMMENT_REPEAT_GAP)&&(!seenThemes.has(candidate.theme_id)||clock-seenThemes.get(candidate.theme_id)>=ORIGINAL_THEME_REPEAT_GAP)){
+     row=candidate;
+     // Keep the existing theme priority. Within that eligible theme, prefer the
+     // least recently shown wording, so its first variant cannot starve siblings.
+     for(let offset=1;offset<originalPool.length;offset++){
+      const alternate=originalPool[(index+offset)%originalPool.length];
+      if(alternate.theme_id!==candidate.theme_id)continue;
+      const last=seen.get(alternate.originalText)??-Infinity;
+      if(clock-last>=COMMENT_REPEAT_GAP&&last<(seen.get(row.originalText)??-Infinity))row=alternate;
+     }
+     originalCursor=(index+1)%originalPool.length;break;
+    }
+   }
    for(let n=0;!row&&n<pool.length;n++){const index=(cursor+n)%pool.length,candidate=pool[index];if(!seen.has(candidate.zh_translation)||clock-seen.get(candidate.zh_translation)>=COMMENT_REPEAT_GAP){row=candidate;cursor=(index+1)%pool.length;break;}}
    if(!row)return result; // never invent text or shorten the repeat cooldown for density
    const textWidth=Math.max(1,measureWidth(row.zh_translation)),previous=lanes[lane];
    const speed=previous&&previous.expires>clock?previous.speed:activity.pixelsPerSecond;
    const duration=reduce?30000:Math.ceil((width+textWidth)/speed*1000);
    if(row.source==='player'){shownPlayerIds.add(row.id);marketSincePlayer=0;}else marketSincePlayer=Math.min(3,marketSincePlayer+1);
-   seen.set(row.playerText??row.zh_translation,clock);lanes[lane]={entryAt:clock+(textWidth+COMMENT_LANE_GAP)/speed*1000,expires:clock+duration,speed};
+   if(row.source==='fictional'){seenThemes.set(row.theme_id,clock);marketSinceOriginal=0;}else if(row.source!=='player')marketSinceOriginal=1;
+   seen.set(row.playerText??row.originalText??row.zh_translation,clock);lanes[lane]={entryAt:clock+(textWidth+COMMENT_LANE_GAP)/speed*1000,expires:clock+duration,speed};
    laneCursor=(lane+1)%activity.lanes;nextAt=clock+Math.max(activity.interval,reduce?30000:0);
    result.row={...row,lane,duration,textWidth,speed,expires:clock+duration};return result;
   }
  };
 }
-export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>performance.now(),comments=MARKET_COMMENTS}={}){
+export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>performance.now(),comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS}={}){
  const canvas=document.createElement('canvas'),context=canvas.getContext?.('2d');
  if(context)context.font='600 13px sans-serif';
- const schedule=createCommentSchedule({comments,measureWidth:text=>context?Math.ceil(context.measureText(text).width)+8:text.length*14});let disposed=false;
+ const schedule=createCommentSchedule({comments,originalComments,measureWidth:text=>context?Math.ceil(context.measureText(text).width)+8:text.length*14});let disposed=false;
  return{
   setPlayerComments(rows){if(!disposed)schedule.setPlayerComments(rows);},
   update(state,{paused=false,reducedMotion=false}={}){
