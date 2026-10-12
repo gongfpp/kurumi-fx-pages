@@ -1,6 +1,6 @@
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {NEWS_ARCHIVE} from './news-archive.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
 
 // Fictional speakers are the game's existing investors, never account holders.
 // Dialogue about their imagined trades has no execution, balance or ranking side effects.

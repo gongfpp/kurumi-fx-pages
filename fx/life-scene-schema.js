@@ -1,5 +1,5 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
 const options={friend:['mochiko','yasuko'],work:['convenience','cafe','bookstore'],relax:['shrine','river','park']};
 const text=value=>typeof value==='string'&&value.trim().length>0;
 const strings=value=>Array.isArray(value)&&value.length>0&&value.every(text)&&new Set(value).size===value.length;
@@ -15,7 +15,14 @@ function valid(entry,dialogueForSource){
   a?.reviewed!==true||a.independentComic!==true||a.panels!==4||a.grid||a.people!==entry.people||a.dialogueId!==entry.dialogueId||
   typeof a.path!=='string'||!/^\.\/generated\/(?:[a-z0-9_-]+\/)*[a-z0-9_-]+\.(?:webp|png|jpg)$/.test(a.path)||!/^([a-f0-9]{64})$/.test(a.sha256)||
   !Number.isFinite(a.width)||a.width<=0||!Number.isFinite(a.height)||a.height<=0||!Array.isArray(a.panelRects)||a.panelRects.length!==4||new Set(a.panelRects.map(r=>JSON.stringify(r))).size!==4||!a.panelRects.every(r=>cropValid(r,a)))return false;
- if(entry.category!=='friend')return entry.people===1&&entry.receiptDialogueSourceId==null;
+ if(entry.category!=='friend'){
+  if(entry.people!==1)return false;
+  // Existing unbound catalogs remain compatible; new routine artwork must
+  // opt into the exact frozen receipt source, without renaming that source.
+  if(entry.receiptDialogueSourceId==null)return true;
+  const source=dialogueForSource({category:entry.category,id:entry.optionId},entry.receiptDialogueSourceId);
+  return !!source&&JSON.stringify(source.lines)===JSON.stringify(entry.dialoguePanels.flatMap(p=>p.lines.map(([from,text])=>({from,text}))));
+ }
  const friend=entry.optionId==='mochiko'?'萌智子':'康子';
  if(entry.people!==2||!entry.characters.includes(friend)||entry.receiptDialogueSourceId!==entry.dialogueId)return false;
  const source=dialogueForSource({category:entry.category,id:entry.optionId},entry.receiptDialogueSourceId);

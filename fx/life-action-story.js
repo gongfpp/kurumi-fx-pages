@@ -1,6 +1,7 @@
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.
@@ -12,7 +13,7 @@ export function lifeActionStory(state){
   lines:receipt.dialogue.lines.map(({from,text})=>[from,text]),receiptKey:receipt.id,receiptBinding:JSON.stringify(receipt),
   day:state.day,runId:String(state.runId??`seed:${state.seed}:${state.mode}`),dayKey:`${state.runId||state.seed}:${state.day}`};
  const shrine=APPROVED_FOUR_SKITS['shrine-walk'],art=APPROVED_FOUR_SKIT_ASSETS['shrine-walk'];
- if(receipt.category==='relax'&&receipt.optionId==='shrine'&&art?.reviewed&&art.panels===4&&JSON.stringify(scene.lines)===JSON.stringify(shrine.lines))return {...scene,title:shrine.title,dialogueOnly:false,art:structuredClone(art),dialoguePanels:structuredClone(shrine.dialoguePanels),reusedArtwork:true};
+ if(receipt.category==='relax'&&receipt.optionId==='shrine'&&art?.reviewed&&art.panels===4&&JSON.stringify(scene.lines)===JSON.stringify(shrine.lines))return {...scene,arcIdentity:artIdentity(art),title:shrine.title,dialogueOnly:false,art:structuredClone(art),dialoguePanels:structuredClone(shrine.dialoguePanels),reusedArtwork:true};
  return scene;
 }
 

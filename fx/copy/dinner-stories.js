@@ -1,5 +1,6 @@
-import {DINNER_EXPANSION_19_STORIES} from '../dinner-expansion-19.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {DINNER_EXPANSION_20_STORIES} from '../dinner-expansion-20.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {DINNER_EXPANSION_19_STORIES} from '../dinner-expansion-19.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
 // Original game dialogue authorized in the approved dinner-story style, not manga quotations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORIES=freeze({
@@ -984,5 +985,6 @@ export const DINNER_STORIES=freeze({
   "requiresYasuko": false
  },
  ...DINNER_EXPANSION_16_18_STORIES,
- ...DINNER_EXPANSION_19_STORIES
+ ...DINNER_EXPANSION_19_STORIES,
+ ...DINNER_EXPANSION_20_STORIES
 });

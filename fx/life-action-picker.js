@@ -1,4 +1,4 @@
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
