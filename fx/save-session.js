@@ -1,6 +1,6 @@
-import {encodeProgress} from './save-encoder.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {storageFailure} from './storage.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {storageFailure} from './storage.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -16,11 +16,24 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   let baseline=read(),raw=baseline.raw,localRaw=raw,queue=Promise.resolve(),epoch=0;
   let savedText=null;try{savedText=raw===null?null:inspectSave(raw).currentRaw;}catch{}
   let revision=0,importPending=false,latestRun=null;
+  let baselineMetadata=null,completedSnapshot=null;
+  const invalidate=()=>{baselineMetadata=null;completedSnapshot=null;};
+  // Retain only immutable migration decisions, never the caller's state object.
+  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state)});
+  const previousMetadata=()=>{
+    if(baselineMetadata?.raw===baseline.raw)return baselineMetadata.value;
+    let value={};
+    if(baseline.raw!==null){const archive=inspectSave(baseline.raw);value=metadata(JSON.parse(archive.currentRaw));
+      // pre-v9 historically checks the outer durable version, not its payload.
+      if(archive.compressed)value.preV9=false;
+    }
+    baselineMetadata={raw:baseline.raw,value};return value;
+  };
   let status='ready',reason='',failure=null;
   const decode=value=>{try{return value===null?null:restore(value);}catch{return null;}};
   const available=value=>value.current.available&&(!value.legacy||value.legacy.available);
   const invalid=value=>value.raw!==null&&!decode(value.raw);
-  const fail=(next,why='',detail=null)=>{status=next;reason=why;failure=detail;return false;};
+  const fail=(next,why='',detail=null)=>{completedSnapshot=null;if(next==='conflict'||next==='invalid')baselineMetadata=null;status=next;reason=why;failure=detail;return false;};
   if(!available(baseline))fail('memory','storage',baseline.failure);
   else if(invalid(baseline))fail('invalid','schema');
   const blocked=()=>status==='conflict'||status==='invalid';
@@ -31,7 +44,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
     // A previously unreadable slot can only be claimed once proven empty.
     if(!available(baseline)) {
       if(latest.raw!==null)return fail('conflict','unreadable-baseline');
-      baseline=latest;
+      baseline=latest;invalidate();
     }
     if(latest.current.value!==baseline.current.value||latest.legacy?.value!==baseline.legacy?.value)return fail('conflict','changed');
     return true;
@@ -44,14 +57,17 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
     save(state,options={}) {
       if(importPending&&!options.replacement)return Promise.resolve(false);
       const text=JSON.stringify(state),run=String(state.runId??`seed:${state.seed}:${state.mode}`);
-      if(latestRun!==null&&latestRun!==run)epoch++;latestRun=run;
-      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD,sceneSource=!!sceneBackupKey&&hasLifeSceneSource(state);localRaw=text;if(!blocked())status='pending';
+      if(latestRun!==null&&latestRun!==run){epoch++;invalidate();}latestRun=run;
+      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD;localRaw=text;if(!blocked())status='pending';
       const write=async()=>{
         if(generation!==epoch||large&&ticket!==revision||!check())return false;
         if(options.replacement&&raw!==options.expectedRaw)return false;
         if(!locks?.request)return fail('memory','coordination');
+        // Only a fully successful write in this epoch may skip encoding. The
+        // lock and fresh durable checks below still run for identical text.
+        const unchanged=!options.replacement&&completedSnapshot?.text===text&&completedSnapshot.raw===baseline.raw;
         let durableText;
-        try{const encoded=encode(text,baseline.raw,{replacement:!!options.replacement});durableText=typeof encoded==='string'?encoded:await encoded;}catch{return generation===epoch&&!blocked()?fail('memory','encoding'):false;}
+        if(!unchanged)try{const encoded=encode(text,baseline.raw,{replacement:!!options.replacement});durableText=typeof encoded==='string'?encoded:await encoded;}catch{return generation===epoch&&!blocked()?fail('memory','encoding'):false;}
         try {
           return await locks.request('fx-progress:'+key,{mode:'exclusive'},()=>{
             // Let an in-flight snapshot of this run land even when newer ticks
@@ -59,43 +75,50 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
             if(generation!==epoch||!check())return false;
             const latest=read();
             if(!available(latest))return fail('memory','storage',latest.failure);
+            if(unchanged){
+              // A failed read or reload while waiting may invalidate this proof.
+              if(completedSnapshot?.text!==text||completedSnapshot.raw!==baseline.raw)return fail('memory','storage',failure);
+              status='saved';reason='';failure=null;return true;
+            }
+            const nextMetadata=metadata(JSON.parse(text)),previous=previousMetadata();
             // Preserve the exact pre-v9 bytes once before replacing an older schema.
             // Backups stay in this mode's namespace and are never overwritten.
-            let previousVersion;try{previousVersion=JSON.parse(baseline.raw)?.version;}catch{}
-            if(Number.isInteger(previousVersion)&&previousVersion<9&&state.version>=9){
+            if(previous.preV9&&nextMetadata.v9){
               const backupKey=key+':pre-v9',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
             // Preserve the exact pre-housing bytes once, including compressed
             // envelopes. The namespace allows only known save-slot backups.
-            let previousLivingVersion;try{previousLivingVersion=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.lifestyle?.version;}catch{}
-            if(baseline.raw!==null&&state.lifestyle?.version===2&&previousLivingVersion!==2){
+            if(baseline.raw!==null&&nextMetadata.livingV2&&!previous.livingV2){
               const backupKey=key+':pre-living-v2',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
-            let previousTheft;try{previousTheft=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.family?.theftDiscovery;}catch{}
-            if(baseline.raw!==null&&state.mode==='story'&&state.family?.theftDiscovery?.version===1&&!previousTheft){
+            if(baseline.raw!==null&&nextMetadata.story&&nextMetadata.theftV1&&!previous.hasTheft){
               const backupKey=key+':pre-father-theft-v1',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
             // The first life-action write preserves the exact prior durable state.
             // Older clients reject v17; the scoped backup remains a recovery path.
-            let previousLife;try{previousLife=baseline.raw===null?null:JSON.parse(inspectSave(baseline.raw).currentRaw)?.lifeActions;}catch{}
-            if(baseline.raw!==null&&state.lifeActions?.version===1&&!previousLife){
+            if(baseline.raw!==null&&nextMetadata.lifeV1&&!previous.hasLife){
               const backupKey=key+':pre-life-actions-v1',backup=storage.readItem(backupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(backupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(backupKey));
             }
             // Preserve the full latest v17 state before its first registered scene
             // source is written. The older pre-life-actions backup can be much older.
             // Capture the queued snapshot's decision, not later mutations of state.
-            if(sceneSource&&baseline.raw!==null&&!hasLifeSceneSource(JSON.parse(inspectSave(baseline.raw).currentRaw))){
+            if(nextMetadata.sceneSource&&baseline.raw!==null&&!previous.sceneSource){
               const backup=storage.readItem(sceneBackupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(sceneBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(sceneBackupKey));
             }
+            // The encoder can return plain bytes or an envelope. Keep the
+            // original outer-version migration rule without decoding its body.
+            let outerPreV9=nextMetadata.preV9;
+            if(durableText!==text){let version;try{version=JSON.parse(durableText)?.version;}catch{}outerPreV9=Number.isInteger(version)&&version<9;}
             if(!storage.setItem(key,durableText))return fail('memory','storage',storage.failureFor?.(key));
             // After migration, the current slot is authoritative. Never delete
             // the legacy slot, which is still a recovery source for the user.
             baseline={current:{available:true,value:durableText},legacy:null,raw:durableText};
+            baselineMetadata={raw:durableText,value:{...nextMetadata,preV9:outerPreV9}};completedSnapshot={raw:durableText,text};
             raw=durableText;savedText=text;status='saved';reason='';failure=null;return true;
           });
         } catch(error) {return generation===epoch&&!blocked()?fail('memory','coordination',storageFailure(error,'lock')):false;}
@@ -104,14 +127,14 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
     },
     async replaceFromBackup(state,expectedRaw) {
       if(importPending||blocked()||raw!==expectedRaw||!check()||!decode(JSON.stringify(state)))return false;
-      const beforeLocal=localRaw,beforeRun=latestRun;importPending=true;epoch++;
+      const beforeLocal=localRaw,beforeRun=latestRun;importPending=true;epoch++;invalidate();
       try{const saved=await this.save(state,{replacement:true,expectedRaw});if(!saved){localRaw=beforeLocal;latestRun=beforeRun;storage.forgetItem(key);}return saved;}
       finally{importPending=false;}
     },
     // Only an explicit user choice may replace this page with another save.
     // Cancel queued writes so a pre-reload snapshot cannot be written afterward.
     reload() {
-      const latest=read();
+      invalidate();const latest=read();
       if(!available(latest)){reason='storage';failure=latest.failure;return {ok:false,reason};}
       if(invalid(latest)){fail('invalid','schema');return {ok:false,reason};}
       epoch++;latestRun=null;baseline=latest;raw=latest.raw;localRaw=raw;savedText=raw===null?null:inspectSave(raw).currentRaw;status='ready';reason='';failure=null;

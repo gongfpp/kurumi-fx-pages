@@ -1,7 +1,7 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 // Called only by the existing synchronous commit after the report is sealed.
 // The action payload cannot inject a source ID, lines, money or scene catalog.
 export function selectLifeSceneDialogue(option,state,{catalog=LIFE_SCENE_CATALOG,dialogueForSource=lifeActionDialogueForSource}={}){

@@ -1,5 +1,5 @@
-import {setImage} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {setImage} from './assets.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.

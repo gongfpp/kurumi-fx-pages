@@ -5,3 +5,5 @@ body:not([data-frontend=pixel]) .manga-collection-tab[aria-selected=true]{backgr
 body[data-frontend=pixel] #achievements-dialog:has(.manga-collection-tabs) .dialog-toolbar::before{content:'成就与漫画'}
 
 .manga-collection-original.image-unavailable,.manga-collection-thumbnail.image-unavailable{display:none}.manga-collection-page .manga-image-fallback{font-size:14px;line-height:1.6;padding:20px;color:#625187}
+
+.manga-collection-editions{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:#fffdfd}.manga-collection-editions button{font:inherit;font-size:13px;border:1px solid #a594ef;border-radius:5px;background:#fff;color:inherit;padding:8px 10px;cursor:pointer}.manga-collection-editions button[aria-pressed=true]{background:#efe4fa;border-color:#a065ad}.manga-collection-editions button:focus-visible{outline:3px solid #5448de;outline-offset:2px}

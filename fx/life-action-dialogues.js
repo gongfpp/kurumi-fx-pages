@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 // Append-only receipt dialogue sources. Existing source IDs, scope and exact text
 // are a save-format contract, independent of the current action selector.
 // These two legacy snapshots intentionally preserve the original v17 bytes.

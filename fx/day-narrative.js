@@ -1,6 +1,6 @@
-import {pendingStory,chooseStory} from './story.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {pendingStory,chooseStory} from './story.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 export function prepareDailyNarrative(state,{accountEquity}={}){
  if(state.mode==='endless'||state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
  applyFatherDiscovery(state,{type:'migrate'});

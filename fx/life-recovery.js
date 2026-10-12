@@ -1,5 +1,5 @@
-import {recoverStamina} from './stamina.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {recoverStamina} from './stamina.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 
 // Game-balance values for existing actions and items. No new purchases,
 // unlocks, story events or fees are introduced here. All values are bounded by

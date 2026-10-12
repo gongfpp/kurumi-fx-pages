@@ -110,9 +110,7 @@ body[data-frontend="pixel"]{background:#fff4f9}
 #pixel-frontend #order-empty>fieldset>legend{top:8px;font-size:19px}
 #pixel-frontend #order-empty>fieldset:has(#leverages)>legend,#pixel-frontend #order-empty>fieldset:has(#stops)>legend{left:1px;width:85px;font-size:19px}
 #pixel-frontend #order-empty>fieldset:has(#stops){height:43px}
-#pixel-frontend #order-empty>fieldset:has(#stops)>legend:after{font-size:19px}
 #pixel-frontend #order-empty fieldset button{font-size:16px;border:1px solid var(--panorama-control)}
-#pixel-frontend #order-empty button[data-leverage="50"]:after,#pixel-frontend #order-empty button[data-leverage="100"]:after{font-size:16px}
 #pixel-frontend #order-empty .entry-actions{height:62px;padding:2px 0 0;margin:0;gap:10px}
 #pixel-frontend .entry-actions button{height:60px;border:1px solid #fa83b7;border-radius:7px;font-size:30px;background:linear-gradient(110deg,#f44f9c,#f13e91);box-shadow:inset 0 1px #ffffff55}
 #pixel-frontend .entry-actions #long:before{font-size:36px;color:#fff;text-shadow:none}
@@ -200,7 +198,6 @@ body[data-frontend="pixel"]{background:#fff4f9}
  #pixel-frontend .pixel-percent-slider{height:44px;min-height:44px}
  #pixel-frontend #order-empty>fieldset,#pixel-frontend #order-empty>fieldset:has(#stops){height:auto;min-height:82px;padding:34px 0 0}
  #pixel-frontend #order-empty>fieldset>legend,#pixel-frontend #order-empty>fieldset:has(#leverages)>legend,#pixel-frontend #order-empty>fieldset:has(#stops)>legend{left:3px;top:4px;width:auto;font-size:17px}
- #pixel-frontend #order-empty>fieldset:has(#stops)>legend:after{font-size:17px}
  #pixel-frontend #order-empty fieldset button{height:44px;min-height:44px;font-size:16px}
  #pixel-frontend .pixel-positions-slot{padding-inline:9px}
  #pixel-frontend .position-title{margin-inline:-9px;height:auto;min-height:54px;padding-block:4px;flex-wrap:wrap}

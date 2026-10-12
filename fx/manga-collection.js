@@ -1,7 +1,8 @@
-import {mangaCollectionProgress} from './manga-collection-model.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {assetURL} from './assets.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {mangaCollectionProgress} from './manga-collection-model.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {assetURL,setImage} from './assets.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {collectionHdEdition} from './manga-collection-hd.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 
 const mounts=new WeakMap();
 const put=(node,text)=>{if(node.textContent!==text)node.textContent=text;};
@@ -51,7 +52,28 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
   const img=make('img',thumbnail?'manga-collection-thumbnail':'manga-collection-original');img.alt=thumbnail?'':entry.alt;
   if(thumbnail)img.setAttribute('aria-hidden','true');
   const [width,height]=entry.dimensions||[];if(width&&height){img.width=width;img.height=height;}
-  frame.append(img);setMangaImage(img,entry.path,{loading:thumbnail?'lazy':'eager'});
+  const hd=thumbnail?null:collectionHdEdition(entry);
+  if(!hd){frame.append(img);setMangaImage(img,entry.path,{loading:thumbnail?'lazy':'eager'});return;}
+  const editions=make('div','manga-collection-editions'),jp=button('','高清日文原页'),legacy=button('','原有中文片段');
+  editions.setAttribute('role','group');editions.setAttribute('aria-label','漫画版本');editions.append(jp,legacy);frame.append(editions,img);
+  let edition=null;
+  function showEdition(useHd){
+   if(disposed||!frame.contains(img)||edition===useHd)return;edition=useHd;
+   frame.querySelector('.manga-image-fallback')?.remove();
+   jp.setAttribute('aria-pressed',String(useHd));legacy.setAttribute('aria-pressed',String(!useHd));
+   img.alt=useHd?hd.alt:entry.alt;[img.width,img.height]=useHd?hd.dimensions:entry.dimensions;
+   // A failed optional original falls back to the preserved Chinese panel.
+   // This reader never records a new content identity or writes a save.
+   img.loading='eager';img.decoding='async';
+   setImage(img,useHd?hd.path:entry.path,{onStatus:status=>{
+    if(disposed||!frame.contains(img)||edition!==useHd)return;
+    if(status==='ready')frame.querySelector('.manga-image-fallback')?.remove();
+    if(status!=='unavailable')return;
+    if(useHd){showEdition(false);return;}
+    if(!frame.querySelector('.manga-image-fallback')){const note=make('p','manga-image-fallback','漫画图片暂时无法载入；本局数值与文字说明仍可查看。');note.setAttribute('role','status');frame.append(note);}
+   }});
+  }
+  jp.addEventListener('click',event=>{if(event.detail<=1)showEdition(true);});legacy.addEventListener('click',event=>{if(event.detail<=1)showEdition(false);});showEdition(true);
  }
  function paintSelection({resetScroll=false}={}){
   const items=available();if(!items.some(e=>e.id===selectedId))selectedId=(items.find(e=>e.unlocked)||items[0])?.id||null;

@@ -1,5 +1,5 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 const options={friend:['mochiko','yasuko'],work:['convenience','cafe','bookstore'],relax:['shrine','river','park']};
 const text=value=>typeof value==='string'&&value.trim().length>0;
 const strings=value=>Array.isArray(value)&&value.length>0&&value.every(text)&&new Set(value).size===value.length;

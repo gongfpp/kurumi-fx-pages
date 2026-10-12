@@ -1,4 +1,4 @@
-import {currentTradingTimestamp} from './trading-time.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 
 const DAY=86400000,JST=9*3600000;
 export const NEWS_PAIRS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);

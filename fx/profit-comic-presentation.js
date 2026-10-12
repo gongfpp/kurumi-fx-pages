@@ -1,4 +1,4 @@
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 // Presentation only: the scheduler still owns eligibility, batch net and receipts.
 // Half-close, critical loss and trauma-specific scenes retain their existing art.
 export function realizedProfitComicPresentation(scene,{traumaActive=false}={}){

@@ -1,8 +1,8 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {isTraumaMood} from './trading-trauma.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
-import {STORIES,getStory} from './story-content.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {isTraumaMood} from './trading-trauma.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;
@@ -32,7 +32,13 @@ export function checkStories(s,account,emotion){ensureStory(s);
  // Detection is committed only by the real daily close. Rendering, intraday
  // ticks and reloads may requeue its receipt, but never reroll or create one.
  if(fatherTheftReceipt(s)&&s.family.outstanding>0&&!s.family.discovered&&!s.family.informed)queueStory(s,'fatherFound');
- if(s.phase==='resting'&&!s.story.queue.length){queueStory(s,s.day===1?'friendStudy':s.day===2?'roommate':'quietNight');}
+ if(s.phase==='resting'&&!s.story.queue.length){
+  // A family evening may defer an introduction past its original calendar day.
+  // Completion in either legacy log or seen memory prevents a second delivery.
+  const completed=id=>s.story.seen.includes(id)||s.story.log.some(row=>row.id===id);
+  const due=[['friendStudy',1],['roommate',2]].find(([id,day])=>s.day>=day&&!completed(id));
+  if(due)queueStory(s,due[0]);else if(s.day>=3)queueStory(s,'quietNight');
+ }
 }
 export function pendingStory(s){ensureStory(s);if(s.mode==='endless'||s.phase!=='resting'||s.story.presentedDay===s.day)return null;s.story.queue=s.story.queue.filter(id=>!!getStory(s,id));const family=s.story.queue.find(id=>['fatherUnlock','fatherFound','repayPartial','repayFull'].includes(id));const key=family||s.story.queue.find(id=>id!=='fatherDiscover'||(!s.fatherUsed&&(s.day>=FATHER_DISCOVERY_POLICY.scheduledDay||s.settlementNarrative?.event?.key==='fatherDiscover')));if(key==='fatherUnlock')s.family.unlockedAtEquity=s.cash+s.reserve;return getStory(s,key);}
 export function chooseStory(s,choiceId){if(s.phase!=='resting')throw Error('人物事件只在休市后发生');const event=pendingStory(s);if(!event)throw Error('没有待处理的剧情');const choice=event.choices.find(c=>c.id===choiceId);if(!choice)throw Error('请选择一个回应');s.story.queue=s.story.queue.filter(id=>id!==event.key);s.story.presentedDay=s.day;s.story.seen.push(event.key);s.story.log.push({id:event.key,day:s.day,beat:s.beat,choice:choice.id});s.story.log=s.story.log.slice(-40);

@@ -1,6 +1,6 @@
 /* Approved pink-pixel renderer. Every rule is scoped; legacy rendering is untouched. */
 body[data-frontend="pixel"]{background:#ffe3f1;color:#0a1255}
-#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
+#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
 #pixel-frontend *,#pixel-frontend *:before,#pixel-frontend *:after{box-sizing:border-box}
 #pixel-frontend [hidden]{display:none!important}
 #pixel-frontend button,#pixel-frontend input,#pixel-frontend select,#pixel-frontend textarea{font:inherit;color:var(--px-ink)}
@@ -203,15 +203,15 @@ body[data-frontend="pixel"]{background:#ffe3f1;color:#0a1255}
 #pixel-frontend #order-empty>fieldset:has(#leverages)>legend{font-size:22px;padding-left:31px;width:88px;left:7px}
 #pixel-frontend #order-empty>fieldset:has(#leverages)>legend:before{content:'';position:absolute;left:0;top:-5px;width:35px;height:35px;background-image:var(--px-atlas);background-position:-1083px -424px}
 #pixel-frontend #order-empty>fieldset:has(#stops){order:3;height:49px}
-#pixel-frontend #order-empty>fieldset:has(#stops)>legend{font-size:0;padding-left:35px;width:88px;left:7px}
-#pixel-frontend #order-empty>fieldset:has(#stops)>legend:after{content:'止损';font-size:22px}
+#pixel-frontend #order-empty>fieldset:has(#stops)>legend{font-size:22px;padding-left:35px;width:88px;left:7px}
 #pixel-frontend #order-empty>fieldset:has(#stops)>legend:before{content:'';position:absolute;left:1px;top:-6px;width:34px;height:38px;background-image:var(--px-atlas);background-position:-1084px -473px}
 #pixel-frontend #order-empty .segments{display:contents}
 #pixel-frontend #order-empty fieldset button{flex:1;min-width:0;min-height:0;margin:0;padding:0 3px;font-size:19px;line-height:1;border:1.5px solid var(--px-ink);background:#fff;color:var(--px-ink);white-space:nowrap}
 #pixel-frontend #order-empty fieldset button[aria-pressed=true]{background:linear-gradient(115deg,#ffc8e5,#ffadd8)}
-#pixel-frontend #order-empty button[data-leverage="50"],#pixel-frontend #order-empty button[data-leverage="100"]{font-size:0}
-#pixel-frontend #order-empty button[data-leverage="50"]:after{content:'50×';font-size:19px}
-#pixel-frontend #order-empty button[data-leverage="100"]:after{content:'100×';font-size:19px}
+/* Keep real labels in normal flow: pressure effects own the button pseudo-elements.
+   Only the legacy-only detail is hidden; legacy copy and control nodes stay intact. */
+#pixel-frontend #order-empty .pixel-control-detail{display:none}
+#pixel-frontend #order-empty button[data-leverage]:has(.pressure-count:not([hidden])){padding-bottom:16px}
 #pixel-frontend #order-empty [data-stop-pips="none"]{order:-1}
 #pixel-frontend #order-empty .entry-actions{order:4;height:73px;display:flex;gap:10px;margin:0;padding:5px 0 0}
 #pixel-frontend .entry-actions button{height:65px;flex:1;min-height:0;font-size:36px;font-weight:900;border:2px solid var(--px-ink);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:inset 0 0 10px #ffffff44;line-height:1;padding:0;color:#fff;background:linear-gradient(120deg,#ff248f,#ff51a6 72%,#ff3299)}
@@ -361,9 +361,7 @@ body[data-frontend="pixel"] #frontend-switch{background:#fff6fc;border-color:#c0
  #pixel-frontend #percent-field>legend:before{font-size:17px}
  #pixel-frontend #order-empty fieldset>legend{left:8px}
  #pixel-frontend #order-empty fieldset button{font-size:17px;padding:0 2px}
- #pixel-frontend #order-empty button[data-leverage="50"]:after,#pixel-frontend #order-empty button[data-leverage="100"]:after{font-size:17px}
  #pixel-frontend #order-empty>fieldset:has(#leverages)>legend{font-size:19px}
- #pixel-frontend #order-empty>fieldset:has(#stops)>legend:after{font-size:19px}
  #pixel-frontend #order-empty .entry-actions{gap:8px;height:70px}
  #pixel-frontend .entry-actions button{font-size:30px;gap:10px;height:62px}
  #pixel-frontend .entry-actions #long:before,#pixel-frontend .entry-actions #short:before{font-size:39px}

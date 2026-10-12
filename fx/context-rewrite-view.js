@@ -1,4 +1,4 @@
-import {CONTEXT_REWRITE_SCENES} from './copy/context-rewrite-scenes.js?v=6bfd369389c86237f67818f1036ff0bf523ac575-23f2a20b7717';
+import {CONTEXT_REWRITE_SCENES} from './copy/context-rewrite-scenes.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
 // Apply only at the last presentation boundary: profit tiers, dinner variants,
 // receipt gates and current-debt continuity already made their factual choices.
 // An unchanged image identity keeps read/replay memory and costs unchanged.
