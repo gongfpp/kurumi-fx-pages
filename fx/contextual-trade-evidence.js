@@ -1,4 +1,4 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 
 const positive=n=>Number.isFinite(n)&&n>0;
 const nonnegative=n=>Number.isFinite(n)&&n>=0;

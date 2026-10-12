@@ -1,5 +1,5 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave} from './multi-history-state.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave} from './multi-history-state.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;

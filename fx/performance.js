@@ -1,5 +1,5 @@
-import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {START,CANDLES_PER_BEAT,TICKS_PER_CANDLE,BEATS_PER_DAY,beatsPerDay} from './engine.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 
 // Returns ratios as fractions (0.10 = 10%). Closed pnl already includes both fees;
 // external funding, consumption and open floating gains never count as returns.

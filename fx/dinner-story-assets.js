@@ -1,5 +1,5 @@
-import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
@@ -910,3 +910,25 @@ export const DINNER_STORY_ASSETS=freeze({
  ...DINNER_EXPANSION_19_ASSETS
 });
 export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));
+
+// Historical source entries above remain immutable and recoverable. The current
+// scene uses this presentation mapping, as COMIC_PRESENTATION_ASSETS does.
+// A visual revision is the same story, not a twentieth dinner or a new read ID.
+export const DINNER_STORY_ART_REVISIONS=freeze({
+ 'dinner-seafood-claw':{
+  ...DINNER_STORY_ASSETS['dinner-seafood-claw'],
+  path:'./generated/dinner-stories-v2/dinner-seafood-claw-continuity-v1.webp',
+  sha256:'725d7a448144909a43cebde5f1ea8e01437b9ad529c22de0bcd8f71663cee47b',
+  contentIdentity:'sha256:83ef50e520ac23bcf0aad3726f24faaacdf336c852aeef10bd84e9750fd206a6',
+  revision:{
+   id:'dinner-seafood-claw-continuity-v1',kind:'reviewed-image-edit',date:'2026-10-12',
+   basePath:'./generated/dinner-stories-v1/dinner-seafood-claw.webp',
+   baseSha256:'83ef50e520ac23bcf0aad3726f24faaacdf336c852aeef10bd84e9750fd206a6',
+   reviewedImageSha256:'38ce2f7fd534bec5fd95bc9c38f34dd7c949f1dfa56943f6c41c31f27bb5ba7b',
+   generator:'built-in image_gen',visualReview:'passed',
+   scope:'Panel three continues the opened claw from panel two; full-image resampling.',
+   runtimeEncoding:'lossless-webp',storyCountContribution:0
+  }
+ }
+});
+export const DINNER_PRESENTATION_ASSETS=freeze({...DINNER_STORY_ASSETS,...DINNER_STORY_ART_REVISIONS});

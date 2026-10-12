@@ -1,6 +1,6 @@
-import {DeveloperAccess} from './developer-access.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {DeveloperSession} from './developer-session.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {applyDeveloperPatch,developerValues} from './developer.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {DeveloperAccess} from './developer-access.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {DeveloperSession} from './developer-session.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {applyDeveloperPatch,developerValues} from './developer.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 
 export function mountDeveloperUI({root=document,leaderboard,storage,getState,getGeneration,guard,canEdit,backupKey,restore,replace,pause,onTaint,notify,render,now=()=>Date.now()}){
  const $=id=>root.getElementById(id),access=new DeveloperAccess({leaderboard,now});
@@ -36,7 +36,7 @@ export function mountDeveloperUI({root=document,leaderboard,storage,getState,get
   try{const result=await session.open();if(generation!==uiGeneration)return;if(result.authorized){showEditor(result,generation);return;}link.href=result.url;link.hidden=false;check.disabled=false;message('先打开安全页完成本人登录及密码验证，再回来检查解锁。请求 10 分钟内有效。');}
   catch(error){if(generation===uiGeneration)fail(error);}
  }
- $('developer-open').onclick=open;$('ending-developer').onclick=open;
+ $('developer-open').onclick=open;
  check.onclick=async()=>{if(session.busy)return;const generation=uiGeneration;check.disabled=true;message('正在复核…');try{showEditor(await session.confirm(),generation);}catch(error){if(generation===uiGeneration){message(error.message);check.disabled=false;}}};
  $('developer-access-cancel').onclick=()=>dialog.close('cancelled');
  // Native close events are queued. Invalidate synchronously at the close

@@ -1,9 +1,9 @@
-import {DINNER_STORIES} from './copy/dinner-stories.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {DINNER_STORY_ASSETS} from './dinner-story-assets.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import {DINNER_STORIES} from './copy/dinner-stories.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 
 // Existing prices and gain thresholds, copied as evidence checks only. The
 // engine/recap choice remains the sole owner of the bill and account effects.
@@ -21,7 +21,7 @@ export function dinnerCastKnown(state,script,memory=dailyArtMemory){
  if(script.requiresYasuko&&!state.story?.seen?.includes('roommate'))return false;
  return true;
 }
-export function dinnerStoryCandidates(state,receipt,{memory=dailyArtMemory,assets=DINNER_STORY_ASSETS,legacyAssets=COMIC_PRESENTATION_ASSETS}={}){
+export function dinnerStoryCandidates(state,receipt,{memory=dailyArtMemory,assets=DINNER_PRESENTATION_ASSETS,legacyAssets=COMIC_PRESENTATION_ASSETS}={}){
  const tier=DINNER_TIERS[receipt?.id],outcome=sealedDailyMangaOutcome(state);
  if(!tier||state.mode!=='story'||!outcome||outcome.net<tier.minGain||receipt.day!==state.day||receipt.cost!==tier.cost)return [];
  const base=selectComicScene(state,{type:'activity',receipt},{assets:legacyAssets});if(!base)return [];

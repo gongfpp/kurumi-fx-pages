@@ -1,4 +1,4 @@
-import LZString from './vendor/lz-string.js?v=1c75a7b7eb0f196afacd04115d710d505cd37d9a-23f2a20b7717';
+import LZString from './vendor/lz-string.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
 export const SAVE_FORMAT='kurumi-save-lz-v1';
 export const SAVE_ENVELOPE_VERSION=14;
 export const SAVE_COMPRESSION_THRESHOLD=256*1024;

@@ -142,10 +142,10 @@ body[data-frontend="pixel"]{background:#fff4f9}
 /* Compact layouts retain full-size hit targets and complete financial facts. */
 @media(max-width:1200px){
  #pixel-frontend .pixel-header-slot{height:auto;min-height:74px}
- #pixel-frontend .topbar{height:auto;padding:10px;gap:9px}
+ #pixel-frontend .topbar{height:auto;padding:10px max(10px,env(safe-area-inset-right,0px)) 10px max(10px,env(safe-area-inset-left,0px));gap:9px}
  #pixel-frontend .brand{font-size:29px;max-width:calc(100% - 123px)}
  #pixel-frontend .top-right{gap:7px;flex-wrap:wrap;overflow:visible}
- #pixel-frontend #mode-open{width:116px;height:46px;right:10px;top:8px}
+ #pixel-frontend #mode-open{width:116px;height:46px;right:max(10px,env(safe-area-inset-right,0px));top:8px}
  #pixel-frontend .pixel-source-status{min-width:82px;height:44px;padding:0 8px;font-size:13px}
  #pixel-frontend .pixel-exit-region{margin-left:auto;padding:0 7px}
  #pixel-frontend .pixel-exit-region #retire{font-size:13px;gap:4px;min-height:44px}
