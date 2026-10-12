@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
@@ -60,7 +60,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     const focus=root.activeElement;
     return ['BUTTON','INPUT','SELECT','TEXTAREA','A','SUMMARY'].includes(focus?.tagName)||['button','slider','spinbutton','combobox'].includes(focus?.getAttribute?.('role'))||focus===root.getElementById('chart');
   }
-  function canBlink(model){return available()&&!pointerActive&&!interactionFocused()&&singleActionCardView(model)?.kind!=='risk'&&model.active!==false&&model.stamina?.low&&model.blinkAllowed!==false&&motionEnabled();}
+  function canBlink(model){return available()&&!pointerActive&&!interactionFocused()&&singleActionCardView(model)?.kind!=='risk'&&model.active!==false&&model.stamina?.low&&model.stamina?.value>0&&model.blinkAllowed!==false&&motionEnabled();}
   function scheduleBlink(context,delay){
     blinkTimer=win.setTimeout(()=>{
       blinkTimer=null;const model=getModel();

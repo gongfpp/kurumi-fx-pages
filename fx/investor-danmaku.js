@@ -1,11 +1,13 @@
-import {MARKET_COMMENTS} from './market-comments.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;
-export const PLAYER_COMMENT_MAX_LENGTH=30;
+export const PLAYER_COMMENT_MAX_LENGTH=200;
+export const PLAYER_COMMENT_PREVIEW_LENGTH=30;
 // Input is only the existing public comments API response, never composer text.
 // Keep the nickname in the same text-only line; Unicode code points match the API.
 export function eligiblePlayerComments(rows=[]){
@@ -15,7 +17,9 @@ export function eligiblePlayerComments(rows=[]){
   const text=row.text.trim();
   if(!text||[...text].length>PLAYER_COMMENT_MAX_LENGTH)return [];
   ids.add(row.id);
-  return [{id:row.id,playerText:text,zh_translation:`${typeof row.alias==='string'&&row.alias?row.alias:'匿名玩家'}：${text}`,source:'player'}];
+  const alias=typeof row.alias==='string'&&row.alias?row.alias:'匿名玩家',long=[...text].length>PLAYER_COMMENT_PREVIEW_LENGTH;
+  const preview=long?[...text].slice(0,PLAYER_COMMENT_PREVIEW_LENGTH).join('')+'…':text;
+  return [{id:row.id,alias,playerText:text,truncated:long,zh_translation:`${alias}：${preview}`,source:'player'}];
  });
 }
 // Activity is derived only from revealed candles and completed/recorded actions.
@@ -167,7 +171,7 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
   }
  };
 }
-export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>performance.now(),comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS}={}){
+export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>performance.now(),comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS,onOpenComment=()=>{}}={}){
  const canvas=document.createElement('canvas'),context=canvas.getContext?.('2d');
  if(context)context.font='600 13px sans-serif';
  const schedule=createCommentSchedule({comments,originalComments,measureWidth:text=>context?Math.ceil(context.measureText(text).width)+8:text.length*14});let disposed=false;
@@ -175,13 +179,18 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
   setPlayerComments(rows){if(!disposed)schedule.setPlayerComments(rows);},
   update(state,{paused=false,reducedMotion=false}={}){
    if(disposed)return;
-   const frame=schedule.update(state,{now:now(),pause:paused,reduce:reducedMotion,width:root.clientWidth});
-   root.dataset.activity=frame.activity.level;root.dataset.lanes=String(frame.activity.lanes);root.dataset.paused=String(paused);root.dataset.reduced=String(reducedMotion);
+   const effectivePaused=paused||root.contains?.(document.activeElement)===true;
+   const frame=schedule.update(state,{now:now(),pause:effectivePaused,reduce:reducedMotion,width:root.clientWidth});
+   root.dataset.activity=frame.activity.level;root.dataset.lanes=String(frame.activity.lanes);root.dataset.paused=String(effectivePaused);root.dataset.reduced=String(reducedMotion);
    if(frame.reset){const retained=reducedMotion&&!frame.scopeChanged?[...root.children].at(-1):null;root.replaceChildren();if(retained)root.append(retained);}
    for(const child of [...root.children])if(!reducedMotion&&Number(child.dataset.expires)<=frame.clock)child.remove();
    if(!frame.row)return;
    if(reducedMotion)root.replaceChildren();
-   const line=document.createElement('li');line.className='investor-danmaku-line';line.textContent=frame.row.zh_translation;
+   const line=document.createElement('li');line.className='investor-danmaku-line';
+   if(frame.row.source==='player'&&frame.row.truncated){
+    const full=document.createElement('button');full.type='button';full.className='investor-danmaku-open';full.textContent=frame.row.zh_translation;full.setAttribute('aria-label',LIBRARY_COPY.commentOpenLabel.replace('{alias}',frame.row.alias));
+    full.addEventListener('click',()=>{if(!disposed)onOpenComment({id:frame.row.id,alias:frame.row.alias,text:frame.row.playerText});});line.append(full);
+   }else line.textContent=frame.row.zh_translation;
    line.dataset.source=frame.row.source||'excerpt';line.dataset.sourceRef=frame.row.source==='player'?frame.row.id:commentSourceRef(frame.row);line.dataset.commentId=frame.row.id;line.dataset.lane=String(frame.row.lane);line.dataset.speed=String(frame.row.speed);line.dataset.expires=String(frame.row.expires);
    line.style.setProperty('--comment-width',`${frame.row.textWidth}px`);line.style.setProperty('--comment-lane',frame.row.lane);line.style.setProperty('--comment-duration',`${frame.row.duration}ms`);line.style.setProperty('--comment-travel',`${Math.max(200,root.clientWidth||400)}px`);
    line.addEventListener('animationend',()=>line.remove(),{once:true});root.append(line);

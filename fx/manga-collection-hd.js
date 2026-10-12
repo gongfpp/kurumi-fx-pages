@@ -56,7 +56,7 @@ export const MANGA_COLLECTION_HD_SOURCES=freeze([
     "alt": "久留美的神情僵住；同页的损益评估从负98,500变为负105,000日元。"
   }
 ]);
-export function collectionHdEdition(entry){
- if(entry?.unlocked!==true||entry.source?.kind!=='original-manga'||entry.id!=='sha256:'+entry.sha256)return null;
+export function collectionHdEdition(entry,{readOnlyPreview=false}={}){
+ if((!readOnlyPreview&&entry?.unlocked!==true)||entry?.source?.kind!=='original-manga'||entry.id!=='sha256:'+entry.sha256)return null;
  return MANGA_COLLECTION_HD_SOURCES.find(row=>row.record===entry.record&&row.legacySha256===entry.sha256&&row.legacyPath===entry.path)||null;
 }

@@ -201,3 +201,14 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 
 /* Three independent source slots; game modes retain their existing two columns. */
 .market-source-buttons[aria-label="交易K线"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+/* The whole news card remains a keyboard-accessible details entry. */
+#news[role="button"]{cursor:pointer;position:relative;padding-bottom:30px}
+#news[role="button"]:focus-visible{outline:3px solid #b64c7e;outline-offset:3px}
+#news .news-meta{align-items:baseline;line-height:1.5}
+#news #news-copy,#pixel-frontend #news #news-copy{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-height:none}
+#news #news-copy[hidden],#news #news-recap[hidden]{display:none}
+#news #news-recap{font-size:12px;line-height:1.55;margin-top:7px;color:#765f70}
+#news .news-detail-hint{position:absolute;right:12px;bottom:8px;font-size:12px;font-weight:700;color:#9d3d6b}
+#pixel-frontend #news #news-recap{font-size:13px;color:#495daa}
+#pixel-frontend #news .news-detail-hint{color:#495daa}

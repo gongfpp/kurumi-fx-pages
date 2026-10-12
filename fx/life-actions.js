@@ -1,6 +1,6 @@
-import {DINNER_OPTIONS} from './recap-choices.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 // Initial game-balance value, not a real-world wage or a claim about the manga.
 // One completed life action per story day. Workplaces differ only in presentation.
 export const LIFE_WORK_INCOME=2200;
@@ -25,10 +25,10 @@ export function lifeFriendKnown(s,id){
  return !!(s.story?.seen?.includes(event)||s.story?.log?.some(row=>row.id===event)||['friend','campus'].some(channel=>(s.chat?.[channel]||[]).some(line=>line.from===name&&(typeof line.dialogueId==='string'||typeof line.storyId==='string')))||
   LIFE_SCENE_DIALOGUE_SOURCES.length>0&&validLifeActions(s)&&s.lifeActions?.receipts?.some(receipt=>receipt.category==='friend'&&receipt.optionId===id&&LIFE_SCENE_DIALOGUE_SOURCES.some(row=>row.category==='friend'&&row.optionId===id&&row.dialogue?.sourceId===receipt.dialogue?.sourceId)));
 }
-// Reuse reviewed game text verbatim. The short Yasuko exchange is an explicitly
-// identified contiguous excerpt; speakers are never renamed or substituted.
+// Select only frozen trusted text. Legacy friend receipts retain their exact
+// excerpts; routine additions have their own append-only source identities.
 export function lifeActionDialogue(option){
- const id=option.category==='friend'?option.id==='mochiko'?'O-F-TALK-01':'O-C-HIDE-02':null;
+ const id=option.category==='friend'?option.id==='mochiko'?'O-F-TALK-01':'O-C-HIDE-02':['work','relax'].includes(option.category)?`life-action-20261012:${option.category}:${option.id}`:null;
  return lifeActionDialogueForSource(option,id);
 }
 export function validLifeActions(s){

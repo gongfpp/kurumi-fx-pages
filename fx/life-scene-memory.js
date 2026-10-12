@@ -1,5 +1,5 @@
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {validLifeActions} from './life-actions.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {validLifeActions} from './life-actions.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 // Only new life-scene locks/read acknowledgements are staged. Rendering never
 // waits for disk. A failed game save cannot permanently consume its unsaved
 // action's picture or poison that run/day's durable single-scene slot.
@@ -14,6 +14,7 @@ export function createLifeSceneMemory({memory,getState,getContext,getSavedState,
  const commit=entry=>{
   if(!current(entry)||!durable(entry))return false;
   // pick preserves every pre-existing lock, including an explicit null.
+  if(entry.scene.receiptDialogue&&memory.day(entry.dayKey).locked&&memory.day(entry.dayKey).identity!==entry.scene.identity)return entry.seen.size?memory.seen([...entry.seen]):true;
   const chosen=memory.pick(entry.dayKey,[entry.scene]);
   if(chosen?.identity!==entry.scene.identity)return false;
   return entry.seen.size?memory.seen([...entry.seen]):true;

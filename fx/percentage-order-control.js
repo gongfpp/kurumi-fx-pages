@@ -1,4 +1,4 @@
-import {orderAmountRatio} from './amount-controls.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {orderAmountRatio} from './amount-controls.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 
 // Paint only. Selection flows through the app's existing quoted order draft.
 // Keep a selected ratio under fee/psychological caps, and disclose the actual

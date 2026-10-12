@@ -93,7 +93,7 @@ export function createPixelRenderer({document:doc}) {
   function buildComments(container){
     move('comments',container);
     const comments=q('.investor-comments',container),player=native('player-comments'),list=q('.player-comment-list',player);
-    if(list){const recent=drawer('最近留言','pixel-recent-comments');player.append(recent.node);moveNode(list,recent.content);}
+    if(list&&!list.closest('details')){const recent=drawer('最近留言','pixel-recent-comments');player.append(recent.node);moveNode(list,recent.content);}
     if(comments){const credits=native('comment-credits-open');if(credits)moveNode(credits,q('.investor-comments-heading',comments));}
   }
   function syncMarketTabs(){

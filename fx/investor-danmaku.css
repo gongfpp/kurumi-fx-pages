@@ -21,3 +21,8 @@
 /* Scrolling excerpts are an explicit game presentation; other reduced-motion effects stay unchanged. */
 #investor-danmaku[data-reduced="false"] .investor-danmaku-line{animation:investor-comment-right-to-left var(--comment-duration) linear forwards!important}
 #investor-danmaku[data-reduced="false"][data-paused="true"] .investor-danmaku-line{animation-play-state:paused!important}
+
+/* Only a long public message needs a focusable full-text action. */
+#investor-danmaku .investor-danmaku-open{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;pointer-events:auto;white-space:inherit;cursor:pointer;text-align:left}
+#investor-danmaku .investor-danmaku-open:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+#investor-danmaku .investor-danmaku-line:focus-within{animation-play-state:paused}

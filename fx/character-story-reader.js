@@ -1,5 +1,5 @@
-import {CHARACTER_STORY_ASSETS,createCharacterStorySession} from './character-story-content.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {setImage} from './assets.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,createCharacterStorySession} from './character-story-content.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {setImage} from './assets.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 
 // A presentation-only reader. No engine, story queue, persistence, or account imports.
 export function mountCharacterStoryReader({root=document,getState,getContext,canOpen=()=>true}){
@@ -25,11 +25,12 @@ export function mountCharacterStoryReader({root=document,getState,getContext,can
   $('character-story-prev').disabled=index===0;$('character-story-next').disabled=index===total-1;
   const scroller=dialog.querySelector('.dialog-scroll');if(scroller)scroller.scrollTop=0;scrollTop=0;painting=false;
  }
- const session=createCharacterStorySession({getState,getContext,canOpen,onPage:paint,onClose:()=>{if(dialog.open)dialog.close();}});
+ const session=createCharacterStorySession({getState,getContext,canOpen,readOnlyPreview:true,onPage:paint,onClose:()=>{if(dialog.open)dialog.close();}});
  function show(){
+  const collection=root.getElementById('achievements-dialog'),fromCollection=collection?.open===true;if(fromCollection)collection.close();
   // Preserve the last position only in this live module and this run.
   const context=getContext(),resume=context===lastContext?scrollTop:0;
-  if(!session.open())return false;
+  if(!session.open()){if(fromCollection)collection.showModal();return false;}
   lastContext=context;
   if(footer.parentElement!==dialog)dialog.append(footer);
   dialog.showModal();const scroller=dialog.querySelector('.dialog-scroll');if(scroller)scroller.scrollTop=resume;

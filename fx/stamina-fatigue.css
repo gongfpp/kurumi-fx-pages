@@ -1,0 +1,9 @@
+/* Exhaustion is one 2.5s episode, never a modal or an input blocker. Ordinary
+   low-stamina effects stay local to non-action text and leave prices legible. */
+.stamina-exhaustion{position:fixed;inset:0;z-index:10000;background:#08060a;color:#eadde7;display:grid;place-items:center;pointer-events:none}
+.stamina-exhaustion[hidden]{display:none}
+.stamina-exhaustion span{font-size:16px;opacity:.75}
+.stamina-exhaustion[data-reduced="true"]{background:#08060a80}
+body[data-stamina-low="true"] :is(#speech-content,#news-copy){filter:blur(.25px);text-shadow:1px .4px 0 #84648545}
+body[data-stamina-low="true"] :is(#speech-content,#news-copy):focus-within{filter:none;text-shadow:none}
+@media(prefers-reduced-motion:reduce){body:not(.motion-full)[data-stamina-low="true"] :is(#speech-content,#news-copy){filter:none;text-shadow:none}}

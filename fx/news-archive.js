@@ -1,10 +1,10 @@
-import {NEWS_2014} from './news-2014.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
 export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH]);

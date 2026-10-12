@@ -1,13 +1,16 @@
-import {encodeProgress} from './save-encoder.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {storageFailure} from './storage.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {storageFailure} from './storage.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
-export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress,lifeSceneMigration=null}) {
+export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress,lifeSceneMigration=null,staminaFatigueMigration=false}) {
   // Main-game migration policy is injected; archived runtimes stay isolated.
   const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
   const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
+  const staminaBackupKey=staminaFatigueMigration&&MAIN_GAME_SAVE_SLOTS.includes(key)?key+':pre-stamina-fatigue-v2':null;
+  const lifeBackupKey=staminaBackupKey&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-actions-v1':null;
   const read=()=>{
     const current=storage.readItem(key);
     const legacy=current.available&&current.value===null&&legacyKey?storage.readItem(legacyKey):null;
@@ -19,7 +22,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   let baselineMetadata=null,completedSnapshot=null;
   const invalidate=()=>{baselineMetadata=null;completedSnapshot=null;};
   // Retain only immutable migration decisions, never the caller's state object.
-  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state)});
+  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state),fatigueV2:!!staminaBackupKey&&state?.stamina?.version===2});
   const previousMetadata=()=>{
     if(baselineMetadata?.raw===baseline.raw)return baselineMetadata.value;
     let value={};
@@ -110,6 +113,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
               const backup=storage.readItem(sceneBackupKey);
               if(!backup.available||backup.value===null&&!storage.setItem(sceneBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(sceneBackupKey));
             }
+            // Fatigue is an optional component upgrade even in small v12/v13
+            // saves. Preserve the exact durable envelope before its first v2 write.
+            // This shares the primary slot lock and never overwrites the archive.
+            if(nextMetadata.fatigueV2&&baseline.raw!==null&&!previous.fatigueV2){
+              const backup=storage.readItem(staminaBackupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(staminaBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(staminaBackupKey));
+            }
             // The encoder can return plain bytes or an envelope. Keep the
             // original outer-version migration rule without decoding its body.
             let outerPreV9=nextMetadata.preV9;
@@ -149,7 +159,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
       // advertised as a durable recovery. It may belong to an earlier run.
       const sceneBackup=sceneBackupKey?storage.readItem(sceneBackupKey):null;
       const sceneRecovery=sceneBackup?.available&&sceneBackup.value!==null?{lifeSceneRecoveryRaw:sceneBackup.value}:{};
-      return {...sceneRecovery,recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
+      const staminaBackup=staminaBackupKey?storage.readItem(staminaBackupKey):null;
+      const staminaRecovery=staminaBackup?.available&&staminaBackup.value!==null?{staminaFatigueRecoveryRaw:staminaBackup.value}:{};
+      // If life upgraded first, this older checkpoint is the pre-v17 recovery.
+      // Both archives keep their own compatibility boundary and exact bytes.
+      const lifeBackup=lifeBackupKey?storage.readItem(lifeBackupKey):null;
+      const lifeRecovery=lifeBackup?.available&&lifeBackup.value!==null?{lifeActionsRecoveryRaw:lifeBackup.value}:{};
+      return {...sceneRecovery,...staminaRecovery,...lifeRecovery,recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
         storedRaw:latest.current.available?latest.current.value:null,
         legacyRaw:latest.legacy?.available?latest.legacy.value:null,
         storageReadable:available(latest),saveDiagnostic:{status:status==='saved'&&savedText!==localRaw?'pending':status,reason,failure:failure?{...failure}:null,localCharacters:localRaw?.length??0,storedCharacters:latest.current.value?.length??0}};

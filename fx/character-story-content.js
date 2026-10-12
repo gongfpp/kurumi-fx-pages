@@ -88,16 +88,17 @@ export function characterStoriesAvailable(state={}){
  if(state.mode==='endless')return false;
  return state.story?.seen?.includes('friendStudy')===true || state.story?.log?.some(row=>row?.id==='friendStudy')===true || state.itemsUsed?.mochiko===true || state.consumptionLedger?.some(row=>row?.kind==='item'&&/^item:[1-9]\d*:mochiko$/.test(row.id||''))===true;
 }
-export function createCharacterStorySession({getState,getContext,canOpen=()=>true,onPage=()=>{},onClose=()=>{}}){
+export function createCharacterStorySession({getState,getContext,canOpen=()=>true,onPage=()=>{},onClose=()=>{},readOnlyPreview=false}){
  let context=null,index=0,active=false;
- const valid=()=>context===getContext()&&characterStoriesAvailable(getState());
+ const available=()=>readOnlyPreview||characterStoriesAvailable(getState());
+ const valid=()=>context===getContext()&&available();
  const paint=()=>onPage({index,node:CHARACTER_STORY_NODES[index],total:CHARACTER_STORY_NODES.length});
  function close(){if(!active)return false;active=false;onClose();return true;}
  return {
-  open(){if(active||!canOpen()||!characterStoriesAvailable(getState()))return false;const next=getContext();if(next!==context){context=next;index=0;}active=true;paint();return true;},
+  open(){if(active||!canOpen()||!available())return false;const next=getContext();if(next!==context){context=next;index=0;}active=true;paint();return true;},
   move(delta){if(!active)return false;if(!valid()){close();return false;}const next=Math.max(0,Math.min(CHARACTER_STORY_NODES.length-1,index+Math.sign(delta)));if(next===index)return false;index=next;paint();return true;},
   close,
-  refresh(){if(active&&!valid())close();if(context!==getContext()){context=null;index=0;}return characterStoriesAvailable(getState());},
+  refresh(){if(active&&!valid())close();if(context!==getContext()){context=null;index=0;}return available();},
   get active(){return active;},get index(){return index;}
  };
 }

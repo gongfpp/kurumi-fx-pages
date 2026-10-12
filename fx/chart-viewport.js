@@ -1,6 +1,6 @@
-import {marketInfo} from './market-book.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {movingAveragePath} from './moving-average.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {marketInfo} from './market-book.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.

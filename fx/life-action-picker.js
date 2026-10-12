@@ -54,9 +54,9 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    const card=make('article','life-picker-menu-card'),h=make('h4','');h.append(icon(item.icon),doc.createTextNode(item.label));
    const options=optionsOf(m,item.id),isDinner=item.id==='dinner';
    const hasDinnerOptions=isDinner&&Array.isArray(m.options?.dinner);
-   const disabled=busy||(isDinner&&!hasDinnerOptions?(m.dinnerEnabled===false||typeof onDinner!=='function'):(!statusOf(m).enabled||!options.some(o=>o.enabled)));
-   const reason=isDinner?m.dinnerReason:statusOf(m).reason||(!options.some(o=>o.enabled)?'还没有可选的安排':'');
-   card.append(h,art(item.id,item.label),actionButton(item.button,{lifeOpen:item.id},disabled,reason));grid.append(card);
+   const disabled=busy||(isDinner&&!hasDinnerOptions?(m.dinnerEnabled===false||typeof onDinner!=='function'):!statusOf(m).enabled);
+   const reason=statusOf(m).reason||(isDinner?m.dinnerReason:'')||(!options.some(o=>o.enabled)?options.find(o=>o.reason)?.reason||'还没有可选的安排':'');
+   card.append(h,art(item.id,item.label));if(reason&&!options.some(o=>o.enabled))card.append(make('p','life-picker-option-reason',reason));card.append(actionButton(item.button,{lifeOpen:item.id},disabled,reason));grid.append(card);
   }
   section.append(grid);body.append(section);
   const footer=make('footer','life-picker-footer'),returnButton=button('life-picker-return','‹ 返回交易');returnButton.dataset.lifeClose='true';footer.append(returnButton);body.append(footer);
@@ -79,7 +79,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    const choose=actionButton('选定并收盘',{lifeChoose:option.id},disabled,reason);choose.setAttribute('aria-label',`${option.label}，选定并收盘`);card.append(choose);grid.append(card);
   }
   if(!options.length)body.append(make('p','life-picker-empty',category==='friend'?'暂时还没有相识的朋友。':'暂时没有可选的安排。'));
-  if(category==='friend'&&options.length&&!enabledCount&&!message)setMessage(statusOf(m).reason||'暂时还没有相识的朋友。');
+  if(options.length&&!enabledCount&&!message)setMessage(statusOf(m).reason||options.find(o=>o.reason)?.reason||(category==='friend'?'暂时还没有相识的朋友。':''));
  }
  function render({force=false}={}){
   if(disposed||!dialog.open)return;

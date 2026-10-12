@@ -1,4 +1,5 @@
-import {currentTradingTimestamp} from './trading-time.js?v=312cdfbdd4a39e25906ce9f6e87d933d3599e3ed-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
 
 const DAY=86400000,JST=9*3600000;
 export const NEWS_PAIRS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);
@@ -12,7 +13,7 @@ export function newsContext(state={}){
  let at=null;
  try{at=historical?state.historical.lastQuote?.[0]:currentTradingTimestamp(state);}catch{/* Invalid old metadata is not a clock. */}
  const date=newsDate(at);
- return {mode:historical?'historical':'simulated',pair:NEWS_PAIRS.includes(pair)?pair:null,at:safeTimestamp(at)?at:null,date,year:date?.slice(0,4)??null};
+ return {mode:isLiveMarket(state)?'live':historical?'historical':'simulated',pair:NEWS_PAIRS.includes(pair)?pair:null,at:safeTimestamp(at)?at:null,date,year:date?.slice(0,4)??null};
 }
 export function newsAvailableAt(entry){
  if(typeof entry?.date!=='string'||!/^2014-\d\d-\d\d$/.test(entry.date))return null;
@@ -33,7 +34,7 @@ export function newsPairs(entry){
  return NEWS_PAIRS.filter(pair=>entry.currencies?.some(currency=>pair.slice(0,3)===currency||pair.slice(3)===currency));
 }
 export function availableNews(entry,context){
- if(!context||!NEWS_PAIRS.includes(context.pair)||!safeTimestamp(context.at)||newsDate(context.at)?.slice(0,4)!==entry.date?.slice(0,4))return false;
+ if(!context||context.mode==='live'||!NEWS_PAIRS.includes(context.pair)||!safeTimestamp(context.at)||newsDate(context.at)?.slice(0,4)!==entry.date?.slice(0,4))return false;
  if(entry.productionEnabled===false)return false;
  // This review permits only the original factual summary; it does not grant
  // reuse rights in the source document or remove its recorded restrictions.
