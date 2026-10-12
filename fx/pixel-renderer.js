@@ -1,10 +1,12 @@
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
  * No engine, save store, network client, quote clock or financial state is created.
  * The host owns the reversible portal ledger and restores nodes after dispose().
  */
 export function createPixelRenderer({document:doc}) {
-  let root=null, portals=null, controller=null, tabs=null, originalPercent=null, originalPercentHidden=null;
+  let root=null, portals=null, controller=null, tabs=null, originalPercent=null, originalPercentHidden=null, mobileLayout=null;
   const owned=[];
   const q=(selector,scope=root)=>scope?.querySelector(selector);
   const native=id=>doc.getElementById(id);
@@ -117,6 +119,7 @@ export function createPixelRenderer({document:doc}) {
     const disclosure=native('market-disclosure')?.textContent||'';
     const source=q('.pixel-source-status');if(source){const kind=native('terminal')?.dataset.marketSource;source.textContent=({live:'实时真实',historical:'历史真实',simulated:'模拟盘'}[kind]||'模拟盘');source.title=disclosure;}
     const pressure=native('emotion-pressure-panel');if(pressure&&!pressure.hidden){const drawer=pressure.closest('details');if(drawer)drawer.open=true;}
+    mobileLayout?.refresh();
   }
   return {
     id:'pixel',
@@ -129,11 +132,13 @@ export function createPixelRenderer({document:doc}) {
       character.append(characterBody);market.append(marketBody);news.append(newsBody);comments.append(commentsBody);right.append(tradeBody,positions);grid.append(character,market,news,comments,right);root.append(header,notices,grid,footer);
       buildHeader(header);for(const name of ['status','developerStatus','sceneResume'])move(name,notices);
       buildCharacter(characterBody);buildMarket(marketBody);move('news',newsBody);buildComments(commentsBody);move('positions',positions);buildTrade(tradeBody,positions);move('footer',footer);
+      mobileLayout=createApprovedMobileLayout({document:doc,root});
       render();
     },
     render,
     dispose() {
       controller?.abort();
+      mobileLayout?.dispose();mobileLayout=null;
       const percent=native('percent-slider-field');if(percent)percent.hidden=true;
       if(originalPercent){originalPercent.hidden=originalPercentHidden;originalPercent=null;originalPercentHidden=null;}
       // Portal restoration follows this call. Do not remove a wrapper that owns live nodes.

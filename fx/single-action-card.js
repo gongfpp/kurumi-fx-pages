@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
@@ -101,7 +101,10 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     if(meter.parentElement!==character)character.append(meter);
     const stage=chart.closest?.('.chart-risk-stage')||chart;
     if(eyelids.parentElement!==stage)stage.append(eyelids);
-    if(slot.parentElement!==stage.parentElement)stage.after(slot);
+    // Follow the chart-edge order strip when the approved mobile layout is active.
+    const quickTrade=root.getElementById('mobile-quick-trade');
+    const actionAnchor=quickTrade&&host.contains(quickTrade)?quickTrade:stage;
+    if(slot.parentElement!==stage.parentElement||slot.previousSibling!==actionAnchor)actionAnchor.after(slot);
     const value=Math.max(0,Math.min(100,Number.isFinite(model.stamina?.value)?model.stamina.value:100));
     text(number,`${Math.round(value)}/100`);text(stateLabel,model.stamina?.low?'困倦':'');stateLabel.hidden=!model.stamina?.low;
     meter.dataset.low=String(Boolean(model.stamina?.low));track.setAttribute('aria-valuenow',String(Math.round(value)));track.setAttribute('aria-valuetext',`${Math.round(value)}/100${model.stamina?.low?'，困倦':''}`);fill.style.width=`${value}%`;

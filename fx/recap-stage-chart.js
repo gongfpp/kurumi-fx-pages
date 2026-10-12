@@ -1,6 +1,6 @@
-import {marketInfo,positionMarket} from './market-book.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {orderedRecapTrades,recapUpperBound} from './recap-timeline.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {marketInfo,positionMarket} from './market-book.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {orderedRecapTrades,recapUpperBound} from './recap-timeline.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 const node=(doc,tag,attrs={})=>{const e=doc.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;};
 // Compress unrecorded session gaps geometrically, never synthesize market data.
 // Timestamp interpolation is only for the replay cursor / receipt marker x-axis.

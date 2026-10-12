@@ -7,3 +7,58 @@ body[data-frontend=pixel] #achievements-dialog:has(.manga-collection-tabs) .dial
 .manga-collection-original.image-unavailable,.manga-collection-thumbnail.image-unavailable{display:none}.manga-collection-page .manga-image-fallback{font-size:14px;line-height:1.6;padding:20px;color:#625187}
 
 .manga-collection-editions{display:flex;gap:6px;flex-wrap:wrap;padding:8px;background:#fffdfd}.manga-collection-editions button{font:inherit;font-size:13px;border:1px solid #a594ef;border-radius:5px;background:#fff;color:inherit;padding:8px 10px;cursor:pointer}.manga-collection-editions button[aria-pressed=true]{background:#efe4fa;border-color:#a065ad}.manga-collection-editions button:focus-visible{outline:3px solid #5448de;outline-offset:2px}
+
+/* Approved mobile catalog: presentation only. Desktop and legacy retain the
+   existing gallery; all reader sources and natural/achievement facts remain. */
+.manga-collection-mobile-toolbar-title,.manga-collection-mobile-heading,
+.manga-collection-book-icon,.manga-collection-chapter,.manga-collection-card-chevron,
+.manga-collection-read,.manga-collection-next-group,.manga-collection-reader-back{display:none}
+@media(max-width:760px){
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga]{--comic-pink:#ff399c;--comic-ink:#0a1255;width:calc(100vw - 12px);max-width:748px;color:var(--comic-ink);border:1px solid #ffb2d9;border-radius:10px;background:#fffafd;box-shadow:0 12px 42px #18245338}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-toolbar{min-height:62px;padding:6px 10px;gap:8px;background:#fffafd;border-bottom:0;justify-content:flex-start}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-toolbar::before{content:none}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-toolbar .x-close{width:44px;min-width:44px;height:44px;padding:0;flex:0 0 44px;font-size:0;background:none;color:var(--comic-ink);border:0;box-shadow:none}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-toolbar .x-close::before{content:'‹';font-size:38px;line-height:1}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-mobile-toolbar-title{display:flex;align-items:center;gap:12px;font-size:25px;font-weight:900}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-mobile-toolbar-title::before,
+ body[data-frontend=pixel] .manga-collection-book-icon{content:'';display:block;width:43px;height:45px;background:url('./pixel-assets/reference-atlas.png?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717') -36px -662px no-repeat;image-rendering:pixelated;flex:none}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-scroll{padding:0 9px 16px;scrollbar-gutter:auto;background:#fffafd}
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-scroll>h2,
+ body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-tabs{display:none}
+ body[data-frontend=pixel] .manga-collection-panel{display:block;color:var(--comic-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif}
+ body[data-frontend=pixel] .manga-collection-catalog{border:0;border-radius:0;background:none;overflow:visible}
+ body[data-frontend=pixel] .manga-collection-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;padding:0;margin:0 0 18px;border:1px solid var(--comic-pink);border-radius:7px;overflow:hidden}
+ body[data-frontend=pixel] .manga-collection-filter{min-height:46px;border:0;border-radius:0;padding:8px 12px;background:#fff;font-size:21px;font-weight:800;color:var(--comic-ink)}
+ body[data-frontend=pixel] .manga-collection-filter[aria-pressed=true]{background:var(--comic-pink);color:#fff}
+ body[data-frontend=pixel] .manga-collection-filter:focus-visible{outline-offset:-3px}
+ body[data-frontend=pixel] .manga-collection-header{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:0 0 12px;border:0}
+ body[data-frontend=pixel] .manga-collection-mobile-heading{display:block;font-size:20px;line-height:1.3;white-space:nowrap}
+ body[data-frontend=pixel] .manga-collection-desktop-heading,
+ body[data-frontend=pixel] .manga-collection-count{display:none}
+ body[data-frontend=pixel] .manga-collection-header #character-story-entry{min-height:44px;min-width:0;width:auto;flex:0 1 auto;margin:0;padding:7px 12px;border:1px solid #ff91c8;border-radius:7px;background:#fff;font-size:15px;color:var(--comic-ink);white-space:normal}
+ body[data-frontend=pixel] .manga-collection-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:0}
+ body[data-frontend=pixel] .manga-collection-card{display:grid;grid-template-columns:43px auto minmax(0,1fr) 14px;grid-template-rows:minmax(46px,auto) minmax(44px,auto);align-items:center;gap:10px 9px;width:100%;padding:12px 10px 10px;border:1px solid #ffc0df;border-radius:9px;background:#fff;text-align:left;box-shadow:none;overflow:visible;white-space:normal;touch-action:manipulation}
+ body[data-frontend=pixel] .manga-collection-card[aria-pressed=true]{outline:0;border-color:#ff67b2;background:linear-gradient(110deg,#fff5fb,#fff)}
+ body[data-frontend=pixel] .manga-collection-thumb,
+ body[data-frontend=pixel] .manga-collection-card-status,
+ body[data-frontend=pixel] .manga-collection-detail{display:none}
+ body[data-frontend=pixel] .manga-collection-chapter{display:block;max-width:74px;padding:5px 7px;border-radius:6px;background:#ffe3f2;font-size:14px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+ body[data-frontend=pixel] .manga-collection-card strong{min-width:0;font-size:16px;line-height:1.45;font-weight:800;overflow-wrap:anywhere}
+ body[data-frontend=pixel] .manga-collection-card-chevron{display:block;font-size:27px;line-height:1;text-align:right}
+ body[data-frontend=pixel] .manga-collection-read{display:flex;grid-column:1/-1;min-height:44px;align-items:center;justify-content:center;border:1px solid var(--comic-pink);border-radius:6px;color:var(--comic-pink);font-size:18px;font-weight:800;line-height:1.4}
+ body[data-frontend=pixel] .manga-collection-card[aria-pressed=true] .manga-collection-read{background:var(--comic-pink);color:#fff}
+ body[data-frontend=pixel] .manga-collection-card:focus-visible{outline:3px solid #5448de;outline-offset:2px}
+ body[data-frontend=pixel] .manga-collection-list-nav{gap:22px;padding:16px 0 12px;font-size:18px;font-weight:700}
+ body[data-frontend=pixel] .manga-collection-list-nav button{width:44px;min-height:44px;padding:0;border:1px solid #ffc0df;border-radius:7px;background:#fff;color:var(--comic-ink);font-size:29px;line-height:1}
+ body[data-frontend=pixel] .manga-collection-next-group{display:block;width:100%;min-height:46px;margin:0;padding:9px;border:1px solid var(--comic-pink);border-radius:7px;background:#fff;color:var(--comic-pink);font:inherit;font-size:18px;font-weight:800;touch-action:manipulation}
+ body[data-frontend=pixel] .manga-collection-panel[data-reader-open=false] .manga-collection-reader,
+ body[data-frontend=pixel] .manga-collection-panel[data-reader-open=true] .manga-collection-catalog{display:none}
+ body[data-frontend=pixel] .manga-collection-reader{padding:0;border:0;background:#fffafd;overflow:visible}
+ body[data-frontend=pixel] .manga-collection-reader-header{flex-wrap:wrap;gap:10px}
+ body[data-frontend=pixel] .manga-collection-reader-header h3{display:none}
+ body[data-frontend=pixel] .manga-collection-reader-back{display:block;min-height:44px;padding:8px 12px;border:1px solid #ff91c8;border-radius:7px;background:#fff;color:var(--comic-ink);font:inherit;font-weight:700;touch-action:manipulation}
+ body[data-frontend=pixel] .manga-collection-choice{max-width:100%;width:100%;min-height:44px;font-size:15px}
+ body[data-frontend=pixel] .manga-collection-reader-nav{padding:10px 0;font-size:15px;flex-wrap:wrap}
+ body[data-frontend=pixel] .manga-collection-reader-nav button{min-height:44px;max-width:45%;padding:8px 10px;white-space:normal}
+ body[data-frontend=pixel] .manga-collection-editions button{min-height:44px}
+}

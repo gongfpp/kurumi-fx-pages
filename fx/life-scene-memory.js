@@ -1,5 +1,5 @@
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {validLifeActions} from './life-actions.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {validLifeActions} from './life-actions.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 // Only new life-scene locks/read acknowledgements are staged. Rendering never
 // waits for disk. A failed game save cannot permanently consume its unsaved
 // action's picture or poison that run/day's durable single-scene slot.

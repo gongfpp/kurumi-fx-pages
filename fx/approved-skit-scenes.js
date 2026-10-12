@@ -1,10 +1,10 @@
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 
 export function approvedSkit(id,{assets=APPROVED_FOUR_SKIT_ASSETS}={}){
  const script=APPROVED_FOUR_SKITS[id];if(!script)return null;

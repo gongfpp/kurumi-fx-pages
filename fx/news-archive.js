@@ -1,13 +1,14 @@
-import {NEWS_2014} from './news-2014.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
-import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {NEWS_2014_VERIFIED_EXPANSION} from './news-2014-verified-expansion.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
+import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
-export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH]);
+export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH,...NEWS_2014_VERIFIED_EXPANSION]);
 const byId=new Map(NEWS_ARCHIVE.map(e=>[e.id,e]));
 const DIRECTIONS=['up','down','range'],VOLATILITY=['normal','high'];
 const validState=s=>s&&DIRECTIONS.includes(s.direction)&&VOLATILITY.includes(s.volatility);

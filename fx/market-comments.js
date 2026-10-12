@@ -1,4 +1,4 @@
-import {CCSE_MARKET_COMMENTS} from './market-comments-ccse.js?v=e96fa64c519b4b67cce1aa222710ddf39572a802-23f2a20b7717';
+import {CCSE_MARKET_COMMENTS} from './market-comments-ccse.js?v=dc2d3c2c7c850feefe871b0398d0d71c5f530df2-23f2a20b7717';
 // Licensed quotation data; each Chinese translation shares its source license.
 export const MARKET_COMMENTS=Object.freeze([
   {
