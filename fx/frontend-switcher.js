@@ -1,8 +1,8 @@
-import {createFrontendHost} from './frontend-host.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {createFrontendHost} from './frontend-host.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 // Loaded once by the original application after its controls and chart exist.
 // Loading the optional skin is isolated: failure leaves the original UI usable.
-export function mountFrontendSwitcher({document=globalThis.document,onLayout=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717')}={}){
+export function mountFrontendSwitcher({document=globalThis.document,onLayout=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717')}={}){
  const nav=document.getElementById('frontend-switch');
  if(!nav)return null;
  const status=document.getElementById('frontend-switch-status');

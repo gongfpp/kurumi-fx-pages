@@ -1,7 +1,7 @@
-import {marketPrice,positionMarket} from './market-book.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 export function accountingValues(state){
  const positions=state.positions?.length?state.positions:state.position?[state.position]:[];

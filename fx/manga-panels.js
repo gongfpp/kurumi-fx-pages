@@ -1,4 +1,4 @@
-import {CONTEXT_PANELS} from './manga-context-panels.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {CONTEXT_PANELS} from './manga-context-panels.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // Original first-chapter references plus individually reviewed context assets.
 export const MANGA_PANELS = Object.freeze({
  ...CONTEXT_PANELS,
@@ -204,10 +204,13 @@ export const MANGA_PANELS = Object.freeze({
     "chapter": 1,
     "page": 44,
     "character": "久留美",
-    "context": "反弹止损",
+    "context": "反弹后手动退出",
     "scene": "电脑前",
     "expression": "恐慌",
-    "meaning": "行情反弹时的止损反应",
+    "meaning": "空单浮盈回撤时手动退出，后页确认盈利",
+    "sourceOriginalPageURL": "https://x.com/demk0814/status/1417775718604238853",
+    "sourceOriginalPrintedPage": 46,
+    "correction": "原作者公开预览第46页手动撤退，第47页确认盈利；不是自动止损或已实现亏损。原目录页号与文件名保留作溯源，不作为交易语义。",
     "sourceFile": "久留美_反弹止损_电脑前_恐慌_不好立即撤退.jpg",
     "sourceCommit": "3e63cbf68cb66a26c59ee07b3ae9cd3100184f3c",
     "sourceURL": "https://github.com/gongfpp/manga-panel-extractor/blob/3e63cbf68cb66a26c59ee07b3ae9cd3100184f3c/memes/久留美_反弹止损_电脑前_恐慌_不好立即撤退.jpg",

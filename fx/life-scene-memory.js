@@ -1,7 +1,7 @@
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {validLifeActions} from './life-actions.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {validLifeActions} from './life-actions.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 const dinnerReceipt=state=>Array.isArray(state?.recapChoiceLedger)?state.recapChoiceLedger.findLast(row=>row?.day===state.day&&DINNER_OPTIONS.some(option=>option.id===row.id)):null;
 const dayKey=state=>state?`${state.runId||state.seed}:${state.day}`:null;
 // Only this paid choice and its explicit daily fallback use the meal gate.

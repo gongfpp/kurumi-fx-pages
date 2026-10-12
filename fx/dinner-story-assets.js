@@ -1,6 +1,7 @@
-import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {DINNER_EXPANSION_21_ASSETS} from './dinner-expansion-21.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
@@ -909,7 +910,8 @@ export const DINNER_STORY_ASSETS=freeze({
  },
  ...DINNER_EXPANSION_16_18_ASSETS,
  ...DINNER_EXPANSION_19_ASSETS,
- ...DINNER_EXPANSION_20_ASSETS
+ ...DINNER_EXPANSION_20_ASSETS,
+ ...DINNER_EXPANSION_21_ASSETS
 });
 export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));
 

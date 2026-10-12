@@ -1,9 +1,9 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {originalPublicationUrl} from './news-source-view.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {originalPublicationUrl} from './news-source-view.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 // Read-only publication list. Eligibility is the archive's existing pair/date/
 // review gate; neither future script events nor archive bag mutations are read.

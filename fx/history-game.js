@@ -1,5 +1,5 @@
-import {importHistoricalPackage} from './historical-import.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {createLocalResearchFile,importResearchPackage} from './research-import.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {importHistoricalPackage} from './historical-import.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {createLocalResearchFile,importResearchPackage} from './research-import.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // Static game-data transport, separate from the protected owner API.
 // Packages must pass the publication review before they are shipped here.
 const ROOT=new URL('./history-data/',import.meta.url);

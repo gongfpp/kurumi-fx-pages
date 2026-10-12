@@ -1,15 +1,16 @@
-import {NEWS_2014} from './news-2014.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_VERIFIED_EXPANSION} from './news-2014-verified-expansion.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {NEWS_2014_VERIFIED_FOLLOWUP} from './news-2014-verified-followup.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_VERIFIED_EXPANSION} from './news-2014-verified-expansion.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_VERIFIED_FOLLOWUP} from './news-2014-verified-followup.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {NEWS_2014_VERIFIED_FIVE} from './news-2014-verified-five.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
-export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH,...NEWS_2014_VERIFIED_EXPANSION,...NEWS_2014_VERIFIED_FOLLOWUP]);
+export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH,...NEWS_2014_VERIFIED_EXPANSION,...NEWS_2014_VERIFIED_FOLLOWUP,...NEWS_2014_VERIFIED_FIVE]);
 const byId=new Map(NEWS_ARCHIVE.map(e=>[e.id,e]));
 const DIRECTIONS=['up','down','range'],VOLATILITY=['normal','high'];
 const validState=s=>s&&DIRECTIONS.includes(s.direction)&&VOLATILITY.includes(s.volatility);

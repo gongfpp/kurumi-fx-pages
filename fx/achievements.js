@@ -1,8 +1,8 @@
-import {marketPrice,positionMarket} from './market-book.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {setImage} from './assets.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {setImage} from './assets.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});

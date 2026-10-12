@@ -1,8 +1,8 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // Simulated market information is separate from user-approved character dialogue.
-import {approvedQuote,dialogueFacts} from './dialogue.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {approvedQuote,dialogueFacts} from './dialogue.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // USD/JPY is quoted in JPY per USD: positive = stronger USD / weaker JPY.
 // Bias is a simulated tendency; seeded noise and reversals can outweigh it.
 // Quote convention: https://www.boj.or.jp/about/education/oshiete/intl/g18.htm

@@ -1,4 +1,4 @@
-import {INVESTOR_COPY} from './copy/npc-investors.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {INVESTOR_COPY} from './copy/npc-investors.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 const ACTORS = [
   {id:'paper-kite',actor:'多头纸鸢',stance:'long'},

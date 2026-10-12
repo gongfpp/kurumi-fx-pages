@@ -1,7 +1,7 @@
-import {selectOriginalTradingExpression} from './trading-expression-originals.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {assetURL} from './assets.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {bindFloatingDismissal} from './floating-dismissal.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {selectOriginalTradingExpression} from './trading-expression-originals.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {assetURL} from './assets.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {bindFloatingDismissal} from './floating-dismissal.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {createExpressionObserver,createExpressionGate,tradingExpressionSnapshot,expressionEvent,expressionForTrades,expressionThought} from './trading-expression-events.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 // Try readable sizes inside existing whitespace; never move or cover game UI.
 export function selectExpressionPlacement({width,height,viewportWidth,viewportHeight,context,blockers=[],anchors=[],selectAsset=selectOriginalTradingExpression}){

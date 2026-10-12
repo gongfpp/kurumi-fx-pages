@@ -1,7 +1,7 @@
-import {MANGA_PANELS} from './manga-panels.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {positionsOf,positionUnrealized,positionNetUnrealized,mood} from './engine.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {sealedDailyMangaOutcome,selectDailyManga} from './manga-context.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {positionsOf,positionUnrealized,positionNetUnrealized,mood} from './engine.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {sealedDailyMangaOutcome,selectDailyManga} from './manga-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 
 // Rules refer to actual account exposure, never the direction of the market
 // alone. Canonical labels are retained in the catalogue; corrected semantics
@@ -29,7 +29,7 @@ export function selectMangaPortrait(state, {maxChapter=Infinity,maxPage=Infinity
   else if(!orders.length&&recent&&last.type!=='open'&&last.pnl>0&&em==='ecstatic'&&last.direction===-1&&cleanShortClose&&daySupportsProfit){id='profit';reason='空单净盈利已实际平仓，当前情绪为狂喜；原图金额不用于本局。';}
   else if(shorts&&recent&&last.type==='open'&&Math.abs(pnl)<.005&&em==='smug'){id='short-entry';reason='刚卖出建空且当前得意，尚未平仓。';}
   else if(shorts&&net>0&&['nervous','anxious'].includes(em)){id='leverage';reason='空单净浮盈伴随杠杆紧张；浮盈尚未落袋。';}
-  else if(shorts&&['nervous','stunned','anxious'].includes(em)&&orders.some(p=>p.maxUnrealized>0&&positionUnrealized(state,p)<p.maxUnrealized-.005)){id='retreat';reason='空单遇报价反弹，当前惊慌；原作撤退不等于已实现亏损。';}
+  else if(shorts&&orders.every(p=>positionNetUnrealized(state,p)>0)&&['nervous','stunned','anxious'].includes(em)&&orders.some(p=>p.maxUnrealized>0&&positionUnrealized(state,p)<p.maxUnrealized-.005)){id='retreat';reason='空单净浮盈回落，当前惊慌；原作此时手动退出，后页确认盈利，不表示本局已平仓。';}
   else if(longs&&net>0&&em==='ecstatic'){id='long-profit';reason='多单当前净浮盈并感到狂喜；只取表情，不采用原作澳元金额。';}
   else if(longs&&pnl<0&&reversal&&['stunned','regretful','anxious','profit-to-loss'].includes(em)){id='long-loss';reason='本局多单有已记录的浮盈转亏，当前错愕；尚未平仓。';}
   else if(longs&&pnl<0&&['anxious','nervous'].includes(em)){id='stop-loss-uneasy';reason='多单仍有浮亏，当前犹疑紧张；漫画是在考虑止损，并未证明已经执行。';}

@@ -1,8 +1,8 @@
-import {LIBRARY_COPY} from './copy/library-ui.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {MARKET_COMMENTS} from './market-comments.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;
@@ -43,6 +43,8 @@ const LEGACY_COMMENT_RECORDS=new WeakSet(LEGACY_COMMENT_IDS.flatMap((id,index)=>
 const commentText=value=>typeof value==='string'&&value.trim().length>0;
 const commentSourceRef=row=>commentText(row.source_ref)?row.source_ref.trim():row.id.trim();
 const commentTextKey=value=>value.normalize('NFC').replace(/\s+/gu,' ').trim();
+// Compare equivalent text without rewriting the displayed or full player message.
+const commentRepeatKey=row=>commentTextKey(row.playerText??row.originalText??row.zh_translation);
 const COMMENT_KEYS=new WeakMap();
 function commentKeys(row){
  const cached=COMMENT_KEYS.get(row);
@@ -140,32 +142,32 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    }
    if(lane<0)return result;
    let row=null;
-   if(marketSincePlayer>=3)row=playerPool.find(candidate=>!shownPlayerIds.has(candidate.id)&&(!seen.has(candidate.playerText)||clock-seen.get(candidate.playerText)>=COMMENT_REPEAT_GAP))||null;
+   if(marketSincePlayer>=3)row=playerPool.find(candidate=>!shownPlayerIds.has(candidate.id)&&(!seen.has(commentRepeatKey(candidate))||clock-seen.get(commentRepeatKey(candidate))>=COMMENT_REPEAT_GAP))||null;
    // Player priority is unchanged. Fictional dialogue shares these existing lanes,
    // alternates with excerpts, and cannot increase density by paraphrasing one scene.
    if(!row&&marketSinceOriginal>=1)for(let n=0;n<originalPool.length;n++){
     const index=(originalCursor+n)%originalPool.length,candidate=originalPool[index];
-    if((!seen.has(candidate.originalText)||clock-seen.get(candidate.originalText)>=COMMENT_REPEAT_GAP)&&(!seenThemes.has(candidate.theme_id)||clock-seenThemes.get(candidate.theme_id)>=ORIGINAL_THEME_REPEAT_GAP)){
+    if((!seen.has(commentRepeatKey(candidate))||clock-seen.get(commentRepeatKey(candidate))>=COMMENT_REPEAT_GAP)&&(!seenThemes.has(candidate.theme_id)||clock-seenThemes.get(candidate.theme_id)>=ORIGINAL_THEME_REPEAT_GAP)){
      row=candidate;
      // Keep the existing theme priority. Within that eligible theme, prefer the
      // least recently shown wording, so its first variant cannot starve siblings.
      for(let offset=1;offset<originalPool.length;offset++){
       const alternate=originalPool[(index+offset)%originalPool.length];
       if(alternate.theme_id!==candidate.theme_id)continue;
-      const last=seen.get(alternate.originalText)??-Infinity;
-      if(clock-last>=COMMENT_REPEAT_GAP&&last<(seen.get(row.originalText)??-Infinity))row=alternate;
+      const last=seen.get(commentRepeatKey(alternate))??-Infinity;
+      if(clock-last>=COMMENT_REPEAT_GAP&&last<(seen.get(commentRepeatKey(row))??-Infinity))row=alternate;
      }
      originalCursor=(index+1)%originalPool.length;break;
     }
    }
-   for(let n=0;!row&&n<pool.length;n++){const index=(cursor+n)%pool.length,candidate=pool[index];if(!seen.has(candidate.zh_translation)||clock-seen.get(candidate.zh_translation)>=COMMENT_REPEAT_GAP){row=candidate;cursor=(index+1)%pool.length;break;}}
+   for(let n=0;!row&&n<pool.length;n++){const index=(cursor+n)%pool.length,candidate=pool[index];if(!seen.has(commentRepeatKey(candidate))||clock-seen.get(commentRepeatKey(candidate))>=COMMENT_REPEAT_GAP){row=candidate;cursor=(index+1)%pool.length;break;}}
    if(!row)return result; // never invent text or shorten the repeat cooldown for density
    const textWidth=Math.max(1,measureWidth(row.zh_translation)),previous=lanes[lane];
    const speed=previous&&previous.expires>clock?previous.speed:activity.pixelsPerSecond;
    const duration=reduce?30000:Math.ceil((width+textWidth)/speed*1000);
    if(row.source==='player'){shownPlayerIds.add(row.id);marketSincePlayer=0;}else marketSincePlayer=Math.min(3,marketSincePlayer+1);
    if(row.source==='fictional'){seenThemes.set(row.theme_id,clock);marketSinceOriginal=0;}else if(row.source!=='player')marketSinceOriginal=1;
-   seen.set(row.playerText??row.originalText??row.zh_translation,clock);lanes[lane]={entryAt:clock+(textWidth+COMMENT_LANE_GAP)/speed*1000,expires:clock+duration,speed};
+   seen.set(commentRepeatKey(row),clock);lanes[lane]={entryAt:clock+(textWidth+COMMENT_LANE_GAP)/speed*1000,expires:clock+duration,speed};
    laneCursor=(lane+1)%activity.lanes;nextAt=clock+Math.max(activity.interval,reduce?30000:0);
    result.row={...row,lane,duration,textWidth,speed,expires:clock+duration};return result;
   }

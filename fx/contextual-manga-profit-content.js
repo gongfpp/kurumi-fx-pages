@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=2ab09e13d91ca760a3adcdfc0636341e66b855e6-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
 // Parallel original episodes. Fixed pictures and third-person narration only.
 const reused={16:'short-entry',17:'leverage',19:'retreat',20:'profit'};
 export const PROFIT_MANGA_ASSETS={
