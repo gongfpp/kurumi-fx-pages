@@ -1,7 +1,8 @@
-import {artIdentity} from './daily-art-memory.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.
@@ -47,7 +48,7 @@ function fallbackLineVisible(line,win){
 export function mountLifeActionStory(host,scene,{memory}={}){
  const doc=host.ownerDocument,win=doc.defaultView,lines=[];let stopped=false,completed=false,observer=null;
  host.classList?.add('life-action-story');
- for(const [from,text] of scene.lines){const line=doc.createElement('p');line.textContent=`${from}：${text}`;host.append(line);lines.push(line);}
+ for(const [from,text] of scene.lines){const line=createSkitLine(doc,from,text);host.append(line);lines.push(line);}
  const seen=new Set(),finish=()=>{if(!stopped&&!completed&&!doc.hidden&&seen.size===lines.length){completed=true;memory?.seen([scene.identity]);observer?.disconnect();}};
  if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{if(stopped||doc.hidden)return;for(const entry of entries)if(entry.isIntersecting&&entry.intersectionRatio>=.9)seen.add(entry.target);finish();},{threshold:[.9]});lines.forEach(line=>observer.observe(line));}
  const check=()=>{if(stopped||completed||doc.hidden)return;for(const line of lines)if(fallbackLineVisible(line,win))seen.add(line);finish();};

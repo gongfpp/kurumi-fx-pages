@@ -1,4 +1,4 @@
-import {ResearchProvider} from './research-provider.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 export const MULTI_HISTORY_SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']);
 const HASH=/^[a-f0-9]{64}$/;
 // Local owner research only. Transport is scoped to the existing local catalog.

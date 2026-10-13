@@ -1,9 +1,9 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {originalPublicationUrl} from './news-source-view.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {originalPublicationUrl} from './news-source-view.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 
 // Read-only publication list. Eligibility is the archive's existing pair/date/
 // review gate; neither future script events nor archive bag mutations are read.

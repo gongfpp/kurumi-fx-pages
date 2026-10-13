@@ -1,9 +1,9 @@
-import {DINNER_STORIES} from './copy/dinner-stories.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {DINNER_STORIES} from './copy/dinner-stories.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 
 // Existing prices and gain thresholds, copied as evidence checks only. The
 // engine/recap choice remains the sole owner of the bill and account effects.

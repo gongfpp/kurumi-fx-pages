@@ -1,13 +1,13 @@
-import {marketPrice,positionMarket} from './market-book.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {buildResultsReport} from './results-report.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {buildRecapSnapshot} from './daily-recap.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {runPerformance} from './performance.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {achievementMangaThumbnail} from './manga-achievements.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {assetURL} from './assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {buildResultsReport} from './results-report.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {buildRecapSnapshot} from './daily-recap.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {runPerformance} from './performance.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {ACHIEVEMENTS,achievementProgress} from './achievements.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {achievementMangaThumbnail} from './manga-achievements.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {assetURL} from './assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const amount=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+amount(n);
@@ -104,7 +104,7 @@ export async function createShareCard(state,options={}) {
  const crop=sharePortraitCrop(image,options);
  if(crop){ctx.save();ctx.beginPath();ctx.rect(48,169,178,178);ctx.clip();const cw=crop[2]-crop[0],ch=crop[3]-crop[1],scale=Math.max(178/cw,178/ch),w=cw*scale,h=ch*scale;ctx.drawImage(image,crop[0],crop[1],cw,ch,48+(178-w)/2,169+(178-h)/2,w,h);ctx.restore();}else {num('久留美',66,266,28,darkPink);if(options.portraitUrl)label('画像未载入',66,300,18,muted);}
  label(`${s.moodLabel} · ${s.recap.primary.label}`,252,196,22,darkPink);num(signed(s.recap.primary.profit),252,253,52,s.recap.primary.profit>=0?green:red,780);label(`收益率 ${s.recap.primary.returnRate===null?'—':(s.recap.primary.returnRate>=0?'+':'')+(s.recap.primary.returnRate*100).toFixed(2)+'%'}`,252,291,26,s.recap.primary.profit>=0?green:red);label(`第 ${s.day} 个游戏交易日 · 心理承受力 ${s.sanity} / 100`,252,329,20); 
- rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red);
+ rule(375);label('累计已实现交易收益率',48,425,24);num(s.recap.cumulative.returnRate===null?'—':(s.recap.cumulative.returnRate>=0?'+':'')+(s.recap.cumulative.returnRate*100).toFixed(2)+'%',48,512,82,(s.recap.cumulative.returnRate||0)>=0?green:red,564);
  label('账户总资产 / 净资产',660,429,21);num(knownAmount(a.nominalAssets),660,474,34);num(knownAmount(a.netAssets),660,516,29);
  label('完整订单胜率 '+knownPercent(p.winRate),660,557,21);
  label(`初始 ${knownAmount(p.initialCapital)} · 已存活 ${p.daysSurvived} 天`,48,558,20);
@@ -117,7 +117,7 @@ export async function createShareCard(state,options={}) {
   const start=points[0]?.timestamp||0,range=Math.max(1,(points.at(-1)?.timestamp||start)-start),plotX=p=>plot.left+(p.timestamp-start)/range*(plot.right-plot.left),plotY=value=>plot.bottom-(value-scale.min)/(scale.max-scale.min)*(plot.bottom-plot.top);
   for(const value of scale.ticks){const y=plotY(value);ctx.strokeStyle='#f0dfe7';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(plot.left,y);ctx.lineTo(plot.right,y);ctx.stroke();ctx.textAlign='right';label(axisAmount(value,scale.step),plot.left-8,y+5,14);ctx.textAlign='left';}
   ctx.strokeStyle=darkPink;ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>{const x=plotX(p),y=plotY(p.nominalAssets);i&&!p.gapBefore?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
-  for(const t of timeAxisTicks(points,{maxTicks:2})){ctx.textAlign=t.index===0?'left':'right';label(t.label,plotX(t),955,15);ctx.textAlign='left';}
+  for(const t of timeAxisTicks(points,{maxTicks:2}).filter((tick,i,ticks)=>i===0||tick.timestamp!==ticks[0].timestamp)){ctx.textAlign=t.index===0?'left':'right';label(t.label,plotX(t),955,15);ctx.textAlign='left';}
  }
  label(s.recap.curves.todaySampled?(s.recap.curves.todayMissing||s.recap.curves.cumulativePartial?'部分历史缺失，其余盘中资金已采样；仅展示实际记录':'盘中资金已采样；点为实际记录，连线不是逐笔走势'):s.recap.curves.todayPartial||s.recap.curves.cumulativePartial?'部分历史未记录，仅展示已知点；连线不是完整盘中路径':s.recap.curves.basis==='trading'?'交易资产曲线':'账户总资产曲线',48,981,16);rule(1000);
  num('特别记录',48,1033,27);

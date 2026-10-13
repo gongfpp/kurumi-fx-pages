@@ -212,3 +212,19 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 #news .news-detail-hint{position:absolute;right:12px;bottom:8px;font-size:12px;font-weight:700;color:#9d3d6b}
 #pixel-frontend #news #news-recap{font-size:13px;color:#495daa}
 #pixel-frontend #news .news-detail-hint{color:#495daa}
+
+/* Undiscovered inventory slots never request or expose the original artwork. */
+.inventory .tool-row button.item-undiscovered{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:10px;background:#f1eef0;border-color:#d5cdd3;min-height:64px}
+#tool-list button.item-undiscovered:disabled{opacity:1;cursor:default;color:#675b66}
+.inventory .tool-row button.item-undiscovered b{margin:0;font-size:12px;overflow-wrap:anywhere}
+.item-silhouette-art{position:relative;display:grid;place-items:center;width:40px;height:42px}
+.item-silhouette{display:block;width:36px;height:34px;background:#08080b;clip-path:polygon(8% 30%,25% 20%,75% 20%,92% 30%,82% 90%,18% 90%)}
+.item-silhouette--can{clip-path:polygon(30% 4%,70% 4%,76% 15%,76% 92%,68% 100%,32% 100%,24% 92%,24% 15%)}
+.item-silhouette--box{clip-path:polygon(8% 20%,43% 11%,50% 22%,57% 11%,92% 20%,84% 92%,16% 92%)}
+.item-silhouette--bowl{clip-path:polygon(0 31%,100% 31%,91% 64%,74% 86%,65% 90%,65% 98%,35% 98%,35% 90%,26% 86%,9% 64%)}
+.item-silhouette--towel{clip-path:polygon(12% 11%,74% 11%,74% 29%,88% 29%,88% 94%,12% 94%)}
+.item-silhouette--wallet{clip-path:polygon(6% 20%,86% 20%,86% 41%,100% 41%,100% 71%,86% 71%,86% 91%,6% 91%)}
+.item-silhouette--person{clip-path:polygon(38% 1%,62% 1%,75% 14%,75% 38%,65% 50%,65% 55%,90% 67%,100% 100%,0 100%,10% 67%,35% 55%,35% 50%,25% 38%,25% 14%)}
+.item-silhouette-lock{position:absolute;right:0;bottom:0;display:block;width:15px;height:13px;border-radius:2px;background:currentColor;color:#675b66}
+.item-silhouette-lock::before{content:'';position:absolute;left:3px;top:-8px;width:9px;height:10px;border:2px solid currentColor;border-radius:7px 7px 0 0}
+@media(forced-colors:active){.item-silhouette,.item-silhouette-lock{background:CanvasText;forced-color-adjust:none}.item-silhouette-lock{color:CanvasText}}

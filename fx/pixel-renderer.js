@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
@@ -27,9 +27,13 @@ export function createPixelRenderer({document:doc}) {
     const exit=make('div','pixel-exit-region');exit.setAttribute('role','group');exit.setAttribute('aria-label','结束本局');right.append(exit);moveNode(native('retire'),exit);
     for(const id of ['leaderboard-open','achievements-open','share-open'])moveNode(native(id),right);
     const settings=drawer('设置','pixel-settings');settings.summary.prepend(icon('settings'));right.append(settings.node);
-    for(const id of ['sound','music-open','help','developer-open','privacy-toggle'])moveNode(native(id),settings.content);
-    moveNode(q('.stock-game-link',top),settings.content);
-    moveNode(native('saved'),settings.content);
+    const sound=make('section','settings-section');sound.setAttribute('aria-label','声音');sound.append(make('h3','','声音'));settings.content.append(sound);
+    for(const id of ['sound','music-open'])moveNode(native(id),sound);
+    for(const id of ['settings-reading','settings-progress'])moveNode(native(id),settings.content);
+    const more=make('section','settings-section');more.setAttribute('aria-label','帮助与其他');more.append(make('h3','','帮助与其他'));settings.content.append(more);
+    for(const id of ['help','developer-open','privacy-toggle'])moveNode(native(id),more);
+    moveNode(q('.stock-game-link',top),more);
+    moveNode(native('saved'),more);
   }
   function buildCharacter(container){
     move('character',container);

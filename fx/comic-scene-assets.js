@@ -1,7 +1,7 @@
-import {PROP_STORY_ASSETS} from './prop-story-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {PROP_STORY_ASSETS} from './prop-story-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 // Original fan-art game assets. Only pixel-reviewed complete independent four-panel sheets are listed.
 export const COMIC_SCENE_ASSETS=Object.freeze({
   "closed-profit": {

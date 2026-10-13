@@ -1,7 +1,7 @@
-import {DINNER_EXPANSION_21_ASSETS} from './dinner-expansion-21.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
+import {DINNER_EXPANSION_21_ASSETS} from './dinner-expansion-21.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
