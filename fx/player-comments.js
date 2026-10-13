@@ -1,5 +1,6 @@
-import {serviceConfiguration} from './service-config.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
 
 // Match the API's existing nickname rules without rewriting the player's input.
 const commentAliasError=value=>{
@@ -21,8 +22,8 @@ export function renderPlayerComments(list,rows,{document=list.ownerDocument}={})
 }
 export function mountPlayerComments(root,{document=root.ownerDocument,fetch=globalThis.fetch.bind(globalThis),configuration=serviceConfiguration(),getAlias=()=>document.getElementById('ranking-name')?.value||'',storage,crypto=globalThis.crypto,onPublicRows=()=>{},onFailure=()=>{}}={}){
  const form=root.querySelector('form'),input=root.querySelector('textarea'),button=form.querySelector('button'),status=root.querySelector('[role=status]'),list=root.querySelector('ul'),identity=root.querySelector('[data-comment-author]');
- let pending=false,reading=false,disposed=false,attempt=null,visitor=null,revision=0,publicRows=[],composerStatus=false;
- try{storage??=kurumiStorage();visitor=storage.getItem('fx-api-v1-comment-visitor');if(!/^[a-zA-Z0-9_-]{16,80}$/.test(visitor||'')){visitor=crypto.randomUUID();storage.setItem('fx-api-v1-comment-visitor',visitor);}}catch{visitor=crypto.randomUUID();}
+ let pending=false,reading=false,disposed=false,composing=false,attempt=null,visitor=null,revision=0,publicRows=[],composerStatus=false;
+ try{storage??=kurumiStorage();visitor=storage.getItem('fx-api-v1-comment-visitor');if(!/^[a-zA-Z0-9_-]{16,80}$/.test(visitor||'')){visitor=randomUUID(crypto);storage.setItem('fx-api-v1-comment-visitor',visitor);}}catch{visitor=randomUUID(crypto);}
  const author=()=>getAlias().trim()||'匿名玩家';
  const showAuthor=()=>{identity.textContent=`以「${author()}」留言，所有玩家可见。请勿填写个人隐私。`;};
  const requestFailures=new WeakSet();
@@ -64,17 +65,21 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
   catch{if(!disposed&&!pending&&!composerStatus&&startedRevision===revision)status.textContent='暂时读不到留言，稍后会重试。';}finally{reading=false;}
  }
  form.addEventListener('submit',async event=>{
-  event.preventDefault();if(pending||!configuration.configured)return;if(disposed)return;
+  event.preventDefault();if(pending||!configuration.configured)return;if(disposed||composing||event.isComposing)return;
   composerStatus=true;revision++;
   const text=input.value.trim(),alias=getAlias().trim();if(!text||[...text].length>200){status.textContent='请输入 1–200 字的留言。';return;}
   const aliasError=commentAliasError(alias);if(aliasError){status.textContent=aliasError;return;}
-  if(!attempt||attempt.text!==text||attempt.alias!==alias)attempt={id:crypto.randomUUID(),visitor,text,alias};
+  if(!attempt||attempt.text!==text||attempt.alias!==alias)attempt={id:randomUUID(crypto),visitor,text,alias};
   pending=true;button.disabled=true;input.disabled=true;status.textContent='正在公开发送…';
   try{const result=await request({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(attempt)},attempt.id);if(disposed)return;
    revision++;const row=result.row,item=document.createElement('li'),name=document.createElement('strong'),message=document.createElement('span');name.textContent=`${row.alias}：`;message.textContent=row.text;item.dataset.commentId=row.id;for(const old of [...list.children])if(old.dataset.commentId===row.id)old.remove();item.append(name,message);list.prepend(item);while(list.children.length>50)list.lastElementChild.remove();publicRows=[row,...publicRows.filter(old=>old.id!==row.id)].slice(0,50);onPublicRows(publicRows);input.value='';attempt=null;status.textContent='已公开发送。';
   }catch(error){if(error.kind==='http-error'&&error.status===409)attempt=null;if(!disposed)status.textContent=sendFailureCopy(error);}
   finally{pending=false;if(!disposed){button.disabled=false;input.disabled=false;}}
  });
+ // Selecting an IME candidate is not consent to publish the unfinished draft.
+ // Wait for compositionend and a fresh submit; never auto-send on compositionend.
+ input.addEventListener('compositionstart',()=>{composing=true;});
+ input.addEventListener('compositionend',()=>{composing=false;});
  input.addEventListener('input',()=>{if(!pending){composerStatus=false;status.textContent='';}});
  input.addEventListener('focus',showAuthor);document.getElementById('ranking-name')?.addEventListener('input',showAuthor);showAuthor();
  if(configuration.configured){refresh();}else{button.disabled=true;status.textContent='留言服务尚未配置。';}

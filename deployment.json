@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "443669c15b264bcc9465b95315e1b8dd764b4d8f",
-  "assetVersion": "443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717",
+  "sourceCommit": "5ffe4858d3c5ee4ea910ecf96c1477745bc1b782",
+  "assetVersion": "5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -9,6 +9,30 @@
     "clientPath": "/fx.html",
     "pagesPath": "/kurumi-fx-pages/"
   },
+  "retainedHistory": {
+    "baseCommit": "6d9ce318f4317999ec157fa5ea68acf23013d834",
+    "entries": [
+      {
+        "path": "fx/history-data/2008-10/USDJPY-2008-10.forexite.m1.csv.gz",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7b70d89fafffcded2268119fcc89c90a06960ee1"
+      },
+      {
+        "path": "fx/history-data/2008-10/manifest.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d2cb55311a4524b2f0e2f5ebb0d3fd95402168b1"
+      },
+      {
+        "path": "fx/history-data/2014-02/package.fxhistory.gz",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ef92123e9af2cb2365e09a5d33c920cfc6a70f15"
+      }
+    ]
+  },
+  "privatePrototypeExcluded": true,
   "manga": {
     "scope": "approved-panels-chapter-disabled",
     "selectionSourceCommit": "37c41c1bfdc416efc06b85fb0ad1202c80ef7f80",

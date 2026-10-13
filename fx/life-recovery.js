@@ -1,5 +1,5 @@
-import {recoverStamina} from './stamina.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {recoverStamina} from './stamina.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
 
 // Game-balance values for existing actions and items. No new purchases,
 // unlocks, story events or fees are introduced here. All values are bounded by
@@ -10,7 +10,10 @@ export const RECAP_STAMINA_RECOVERY=Object.freeze({
  'dinner-small':12,'dinner-friends':20,'dinner-feast':28,'dinner-banquet':36
 });
 export const PROP_STAMINA_RECOVERY=Object.freeze({dailyDrink:8,noodles:6,takeaway:14,energy:20,celebration:25});
-export const SLEEP_STAMINA_RECOVERY=Object.freeze({basic:35,comfortable:50,generous:65});
+// Basic/comfortable sleep leaves a 20/10-point deficit after a calm simulated
+// day. Existing food and relaxation can cover it; fully paid generous housing
+// covers that day alone, while distressed trading still needs more recovery.
+export const SLEEP_STAMINA_RECOVERY=Object.freeze({basic:28,comfortable:38,generous:48});
 
 export function recoverLifeAction(state,category,receiptId){
  const amount=LIFE_STAMINA_RECOVERY[category];

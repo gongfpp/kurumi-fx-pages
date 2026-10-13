@@ -4,7 +4,7 @@
 #pixel-frontend[data-mobile-layout="true"] .mobile-news-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
 #pixel-frontend[data-mobile-layout="true"] .mobile-news-heading h2{margin:0;font-size:16px;line-height:22px}
 #pixel-frontend[data-mobile-layout="true"] .mobile-news-more{min-height:44px;padding:4px 5px;font-size:13px;background:none;border:0}
-#pixel-frontend[data-mobile-layout="true"] .mobile-news-row{display:grid;grid-template-columns:72px minmax(0,1fr) 12px;gap:5px;align-items:center;width:100%;min-width:0;min-height:44px;padding:5px 0;text-align:left;border:0;border-top:1px solid #eee3ec;border-radius:0;background:none;font-size:13px;line-height:19px}
+#pixel-frontend[data-mobile-layout="true"] .mobile-news-row{display:grid;grid-template-columns:72px minmax(0,1fr) 12px;gap:5px;align-items:center;width:100%;min-width:0;min-height:44px;padding:5px 0;text-align:left;white-space:normal;border:0;border-top:1px solid #eee3ec;border-radius:0;background:none;font-size:13px;line-height:19px}
 #pixel-frontend[data-mobile-layout="true"] .mobile-news-row time{font-size:10px;line-height:15px;color:#64618e;overflow-wrap:anywhere}
 #pixel-frontend[data-mobile-layout="true"] .mobile-news-row>span{min-width:0;overflow-wrap:anywhere}
 body[data-frontend="pixel"] .mobile-news-dialog{width:min(94vw,560px);max-width:560px;max-height:85dvh;padding:0;color:#11154f;border:1px solid #f5bfdc;border-radius:10px;background:#fffbfd}

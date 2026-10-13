@@ -1,12 +1,14 @@
-import {receiptCueData} from './receipt-audio.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {recapImpact,boundedRecapCues} from './recap-impact.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap,receiptRecapFrame} from './recap-receipts.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {receiptCueData} from './receipt-audio.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {recapImpact,boundedRecapCues} from './recap-impact.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
-export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabled=true,reducedMotion=false,playbackRate=1,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
- const segments=recapSegments(snapshot),presentation=recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;
- const tradingTimeline=buildRecapTimeline(snapshot,presentation);
+export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,variant='classic',enabled=true,reducedMotion=false,playbackRate=1,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
+ const candidate=variant===RECEIPT_RECAP_CANDIDATE?buildReceiptRecap(snapshot):null;
+ const segments=recapSegments(snapshot),presentation=candidate?.presentation||recapPresentation(snapshot),duration=enabled&&!reducedMotion?presentation.duration:0;
+ const tradingTimeline=candidate?.timeline||buildRecapTimeline(snapshot,presentation),timelineFrame=candidate?receiptRecapFrame:recapTimelineFrame;
  const cueDelta=b=>Number.isFinite(b.displayDelta)?b.displayDelta:b.delta;
  // A zero-money opening tap must not crowd out a real asset change. Check both
  // the virtual score and its retimed wall deadlines before generic thinning.
@@ -25,7 +27,7 @@ export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabl
   if(duration-elapsed<1e-7)elapsed=duration;
   return elapsed;
  };
- const cues=boundedRecapCues(preferMoney(tradingTimeline.scoreBeats.map(b=>Object.freeze({kind:b.step===b.count-1?(cueDelta(b)<0?'terminal-close':'terminal-fill'):(cueDelta(b)<0?'recap-fall':'recap-rise'),atMs:b.atMs,rate:cueDelta(b)<0?.8+.2*b.strength:.8+.45*b.strength,level:recapImpact(presentation,b).level,recap:receiptCueData(tradingTimeline,b,snapshot.daily.tradingNet),beat:b.index,trade:true,final:false})).concat(tradingTimeline.assetBeats.map(b=>Object.freeze({kind:cueDelta(b)<0?'recap-fall':'recap-rise',atMs:b.atMs,rate:cueDelta(b)<0?.8+.2*b.strength:.85+.4*b.strength,level:recapImpact(presentation,b).level,recap:receiptCueData(tradingTimeline,b,snapshot.daily.tradingNet,{source:'observation',cumulative:recapTimelineFrame(tradingTimeline,b.atMs).realized}),assetBeat:b.index,asset:true,final:false}))).concat(tradingTimeline.events.filter(e=>!e.delta).map(e=>Object.freeze({kind:'terminal-tap',atMs:e.atMs+Math.min(80,e.hold/2),rate:.85,level:.25,trade:true,final:false}))).concat(audioPresentation.direction==='flat'?[]:[Object.freeze({...recapBeatCue(audioPresentation,presentation.beats-1,{final:true}),atMs:presentation.countDuration,beat:presentation.beats-1,recap:receiptCueData(tradingTimeline,null,snapshot.daily.tradingNet,{final:true}),final:true})]).filter(c=>!c.recap||c.final||Math.abs(c.recap.delta)>=.005).sort((a,b)=>a.atMs-b.atMs)));
+ const cues=boundedRecapCues(preferMoney(tradingTimeline.scoreBeats.map(b=>Object.freeze({kind:b.step===b.count-1?(cueDelta(b)<0?'terminal-close':'terminal-fill'):(cueDelta(b)<0?'recap-fall':'recap-rise'),atMs:b.atMs,rate:cueDelta(b)<0?.8+.2*b.strength:.8+.45*b.strength,level:recapImpact(presentation,b).level,recap:receiptCueData(tradingTimeline,b,snapshot.daily.tradingNet),beat:b.index,trade:true,final:false})).concat(tradingTimeline.assetBeats.map(b=>Object.freeze({kind:cueDelta(b)<0?'recap-fall':'recap-rise',atMs:b.atMs,rate:cueDelta(b)<0?.8+.2*b.strength:.85+.4*b.strength,level:recapImpact(presentation,b).level,recap:receiptCueData(tradingTimeline,b,snapshot.daily.tradingNet,{source:'observation',cumulative:timelineFrame(tradingTimeline,b.atMs).realized}),assetBeat:b.index,asset:true,final:false}))).concat(tradingTimeline.events.filter(e=>!e.delta).map(e=>Object.freeze({kind:'terminal-tap',atMs:e.atMs+Math.min(80,e.hold/2),rate:.85,level:.25,trade:true,final:false}))).concat(audioPresentation.direction==='flat'?[]:[Object.freeze({...recapBeatCue(audioPresentation,presentation.beats-1,{final:true}),atMs:presentation.countDuration,beat:presentation.beats-1,recap:receiptCueData(tradingTimeline,null,snapshot.daily.tradingNet,{final:true}),final:true})]).filter(c=>!c.recap||c.final||Math.abs(c.recap.delta)>=.005).sort((a,b)=>a.atMs-b.atMs)));
  let lastCue=-1;
  const cancelTimeline=()=>{timeline?.cancel?.();timeline=null;};
  const scheduleTimeline=(at,wall,{initial=false}={})=>{
@@ -38,7 +40,7 @@ export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,enabl
  const draw=(elapsed,{silent=false}={})=>{
   const counting=duration?Math.min(1,Math.max(0,elapsed/presentation.countDuration)):1,progress=duration?recapProgress(presentation,elapsed):1,index=progress===0?0:progress<1?1:segments.length-1,segment=segments[index];
   const beat=duration?recapUpperBound(presentation.beatTimes,elapsed,t=>t)-1:-1,complete=!duration||elapsed>=duration,stage=complete?'complete':counting>=1?'landing':counting>=(presentation.catastrophic?.84:.93)?'anticipation':elapsed<tradingTimeline.leadIn?'opening':'counting';
-  const replay=recapTimelineFrame(tradingTimeline,elapsed,{complete});
+  const replay=timelineFrame(tradingTimeline,elapsed,{complete});
   render({elapsed,playbackRate:rate,progress,segment,index,...replay,reconciliation:tradingTimeline.residual,value:replay.tradingAssets,intensity:presentation.intensity,complete,candleCount:recapUpperBound(snapshot.candles,replay.timestamp,c=>c.timestamp),stage,beat,presentation});
   if(!silent&&!stopped&&!timeline&&duration){
    // A late frame releases at most one still-current cue, never an old burst.

@@ -1,7 +1,7 @@
-import {buildShareSummary,buildCurveScale,achievementThumbnail} from './share-card.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {ACHIEVEMENTS} from './achievements.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {assetURL} from './assets.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {buildShareSummary,buildCurveScale,achievementThumbnail} from './share-card.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {ACHIEVEMENTS} from './achievements.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {assetURL} from './assets.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
 
 // Approved 2026-10-12 pixel reference. Only the listed artwork rectangles are
 // sampled; example amounts, captions and charts are never used as game data.

@@ -1,6 +1,9 @@
-// Game-balance parameters. Time is consumed market time, never render time.
-export const STAMINA_RULES=Object.freeze({max:100,warning:20,entryMinimum:0,workCost:20,watchCostPerMinute:.03,maxObservedGapMinutes:15});
-export const STAMINA_MOOD_MULTIPLIERS=Object.freeze({despair:2,exhausted:1.5,anxious:1.3,nervous:1.2,regretful:1.2,guilty:1.15,irritated:1.15,stunned:1.1,calm:1,relieved:1,hopeful:.9,smug:.75,ecstatic:.5});
+// Time is consumed market time, never render time. A simulated day observes
+// 16 x 15 minutes: calm watching spends 48 points. Historical/live minutes
+// retain their source duration and prior rate (1.8 points per observed hour);
+// a one-second provider update is 1/60 minute, not a simulated quote step.
+export const STAMINA_RULES=Object.freeze({max:100,warning:20,entryMinimum:0,workCost:20,watchCostPerMinute:.20,observedWatchCostPerMinute:.03,maxObservedGapMinutes:15});
+export const STAMINA_MOOD_MULTIPLIERS=Object.freeze({despair:1.6,exhausted:1.5,anxious:1.3,nervous:1.2,regretful:1.2,guilty:1.15,irritated:1.15,stunned:1.1,calm:1,relieved:1,hopeful:.9,smug:.75,ecstatic:.7});
 const round=value=>Math.round(value*1e9)/1e9;
 const bounded=value=>Number.isFinite(value)&&value>=0&&value<=STAMINA_RULES.max;
 const validId=value=>typeof value==='string'&&value.length>0&&value.length<=200;
@@ -22,13 +25,16 @@ export function staminaStatus(state={}){
  return{value,max:STAMINA_RULES.max,low:value<=STAMINA_RULES.warning,exhausted:value<=0,canOpen:value>STAMINA_RULES.entryMinimum,canWork:value>=STAMINA_RULES.workCost,canRest:true};
 }
 export function staminaDrainMultiplier(emotion){return STAMINA_MOOD_MULTIPLIERS[emotion]??1;}
+export function staminaWatchCostPerMinute(state={}){
+ return state.liveMarket?.version===1||[1,2,3].includes(state.historical?.version)?STAMINA_RULES.observedWatchCostPerMinute:STAMINA_RULES.watchCostPerMinute;
+}
 export function consumeTradingStamina(state,{minutes,emotion='calm',sampleId,active=true}={}){
  if(!Number.isFinite(minutes)||minutes<0||!validId(sampleId))throw new TypeError('Invalid stamina sample');
  if(!active||state.marketPaused||!['decision','playing'].includes(state.phase))return{applied:false,spent:0,...staminaStatus(state)};
  const stamina=ensureStamina(state);
  if(staminaFatigueActive(state))return{applied:false,spent:0,...staminaStatus(state)};
  if(stamina.lastSample===sampleId)return{applied:false,alreadyApplied:true,spent:0,...staminaStatus(state)};
- const before=stamina.value,spent=Math.min(before,minutes*STAMINA_RULES.watchCostPerMinute*staminaDrainMultiplier(emotion));
+ const before=stamina.value,spent=Math.min(before,minutes*staminaWatchCostPerMinute(state)*staminaDrainMultiplier(emotion));
  stamina.value=round(Math.max(0,before-spent));stamina.spent=round(stamina.spent+before-stamina.value);stamina.watchMinutes=round(stamina.watchMinutes+minutes);stamina.lastSample=sampleId;
  if(before>0&&stamina.value===0)queueStaminaFatigue(state);
  return{applied:true,spent:before-stamina.value,...staminaStatus(state)};

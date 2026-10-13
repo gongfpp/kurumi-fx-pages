@@ -177,12 +177,14 @@
 #pixel-frontend[data-mobile-layout="true"] .mobile-amount-row[data-long-amounts="true"]{grid-template-columns:minmax(0,1fr)}
 
 /* Approved positions-quick-trade-v2: native orders remain next to the chart. */
+body[data-frontend="pixel"]:has(#pixel-frontend[data-mobile-layout="true"]) .deal-impact{width:max-content;min-width:210px;max-width:calc(100vw - 48px)}
+body[data-frontend="pixel"]:has(#pixel-frontend[data-mobile-layout="true"]) .deal-impact b{white-space:normal;overflow-wrap:anywhere}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade{order:4;display:grid;grid-template-columns:minmax(112px,1.45fr) minmax(0,2fr) minmax(52px,.65fr);align-items:stretch;gap:5px;margin:6px 0;min-width:0}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-parameters{display:grid;grid-template-columns:minmax(39px,.65fr) minmax(0,1.35fr);min-width:0;border:1px solid #e2dfee;border-radius:6px;overflow:hidden}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-parameters>button{height:auto;min-height:48px;min-width:0;width:100%;padding:2px;font-size:14px;line-height:20px;white-space:normal;overflow-wrap:anywhere;border:0;border-radius:0;background:#fff}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-leverage{color:#ed267f;font-weight:800}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-amount{border-left:1px solid #e2dfee!important;font-weight:800}
-#pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade .entry-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));height:auto;min-height:48px;gap:5px;margin:0;padding:0}
+#pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade .entry-actions{display:grid;grid-column:auto;grid-template-columns:repeat(2,minmax(0,1fr));height:auto;min-height:48px;gap:5px;margin:0;padding:0}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade .entry-actions button{min-width:0;height:auto;min-height:48px;padding:3px 2px;font-size:17px;line-height:22px;gap:2px}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade .entry-actions #long:before,#pixel-frontend[data-mobile-layout="true"] .mobile-quick-trade .entry-actions #short:before{font-size:19px}
 #pixel-frontend[data-mobile-layout="true"] .mobile-quick-positions{min-width:0;min-height:48px;font-size:12px;line-height:18px;padding:2px;white-space:normal;background:#fff;border:1px solid #e2dfee}

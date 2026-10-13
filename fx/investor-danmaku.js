@@ -1,8 +1,8 @@
-import {LIBRARY_COPY} from './copy/library-ui.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {MARKET_COMMENTS} from './market-comments.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;
@@ -122,8 +122,9 @@ export function eligibleMarketComments(comments=MARKET_COMMENTS,state=null){
 // A lane keeps its speed until empty. A following line may enter once the
 // preceding tail has cleared the right edge by 42px, so it cannot catch up.
 export const COMMENT_LANE_GAP=42;
+export const COMMENT_MAX_VISIBLE=16;
 export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS,measureWidth=text=>text.length*14}={}){
- const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,viewport=null;
+ const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,active=[];
  return{
   // Replace the public snapshot, rather than append on every poll or resume.
   setPlayerComments(rows){playerPool=eligiblePlayerComments(rows);},
@@ -131,14 +132,17 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    if(wall!==null&&!paused&&!pause)clock+=Math.max(0,Math.min(2000,now-wall)); // no replay after a sleeping tab
    wall=now;paused=pause;
    width=Math.max(200,width||400);
-   const pool=eligibleMarketComments(catalogue,state),originalPool=eligibleOriginalComments(state,originalComments),run=`${state.mode}:${state.runId||state.seed}:${pool.map(row=>row.id).join(',')}:${originalPool.map(row=>row.id).join(',')}`,scopeChanged=key!==run,reset=scopeChanged||reduced!==reduce||viewport!==width;
-   if(reset){key=run;reduced=reduce;viewport=width;lanes.fill(null);laneCursor=0;nextAt=clock;}
+   const pool=eligibleMarketComments(catalogue,state),originalPool=eligibleOriginalComments(state,originalComments),run=`${state.mode}:${state.runId||state.seed}`,scopeChanged=key!==run,reset=scopeChanged||reduced!==reduce;
+   // Eligibility and container width affect future rows, never the current run.
+   if(reset){key=run;reduced=reduce;lanes.fill(null);active=[];laneCursor=0;nextAt=clock;}
+   active=active.filter(row=>row.expires>clock);
    const activity=marketCommentActivity(state),result={clock,reset,scopeChanged,paused:pause,reduced:reduce,activity,row:null};
-   if(pause||clock<nextAt||!pool.length&&!originalPool.length)return result;
+   if(pause||clock<nextAt||active.length>=COMMENT_MAX_VISIBLE||!pool.length&&!originalPool.length)return result;
    let lane=reduce?0:-1;
    if(!reduce)for(let n=0;n<activity.lanes;n++){
     const index=(laneCursor+n)%activity.lanes,previous=lanes[index];
-    if(!previous||clock>=previous.entryAt){lane=index;break;}
+    const tail=previous?previous.origin-(clock-previous.startedAt)*previous.speed/1000+previous.textWidth:-Infinity;
+    if(!previous||clock>=previous.expires||tail<=width-COMMENT_LANE_GAP){lane=index;break;}
    }
    if(lane<0)return result;
    let row=null;
@@ -167,16 +171,19 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    const duration=reduce?30000:Math.ceil((width+textWidth)/speed*1000);
    if(row.source==='player'){shownPlayerIds.add(row.id);marketSincePlayer=0;}else marketSincePlayer=Math.min(3,marketSincePlayer+1);
    if(row.source==='fictional'){seenThemes.set(row.theme_id,clock);marketSinceOriginal=0;}else if(row.source!=='player')marketSinceOriginal=1;
-   seen.set(commentRepeatKey(row),clock);lanes[lane]={entryAt:clock+(textWidth+COMMENT_LANE_GAP)/speed*1000,expires:clock+duration,speed};
+   seen.set(commentRepeatKey(row),clock);lanes[lane]={origin:width,startedAt:clock,textWidth,expires:clock+duration,speed};
+   active.push({expires:clock+duration});
    laneCursor=(lane+1)%activity.lanes;nextAt=clock+Math.max(activity.interval,reduce?30000:0);
-   result.row={...row,lane,duration,textWidth,speed,expires:clock+duration};return result;
+   result.row={...row,lane,duration,textWidth,speed,origin:width,expires:clock+duration};return result;
   }
  };
 }
 export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>performance.now(),comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS,onOpenComment=()=>{}}={}){
  const canvas=document.createElement('canvas'),context=canvas.getContext?.('2d');
  if(context)context.font='600 13px sans-serif';
- const schedule=createCommentSchedule({comments,originalComments,measureWidth:text=>context?Math.ceil(context.measureText(text).width)+8:text.length*14});let disposed=false;
+ const schedule=createCommentSchedule({comments,originalComments,measureWidth:text=>context?Math.ceil(context.measureText(text).width)+8:text.length*14}),lines=new Map();let disposed=false;
+ const removeLine=line=>{lines.get(line)?.cleanup();lines.delete(line);line.remove();};
+ const clearLines=retained=>{for(const line of [...root.children])if(line!==retained)removeLine(line);};
  return{
   setPlayerComments(rows){if(!disposed)schedule.setPlayerComments(rows);},
   update(state,{paused=false,reducedMotion=false}={}){
@@ -184,20 +191,32 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
    const effectivePaused=paused||root.contains?.(document.activeElement)===true;
    const frame=schedule.update(state,{now:now(),pause:effectivePaused,reduce:reducedMotion,width:root.clientWidth});
    root.dataset.activity=frame.activity.level;root.dataset.lanes=String(frame.activity.lanes);root.dataset.paused=String(effectivePaused);root.dataset.reduced=String(reducedMotion);
-   if(frame.reset){const retained=reducedMotion&&!frame.scopeChanged?[...root.children].at(-1):null;root.replaceChildren();if(retained)root.append(retained);}
-   for(const child of [...root.children])if(!reducedMotion&&Number(child.dataset.expires)<=frame.clock)child.remove();
+   if(frame.reset)clearLines(reducedMotion&&!frame.scopeChanged?[...root.children].at(-1):null);
+   for(const child of [...root.children]){
+    if(!reducedMotion&&Number(child.dataset.expires)<=frame.clock){removeLine(child);continue;}
+    const record=lines.get(child),animation=child.getAnimations?.().find(a=>a.animationName==='investor-comment-right-to-left');
+    // Moving the native list between skins can recreate its CSS animation.
+    // Reattach that animation to the existing row's clock, without replaying it.
+    if(record&&animation&&record.animation!==animation)animation.currentTime=Math.max(0,frame.clock-record.startedAt);
+    if(record)record.animation=animation;
+   }
    if(!frame.row)return;
-   if(reducedMotion)root.replaceChildren();
+   if(reducedMotion)clearLines();
    const line=document.createElement('li');line.className='investor-danmaku-line';
+   let detachOpen=()=>{};
    if(frame.row.source==='player'&&frame.row.truncated){
     const full=document.createElement('button');full.type='button';full.className='investor-danmaku-open';full.textContent=frame.row.zh_translation;full.setAttribute('aria-label',LIBRARY_COPY.commentOpenLabel.replace('{alias}',frame.row.alias));
-    full.addEventListener('click',()=>{if(!disposed)onOpenComment({id:frame.row.id,alias:frame.row.alias,text:frame.row.playerText});});line.append(full);
+    const open=()=>{if(!disposed&&lines.has(line))onOpenComment({id:frame.row.id,alias:frame.row.alias,text:frame.row.playerText});};
+    full.addEventListener('click',open);detachOpen=()=>full.removeEventListener?.('click',open);line.append(full);
    }else line.textContent=frame.row.zh_translation;
    line.dataset.source=frame.row.source||'excerpt';line.dataset.sourceRef=frame.row.source==='player'?frame.row.id:commentSourceRef(frame.row);line.dataset.commentId=frame.row.id;line.dataset.lane=String(frame.row.lane);line.dataset.speed=String(frame.row.speed);line.dataset.expires=String(frame.row.expires);
-   line.style.setProperty('--comment-width',`${frame.row.textWidth}px`);line.style.setProperty('--comment-lane',frame.row.lane);line.style.setProperty('--comment-duration',`${frame.row.duration}ms`);line.style.setProperty('--comment-travel',`${Math.max(200,root.clientWidth||400)}px`);
-   line.addEventListener('animationend',()=>line.remove(),{once:true});root.append(line);
+   line.style.left=`${frame.row.origin}px`;
+   line.style.setProperty('--comment-width',`${frame.row.textWidth}px`);line.style.setProperty('--comment-lane',frame.row.lane);line.style.setProperty('--comment-duration',`${frame.row.duration}ms`);line.style.setProperty('--comment-travel',`${frame.row.origin}px`);
+   const end=event=>{if(event.target===line&&event.animationName==='investor-comment-right-to-left')removeLine(line);};
+   line.addEventListener('animationend',end);
+   lines.set(line,{startedAt:frame.clock,animation:null,cleanup(){line.removeEventListener?.('animationend',end);detachOpen();}});root.append(line);
   },
-  dispose(){disposed=true;root.replaceChildren();}
+  dispose(){disposed=true;clearLines();}
  };
 }
 export function mountCommentCredits(root,{document=root.ownerDocument,comments=MARKET_COMMENTS}={}){
