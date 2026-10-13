@@ -1,5 +1,5 @@
-import {createGameStorage} from './storage.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
 // A visual-only revision can retain its original read/locked-day identity.
 // The actual sha256 still verifies the image bytes; no saved records are migrated.

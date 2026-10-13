@@ -1,4 +1,4 @@
-import {EXTRA_NEWS_CHAINS} from './story-content.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {EXTRA_NEWS_CHAINS} from './story-content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
 // Simulated market information and functional UI copy, separate from approved character dialogue.
 // Bias is the simulated USD/JPY quote tendency: +1 = USD stronger / JPY weaker.
 // Economic news can be priced in or overwhelmed by other flows; it never guarantees a trade.
@@ -44,4 +44,4 @@ export const MOODS = {
 };
 
 export const CANON_QUOTE = {id:'V2-HOPE-01',text:'两千万而已，我会轻松赚回来的！',source:'用户附译；日语原句见动画官方简介',url:'https://fxkurumi-info.com/'};
-export {PROPS} from './copy/items.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+export {PROPS} from './copy/items.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';

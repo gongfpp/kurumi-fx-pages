@@ -1,4 +1,4 @@
-import {MANGA_PANELS} from './manga-panels.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
 // Trophy references are labelled as inspiration, not screenshots of this save.
 const mappings=Object.freeze({
  "profit-receipt":{"panel":{"id":"cafe-meal-anime","original":"./manga/achievement-anime/cafe-meal.jpg","imageSize":[450,220],"kind":"original-anime-frame","sourceURL":"https://www.bilibili.com/video/BV1eqH96AEtJ/","sourceTimeSeconds":387.254264,"sha256":"e1683e04f61c2cefd310efbc3801066ae85ffacd8d368d473d5252ab878bba90"},"note":"原动画久留美和萌智子在快餐店用餐，呼应把钱用在一顿饭上；外卖下单与先盈利条件属于本局，不称原作已完成该条件。"},

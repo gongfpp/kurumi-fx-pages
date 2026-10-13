@@ -1,6 +1,6 @@
-import {buildReceiptRecap,receiptRecapBars} from './recap-receipts.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {recapUpperBound} from './recap-timeline.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {buildReceiptRecap,receiptRecapBars} from './recap-receipts.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {recapUpperBound} from './recap-timeline.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
 
 const money=value=>(value>0?'+':value<0?'−':'')+'¥'+Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const node=(doc,tag,attributes={})=>{const element=doc.createElementNS('http://www.w3.org/2000/svg',tag);for(const [key,value]of Object.entries(attributes))element.setAttribute(key,value);return element;};

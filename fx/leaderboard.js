@@ -1,12 +1,12 @@
-import {randomUUID} from './uuid.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {runPerformance} from './performance.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=5ffe4858d3c5ee4ea910ecf96c1477745bc1b782-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {runPerformance} from './performance.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
