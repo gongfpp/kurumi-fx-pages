@@ -1,6 +1,6 @@
-import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=443669c15b264bcc9465b95315e1b8dd764b4d8f-23f2a20b7717';
 
 // The card shows the publication, time and a short body/observed-market recap. The existing detail dialog owns scrolling,
 // Escape, touch, focus return and the ordinary modal playback boundary.
@@ -14,14 +14,17 @@ export function mountNewsDetails({document=globalThis.document,openDetails}={}){
  const visibility={meta:meta.hidden,copy:copy.hidden};let current=null,disposed=false;
  list.setAttribute('role','button');list.setAttribute('tabindex','0');list.setAttribute('aria-haspopup','dialog');
  list.setAttribute('aria-controls','detail-dialog');list.setAttribute('aria-labelledby','news-title');list.setAttribute('aria-describedby','news-time news-copy news-recap');
+ // Repeated trade renders often keep the same news. Avoid replacing its text
+ // nodes; compare the DOM so external edits are still repaired on the next render.
+ const text=(node,value)=>{if(node){const next=String(value??'');if(node.textContent!==next)node.textContent=next;}};
  function render(event){
   if(disposed)return;
   // Keep a snapshot of the displayed item, including its provenance. Never
   // mutate the event, save, archive selection or a detail already being read.
-  current={...event,recap:event?.recap?{...event.recap}:null,background:event?.background?{...event.background}:null};title.textContent=current.title??'';copy.textContent=current.copy??'';
+  current={...event,recap:event?.recap?{...event.recap}:null,background:event?.background?{...event.background}:null};text(title,current.title);text(copy,current.copy);
   const sourceName=get('news-source'),time=get('news-time');
-  if(sourceName)sourceName.textContent=current.source??'';if(time)time.textContent=current.time??'';
-  meta.hidden=false;copy.hidden=!current.copy;recap.hidden=!current.recap?.copy;recap.textContent=current.recap?.copy?`${current.recap.title} · ${current.recap.copy}`:'';sources.hidden=true;source.hidden=true;source.removeAttribute('href');
+  text(sourceName,current.source);text(time,current.time);
+  meta.hidden=false;copy.hidden=!current.copy;recap.hidden=!current.recap?.copy;text(recap,current.recap?.copy?`${current.recap.title} · ${current.recap.copy}`:'');sources.hidden=true;source.hidden=true;source.removeAttribute('href');
  }
  function open(){
   if(disposed||!current||closeAllModalOpen(document))return false;
