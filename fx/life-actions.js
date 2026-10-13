@@ -1,6 +1,6 @@
-import {DINNER_OPTIONS} from './recap-choices.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 // Initial game-balance value, not a real-world wage or a claim about the manga.
 // One completed life action per story day. Workplaces differ only in presentation.
 export const LIFE_WORK_INCOME=2200;

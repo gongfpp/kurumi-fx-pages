@@ -1,10 +1,10 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {livingMoveEvidence} from './living-services.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {livingMoveEvidence} from './living-services.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.

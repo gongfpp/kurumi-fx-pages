@@ -1,9 +1,19 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {originalPublicationUrl} from './news-source-view.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {originalPublicationUrl} from './news-source-view.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {displayedNewsItems} from './displayed-news-session.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+
+// Compact labels use the viewed market date only as a comparison. The item's
+// own publication instant supplies its JST day/time; availability is not a clock.
+export function mobileNewsListTime(item,referenceDate){
+ const date=newsDate(item?.publishedAt);
+ if(!date||typeof referenceDate!=='string'||!/^\d{4}-\d\d-\d\d$/.test(referenceDate))return item?.time||'';
+ const day=date===referenceDate?'':date.slice(0,4)===referenceDate.slice(0,4)?date.slice(5):date;
+ return [day,formatTradingTime(item.publishedAt)].filter(Boolean).join(' ');
+}
 
 // Read-only publication list. Eligibility is the archive's existing pair/date/
 // review gate; neither future script events nor archive bag mutations are read.
@@ -19,8 +29,10 @@ export function mobileNewsItems(state,current,{archive=NEWS_ARCHIVE}={}){
    summaryNotice:entry.summaryNotice,contentKind:'historical_fact'};
  }).filter(item=>item.publishedAt===null||item.publishedAt<=context.at).sort((a,b)=>
   b.publicationDate.localeCompare(a.publicationDate)||(b.publishedAt??-Infinity)-(a.publishedAt??-Infinity)||a.id.localeCompare(b.id));
- if(current?.title&&current.contentKind!=='historical_fact'&&(!Number.isFinite(current.publishedAt)||current.publishedAt<=context.at))rows.unshift({...current,id:`current:${context.mode}:${context.pair}:${current.id??''}:${current.publishedAt??context.at}:${current.title}`});
- return rows;
+ const displayed=displayedNewsItems(state);
+ rows.unshift(...displayed);
+ if(current?.title&&current.contentKind!=='historical_fact'&&current.contentKind!=='fictional_market_event'&&(!Number.isFinite(current.publishedAt)||current.publishedAt<=context.at))rows.unshift({...current,id:`current:${context.mode}:${context.pair}:${current.id??''}:${current.publishedAt??context.at}:${current.title}`});
+ return rows.map(item=>({...item,listTime:mobileNewsListTime(item,context.date)}));
 }
 
 export function mountMobileNewsList({document:doc=globalThis.document,onClose=()=>{}}={}){
@@ -32,7 +44,7 @@ export function mountMobileNewsList({document:doc=globalThis.document,onClose=()
  dialog.id='mobile-news-dialog';title.id='mobile-news-dialog-title';dialog.setAttribute('aria-labelledby',title.id);dialog.setAttribute('data-mobile-news-dialog','true');back.type=close.type='button';dialogHeader.append(back,title,close);dialog.append(dialogHeader,body);doc.body.append(dialog);
  const listeners=[];const listen=(node,type,fn)=>{node?.addEventListener(type,fn);listeners.push(()=>node?.removeEventListener(type,fn));};
  let items=[],snapshot=[],active=false,disposed=false,opener=null,listMode=true,lastSignature='',savedHidden=native.hidden,selectedIndex=0,listScroll=0,listShellScroll=0;
- function row(item,index,scope){const button=make('button','mobile-news-row'),time=make('time','',scope==='three'?(item.time?.match(/\b\d{2}:\d{2}(?::\d{2})?\b/)?.[0]||item.time?.slice(0,10)||''):(item.time||'')),label=make('span','',item.title||'');button.type='button';button.dataset.newsIndex=String(index);button.dataset.newsScope=scope;button.setAttribute('aria-haspopup','dialog');time.setAttribute('aria-label',item.time||'');time.title=item.time||'';button.append(time,label,make('span','mobile-news-chevron','›'));return button;}
+ function row(item,index,scope){const button=make('button','mobile-news-row'),time=make('time','',scope==='three'?(item.listTime??item.time??''):(item.time||'')),label=make('span','',item.title||'');button.type='button';button.dataset.newsIndex=String(index);button.dataset.newsScope=scope;button.setAttribute('aria-haspopup','dialog');time.setAttribute('aria-label',item.time||'');time.title=item.time||'';button.append(time,label,make('span','mobile-news-chevron','›'));return button;}
  function renderList(restore=false){listMode=true;back.hidden=true;title.textContent='市场快讯';body.replaceChildren();snapshot.forEach((item,index)=>body.append(row(item,index,'all')));if(!snapshot.length)body.append(make('p','','暂无快讯'));if(restore){body.scrollTop=listScroll;const scroller=dialog.querySelector('.dialog-scroll');if(scroller)scroller.scrollTop=listShellScroll;body.querySelectorAll('[data-news-index]')[selectedIndex]?.focus({preventScroll:true});}}
  function source(item,parent){
   if(item.contentKind==='fictional_market_event'||item.swan)return;
@@ -63,7 +75,7 @@ export function mountMobileNewsList({document:doc=globalThis.document,onClose=()
  }
  function render(next){
   if(disposed)return;items=Array.isArray(next)?next:[];
-  const signature=JSON.stringify(items.slice(0,3).map(item=>[item.id,item.title,item.time]));
+  const signature=JSON.stringify(items.slice(0,3).map(item=>[item.id,item.title,item.time,item.listTime]));
   if(signature!==lastSignature){lastSignature=signature;list.replaceChildren();items.slice(0,3).forEach((item,index)=>list.append(row(item,index,'three')));}
   more.disabled=!items.length;sync();
  }

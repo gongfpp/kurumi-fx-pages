@@ -1,5 +1,5 @@
-import {serviceConfiguration} from './service-config.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 
 // Match the API's existing nickname rules without rewriting the player's input.
 const commentAliasError=value=>{

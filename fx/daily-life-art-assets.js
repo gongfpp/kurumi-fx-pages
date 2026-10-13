@@ -1,4 +1,4 @@
-import {DAILY_LIFE_SCRIPTS} from './copy/daily-life-scripts.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {DAILY_LIFE_SCRIPTS} from './copy/daily-life-scripts.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 // Reviewed original life-scene artwork; relationship gates belong to the catalogue.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DAILY_LIFE_ART_ASSETS=freeze({

@@ -1,12 +1,12 @@
-import {createSkitCrop} from './skit-dialogue.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {DINNER_STORY_ASSETS} from './dinner-story-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {PROFIT_TIER_ART} from './profit-tier-art.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {createSkitCrop} from './skit-dialogue.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {DINNER_STORY_ASSETS} from './dinner-story-assets.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {PROFIT_TIER_ART} from './profit-tier-art.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 // Cropped windows of the already approved life UI; no new illustration assets.
 const lifeIcon=rect=>Object.freeze({path:'./pixel-assets/mobile-life-approved.png',width:854,height:1842,rect});
 export const SKIT_CHROME_ICONS=Object.freeze({

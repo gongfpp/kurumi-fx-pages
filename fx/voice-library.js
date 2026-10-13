@@ -1,4 +1,4 @@
-import {bindAuditionEnvelope} from './audio-envelope.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {bindAuditionEnvelope} from './audio-envelope.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 // Native controls provide keyboard-accessible play, pause, seeking and volume.
 export function coordinateAuditions(players,{beforePlay=()=>{},onPlay=()=>{}}={}){
   const listeners=players.map(player=>{

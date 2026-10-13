@@ -1,7 +1,8 @@
-import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {newsContext,newsDate} from './news-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {newsContext,newsDate} from './news-context.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {rememberDisplayedNews} from './displayed-news-session.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 
 const archiveById=new Map(NEWS_ARCHIVE.map(entry=>[entry.id,entry]));
 const positive=value=>Number.isFinite(value)&&value>0;
@@ -68,5 +69,7 @@ export function marketNewsView(state,event,options={}){
  if(context.mode==='historical')return {...publicNews(archive),time:archive.archiveId?newsPublicationTime(archive):formatTradingTime(context.at,{full:true}),recap};
  const primary=visibleSimulation(state,event,{...options,context});
  const background=archive.archiveId?{...publicNews(archive),time:newsPublicationTime(archive)}:null;
- return {...primary,recap,background};
+ const view={...primary,recap,background};
+ rememberDisplayedNews(state,view,context);
+ return view;
 }

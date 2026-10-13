@@ -1,6 +1,6 @@
-import {createSkitLine} from './skit-dialogue.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {setImage} from './assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {setImage} from './assets.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.

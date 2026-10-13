@@ -1,8 +1,8 @@
-import {createSkitLine} from './skit-dialogue.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.

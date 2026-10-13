@@ -1,5 +1,5 @@
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 // Retain the compact legacy receipt for older tabs, but compare every public

@@ -1,10 +1,10 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId} from './life-actions.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=d2539e814da3f5cb5601b8be2c35addc36184a48-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId} from './life-actions.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=e0f3cc62baa3b2ee57b32a2c4d590e858d72a749-23f2a20b7717';
 export function currentLifeSceneReceipt(state){
  if(state?.mode!=='story'||state.position||state.positions!==undefined&&!Array.isArray(state.positions)||!sealedDailyMangaOutcome(state)||!validLifeActions(state))return null;
  const receipt=lifeActionReceipt(state);
