@@ -1,4 +1,4 @@
-import {observeSeenArtwork} from './daily-art-memory.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {observeSeenArtwork} from './daily-art-memory.js?v=92aaa7e8239f22d516747842f9d9a2ca0292ec1f-23f2a20b7717';
 
 // The engine has already sealed the account. This optional record controls only
 // the two views of that result, never its classification, money or rewards.
@@ -10,7 +10,10 @@ export function endingPresentationContext(state,ending,media=[]){
 }
 export function endingPresentationState(state,context){
  const saved=state?.endingPresentation;
- return context&&state?.phase==='ending'&&state.ending?.id===context.baseId&&String(state.runId??`seed:${state.seed}:${state.mode}`)===context.runId&&saved&&typeof saved==='object'&&!Array.isArray(saved)&&saved.version===1&&saved.key===context.key&&saved.runId===context.runId&&saved.baseId===context.baseId&&saved.endingId===context.endingId&&saved.stage==='results'&&['observed','skipped'].includes(saved.status)?{version:1,key:context.key,runId:context.runId,baseId:context.baseId,endingId:context.endingId,stage:'results',status:saved.status}:null;
+ // Frozen51 story base endings had no media. Their completed results remain
+ // completed when the exact same-ID legacy picture becomes visible.
+ const previousStoryKey=context&&state?.mode==='story'&&context.endingId===context.baseId&&Object.hasOwn(legacyHashes,context.baseId)&&Array.isArray(context.assets)&&context.assets.length===1&&context.assets[0]===legacyHashes[context.baseId]&&context.key===JSON.stringify([context.runId,context.baseId,context.endingId,context.assets])?JSON.stringify([context.runId,context.baseId,context.endingId,[]]):null;
+ return context&&state?.phase==='ending'&&state.ending?.id===context.baseId&&String(state.runId??`seed:${state.seed}:${state.mode}`)===context.runId&&saved&&typeof saved==='object'&&!Array.isArray(saved)&&saved.version===1&&(saved.key===context.key||previousStoryKey!==null&&saved.key===previousStoryKey)&&saved.runId===context.runId&&saved.baseId===context.baseId&&saved.endingId===context.endingId&&saved.stage==='results'&&['observed','skipped'].includes(saved.status)?{version:1,key:context.key,runId:context.runId,baseId:context.baseId,endingId:context.endingId,stage:'results',status:saved.status}:null;
 }
 export function completeEndingPresentation(state,context,{observed=false}={}){
  if(!context||state?.phase!=='ending'||String(state.runId??`seed:${state.seed}:${state.mode}`)!==context.runId||state.ending?.id!==context.baseId||endingPresentationState(state,context))return false;
@@ -20,7 +23,7 @@ export function completeEndingPresentation(state,context,{observed=false}={}){
 const legacyHashes=Object.freeze({million:'571575df415681ba4eab476f737432ef0ab012afe8429248fc5802296e853ccd',broke:'82ef97fdaf9fff068d9494158829c44f096ea87882670180bed2e63e171dcb4d',crisis:'937e17a1c1f2761086262416225636f4b7029e6a28a7922e5bac1ba0da2a2f73'});
 export function endingPresentationMedia(state,ending,art,manga){
  if(art)return [art.sha256];
- if(state.mode!=='story'&&!ending?.variant&&Object.hasOwn(legacyHashes,state.ending?.id))return [legacyHashes[state.ending.id]];
+ if(!ending?.variant&&Object.hasOwn(legacyHashes,state.ending?.id))return [legacyHashes[state.ending.id]];
  return (manga?.cards||[]).map(card=>card.panel.sha256);
 }
 const views=new WeakMap();
