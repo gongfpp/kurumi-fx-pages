@@ -8,5 +8,5 @@ export const DAILY_STORY_TRACKS=Object.freeze({
 });
 export function orderedDailyStories(candidates,memory){
  const allowed=new Set(Object.values(DAILY_STORY_TRACKS).map(track=>track.find(id=>!memory.has(`arc:${id}`))).filter(Boolean));
- return candidates.filter(c=>!c.selection||allowed.has(c.id)||memory.has(c.identity));
+ return candidates.filter(c=>!c.selection||allowed.has(c.id)||memory.has(c.identity)||memory.has(`arc:${c.id}`));
 }

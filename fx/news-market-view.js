@@ -1,7 +1,7 @@
-import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {newsContext,newsDate} from './news-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {newsContext,newsDate} from './news-context.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 
 const archiveById=new Map(NEWS_ARCHIVE.map(entry=>[entry.id,entry]));
 const positive=value=>Number.isFinite(value)&&value>0;

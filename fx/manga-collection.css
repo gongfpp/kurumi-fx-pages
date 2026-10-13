@@ -21,7 +21,7 @@ body[data-frontend=pixel] #achievements-dialog:has(.manga-collection-tabs) .dial
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-toolbar .x-close::before{content:'‹';font-size:38px;line-height:1}
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-mobile-toolbar-title{display:flex;align-items:center;gap:12px;font-size:25px;font-weight:900}
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-mobile-toolbar-title::before,
- body[data-frontend=pixel] .manga-collection-book-icon{content:'';display:block;width:43px;height:45px;background:url('./pixel-assets/reference-atlas.png?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717') -36px -662px no-repeat;image-rendering:pixelated;flex:none}
+ body[data-frontend=pixel] .manga-collection-book-icon{content:'';display:block;width:43px;height:45px;background:url('./pixel-assets/reference-atlas.png?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717') -36px -662px no-repeat;image-rendering:pixelated;flex:none}
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-scroll{padding:0 9px 16px;scrollbar-gutter:auto;background:#fffafd}
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .dialog-scroll>h2,
  body[data-frontend=pixel] #achievements-dialog[data-collection-tab=manga] .manga-collection-tabs{display:none}

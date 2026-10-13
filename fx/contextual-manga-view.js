@@ -1,7 +1,8 @@
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {setImage} from './assets.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {followConfidenceDailyContentIdentity} from './contextual-manga-scenes.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {setImage} from './assets.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 const mountedViews=new WeakMap();
 // Inline presentation only. Reading memory never changes game/account state.
 export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){
@@ -13,12 +14,19 @@ export function mountContextualManga(host,selection,{manual=true,unreadOnly=fals
  // Recover only from every current, nonempty content identity; never from the
  // chapter selection, a record number, or a partial/previous panel list.
  const completeRead=(choice,recover=false)=>{
+  if(choice.completionIdentity&&choice.completionIdentity!==followConfidenceDailyContentIdentity(choice))return false;
   const assets=choice.nodes.flatMap(node=>node.panels.map(panel=>CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record])),ids=assets.map(artIdentity);
   const complete=ids.length>0&&ids.every(id=>id&&memory.has(id));
   // Path-only legacy identities cannot establish unchanged content on mount.
   // Keep their explicit replay; the normal visible-image observer still owns
   // acknowledging reads when no stable content hash is available.
-  if(complete&&(!recover||assets.every(asset=>/^[a-f0-9]{64}$/i.test(asset?.sha256||'')))&&!memory.has(`arc:${choice.id}`))memory.seen([`arc:${choice.id}`]);
+  if(complete&&(!recover||assets.every(asset=>/^[a-f0-9]{64}$/i.test(asset?.sha256||'')))){
+   const identities=[`arc:${choice.id}`];
+   // An old chapter marker alone never completes a larger edition. Only the
+   // same all-current-image proof can acknowledge its content-bound identity.
+   if(choice.completionIdentity)identities.push(choice.completionIdentity);
+   const unread=identities.filter(id=>!memory.has(id));if(unread.length)memory.seen(unread);
+  }
   return complete;
  };
  const choices=[selection,...(selection.related||[])].slice(0,4);let active=selection,replay=unreadOnly&&completeRead(active,true),expanded=!manual&&!replay,toggle=null;let observers=[];const dispose=()=>{for(const stop of observers)stop();observers=[];};mountedViews.set(host,dispose);

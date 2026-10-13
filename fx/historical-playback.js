@@ -1,5 +1,5 @@
-import {isResearch} from './historical-replay.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {isResearch} from './historical-replay.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.

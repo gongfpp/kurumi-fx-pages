@@ -1,5 +1,5 @@
-import {LIFESTYLES} from './consumption-ledger.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {renderLivingCopy} from './copy/living-choices.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {LIFESTYLES} from './consumption-ledger.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {renderLivingCopy} from './copy/living-choices.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 const yen=value=>'¥'+value.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export const fillLivingCopy=renderLivingCopy;
 const planValues=(plan,option,extra={})=>({label:option?.label||plan.label,dailyBasics:yen(plan.dailyBasics),dailyRent:yen(plan.dailyRent),dailyTotal:yen(plan.dailyCost),extraStressRelief:plan.extraStressRelief,extraRestRecovery:plan.extraRestRecovery,restRecoveryCap:32,...extra});

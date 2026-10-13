@@ -1,4 +1,4 @@
-import {inspectSave} from './save-codec.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {inspectSave} from './save-codec.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 // The local snapshot remains the default. An automatic compatibility archive
 // is restored only when the user explicitly selects it in the existing dialog.
 export const MAX_BACKUP_BYTES=32*1024*1024;

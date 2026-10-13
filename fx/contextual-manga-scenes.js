@@ -1,17 +1,18 @@
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
-import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=090ee9cd35db29dce3353f8689f43d8787bd7476-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
+import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=7e5a730c4a9ee2cb901b46fdac3ef10a829bdcda-23f2a20b7717';
 const arcs={
  ...CONTEXTUAL_MANGA_ARCS,
  'profit-fades':['aud-yen-delight','profit-fades','look-away','first-negative-estimate'],
@@ -108,6 +109,73 @@ export function selectStoryContextualManga(state,event){
  const r=state.story?.log?.findLast(x=>x.id==='friendStudy'&&x.day===state.day&&typeof x.choice==='string'&&x.choice);
  const current=sealedDailyMangaOutcome(state)&&(!Object.hasOwn(state.dayReport,'runId')||state.dayReport.runId===state.runId)&&r?.choice.trim();
  return r&&state.story?.seen?.includes('friendStudy')?(current?dailyArc:arc)('follow-confidence',{day:r.day,choice:r.choice}):null;
+}
+// SHA-256 of the fixed ordered [record, image sha256] list. This edition
+// supplements the old seven-panel chapter; it never migrates old read keys.
+export const FOLLOW_CONFIDENCE_DAILY_IDENTITY='arc-edition:follow-confidence:sha256:cdde1b44c7089f0a83329be6a325fa341119d8fc90ece1c49db368cba4e96f17';
+const followConfidenceDailyContent=Object.freeze([
+ [88,'1fe6e77f75b1b53f8baf99b8319abd1c7b2c653ed9a16becabf98bf4a2a67b01'],
+ [89,'1ed11cca29b5f7ddcafc0817673b128958aaee097c33b6c8bcd7870e449fbf12'],
+ [91,'45dd74f4c02bc2f6e980e42ebca14976ab34a96451d3ace178e9a87543b50b33'],
+ [92,'8c6b85ba0b9a14b72f128f350eac591adb37761e440df275fb2f1a49192626e4'],
+ [93,'9ad380df1949ef2d5634c187c5b7e1b575bdb0c56a80e16775a06cca9742a946'],
+ [94,'65e3fc73ab8bc627bae36b5a6d79d2c15ec60ef5b57462eb4ce88c7f1aeba8b0'],
+ [95,'809bc596574817852c991deb94d8a244e77a1bff732fe0a27e6086438b4fa8ca'],
+ [97,'53ccf9b691f0ed6325ce51329168390d8c39913f0b100f322f5c2775f492f411'],
+ [98,'8c093f23dcadbbc5304b2b948a543918f7fedf73c9b2dc040fc958b90c229452'],
+ [99,'d290f8000d6057b13a802d91bf71a3eecffa17355e3742e05adecb423004fb5f'],
+ [100,'56e9d5334433e948f245c1063ad2d594892f6d8500057b521fac27d96612e466'],
+ [101,'d686c5fc1bc5fa03f1f39ee969d2d20c26aae9d3f23aaadc98163504acb01cfd'],
+ [102,'625e7e36f270e9995d7c666e8971dd616badaf5396f525232887b520ebac693a'],
+ [103,'2da54ba7d620b7c359b0c92ea2d723755fbf4b11a26ae5b946498b217d83f1a2'],
+ [104,'060049f7f1b1aca6e2d1cac6f85dd6d4388bd4d647db9579a00113b4f8308377']
+]);
+export function followConfidenceDailyContentIdentity(selection){
+ const panels=selection?.nodes?.flatMap(node=>node.panels)||[];
+ return selection?.id==='follow-confidence'&&panels.length===followConfidenceDailyContent.length&&panels.every((panel,index)=>{
+  const [record,sha256]=followConfidenceDailyContent[index],asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record];
+  return panel.record===record&&asset?.sha256===sha256;
+ })?FOLLOW_CONFIDENCE_DAILY_IDENTITY:null;
+}
+function completedFriendEvidence(state,{sameDay=false}={}){
+ if(!Array.isArray(state.story?.seen)||!state.story.seen.includes('friendStudy')||!Array.isArray(state.story.log))return null;
+ const valid=row=>Number.isInteger(row?.day)&&row.day>0&&(sameDay?row.day===state.day:row.day<state.day)&&row.choice==='continue'&&
+  (!Object.hasOwn(row,'runId')||row.runId===state.runId);
+ const logs=state.story.log.filter(row=>row?.id==='friendStudy'),unlock=state.itemUnlocks?.mochiko;
+ if(logs.length>1||logs.length===1&&!valid(logs[0]))return null;
+ // chooseStory stores this exact unlock permanently; the log keeps only 40
+ // rows. Migration's day=0/legacy-use entries are not completion evidence.
+ const fromUnlock=unlock?.event==='friendStudy';
+ if(fromUnlock&&(!valid(unlock)||logs.length&&unlock.day!==logs[0].day))return null;
+ return logs[0]||(fromUnlock?unlock:null);
+}
+function currentFriendNarrative(state,narrative,{sameDay=false}={}){
+ // Family frames and actual paid/elected evenings keep priority even during
+ // legacy day-lock recovery, which runs after the primary candidate branch.
+ if(isDailyFamilyNarrative(narrative)||isDailyFamilyNarrative(state?.settlementNarrative)||
+  state?.recapChoiceLedger?.some(row=>row.day===state.day)||state?.dayReport?.lifeAction||
+  state?.lifeActions?.receipts?.some(row=>row.day===state.day))return false;
+ // A later quiet settlement explicitly saves event:null. Missing fields or
+ // an incomplete/stale snapshot are not evidence of a quiet evening.
+ const valid=snapshot=>snapshot?.version===1&&snapshot.day===state?.day&&typeof snapshot.effectsApplied==='boolean'&&
+  Object.hasOwn(snapshot,'event')&&(sameDay?snapshot.event?.key==='friendStudy':snapshot.event===null||snapshot.event?.key==='quietNight');
+ return state?.mode==='story'&&!!sealedDailyMangaOutcome(state)&&typeof state.runId==='string'&&!!state.runId&&
+  (!Object.hasOwn(state.dayReport,'runId')||state.dayReport.runId===state.runId)&&
+  valid(narrative)&&valid(state.settlementNarrative)&&narrative.event?.key===state.settlementNarrative.event?.key;
+}
+export function selectDeferredFriendContextualManga(state,narrative){
+ if(!currentFriendNarrative(state,narrative))return null;
+ const source=completedFriendEvidence(state);if(!source)return null;
+ const selection=dailyArc('follow-confidence',{day:source.day,choice:source.choice,deferredUntil:state.day});
+ const completionIdentity=followConfidenceDailyContentIdentity(selection);
+ return completionIdentity?{...selection,completionIdentity}:null;
+}
+// Only restores a pre-existing chapter day lock. This narrow adapter does not
+// broaden the older independent event-reader API or create a new daily slot.
+export function selectLockedFriendContextualManga(state,narrative){
+ if(!currentFriendNarrative(state,narrative,{sameDay:true}))return null;
+ const source=completedFriendEvidence(state,{sameDay:true});
+ return source?dailyArc('follow-confidence',{day:source.day,choice:source.choice}):null;
 }
 export function selectEventContextualManga(state,event){
  if(event.type==='loan-borrow'){
