@@ -1,7 +1,7 @@
-import {marketPrice,positionMarket} from './market-book.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DIALOGUE_BANK} from './dialogue-bank.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DIALOGUE_BANK} from './dialogue-bank.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 
 export const DIALOGUE_VERSION=7;
 const quotes=new Map(DIALOGUE_BANK.flatMap(q=>[[q.id,q],[q.alias,q]]));

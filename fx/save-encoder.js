@@ -1,4 +1,4 @@
-import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 let worker=null,nextId=0;const pending=new Map();
 function failWorker(){for(const task of pending.values()){clearTimeout(task.timer);task.reject(new Error('Save encoder unavailable'));}pending.clear();worker?.terminate();worker=null;}
 export function encodeProgress(currentRaw,previousRaw=null,{replacement=false}={}){

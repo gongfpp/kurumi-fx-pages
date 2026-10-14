@@ -2,6 +2,7 @@
 // device space or corruption from a generic storage exception.
 export function saveWarning(session,fallback) {
   if(session.blocked)return '检测到存档变化。本页已暂停，请先处理存档。';
+  if(session.reason==='coordination'&&session.failure?.kind==='timeout')return '保存等待超时，原存档未被覆盖。本页进度仍保留，可重试保存或下载备份，请勿刷新或关闭。';
   if(session.reason==='coordination')return '浏览器暂不支持安全的跨页保存。本页仍可游玩，请勿刷新或关闭；可下载本页进度备份。';
   if(session.reason==='encoding')return '本页进度暂时无法打包保存，原存档未被覆盖。请先下载本页进度备份，勿刷新或关闭；之后可重试保存。';
   const detail=session.failure;

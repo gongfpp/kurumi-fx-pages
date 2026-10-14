@@ -1,5 +1,5 @@
-import {currentTradingTimestamp} from './trading-time.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {isLiveMarket} from './live-market-state.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 
 const DAY=86400000,JST=9*3600000;
 export const NEWS_PAIRS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);

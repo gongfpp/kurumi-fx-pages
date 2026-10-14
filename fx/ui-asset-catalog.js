@@ -1,4 +1,4 @@
-// UI sprites have their own identity; they never enter story/expression selection.
+// UI assets keep their own identities, separate from story/trading-event pools.
 export const UI_ASSET_CATALOG=Object.freeze([Object.freeze({
  id:'pixel-interface-reference-atlas',path:'./pixel-assets/reference-atlas.png',
  purpose:'decorative-interface-sprites',kind:'approved-interface-reference',
@@ -17,4 +17,10 @@ Object.freeze({
  source:Object.freeze({sha256:'5e18682bd037ada7d4e2ad0e9232132c24937e7e476f22e9f1f20a7d883bac7f',dimensions:Object.freeze([852,1846]),metadataRefs:Object.freeze(['UI_ASSET_CATALOG:report-pixel-approved'])}),
  consumer:Object.freeze({module:'./share-card-pixel.js',presentation:'bounded-report-sprite-windows',financialData:false}),
  review:Object.freeze({status:'pending',scope:'current-rendered-interface',reason:'Approved pixel report design; current-build browser visual acceptance remains required'})
+}),Object.freeze({
+ id:'kurumi-default-user',path:'./expressions/kurumi-default-user.jpg',
+ purpose:'user-selected-default-avatar',kind:'user-provided-image',
+ source:Object.freeze({sha256:'3e2b88940445ca012fa4b72e6d39333cecda49b74a81b778844fe94a0442b23a',dimensions:Object.freeze([937,500]),sourceCommit:'98878f578e0b1c745851330569094c69a5441258',gitBlob:'1140416f540495da391e6306a0747a22d140ca80',metadataRefs:Object.freeze(['UI_ASSET_CATALOG:kurumi-default-user'])}),
+ consumer:Object.freeze({module:'./final-portrait.js',displayModule:'./portrait-display.js',stylesheet:'./pixel-renderer.css',presentation:'whole-image-contain',preserveWholeImage:true,financialData:false}),
+ review:Object.freeze({status:'pending',scope:'current-rendered-interface',reason:'Exact user image viewed and bytes verified; current-build browser visual acceptance remains required'})
 })]);

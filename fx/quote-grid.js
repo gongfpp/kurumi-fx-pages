@@ -6,6 +6,19 @@ export const QUOTE_DT=1/QUOTE_SUBSTEPS;
 // A market day contains 96 logical seconds. Rare news can still gap, but daily
 // roulette and mandatory weekly shocks must not make consecutive days violent.
 export const MARKET_BALANCE=Object.freeze({noise:.00058*.28,driftScale:.5,maxShock:.012,shockScale:.3,shockChance:.12,shockCooldownDays:2,historyNoise:.002*.28});
+// Simulation presets, not a fit to real historical returns. One logical second
+// represents 2.5 market minutes; changing display Hz/speed/period never changes it.
+export const SIMULATION_CALIBRATION=Object.freeze({
+ 'USD/JPY':Object.freeze({scale:1,maxShock:.006}),
+ 'AUD/JPY':Object.freeze({scale:1.25,maxShock:.0075}),
+ 'GBP/JPY':Object.freeze({scale:1.45,maxShock:.0087})
+});
+export function simulationCalibration(symbol='USD/JPY',tickMinutes=2.5){
+ const profile=SIMULATION_CALIBRATION[symbol];
+ if(!profile||!Number.isFinite(tickMinutes)||tickMinutes<=0)throw Error('Invalid simulation calibration');
+ const time=tickMinutes/2.5;
+ return {noise:MARKET_BALANCE.noise*profile.scale*Math.sqrt(time),driftScale:MARKET_BALANCE.driftScale*profile.scale*time,maxShock:profile.maxShock,shockScale:MARKET_BALANCE.shockScale*.5*profile.scale*Math.sqrt(time)};
+}
 // Candidate rolls are a pure function of seed/day supplied by the engine. Looking
 // back at candidates (rather than mutable run state) gives a strict quiet period
 // and the same day schedule when loading, skipping days or changing display Hz.
@@ -17,19 +30,19 @@ export function shouldScheduleShock(day,rollForDay){
  return true;
 }
 const price9=value=>Number(Math.max(.001,value).toFixed(9));
-export function boundedShock(value){return Number.isFinite(value)?Math.max(-MARKET_BALANCE.maxShock,Math.min(MARKET_BALANCE.maxShock,value)):0;}
+export function boundedShock(value,maxShock=MARKET_BALANCE.maxShock){return Number.isFinite(value)?Math.max(-maxShock,Math.min(maxShock,value)):0;}
 // Return the actual price jump so stored news metadata describes the new path.
-export function calibratedShock(value){return boundedShock(value*MARKET_BALANCE.shockScale);}
-export function generateQuoteGrid({startPrice,events,market,impactAt,swan=null,newsEffects=true,candlesPerBeat=4,ticksPerCandle=6}){
+export function calibratedShock(value,options={}){const profile=simulationCalibration(options.symbol,options.tickMinutes);return boundedShock(value*profile.shockScale,profile.maxShock);}
+export function generateQuoteGrid({startPrice,events,market,impactAt,swan=null,newsEffects=true,symbol='USD/JPY',tickMinutes=2.5,candlesPerBeat=4,ticksPerCandle=6}){
  if(!Number.isFinite(startPrice)||startPrice<=0||typeof market!=='function'||typeof impactAt!=='function'||!Array.isArray(events))throw Error('Invalid canonical quote input');
- let price=startPrice;
+ const profile=simulationCalibration(symbol,tickMinutes);let price=startPrice;
  const subtracks=events.map((event,beat)=>Array.from({length:candlesPerBeat},(_,candle)=>Array.from({length:ticksPerCandle},(_,tick)=>Array.from({length:QUOTE_SUBSTEPS},(_,subtick)=>{
    // A newly revealed release/shock is not leaked into earlier sub-samples.
    const impact=impactAt(event,{beat,candle,tick:subtick===QUOTE_SUBSTEPS-1?tick:tick-1/QUOTE_SUBSTEPS,subtick});
-   const drift=newsEffects?(Number.isFinite(impact.drift)?impact.drift:0)*MARKET_BALANCE.driftScale*QUOTE_DT:0;
+   const drift=newsEffects?(Number.isFinite(impact.drift)?impact.drift:0)*profile.driftScale*QUOTE_DT:0;
    const vol=newsEffects&&Number.isFinite(impact.volatility)?Math.max(0,impact.volatility):1;
-   const noise=(market()+market()-1)*MARKET_BALANCE.noise*vol*Math.sqrt(QUOTE_DT);
-   const shock=swan&&swan.beat===beat&&swan.candle===candle&&swan.tick===tick&&subtick===QUOTE_SUBSTEPS-1?boundedShock(swan.delta):0;
+   const noise=(market()+market()-1)*profile.noise*vol*Math.sqrt(QUOTE_DT);
+   const shock=newsEffects&&swan&&swan.beat===beat&&swan.candle===candle&&swan.tick===tick&&subtick===QUOTE_SUBSTEPS-1?boundedShock(swan.delta,profile.maxShock):0;
    price=price9(price*(1+drift+noise+shock));return price;
  }))));
  const tracks=subtracks.map(beat=>beat.map(candle=>candle.map(second=>second.at(-1))));

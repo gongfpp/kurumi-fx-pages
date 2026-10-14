@@ -1,6 +1,6 @@
 /* Approved pink-pixel renderer. Every rule is scoped; legacy rendering is untouched. */
 body[data-frontend="pixel"]{background:#ffe3f1;color:#0a1255}
-#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
+#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
 #pixel-frontend *,#pixel-frontend *:before,#pixel-frontend *:after{box-sizing:border-box}
 #pixel-frontend [hidden]{display:none!important}
 #pixel-frontend button,#pixel-frontend input,#pixel-frontend select,#pixel-frontend textarea{font:inherit;color:var(--px-ink)}
@@ -412,3 +412,9 @@ body[data-frontend="pixel"] #frontend-switch{background:#fff6fc;border-color:#c0
 
 #pixel-frontend .pixel-session{margin-top:9px}
 #pixel-frontend .pixel-session>.pixel-drawer-content{position:relative;margin-top:5px}
+
+/* Preserve the user-selected default image and its embedded subtitles.
+   The existing portrait box and every unflagged emotion image keep their layout. */
+.portrait.portrait-preserve-whole > #portrait{object-fit:contain;object-position:center}
+#pixel-frontend #character-card > .portrait.portrait-preserve-whole{background-image:none}
+#pixel-frontend #character-card > .portrait.portrait-preserve-whole > #portrait{visibility:visible;object-fit:contain;object-position:center}

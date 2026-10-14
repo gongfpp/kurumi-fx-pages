@@ -1,11 +1,12 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {storageFailure} from './storage.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {storageFailure} from './storage.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
-export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress,lifeSceneMigration=null,staminaFatigueMigration=false}) {
+export function createSaveSession({storage,key,legacyKey=null,restore,locks=globalThis.navigator?.locks,encode=encodeProgress,lifeSceneMigration=null,staminaFatigueMigration=false,lockTimeoutMs=10000,setTimer=setTimeout,clearTimer=clearTimeout}) {
+  if(!Number.isFinite(lockTimeoutMs)||lockTimeoutMs<=0||typeof setTimer!=='function'||typeof clearTimer!=='function')throw TypeError('Invalid save lock timeout');
   // Main-game migration policy is injected; archived runtimes stay isolated.
   const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
   const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
@@ -61,9 +62,12 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
       if(importPending&&!options.replacement)return Promise.resolve(false);
       const text=JSON.stringify(state),run=String(state.runId??`seed:${state.seed}:${state.mode}`);
       if(latestRun!==null&&latestRun!==run){epoch++;invalidate();}latestRun=run;
-      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD;localRaw=text;if(!blocked())status='pending';
+      const generation=epoch,ticket=++revision,large=text.length>=SAVE_COMPRESSION_THRESHOLD;
+      // Live/multi-market/life states use the worker even below the size threshold.
+      // Drop obsolete queued encodings, but let the in-flight write make progress.
+      const coalesce=large||[15,16,17].includes(state.version)||options.replacement||savedText!==baseline.raw;localRaw=text;if(!blocked())status='pending';
       const write=async()=>{
-        if(generation!==epoch||large&&ticket!==revision||!check())return false;
+        if(generation!==epoch||coalesce&&ticket!==revision||!check())return false;
         if(options.replacement&&raw!==options.expectedRaw)return false;
         if(!locks?.request)return fail('memory','coordination');
         // Only a fully successful write in this epoch may skip encoding. The
@@ -71,8 +75,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
         const unchanged=!options.replacement&&completedSnapshot?.text===text&&completedSnapshot.raw===baseline.raw;
         let durableText;
         if(!unchanged)try{const encoded=encode(text,baseline.raw,{replacement:!!options.replacement});durableText=typeof encoded==='string'?encoded:await encoded;}catch{return generation===epoch&&!blocked()?fail('memory','encoding'):false;}
+        const controller=new AbortController();let active=true,timer;
+        const deadline=new Promise((_,reject)=>{timer=setTimer(()=>{active=false;controller.abort();reject(Object.assign(Error('Save coordination timeout'),{name:'TimeoutError'}));},lockTimeoutMs);});
         try {
-          return await locks.request('fx-progress:'+key,{mode:'exclusive'},()=>{
+          return await Promise.race([deadline,locks.request('fx-progress:'+key,{mode:'exclusive',signal:controller.signal},()=>{
+            // A timed-out request may still be granted by a test/old lock adapter.
+            // Its captured bytes must never land after the UI resumes or retries.
+            if(!active)return false;
             // Let an in-flight snapshot of this run land even when newer ticks
             // are waiting, otherwise a busy market could starve every save.
             if(generation!==epoch||!check())return false;
@@ -130,8 +139,9 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
             baseline={current:{available:true,value:durableText},legacy:null,raw:durableText};
             baselineMetadata={raw:durableText,value:{...nextMetadata,preV9:outerPreV9}};completedSnapshot={raw:durableText,text};
             raw=durableText;savedText=text;status='saved';reason='';failure=null;return true;
-          });
-        } catch(error) {return generation===epoch&&!blocked()?fail('memory','coordination',storageFailure(error,'lock')):false;}
+          })]);
+        } catch(error) {return generation===epoch&&!blocked()?fail('memory','coordination',controller.signal.aborted?{operation:'lock',kind:'timeout'}:storageFailure(error,'lock')):false;}
+        finally{active=false;clearTimer(timer);}
       };
       queue=queue.then(write,write);return queue;
     },

@@ -1,7 +1,8 @@
-import {DINNER_EXPANSION_21_ASSETS} from './dinner-expansion-21.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {DINNER_EXPANSION_22_30_ASSETS,DINNER_EXPANSION_22_30_REVIEWS} from './dinner-expansion-22-30.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_EXPANSION_21_ASSETS} from './dinner-expansion-21.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_EXPANSION_20_ASSETS} from './dinner-expansion-20.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_EXPANSION_19_ASSETS} from './dinner-expansion-19.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_ASSETS} from './dinner-expansion-16-18.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // User-approved dinner artwork; originals remain intact outside the runtime.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORY_ASSETS=freeze({
@@ -911,9 +912,10 @@ export const DINNER_STORY_ASSETS=freeze({
  ...DINNER_EXPANSION_16_18_ASSETS,
  ...DINNER_EXPANSION_19_ASSETS,
  ...DINNER_EXPANSION_20_ASSETS,
- ...DINNER_EXPANSION_21_ASSETS
+ ...DINNER_EXPANSION_21_ASSETS,
+ ...DINNER_EXPANSION_22_30_ASSETS
 });
-export const DINNER_STORY_REVIEWS=freeze(Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])));
+export const DINNER_STORY_REVIEWS=freeze({...Object.fromEntries(Object.entries(DINNER_STORY_ASSETS).filter(([id])=>!Object.hasOwn(DINNER_EXPANSION_22_30_ASSETS,id)).map(([id,a])=>[a.path,{primaryUse:"story-dialogue",character:a.characters.join("、"),characters:a.characters,emotion:"吃饭小事",hasEmbeddedText:false,textOriginal:null,faceClarity:"scene-scale",textClarity:"no-dialogue",minDisplayWidth:280,status:"verified",identityStatus:"verified",identityDescription:a.alt,tags:a.tags,exclusions:["story-only","not-live-trading-expression"]}])),...DINNER_EXPANSION_22_30_REVIEWS});
 
 // Historical source entries above remain immutable and recoverable. The current
 // scene uses this presentation mapping, as COMIC_PRESENTATION_ASSETS does.

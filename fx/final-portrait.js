@@ -1,16 +1,16 @@
-import {tradingTrauma} from './trading-trauma.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {positionNetUnrealized,mood} from './engine.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {MOODS} from './content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {floatingReactionSnapshot} from './floating-reaction.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {positionNetUnrealized,mood} from './engine.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {MOODS} from './content.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {floatingReactionSnapshot} from './floating-reaction.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 
 const generated=(path,emotion,label,scope,evidence)=>({kind:'generated',path,emotion,label,scope,evidence,sourceLabel:'原创同人',origin:'generated-game-art'});
 const plain=(emotion,scope,evidence)=>generated(`./expressions/kurumi-${MOODS[emotion]?.[1]||'calm'}.webp`,emotion,MOODS[emotion]?.[0]||'平静',scope,evidence);
 const art=(key,emotion,label,scope,evidence)=>generated(GENERATED_EXTREME_EXPRESSIONS[key].path,emotion,label,scope,evidence);
 
-// Character portraits use authored fan-art only. Story panels keep their own
-// exact narrative matcher elsewhere; a panel cannot become the avatar.
+// The neutral market fallback may use the user-selected image. Authored fan-art
+// retains every emotion rule; story panels keep their separate matcher.
 export function selectFinalPortrait(state,{sealedOutcome=null,floatingReaction=null}={}){
   const sealed=sealedOutcome&&Number.isFinite(sealedOutcome.net)&&Number.isInteger(sealedOutcome.day)
     ?{...sealedOutcome,kind:sealedOutcome.net<0?'loss':sealedOutcome.net>0?'profit':'flat'}:null;
@@ -42,5 +42,8 @@ export function selectFinalPortrait(state,{sealedOutcome=null,floatingReaction=n
     return plain(last.pnl>0?'relieved':last.pnl<0?'regretful':'calm','realized',{net:last.pnl,positionId:last.positionId});
   const pressure=pressureMood(state);if(pressure)return plain(pressure,'pressure',{pressure:true});
   const market=plain(['calm','focused','determined','guilty','warm','lonely','exhausted'].includes(natural)?natural:'calm','market',{hasPositions:false});
+  // The user-selected image is only the neutral market fallback.
+  // Holding, realized, pressure, trauma and sealed-day portraits stay unchanged.
+  if(market.emotion==='calm')return {...market,kind:'user-image',path:'./expressions/kurumi-default-user.jpg',origin:'user-provided-image',sourceLabel:'用户指定人物图',preserveWholeImage:true,line:'先看看行情……'};
   return {...market,line:'先看看行情……'};
 }

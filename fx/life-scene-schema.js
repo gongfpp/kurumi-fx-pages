@@ -1,5 +1,5 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 const options={friend:['mochiko','yasuko'],work:['convenience','cafe','bookstore'],relax:['shrine','river','park']};
 const text=value=>typeof value==='string'&&value.trim().length>0;
 const strings=value=>Array.isArray(value)&&value.length>0&&value.every(text)&&new Set(value).size===value.length;
@@ -23,7 +23,7 @@ function valid(entry,dialogueForSource){
   const source=dialogueForSource({category:entry.category,id:entry.optionId},entry.receiptDialogueSourceId);
   return !!source&&JSON.stringify(source.lines)===JSON.stringify(entry.dialoguePanels.flatMap(p=>p.lines.map(([from,text])=>({from,text}))));
  }
- const friend=entry.optionId==='mochiko'?'萌智子':'康子';
+ const friend=entry.optionId==='mochiko'?'萌智子':'安子';
  if(entry.people!==2||!entry.characters.includes(friend)||entry.receiptDialogueSourceId!==entry.dialogueId)return false;
  const source=dialogueForSource({category:entry.category,id:entry.optionId},entry.receiptDialogueSourceId);
  // The same complete frozen exchange drives chat, receipt and picture. Never

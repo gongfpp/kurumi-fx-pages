@@ -1,14 +1,14 @@
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {validLifeActions} from './life-actions.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {selectDailyContextualManga} from './contextual-manga-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {validLifeActions} from './life-actions.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {selectDailyContextualManga} from './contextual-manga-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 const dinnerOriginalId='friends-different-ledgers';
 const isDinnerOriginal=scene=>scene?.id===dinnerOriginalId||scene?.identity===`arc:${dinnerOriginalId}`||scene?.selection?.id===dinnerOriginalId;
 // Bind only the exact certified original selected for this paid day. Do not

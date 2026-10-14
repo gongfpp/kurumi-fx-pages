@@ -1,10 +1,10 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId} from './life-actions.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId} from './life-actions.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 export function currentLifeSceneReceipt(state){
  if(state?.mode!=='story'||state.position||state.positions!==undefined&&!Array.isArray(state.positions)||!sealedDailyMangaOutcome(state)||!validLifeActions(state))return null;
  const receipt=lifeActionReceipt(state);
@@ -17,5 +17,8 @@ export function lifeSceneCandidates(state,narrative,{catalog=LIFE_SCENE_CATALOG,
  return inspectLifeSceneCatalog(catalog,inspection).accepted.filter(e=>e.category===receipt.category&&e.optionId===receipt.optionId&&lifeSceneMatches(e,context)&&
   (e.receiptDialogueSourceId==null||e.receiptDialogueSourceId===receipt.dialogue?.sourceId)
  ).map(e=>({id:e.id,title:e.title,ready:true,art:structuredClone(e.art),dialoguePanels:structuredClone(e.dialoguePanels),lines:e.dialoguePanels.flatMap(p=>structuredClone(p.lines)),
-  identity:artIdentity(e.art),arcIdentity:e.semanticReadKey,receiptKey:receipt.id,lifeScene:true,...(e.category!=='friend'&&e.receiptDialogueSourceId?{receiptDialogue:true}:{}),receiptBinding:JSON.stringify(receipt),day:state.day,runId:lifeActionRunId(state),dayKey:`${state.runId||state.seed}:${state.day}`}));
+  // An exact source-bound friend scene is the committed exchange too. Carry
+  // the same receipt priority/save gate so an older generic/null lock cannot
+  // hide it; that lock itself remains unchanged.
+  identity:artIdentity(e.art),arcIdentity:e.semanticReadKey,receiptKey:receipt.id,lifeScene:true,...(e.receiptDialogueSourceId?{receiptDialogue:true}:{}),receiptBinding:JSON.stringify(receipt),day:state.day,runId:lifeActionRunId(state),dayKey:`${state.runId||state.seed}:${state.day}`}));
 }

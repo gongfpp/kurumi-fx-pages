@@ -1,4 +1,4 @@
-import {recapActivityAnchors} from './recap-timeline.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {recapActivityAnchors} from './recap-timeline.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // Read-only score: only realized P/L and its recorded return affect spectacle.
 const clamp=n=>Math.max(0,Math.min(1,n));
 // A catastrophic presentation needs a certified daily ledger AND real forced-close receipts.

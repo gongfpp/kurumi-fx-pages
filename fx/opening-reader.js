@@ -1,7 +1,7 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {setImage} from './assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {openingCompanionArt} from './opening-anime-stills.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {setImage} from './assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {openingCompanionArt} from './opening-anime-stills.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 
 export function mountOpeningReader({root=document,frame,getState,guard,save,onFinish,openSource,startingCapital=100000,targetProfit=20000000}){
   const $=id=>root.getElementById(id),dialog=$('opening-dialog'),footer=$('opening-nav');

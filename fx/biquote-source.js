@@ -32,7 +32,7 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
   const quotes = new Map(), issues = new Map(), listeners = new Set();
   let transport = 'idle', responseAt = null, retryAfterMs = intervalMs, blockedUntil = 0;
   let observation = 0;
-  let accessDenied = false, running = false, generation = 0, timer = null, inFlight = null, controller = null;
+  let accessDenied = false, running = false, generation = 0, timer = null, inFlight = null, controller = null, cancelPoll = null;
   const now = () => { const t = clock(); if (!Number.isSafeInteger(t) || t <= 0) throw TypeError('Invalid receipt clock'); return t; };
   function snapshot(symbol) {
     symbol = symbolKey(symbol);
@@ -76,12 +76,21 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
     const thisGeneration = generation;
     controller = new AbortController();
     const activeController = controller;
-    const timeout = setTimer(() => activeController.abort(), requestTimeoutMs);
+    let timeout;
+    // Abort is advisory to an adapter/body reader. The deadline also settles the
+    // poll itself so a hung fetch cannot retain inFlight and stop every retry.
+    const deadline = new Promise(resolve => { timeout = setTimer(() => { activeController.abort(); resolve({timedOut:true}); }, requestTimeoutMs); });
+    const canceled = new Promise(resolve => { cancelPoll = () => resolve({canceled:true}); });
+    const request = Promise.resolve().then(async () => {
+      const response = await fetchImpl(BIQUOTE_ENDPOINT, {method:'GET', mode:'cors', credentials:'omit', cache:'no-store', signal:activeController.signal});
+      return {response, payload:response.ok ? await response.json() : null};
+    });
     inFlight = Promise.resolve().then(async () => {
       try {
-        const response = await fetchImpl(BIQUOTE_ENDPOINT, {method: 'GET', mode: 'cors', credentials: 'omit',
-          cache: 'no-store', signal: activeController.signal});
-        if (thisGeneration !== generation) return freeze({ok: false, reason: 'canceled'});
+        const result = await Promise.race([request, deadline, canceled]);
+        if (thisGeneration !== generation || result.canceled) return freeze({ok:false, reason:'canceled'});
+        if (result.timedOut) throw Error('request-timeout');
+        const {response, payload} = result;
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) { transport = 'denied'; accessDenied = true; running = false; }
           else transport = 'disconnected';
@@ -93,7 +102,6 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
           if (response.status === 429 || (Number.isFinite(retrySeconds) && retrySeconds > 0)) blockedUntil = now() + retryAfterMs;
           notify(); return freeze({ok: false, reason: `http-${response.status}`});
         }
-        const payload = await response.json();
         if (thisGeneration !== generation) return freeze({ok: false, reason: 'canceled'});
         const at = now(), outcomes = apply(payload, at);
         responseAt = at; transport = 'online'; blockedUntil = 0;
@@ -103,7 +111,7 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
         if (thisGeneration !== generation) return freeze({ok: false, reason: 'canceled'});
         transport = 'disconnected'; retryAfterMs = Math.min(60000, Math.max(intervalMs, retryAfterMs * 2));
         notify(); return freeze({ok: false, reason: activeController.signal.aborted ? 'timeout' : 'network-or-payload-error'});
-      } finally { clearTimer(timeout); if (thisGeneration === generation) { inFlight = null; controller = null; } }
+      } finally { clearTimer(timeout); if (thisGeneration === generation) { inFlight = null; controller = null; cancelPoll = null; } }
     });
     return inFlight;
   }
@@ -118,7 +126,7 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
   }
   function stop() {
     running = false; generation++; if (timer !== null) clearTimer(timer); timer = null;
-    controller?.abort(); controller = null; inFlight = null;
+    controller?.abort(); cancelPoll?.(); cancelPoll = null; controller = null; inFlight = null;
     transport = 'stopped'; notify();
   }
   function subscribe(listener) { if (typeof listener !== 'function') throw TypeError('Expected listener'); listeners.add(listener); return () => listeners.delete(listener); }

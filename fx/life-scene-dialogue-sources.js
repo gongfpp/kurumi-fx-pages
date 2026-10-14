@@ -1,3 +1,4 @@
+import {LIFE_FRIEND_DIALOGUE_SOURCES} from './life-friend-dialogues.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // Append-only receipt snapshots, independent of scene artwork or retirement.
 // Preserve every published sourceId, origin, speaker and text byte forever.
 // Routine text-only sources do not count as new four-panel artwork.
@@ -160,4 +161,5 @@ export const LIFE_SCENE_DIALOGUE_SOURCES=freeze([
       ]
     }
   }
+  ,...LIFE_FRIEND_DIALOGUE_SOURCES
 ]);

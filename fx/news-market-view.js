@@ -1,8 +1,8 @@
-import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {newsContext,newsDate} from './news-context.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {rememberDisplayedNews} from './displayed-news-session.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {archiveNewsView,NEWS_ARCHIVE} from './news-archive.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {newsContext,newsDate} from './news-context.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {rememberDisplayedNews} from './displayed-news-session.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 
 const archiveById=new Map(NEWS_ARCHIVE.map(entry=>[entry.id,entry]));
 const positive=value=>Number.isFinite(value)&&value>0;
@@ -40,7 +40,7 @@ export function newsPublicationTime(event){
  return Number.isFinite(at)?formatTradingTime(at,{full:true}):`${entry.date} · ${COPY.labels.unknownTime}`;
 }
 
-function visibleSimulation(state,event,{flash,context}){
+function visibleSimulation(state,event,{flash,context,recap}){
  const beat=Number.isInteger(event.beat)?event.beat:Math.min(state.beat||0,3+(state.mode==='endless'?0:state.bonusBeats||0));
  const revealAt=tradingTimestamp(state,{day:state.day,beat,candle:1,tick:3});
  const revealed=(flash||state.lastEvent?.beat===beat||state.pending?.beat===beat&&state.pending.flashShown)&&context.at>=revealAt;
@@ -48,14 +48,12 @@ function visibleSimulation(state,event,{flash,context}){
  const publishedAt=Number.isFinite(event.publishedAt)?event.publishedAt:tradingTimestamp(state,{day:state.day,...cursor});
  const view={...publicNews(event),archiveId:undefined,sourceUrl:undefined,sourceAttribution:undefined,sourceLicenseUrl:undefined,summaryNotice:undefined,
   contentKind:'fictional_market_event',archiveKind:'新闻',publishedAt,time:formatTradingTime(publishedAt,{full:true})};
- // The 24 existing macro chains describe USD/JPY. Other instruments use the
- // same actual signed pressure with their own copy, not renamed US macro facts.
+ // Cross-pair updates report observations, never hidden bias, future response,
+ // variant or invented order-book pressure. Macro facts remain USD/JPY-specific.
  if(context.pair&&context.pair!=='USDJPY'){
-  const outcomeVisible=revealed||beat%2===1;
-  const direction=(event.swan?event.delta:(event.bias??0)*(outcomeVisible&&event.variant==='reversed'?-1:1))>=0?'Up':'Down';
-  const key=event.swan?`shock${direction}`:outcomeVisible?(event.variant==='muted'?'updateMuted':`update${direction}`):`lead${direction}`;
-  const copy=COPY.crossPair[key],values={pair:pairName(context.pair)};
-  if(copy){view.title=fill(copy.title,values);view.copy=fill(copy.copy,values);view.source='汇市快讯';}
+  const copy=recap?COPY.crossPair.observed:COPY.crossPair.opening;
+  const values=recap?{...recap,pair:pairName(context.pair),start:recap.start.toFixed(3),last:recap.last.toFixed(3),change:`${recap.change>=0?'+':''}${recap.change.toFixed(3)}`,low:recap.low.toFixed(3),high:recap.high.toFixed(3)}:{pair:pairName(context.pair),last:positive(state.price)?state.price.toFixed(3):'—'};
+  view.title=fill(copy.title,values);view.copy=fill(copy.copy,values);view.source='汇市报价记录';
  }
  return view;
 }
@@ -65,9 +63,11 @@ function visibleSimulation(state,event,{flash,context}){
 export function marketNewsView(state,event,options={}){
  const context=newsContext(state),recap=observedMarketRecap(state);
  if(context.mode==='live')return {...publicNews(event),time:formatTradingTime(context.at,{full:true}),contentKind:'quote_record',recap};
- const archive=archiveNewsView(state,event,options);
+ // The archive may spread its input; pass only public fields so even getters on
+ // hidden response/variant/bias metadata cannot enter the rendering path.
+ const archive=archiveNewsView(state,{...publicNews(event),beat:event.beat},options);
  if(context.mode==='historical')return {...publicNews(archive),time:archive.archiveId?newsPublicationTime(archive):formatTradingTime(context.at,{full:true}),recap};
- const primary=visibleSimulation(state,event,{...options,context});
+ const primary=visibleSimulation(state,event,{...options,context,recap});
  const background=archive.archiveId?{...publicNews(archive),time:newsPublicationTime(archive)}:null;
  const view={...primary,recap,background};
  rememberDisplayedNews(state,view,context);

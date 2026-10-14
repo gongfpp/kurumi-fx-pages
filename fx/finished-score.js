@@ -1,5 +1,6 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -8,7 +9,7 @@ const nullable=(value,check)=>value===null||value===undefined?null:check(value);
 const cents=n=>Math.round((n+Number.EPSILON)*100)/100;
 // Fixed score projection, never the full JSON export, names, transactions,
 // accounting journal, open-position details, seed, or browser storage.
-function projectLeaderboardScore(state,report,{storage,live=false}={}){
+function projectLeaderboardScore(state,report,{storage,live=false,includeVolatility=false}={}){
  const eligible=live?{eligible:![2,3].includes(state?.historical?.version)&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
  if(!eligible.eligible)throw Object.assign(Error(eligible.reason==='developer'?'开发测试局不能自动上榜':'本局尚不可自动上榜'),{code:eligible.reason});
  if(report.schemaVersion!=='1.0.0'||!['story','endless'].includes(report.mode)||report.mode!==state.mode)throw Error('终局成绩版本或模式不正确');
@@ -38,7 +39,7 @@ function projectLeaderboardScore(state,report,{storage,live=false}={}){
  if(score.closedOrders===0&&score.winRate!==null)throw Error('没有完整订单时胜率必须未知');
  if(score.closedOrders>0&&score.winningOrders!==null&&(score.winRate===null||Math.abs(score.winRate-score.winningOrders/score.closedOrders)>1e-8))throw Error('胜率与完整订单数不一致');
  if([score.fatherDebt,score.networkDebt,score.totalDebt].every(v=>v!==null)&&Math.abs(score.fatherDebt+score.networkDebt-score.totalDebt)>.01)throw Error('总欠款与两项债务不一致');
- return score;
+ return includeVolatility?{...score,...dailyVolatilityMetrics(state)}:score;
 }
 
 export const finishedLeaderboardScore=(state,report,options)=>projectLeaderboardScore(state,report,options);

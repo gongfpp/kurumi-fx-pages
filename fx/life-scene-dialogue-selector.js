@@ -1,7 +1,8 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {LIFE_FRIEND_DIALOGUE_SCENES} from './life-friend-dialogues.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // Called only by the existing synchronous commit after the report is sealed.
 // The action payload cannot inject a source ID, lines, money or scene catalog.
 export function selectLifeSceneDialogue(option,state,{catalog=LIFE_SCENE_CATALOG,dialogueForSource=lifeActionDialogueForSource}={}){
@@ -9,5 +10,9 @@ export function selectLifeSceneDialogue(option,state,{catalog=LIFE_SCENE_CATALOG
  const used=new Set((state.lifeActions?.receipts||[]).map(r=>r.dialogue?.sourceId));
  const net=state.dayReport.net,context={day:state.day,outcome:net<0?'loss':net>0?'profit':'flat',trauma:tradingTrauma(state).active};
  const entry=inspectLifeSceneCatalog(catalog,{dialogueForSource}).accepted.find(e=>e.category===option.category&&e.optionId===option.id&&!used.has(e.receiptDialogueSourceId)&&lifeSceneMatches(e,context));
- return entry?dialogueForSource(option,entry.receiptDialogueSourceId):null;
+ if(entry)return dialogueForSource(option,entry.receiptDialogueSourceId);
+ // Text is a complete trusted exchange before any picture is admitted. Only
+ // reviewed artwork enters the art catalog; lack of art cannot erase the action.
+ return LIFE_FRIEND_DIALOGUE_SCENES.filter(scene=>scene.optionId===option.id&&!used.has(scene.dialogueId)&&lifeSceneMatches(scene,context))
+  .map(scene=>dialogueForSource(option,scene.dialogueId)).find(Boolean)||null;
 }

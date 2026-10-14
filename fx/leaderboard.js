@@ -1,12 +1,16 @@
-import {randomUUID} from './uuid.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {runPerformance} from './performance.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+export const LEADERBOARD_SORTS = Object.freeze(['survival','returnRate','dailyReturnRate','totalProfit','totalLoss','maxProfit','winRate','maxOrderLoss','maxDrawdown','dailyVolatility']);
+const LEGACY_SORTS=Object.freeze(LEADERBOARD_SORTS.filter(sort=>!['totalLoss','maxDrawdown','dailyVolatility'].includes(sort)));
+const sortNotice=sort=>`${({totalLoss:'累计亏损榜',maxDrawdown:'回撤榜',dailyVolatility:'日收益波动榜'})[sort]||'这个榜单'}尚未开放。`;
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {runPerformance} from './performance.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -67,7 +71,7 @@ export class FXLeaderboard {
     this.configuration=serviceConfiguration({serviceOrigin:options.serviceOrigin,location});
     this.endpoint=this.configuration.leaderboardEndpoint;
     this.onStatus=options.onStatus??(()=>{});this.onFailure=options.onFailure??(()=>{});this.timeout=options.timeout??10000;
-    this.registered=new Set();this.hallSupported=new Set();this.pending=false;this.capabilities=new Map();this.session=null;
+    this.registered=new Set();this.hallSupported=new Set();this.volatilitySupported=new Set();this.pending=false;this.capabilities=new Map();this.session=null;this.sortCapabilities=null;
   }
   status(value){try{this.onStatus(value);}catch{}}
   assertConfigured() {if(!this.configuration.configured)throw new LeaderboardError(SERVICE_UNCONFIGURED_MESSAGE,'service-unconfigured');}
@@ -88,6 +92,10 @@ export class FXLeaderboard {
     finally{clearTimeout(timer);}
   }
   async requestScore(path,options) {
+    if(VOLATILITY_FIELDS.some(key=>Object.hasOwn(options.data,key))){
+      try{return await this.request(path,options);}
+      catch(error){if(error.status!==400)throw error;this.volatilitySupported.delete(options.data.campaign);const data={...options.data};for(const key of VOLATILITY_FIELDS)delete data[key];return this.requestScore(path,{...options,data});}
+    }
     try{return await this.request(path,options);}
     catch(error){
       // A rolling API rollback can outlive a tab's capability cache. Retry only
@@ -98,11 +106,25 @@ export class FXLeaderboard {
     }
   }
   async read({mode='daily',gameMode,sort,limit=20}={}) {
-    if(!['daily','total'].includes(mode)||(gameMode!==undefined&&!['story','endless'].includes(gameMode))||(sort!==undefined&&!['survival','returnRate','dailyReturnRate','totalProfit','maxProfit','winRate','maxOrderLoss'].includes(sort))||!Number.isInteger(limit)||limit<1||limit>50)throw new LeaderboardError('排行榜参数不正确','input');
+    if(!['daily','total'].includes(mode)||(gameMode!==undefined&&!['story','endless'].includes(gameMode))||(sort!==undefined&&!LEADERBOARD_SORTS.includes(sort))||!Number.isInteger(limit)||limit<1||limit>50)throw new LeaderboardError('排行榜参数不正确','input');
+    const extension=sort!==undefined&&!LEGACY_SORTS.includes(sort);
+    // Learn new sort support from a safe read, without registering a run or
+    // guessing an order from one page of results. Missing metadata is the old contract.
+    if(extension&&this.sortCapabilities===null)await this.read({mode,gameMode,sort:'survival',limit:1});
+    if(extension&&!this.sortCapabilities.includes(sort))throw new LeaderboardError(sortNotice(sort),'sort-unavailable');
     this.status({state:'loading',mode,gameMode});
     const query=new URLSearchParams({mode,limit:String(limit)});if(gameMode!==undefined)query.set('gameMode',gameMode);if(sort!==undefined)query.set('sort',sort);
-    try{const result=await this.request(`?${query}`);if(!Array.isArray(result?.rows)||result.verification!=='client-submitted'||(gameMode!==undefined&&result.gameMode!==gameMode)){notifyFailure(this.onFailure,'leaderboard-read','invalid-response',200);throw new LeaderboardError('排行榜响应不完整，请稍后重试','response');}this.status({state:result.rows.length?'ready':'empty',mode,gameMode});return result;}
-    catch(error){this.status({state:'error',code:error.code,message:error.message});throw error;}
+    try{const result=await this.request(`?${query}`);if(!Array.isArray(result?.rows)||result.verification!=='client-submitted'||(gameMode!==undefined&&result.gameMode!==gameMode)){notifyFailure(this.onFailure,'leaderboard-read','invalid-response',200);throw new LeaderboardError('排行榜响应不完整，请稍后重试','response');}
+      this.sortCapabilities=result.sortContract?.version===1&&Array.isArray(result.sortContract.supported)?LEADERBOARD_SORTS.filter(key=>result.sortContract.supported.includes(key)):[...LEGACY_SORTS];
+      this.status({state:result.rows.length?'ready':'empty',mode,gameMode});return result;}
+    catch(error){
+      // A service rollback may invalidate a tab's cache. Only refresh read
+      // capabilities; never substitute a different requested ranking silently.
+      if(extension&&[400,503].includes(error.status)){
+        this.sortCapabilities=null;
+        try{await this.read({mode,gameMode,sort:'survival',limit:1});if(!this.sortCapabilities.includes(sort))error=new LeaderboardError(sortNotice(sort),'sort-unavailable');}catch{}
+      }
+      this.status({state:'error',code:error.code,message:error.message});throw error;}
   }
   storedToken(campaign) {
     if(!ID.test(campaign||''))throw new LeaderboardError('本局标识无效','input');
@@ -137,7 +159,7 @@ export class FXLeaderboard {
   }
   async publishSnapshot(state,report,{snapshotVersion=Date.now(),keepalive=false,isAllowed=()=>true}={}) {
     if(!isAllowed())throw new LeaderboardError('进度更新已暂停','ineligible');
-    const score=liveLeaderboardScore(state,report,{storage:this.storage}),campaign=state.runId;
+    const score=liveLeaderboardScore(state,report,{storage:this.storage,includeVolatility:true}),campaign=state.runId;
     this.assertConfigured();
     if(this.pending)throw new LeaderboardError('成绩正在处理，请稍候','pending');
     this.pending=true;
@@ -149,15 +171,15 @@ export class FXLeaderboard {
       if(!this.registered.has(campaign)){
         const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
         if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
-        if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);this.registered.add(campaign);
+        if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);this.registered.add(campaign);
       }
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       if(!isAllowed())throw new LeaderboardError('进度更新已暂停','ineligible');
-      return await this.requestScore('/snapshot',{method:'POST',keepalive,data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign)),alias:'',snapshotVersion}});
+      return await this.requestScore('/snapshot',{method:'POST',keepalive,data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign),this.volatilitySupported.has(campaign)),alias:'',snapshotVersion}});
     }finally{this.pending=false;}
   }
   async publishFinished(state,report,{alias='',campaign=state?.runId}={}) {
-    const score=finishedLeaderboardScore(state,report,{storage:this.storage}),name=normalizeLeaderboardAlias(alias);
+    const score=finishedLeaderboardScore(state,report,{storage:this.storage,includeVolatility:true}),name=normalizeLeaderboardAlias(alias);
     if(campaign!==state.runId)throw new LeaderboardError('成绩必须属于当前终局','input');
     this.assertConfigured();
     if(this.pending)throw new LeaderboardError('成绩正在处理，请稍候','pending');
@@ -165,9 +187,9 @@ export class FXLeaderboard {
     try{
       const token=await this.ensureToken(campaign);
       const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
-      if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);
+      if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
-      const result=await this.requestScore('',{method:'POST',data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign)),alias:name}});
+      const result=await this.requestScore('',{method:'POST',data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign),this.volatilitySupported.has(campaign)),alias:name}});
       if(result?.ok!==true){notifyFailure(this.onFailure,'leaderboard-publish','invalid-response',200);throw new LeaderboardError('成绩未获确认，请稍后重试','response');}
       this.status({state:'published',duplicate:!!result.duplicate});return result;
     }finally{this.pending=false;}

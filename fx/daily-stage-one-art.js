@@ -1,26 +1,26 @@
-import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {lifeSceneCandidates} from './life-scene-consumer.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {orderedDailyStories} from './daily-story-order.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga} from './contextual-manga-scenes.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {setImage} from './assets.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=56728f45e456b0600e343ee0e73e43491a254dbe-23f2a20b7717';
+import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {lifeSceneCandidates} from './life-scene-consumer.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {orderedDailyStories} from './daily-story-order.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga} from './contextual-manga-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {setImage} from './assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
 const candidate=scene=>scene?.frames?{...scene,identity:'sequence:'+scene.frames.map(frame=>artIdentity(frame.art)).join('|')}:scene?.art?{...scene,identity:artIdentity(scene.art)}:null;
 // An exhausted illustration is not evidence that the activity really happened.
 // Validate its current receipt, offered price/outcome and paired positive debit
@@ -87,20 +87,26 @@ export function selectDailyArtwork(state,narrative,{memory=dailyArtMemory,fallba
  // earlier in this run; global image memory alone cannot invent that history.
  const repeatedLifeSource=receiptAction&&state.lifeActions?.receipts?.some(receipt=>receipt.day<receiptAction.day&&
   receipt.dialogue?.sourceId===state.dayReport?.lifeAction?.dialogue?.sourceId);
- const exhaustedLifeArt=receiptAction?.lifeScene&&receiptAction.art&&!receiptAction.reusedArtwork&&repeatedLifeSource&&
+ const exhaustedLifeArt=receiptAction?.lifeScene&&receiptAction.art&&repeatedLifeSource&&
   (memory.has(receiptAction.identity)||receiptAction.arcIdentity&&memory.has(receiptAction.arcIdentity));
+ // Text receipts have a per-day identity. A new ID must not make the same
+ // already-read frozen exchange look like a new story on every later day.
+ // Require both this run's earlier exact source and its witnessed read marker.
+ const exhaustedLifeText=receiptAction?.dialogueOnly&&repeatedLifeSource&&state.lifeActions.receipts.some(receipt=>
+  receipt.day<receiptAction.day&&receipt.dialogue?.sourceId===state.dayReport.lifeAction.dialogue?.sourceId&&memory.has(`life-dialogue:${receipt.id}`));
+ const exhaustedLife=exhaustedLifeArt||exhaustedLifeText;
  const fallback=dailyFallbackCandidates(state,narrative,{catalog:fallbackCatalog,memory,allowExhaustedActivity:validActivity})
   // Keep an already-locked daily scene restorable if a later content update
   // adds unread activity art. Only an exhausted activity may choose a new one.
   .map(scene=>validActivity&&unreadPrimary?{...scene,preserveLockedOnly:true}:scene)
   // A separate daily scene after an already-read life illustration still
   // belongs to this committed day. Reuse the life receipt's existing save gate.
-  .map(scene=>exhaustedLifeArt?{...scene,lifeScene:true,lifeReceiptFallback:true,receiptKey:receiptAction.receiptKey,receiptBinding:receiptAction.receiptBinding,day:receiptAction.day,runId:receiptAction.runId,dayKey:receiptAction.dayKey}:scene);
+  .map(scene=>exhaustedLife?{...scene,lifeScene:true,lifeReceiptFallback:true,receiptKey:receiptAction.receiptKey,receiptBinding:receiptAction.receiptBinding,day:receiptAction.day,runId:receiptAction.runId,dayKey:receiptAction.dayKey}:scene);
  // Its real event owns the new roommate scene, ahead of unrelated market arcs.
  // A paid choice still comes first, including on roommate's introduction day.
  // Keep legacy selected-day candidates for restoration and preserve empty locks.
  const roommate=!activity&&narrative?.event?.key==='roommate'&&fallback.length>0;
- const immediate=primary.filter(scene=>!scene.deferredOriginal),deferred=primary.filter(scene=>scene.deferredOriginal);
+ const immediate=primary.filter(scene=>!scene.deferredOriginal).map(scene=>exhaustedLifeText&&scene===receiptAction?{...scene,preserveLockedOnly:true}:scene),deferred=primary.filter(scene=>scene.deferredOriginal);
  const candidates=roommate?[...fallback,...primary.map(scene=>({...scene,preserveLockedOnly:true}))]:[...immediate,...fallback,...deferred];
  // Legacy chapter locks still refer to the same chapter, not this newer
  // edition identity. Restore only certified original evidence; never reselect.
@@ -115,7 +121,7 @@ export function selectDailyArtwork(state,narrative,{memory=dailyArtMemory,fallba
  // An unread chosen exchange keeps priority, but a previously read catalog
  // image must not hide the next eligible daily story. Preserve its locked-day
  // fallback on reload; no fallback still leaves the chosen art for manual replay.
- if(chosenAction&&selected?.identity!==chosenAction.identity&&!(exhaustedLifeArt&&selected))return chosenAction;
+ if(chosenAction&&selected?.identity!==chosenAction.identity&&!(exhaustedLife&&selected))return chosenAction;
  // This dialogue has one exact reviewed scene. Across runs, keep its manual
  // replay available instead of dropping the picture and leaving only text.
  return applyApprovedContextDialogue(selected||(narrative?.event?.key==='friendStudy'?candidates.find(scene=>scene.id==='mochiko-watch'):null)||null);
@@ -128,12 +134,17 @@ export function mountDailyArtwork(host,selection,{memory=dailyArtMemory,showHead
  if(!selection){host.hidden=true;return {dispose};}
  host.dataset.contentIdentity=selection.identity;
  const heading=make('h3',selection.title),body=make('div'),replay=make('button','回看这段小剧场');replay.type='button';replay.className='secondary';
- const seen=memory.has(selection.identity)||selection.arcIdentity&&memory.has(selection.arcIdentity);body.hidden=!!seen;replay.hidden=!seen;
+ const seen=memory.has(selection.identity)||selection.arcIdentity&&memory.has(selection.arcIdentity);
+ // A selected life receipt is already the story for this settlement. Keep it
+ // open on re-entry or when another run has read its art; unrelated daily
+ // fallback scenes retain their existing read/replay behavior.
+ const currentLife=selection.lifeScene===true&&!selection.lifeReceiptFallback&&!!selection.receiptKey&&!!selection.receiptBinding;
+ body.hidden=!!seen&&!currentLife;replay.hidden=!seen||currentLife;
  function paint(manual=false){if(body.childNodes.length)return;if(selection.dialogueOnly){const view=mountLifeActionStory(body,selection,{memory});dispose=view.dispose;return;}if(selection.contextLabel)body.append(make('p',selection.contextLabel));if(usesPanelArtwork(selection)){const dialogue=make('ol');dialogue.className='event-comic-lines comic-panel-cards';body.append(dialogue);const view=mountComicDialogue(dialogue,selection,{root:doc});dispose=view.observe({memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});return;}if(selection.selection){const view=mountContextualManga(body,selection.selection,{manual:false,unreadOnly:!manual,showHeading:false,memory});dispose=()=>view?.dispose();return;}if(selection.frames){dispose=mountDailySequence(body,selection,{memory});return;}const image=make('img');image.alt=selection.art.alt||selection.title;if(selection.art.width)image.width=selection.art.width;if(selection.art.height)image.height=selection.art.height;image.style.cssText='display:block;width:100%;height:auto;object-fit:contain';body.append(image);setImage(image,selection.art.path);dispose=observeSeenArtwork(image,{memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});
   if(selection.manga)body.append(make('p','原作片段 · 图中金额与经历属于原作人物。'));
   if(selection.lines?.length){const dialogue=make('ol');dialogue.className='event-comic-lines';mountComicDialogue(dialogue,selection,{root:doc});body.append(dialogue);}
  }
- replay.onclick=()=>{body.hidden=false;replay.hidden=true;paint(true);};if(showHeading)host.append(heading);host.append(replay,body);if(!seen)paint();return {dispose:()=>dispose()};
+ replay.onclick=()=>{body.hidden=false;replay.hidden=true;paint(true);};if(showHeading)host.append(heading);host.append(replay,body);if(!body.hidden)paint();return {dispose:()=>dispose()};
 }
 
 // Three moments, one scene. Partial reading survives refresh, but only seeing
