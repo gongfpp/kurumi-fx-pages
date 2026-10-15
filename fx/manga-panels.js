@@ -1,4 +1,4 @@
-import {CONTEXT_PANELS} from './manga-context-panels.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {CONTEXT_PANELS} from './manga-context-panels.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Original first-chapter references plus individually reviewed context assets.
 export const MANGA_PANELS = Object.freeze({
  ...CONTEXT_PANELS,

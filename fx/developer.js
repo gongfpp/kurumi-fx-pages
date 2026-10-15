@@ -1,6 +1,6 @@
-import {marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {tradingTimestamp} from './trading-time.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {activeMarket,marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);
@@ -28,14 +28,14 @@ export function applyDeveloperPatch(current,patch){
   if(!v.debt)s.effects=s.effects.filter(e=>e.id!=='guilt');
   // The editor explicitly starts a synthetic baseline (as it already does for
   // trades). Retain the original life ledger for recovery, not as new-day income.
-  const lifeActionArchive=s.lifeActions?{actions:structuredClone(s.lifeActions),nonTradingIncome:s.nonTradingIncome,dayOpeningIncome:s.dayOpeningIncome}:s.developer?.lifeActionArchive;
-  if(s.lifeActions){s.version=s.lifeActions.sourceVersion;delete s.lifeActions;delete s.nonTradingIncome;delete s.dayOpeningIncome;}
+  const lifeActionArchive=s.lifeActions?{actions:structuredClone(s.lifeActions),nonTradingIncome:s.nonTradingIncome,dayOpeningIncome:s.dayOpeningIncome,...(s.workInventory?{workInventory:structuredClone(s.workInventory)}:{})}:s.developer?.lifeActionArchive;
+  if(s.lifeActions){s.version=s.lifeActions.sourceVersion;delete s.lifeActions;delete s.nonTradingIncome;delete s.dayOpeningIncome;delete s.workInventory;}
   s.developer={edited:true,sanityOverride:v.sanity,profitOffset:equity(s)-initialCapital(s)-s.externalFunding+s.expenses-v.profit,...(lifeActionArchive?{lifeActionArchive}:{})};
   s.dayOpening=equity(s);s.dayOpeningFunding=s.externalFunding;s.dayOpeningExpenses=s.expenses;
   s.settlementPresentation=null;s.settlementNarrative=null;s.accountingJournal=null;s.recapChoiceLedger=[];delete s.nextDayLivingDiscount;
   if(s.tradingClock)s.tradingClock={...s.tradingClock,lastQuoteAt:tradingTimestamp(s,{day:s.day,beat:s.beat}),lastQuoteDay:s.day};
   s.dayReport=null;s.ending=null;s.pending=null;s.phase='decision';s.lastEvent=null;s.swanSeen=false;s.lastTrade=null;s.recent=[];s.lastReaction=null;s.emotionBias=null;
-  s.script=planDay(marketSeed(s),s.day,s.price);
+  s.script=planDay(marketSeed(s),s.day,s.price,BEATS_PER_DAY,{symbol:activeMarket(s)});
   s.candles.push({open:s.price,close:s.price,high:s.price,low:s.price,closed:true,day:s.day,beat:s.beat,developer:true});
   s.candles=s.candles.slice(-100);s.history=[];
   // Edited runs start a new synthetic performance baseline. They remain marked

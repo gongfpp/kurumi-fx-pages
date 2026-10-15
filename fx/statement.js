@@ -1,8 +1,8 @@
-import {marketInfo,positionMarket} from './market-book.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {formatQuote as quote,directionLabel} from './market.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {TRANSITION_COPY} from './copy/transitions.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {marketInfo,positionMarket} from './market-book.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {formatTradingTime,reportTradingTimestamp} from './trading-time.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {formatQuote as quote,directionLabel} from './market.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {TRANSITION_COPY} from './copy/transitions.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 const yen=value=>`${value<0?'−':''}¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const signed=value=>`${value>0?'+':''}${yen(value)}`;
 export function buildFXReceipt(report,state={}){

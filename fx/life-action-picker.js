@@ -1,4 +1,4 @@
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
@@ -76,6 +76,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    if(ART_IDS.has(option.id))card.append(art(option.id,option.label));
    if(category==='dinner'&&Number.isFinite(option.cost))card.append(make('p','life-picker-income',`请客费用 ¥${number(option.cost)}`));
    if(category==='work'&&Number.isFinite(option.income))card.append(make('p','life-picker-income',`工作收入 ¥${number(option.income)}`));
+   if(category==='work'&&Number.isFinite(option.staminaCost)){card.append(make('p','life-picker-work-details',`体力 −${option.staminaCost} · ${option.stressDelta>0?'压力 +'+option.stressDelta:'压力 '+option.stressDelta}`));card.append(make('p','life-picker-work-reward',`初次完成获得：${option.rewardLabel}`));}
    const disabled=busy||!statusOf(m).enabled||!option.enabled||stale(m),reason=option.reason||statusOf(m).reason;
    if(option.enabled)enabledCount++;
    if(!option.enabled&&reason)card.append(make('p','life-picker-option-reason',reason));

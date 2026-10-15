@@ -1,12 +1,12 @@
 // Public, attributed excerpts collected from the canonical public pages.
 // A source's opinion is not a verified trade, a current player post, or a
 // contemporaneous 2008/2014 chat. One independently meaningful excerpt per row.
-import {QUANT_MARKET_COMMENT_ROWS} from './market-comments-quant-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MONEY_MINDSET_COMMENT_ROWS} from './market-comments-mindset-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MONEY_EXECUTION_COMMENT_ROWS} from './market-comments-execution-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MONEY_PSYCHOLOGY_COMMENT_ROWS} from './market-comments-psychology-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MONEY_RISK_COMMENT_ROWS} from './market-comments-risk-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MONEY_BUDGET_COMMENT_ROWS} from './market-comments-budget-20261015.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {QUANT_MARKET_COMMENT_ROWS} from './market-comments-quant-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MONEY_MINDSET_COMMENT_ROWS} from './market-comments-mindset-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MONEY_EXECUTION_COMMENT_ROWS} from './market-comments-execution-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MONEY_PSYCHOLOGY_COMMENT_ROWS} from './market-comments-psychology-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MONEY_RISK_COMMENT_ROWS} from './market-comments-risk-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MONEY_BUDGET_COMMENT_ROWS} from './market-comments-budget-20261015.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 const ROWS=[
  {id:'se-money-answer-99547',source_url:'https://money.stackexchange.com/a/99547',source_title:"年轻人学习股票交易的资料，以及交易视频是否可信",source_date:'2018-09-06T17:04:00Z',attribution_display:'Bob Baerker',source_author_url:'https://money.stackexchange.com/users/67285/bob-baerker',original:'Consider some other venture if you think trading is easy money.',zh_translation:'要是觉得交易能轻松赚钱，还是考虑做点别的吧。',context:'作者在股票交易入门问答中劝告不要相信轻松赚钱；这里只保留对交易难度的通用态度。',reuse_rationale_zh:'没有原帖的收入、年龄、统计比例或股票品种；保留作者的劝告，不变成收益保证。',license:'CC-BY-SA-4.0'},
  {id:'se-money-answer-118186',source_url:'https://money.stackexchange.com/a/118186',source_title:'这算日内交易、主动管理，还是别的？',source_date:'2019-12-18T22:53:00Z',attribution_display:'Bob Baerker',source_author_url:'https://money.stackexchange.com/users/67285/bob-baerker',original:'When you have achieve great performance on a simulator, take it with a grain of salt.',zh_translation:'模拟盘做出漂亮成绩，也别全当真。',context:'作者区分模拟交易与真钱交易；节选保留条件句，没有将模拟收益当作真实收益。',reuse_rationale_zh:'只谈模拟成绩的局限，不转述原提问者的收益或把模拟经历说成实盘。',license:'CC-BY-SA-4.0'},

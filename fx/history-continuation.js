@@ -1,4 +1,4 @@
-import {simulationCalibration} from './quote-grid.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {simulationCalibration} from './quote-grid.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 const MINUTE=60000,SYMBOLS=['USD/JPY','AUD/JPY','GBP/JPY'];
 const active=s=>s.marketBook?.active||'USD/JPY';
 const price=(s,symbol)=>symbol===active(s)?s.price:s.marketBook?.markets?.[symbol]?.price;
@@ -7,6 +7,14 @@ export const hasHistoricalSimulation=s=>s?.historyContinuation?.version===1&&s.h
 export const historicalSimulationActive=s=>s?.historyContinuation?.version===1&&s.historyContinuation.active===true;
 export const historicalEffectiveTime=s=>historicalSimulationActive(s)?s.historyContinuation.at:null;
 export const historicalMarkIsSimulated=(s,symbol=active(s))=>s?.historyContinuation?.origins?.[symbol]==='simulated';
+export function historicalSourcePresentation(s){
+ if(!s?.historical||s.liveMarket)return null;
+ if(historicalSimulationActive(s))return s.historyContinuation.reason==='exhausted'
+  ?{label:'模拟续盘',description:'历史数据已结束，现从最后真实价格模拟续盘。'}
+  :{label:'历史 · 模拟补接',description:'部分行情使用模拟补接；恢复历史报价后，本局仍标记含模拟。'};
+ if(hasHistoricalSimulation(s))return {label:'历史 · 含模拟',description:'本局用过模拟补接；当前已恢复历史报价，结果仍含模拟。'};
+ return {label:'历史行情',description:'采用历史报价；本局如有模拟段，会在此标明。'};
+}
 export function historicalSourceNotice(s){
  // Normal transitions stay in source/segment evidence, away from play controls.
  // An actual transport failure keeps its visible recovery path.

@@ -1,7 +1,7 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {storageFailure} from './storage.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {storageFailure} from './storage.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -9,9 +9,9 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   if(!Number.isFinite(lockTimeoutMs)||lockTimeoutMs<=0||typeof setTimer!=='function'||typeof clearTimer!=='function')throw TypeError('Invalid save lock timeout');
   // Main-game migration policy is injected; archived runtimes stay isolated.
   const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
-  const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
-  const staminaBackupKey=staminaFatigueMigration&&MAIN_GAME_SAVE_SLOTS.includes(key)?key+':pre-stamina-fatigue-v2':null;
-  const lifeBackupKey=staminaBackupKey&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1'].includes(key)?key+':pre-life-actions-v1':null;
+  const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
+  const staminaBackupKey=staminaFatigueMigration&&(MAIN_GAME_SAVE_SLOTS.includes(key)||['fx-girl-shared-replay-story-v1','fx-girl-shared-replay-endless-v1'].includes(key))?key+':pre-stamina-fatigue-v2':null;
+  const lifeBackupKey=staminaBackupKey&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-actions-v1':null;
   const read=()=>{
     const current=storage.readItem(key);
     const legacy=current.available&&current.value===null&&legacyKey?storage.readItem(legacyKey):null;

@@ -1,12 +1,18 @@
+import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Actual provider observations. No interpolation, random fallback or synthetic time.
 export const LIVE_MARKET_VERSION=16;
 export const LIVE_SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']);
-export const isLiveMarket=s=>s?.liveMarket?.version===1;
-export const marketSourceOf=s=>isLiveMarket(s)?'live':s?.historical?'historical':'simulated';
+import {isSharedReplay,sharedReplayQuoteReady,validSharedReplay,safeSharedReplayEvidence} from './shared-replay-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+export const isOrdinaryLive=s=>s?.liveMarket?.version===1;
+export const isLiveMarket=s=>isOrdinaryLive(s)||isSharedReplay(s);
+// Storage routing is stable for a run; source composition is reported separately.
+export const marketSourceFamilyOf=s=>isSharedReplay(s)?'shared-replay':isLiveMarket(s)?'live':s?.historical?'historical':'simulated';
+export const marketSourceOf=s=>s?.historical&&!isLiveMarket(s)&&(historicalSimulationActive(s)||hasHistoricalSimulation(s))?'historical-mixed':marketSourceFamilyOf(s);
 export const liveSymbol=s=>s.marketBook?.active||'USD/JPY';
 export const liveQuote=(s,symbol=liveSymbol(s))=>s.liveMarket?.quotes?.[symbol]||null;
 export const liveTimestamp=(s,symbol=liveSymbol(s))=>liveQuote(s,symbol)?.sourceTimestamp??null;
 export function liveQuoteReady(s,symbol=liveSymbol(s),now=Date.now()){
+ if(isSharedReplay(s))return sharedReplayQuoteReady(s,symbol);
  const q=liveQuote(s,symbol);return !!q&&s.liveMarket.transport==='online'&&s.liveMarket.statuses[symbol]==='current'&&q.providerMarketState==='open'&&!q.providerStale&&now-q.sourceTimestamp<=30000&&q.sourceTimestamp<=now+5000;
 }
 export function livePositionsReady(s,now=Date.now()){return (s.positions||[]).every(p=>liveQuoteReady(s,p.symbol||'USD/JPY',now));}
@@ -35,24 +41,26 @@ export function initializeLiveMarket(s){
  s.tradingClock={version:1,epochMs:0,timeZone:'Asia/Tokyo',candleMinutes:15,source:'biquote'};s.candlePeriod=1;s.pending=null;s.phase='decision';return s;
 }
 export function liveTradeEvidence(s,symbol=liveSymbol(s)){
- const q=liveQuote(s,symbol);return q?{provider:q.provider,source:q.source,symbol,sourceTimestamp:q.sourceTimestamp,bid:q.bid,ask:q.ask,mid:q.mid,priceBasis:'provider-indicative-mid'}:null;
+ const q=liveQuote(s,symbol);return q?{provider:q.provider,source:q.source,symbol,sourceTimestamp:q.sourceTimestamp,bid:q.bid,ask:q.ask,mid:q.mid,priceBasis:'provider-indicative-mid',...(isSharedReplay(s)?{replay:{...q.replay,sourceTimestamp:q.sourceTimestamp,playbackClock:s.liveMarket.replay.playbackClock,serverReceivedAt:q.receivedAt,wallPlayedAt:q.clientReceivedAt,mode:'shared-replay'}}:{})}:null;
 }
 // Export only the public quote fields required to explain a game execution.
 export function safeLiveTradeEvidence(q){
  if(!q||q.provider!=='biquote'||!LIVE_SYMBOLS.includes(q.symbol)||typeof q.source!=='string'||!q.source.trim()||q.source.length>200||q.priceBasis!=='provider-indicative-mid'||!Number.isSafeInteger(q.sourceTimestamp)||q.sourceTimestamp<=0||!['bid','ask','mid'].every(k=>Number.isFinite(q[k])&&q[k]>0)||q.bid>q.mid||q.mid>q.ask)return null;
- return {provider:'biquote',source:q.source,symbol:q.symbol,sourceTimestamp:q.sourceTimestamp,bid:q.bid,ask:q.ask,mid:q.mid,priceBasis:'provider-indicative-mid'};
+ const replay=q.replay===undefined?null:safeSharedReplayEvidence(q.replay);if(q.replay!==undefined&&(!replay||replay.sourceTimestamp!==q.sourceTimestamp))return null;
+ return {...(replay?{replay}:{}),provider:'biquote',source:q.source,symbol:q.symbol,sourceTimestamp:q.sourceTimestamp,bid:q.bid,ask:q.ask,mid:q.mid,priceBasis:'provider-indicative-mid'};
 }
-export function validLiveQuote(q,symbol){
- return !!q&&LIVE_SYMBOLS.includes(symbol)&&q.symbol===symbol&&q.provider==='biquote'&&['bid','ask','mid'].every(k=>Number.isFinite(q[k])&&q[k]>0)&&q.bid<=q.ask&&q.mid>=q.bid&&q.mid<=q.ask&&Number.isSafeInteger(q.sourceTimestamp)&&q.sourceTimestamp>0&&Date.parse(q.sourceTimestampText)===q.sourceTimestamp&&typeof q.source==='string'&&!!q.source.trim()&&['open','closed'].includes(q.providerMarketState)&&typeof q.providerStale==='boolean';
+export function validLiveQuote(q,symbol,{allowUnknown=false}={}){
+ return !!q&&LIVE_SYMBOLS.includes(symbol)&&q.symbol===symbol&&q.provider==='biquote'&&['bid','ask','mid'].every(k=>Number.isFinite(q[k])&&q[k]>0)&&q.bid<=q.ask&&q.mid>=q.bid&&q.mid<=q.ask&&Number.isSafeInteger(q.sourceTimestamp)&&q.sourceTimestamp>0&&Date.parse(q.sourceTimestampText)===q.sourceTimestamp&&typeof q.source==='string'&&!!q.source.trim()&&(allowUnknown?[null,'open','closed']:['open','closed']).includes(q.providerMarketState)&&(typeof q.providerStale==='boolean'||allowUnknown&&q.providerStale===null);
 }
 export function validLiveMarket(s){
  if(!s.liveMarket)return s.version!==LIVE_MARKET_VERSION&&s.marketBook?.source!=='live';
  const l=s.liveMarket,b=s.marketBook;
+ if(l.version===1&&('mode' in l||'replay' in l)||isSharedReplay(s)&&!validSharedReplay(s))return false;
  if(!isLiveMarket(s)||s.version!==LIVE_MARKET_VERSION||s.historical||l.provider!=='biquote'||!b||b.source!=='live'||!LIVE_SYMBOLS.includes(b.active)||!l.quotes||!l.statuses||!Number.isSafeInteger(l.completedInDay)||l.completedInDay<0||l.completedInDay>20)return false;
  for(const symbol of Object.keys(l.quotes)){
-  const q=l.quotes[symbol];if(!validLiveQuote(q,symbol))return false;
+  const q=l.quotes[symbol];if(!validLiveQuote(q,symbol,{allowUnknown:isSharedReplay(s)}))return false;
   if(b.markets[symbol]?.price!==q.mid)return false;
  }
  return true;
 }
-export function markLiveRestored(s){if(isLiveMarket(s)){s.liveMarket.transport='disconnected';for(const symbol of LIVE_SYMBOLS)s.liveMarket.statuses[symbol]='waiting';}}
+export function markLiveRestored(s){if(isLiveMarket(s)){s.liveMarket.transport='disconnected';if(isSharedReplay(s))s.liveMarket.replay.bound=false;for(const symbol of LIVE_SYMBOLS)s.liveMarket.statuses[symbol]='waiting';}}

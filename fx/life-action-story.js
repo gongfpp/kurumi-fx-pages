@@ -1,8 +1,8 @@
-import {createSkitLine} from './skit-dialogue.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.
@@ -11,11 +11,20 @@ export function lifeActionStory(state){
  if(!receipt?.dialogue?.lines?.length)return null;
  const scene={id:`life-dialogue:${receipt.id}`,identity:`life-dialogue:${receipt.id}`,title:receipt.label,
   ready:true,dialogueOnly:true,receiptDialogue:true,lifeScene:true,
+  workReward:receipt.category==='work'&&receipt.work?.reward?structuredClone(receipt.work.reward):null,
   lines:receipt.dialogue.lines.map(({from,text})=>[from,text]),receiptKey:receipt.id,receiptBinding:JSON.stringify(receipt),
   day:state.day,runId:String(state.runId??`seed:${state.seed}:${state.mode}`),dayKey:`${state.runId||state.seed}:${state.day}`};
  const shrine=APPROVED_FOUR_SKITS['shrine-walk'],art=APPROVED_FOUR_SKIT_ASSETS['shrine-walk'];
  if(receipt.category==='relax'&&receipt.optionId==='shrine'&&art?.reviewed&&art.panels===4&&JSON.stringify(scene.lines)===JSON.stringify(shrine.lines))return {...scene,arcIdentity:artIdentity(art),title:shrine.title,dialogueOnly:false,art:structuredClone(art),dialoguePanels:structuredClone(shrine.dialoguePanels),reusedArtwork:true};
  return scene;
+}
+
+// The actual first-acquisition receipt is separate from dialogue/art panels.
+// Repeated shifts carry reward:null and do not display a second acquisition.
+export function mountLifeActionReward(host,scene){
+ if(!scene?.workReward?.label)return null;
+ const line=host.ownerDocument.createElement('p');line.className='life-action-reward';
+ line.textContent=`获得道具：${scene.workReward.label}`;host.append(line);return line;
 }
 
 // Legacy browsers have no IntersectionObserver. Intersect each line with the

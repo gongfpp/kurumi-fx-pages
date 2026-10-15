@@ -1,16 +1,16 @@
-import {lifeActionDefinition} from './life-actions.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {readHallMetrics} from './hall-metrics.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {classifyEnding} from './ending-classifier.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {runPerformance} from './performance.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {orderPerformance,readRunStatistics} from './run-statistics.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {accountingValues} from './accounting-journal.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {lifeActionDefinition} from './life-actions.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {readHallMetrics} from './hall-metrics.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {classifyEnding} from './ending-classifier.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {runPerformance} from './performance.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {orderPerformance,readRunStatistics} from './run-statistics.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 export const RESULTS_SCHEMA_VERSION='1.0.0';
 const number=v=>Number.isFinite(v)?v:null;
@@ -20,7 +20,7 @@ const endings=['million','walkaway','broke','crisis'];
 const eventTypes=['open','half','close','rescue','stop','liquidation','closing'];
 const positionId=v=>typeof v==='string'&&/^order-\d{1,15}$/.test(v)?v:null;
 function pickNumbers(row,keys){return Object.fromEntries(keys.map(key=>[key,number(row?.[key])]));}
-function exportTrade(t={},historical=false){t=t||{};const liveQuote=safeLiveTradeEvidence(t.liveQuote),marketSegment=safeHistoricalSegmentEvidence(t.marketSegment),historicalQuote=marketSegment?.source==='simulated'?null:safeHistoricalTradeEvidence(t);return {...(liveQuote?{liveQuote}:{}),...(historicalQuote?{historicalQuote}:{}),...(marketSegment?{marketSegment}:{}),symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null,...pickNumbers(t,['sequence','day','beat','timestamp','direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection']),positionId:positionId(t.positionId),type:eventTypes.includes(t.type)?t.type:'unknown',positionClosed:t.positionClosed===true,timePrecision:liveQuote?'provider-quote':marketSegment?.source==='simulated'?'simulated-continuation':historicalQuote||historical&&Number.isFinite(t.timestamp)?'historical-quote':t.timePrecision==='game-clock'?'game-clock':'day-and-beat-only'};}
+function exportTrade(t={},historical=false){t=t||{};const liveQuote=safeLiveTradeEvidence(t.liveQuote),marketSegment=safeHistoricalSegmentEvidence(t.marketSegment),historicalQuote=marketSegment?.source==='simulated'?null:safeHistoricalTradeEvidence(t);return {...(liveQuote?{liveQuote}:{}),...(historicalQuote?{historicalQuote}:{}),...(marketSegment?{marketSegment}:{}),symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null,...pickNumbers(t,['sequence','day','beat','timestamp','direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection']),positionId:positionId(t.positionId),type:eventTypes.includes(t.type)?t.type:'unknown',positionClosed:t.positionClosed===true,...(liveQuote?.replay?{sourceMode:'shared-replay'}:{}),timePrecision:liveQuote?liveQuote.replay?'shared-replay-quote':'provider-quote':marketSegment?.source==='simulated'?'simulated-continuation':historicalQuote||historical&&Number.isFinite(t.timestamp)?'historical-quote':t.timePrecision==='game-clock'?'game-clock':'day-and-beat-only'};}
 function exportPoint(p={}){p=p||{};return {...pickNumbers(p,['day','observation','timestamp','nominalAssets','netAssets','debt','realizedProfit','unrealized','expenses','netFunding','nonTradingIncome','tradingAssets']),...(p.executions?{executions:{...pickNumbers(p.executions,['from','to']),types:(p.executions.types||[]).filter(type=>eventTypes.includes(type))}}:{}),kind:['opening','update','settled','closing','current','start'].includes(p.kind)?p.kind:'observation'};}
 export function buildResultsReport(state={},options={}){
  const p=runPerformance(state),orders=orderPerformance(state),stats=readRunStatistics(state),values=accountingValues(state),recap=state.ending?.immediate?null:options.recap;
@@ -57,9 +57,9 @@ export function buildResultsReport(state={},options={}){
  const events=[];
  if(gameFinished)events.push({type:'ending',reason:state.ending.id,day:state.day,timestamp:currentTradingTimestamp(state)});
  for(const trade of transactions)if(['liquidation','stop'].includes(trade.type))events.push({type:trade.type,positionId:trade.positionId,day:trade.day,timestamp:trade.timestamp,pnl:trade.pnl});
- const report={...(historical||{}),...(isLiveMarket(state)?{marketSource:'live',marketData:{provider:'biquote',priceBasis:'provider-indicative-mid',execution:'game-fees-applied-to-provider-mid',timeBasis:'provider-quote-UTC',dayProgress:'observed-ready-minute-boundaries'}}:{}),schemaVersion:RESULTS_SCHEMA_VERSION,version:1,game:'kurumi-fx',mode:state.mode==='endless'?'endless':'story',day:Number.isSafeInteger(state.day)?state.day:null,seed:Number.isSafeInteger(state.seed)?state.seed:null,currency:'JPY',gameTimeZone:GAME_TIME_ZONE,gameTimestamp:currentTradingTimestamp(state),gameFinished,completionReason:gameFinished?state.ending.id:null,
+ const report={...(historical||{}),...(isLiveMarket(state)?{marketSource:state.liveMarket.version===2?'shared-replay':'live',...(state.liveMarket.version===2?{sourceMode:'shared-replay'}:{}),marketData:{provider:'biquote',priceBasis:'provider-indicative-mid',execution:'game-fees-applied-to-provider-mid',timeBasis:'provider-quote-UTC',dayProgress:'observed-ready-minute-boundaries'}}:{}),schemaVersion:RESULTS_SCHEMA_VERSION,version:1,game:'kurumi-fx',mode:state.mode==='endless'?'endless':'story',day:Number.isSafeInteger(state.day)?state.day:null,seed:Number.isSafeInteger(state.seed)?state.seed:null,currency:'JPY',gameTimeZone:GAME_TIME_ZONE,gameTimestamp:currentTradingTimestamp(state),gameFinished,completionReason:gameFinished?state.ending.id:null,
   ending:classifyEnding(state),
-  eligibility:{gameFinished,developmentTaint,rankingEligible:gameFinished&&!developmentTaint&&!hasHistoricalSimulation(state)},performance,
+  eligibility:{gameFinished,developmentTaint,rankingEligible:gameFinished&&!developmentTaint&&!hasHistoricalSimulation(state)&&state.liveMarket?.version!==2},performance,
   daily:recap?{day:recap.day,tradingNetPartial:!!recap.daily?.tradingNetPartial,livingStatus:recap.daily?.livingStatus||null,tradingNet:money(recap.daily?.tradingNet),returnRate:number(recap.daily?.returnRate),returnDenominator:money(recap.daily?.returnDenominator),netResult:money(recap.daily?.netResult),nonTradingIncome:money(recap.daily?.nonTradingIncome??0),sealed:!!recap.sealed}:null,
   account:{nominalAssets:money(nominalAssets),netAssets:money(netAssets),fatherDebt:money(fatherDebt),networkDebt:money(networkDebt),totalDebt:money(totalDebt),cash:money(state.cash),reservedLivingCash:money(state.reserve),unrealized:money(unrealized),unallocatedOpenFees:money(unallocatedOpenFees),openPositions:currentPositions.map(pos=>({symbol:positionMarket(pos),positionId:positionId(pos.id),...pickNumbers(pos,['direction','entry','margin','leverage','openFeeRemaining']),unrealized:money(grossPnlAt(pos,marketPrice(state,positionMarket(pos))))}))},
   fees:{trading:money(state.feesPaid),interestPaid:money(interestPaid),interestAccrued:money(interestAccrued),interestTotal:money(interestTotal),living:money(living),consumption:money(consumption),nonTradingTotal:money(expenses)},
@@ -81,7 +81,7 @@ export function buildResultsReport(state={},options={}){
  if(developmentTaint)report.dataQuality.warnings.push('开发者测试局，不能用于真实排行榜比较。');
  return JSON.parse(JSON.stringify(report,(_k,value)=>typeof value==='number'&&!Number.isFinite(value)?null:value));
 }
-export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 export function resultsFilename(report){return `kurumi-fx-${report?.mode==='endless'?'endless':'story'}-day-${Number.isSafeInteger(report?.day)&&report.day>0?report.day:1}-results-v1.json`;}
 export function serializeResults(report){return JSON.stringify(report,null,2)+'\n';}
 export function downloadResults(report,{document=globalThis.document,URL=globalThis.URL,Blob=globalThis.Blob,schedule=globalThis.setTimeout}={}){

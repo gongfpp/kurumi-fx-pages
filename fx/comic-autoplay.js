@@ -1,6 +1,6 @@
-import {LIVING_MOVE_SCENE_IDS} from './living-services.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {LIVING_MOVE_SCENE_IDS} from './living-services.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Presentation frequency is run-local. Receipts and manual replay are untouched.
 export const COMIC_PROFIT_MULTIPLIER=2;
 const FIRST_ONLY=new Set([...Object.values(LIVING_MOVE_SCENE_IDS),'prop-daily-drink-first-use','shrine-walk','noodles-today','takeaway','energy','spa','mochiko-watch','dinner-small','dinner-friends','dinner-feast','dinner-banquet','friend-treat','living-basic','living-comfortable','living-generous','stop-loss','liquidation','settled-severe-loss','quote-2hz','quote-4hz']);

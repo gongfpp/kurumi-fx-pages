@@ -1,16 +1,17 @@
-import {randomUUID} from './uuid.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {VOLATILITY_FIELDS} from './daily-volatility.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 export const LEADERBOARD_SORTS = Object.freeze(['survival','returnRate','dailyReturnRate','totalProfit','totalLoss','maxProfit','winRate','maxOrderLoss','maxDrawdown','dailyVolatility']);
 const LEGACY_SORTS=Object.freeze(LEADERBOARD_SORTS.filter(sort=>!['totalLoss','maxDrawdown','dailyVolatility'].includes(sort)));
 const sortNotice=sort=>`${({totalLoss:'累计亏损榜',maxDrawdown:'回撤榜',dailyVolatility:'日收益波动榜'})[sort]||'这个榜单'}尚未开放。`;
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {runPerformance} from './performance.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {runPerformance} from './performance.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -25,6 +26,7 @@ export function normalizeLeaderboardAlias(value='') {
   return alias;
 }
 export function completedLeaderboardScore(state) {
+  if(isSharedReplay(state))throw Object.assign(Error('Shared replay is excluded from ranking'),{code:'shared-replay'});
   const report=state?.dayReport,gameMode=state?.mode??'story';
   if(state?.developer?.edited) throw new Error('开发者测试局不能提交排行榜');
   if(!['story','endless'].includes(gameMode))throw new Error('游戏模式不正确');

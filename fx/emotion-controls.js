@@ -1,13 +1,14 @@
-import {systemReducedMotion} from './motion-preference.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {createPressurePresentation} from './pressure-presentation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {pressureTarget,emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {PRESSURE_TOOLTIP,PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {createPressureQuotePicker,pressureLimitTooltip,pressureQuoteFacts} from './pressure-quotes.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];
   const original=new Map(buttons.map(button=>[button,{label:button.getAttribute('aria-label'),title:button.getAttribute('title'),text:button.textContent.trim()}]));
   const panel=root.getElementById('emotion-pressure-panel'),meter=root.getElementById('emotion-pressure-meter'),status=root.getElementById('emotion-pressure-status'),instructions=root.getElementById('emotion-pressure-instructions');
-  panel.hidden=true;instructions.textContent=PRESSURE_TOOLTIP;instructions.className='sr-only';status.className='sr-only';root.body.append(instructions,status);
+  panel.hidden=true;instructions.textContent='';instructions.className='sr-only';status.className='sr-only';root.body.append(instructions,status);
   const tooltip=root.createElement('div');tooltip.id='emotion-pressure-tooltip';tooltip.className='pressure-tooltip';tooltip.setAttribute('role','tooltip');tooltip.hidden=true;root.body.append(tooltip);
   const decorations=new Map();
   for(const [decorationIndex,button] of buttons.entries()){
@@ -23,6 +24,8 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     const paths=PRESSURE_CRACKS.map(spec=>{const path=root.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',spec.path);path.setAttribute('clip-path',`url(#${clipId})`);svg.append(path);return {path,at:spec.at};});
     const count=root.createElement('span');count.className='pressure-count';count.setAttribute('aria-hidden','true');count.hidden=true;button.append(svg,count);button.dataset.pressureLabel=original.get(button).text;decorations.set(button,{svg,paths,count,shards});
   }
+  const pickQuote=createPressureQuotePicker();
+  let lastQuote='';
   let pressureVoice=null;
   const presentation=createPressurePresentation({root,motion,enabled:motionEnabled,onClear:reason=>{pressureVoice?.stop();pressureVoice=null;if(reason!=='finished')hideHint();}});
   const heldPressureKeys=new Set(),pointerPresses=new Map(),pointerReleaseTimers=new Map();
@@ -42,7 +45,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   }
   function render() {
     const state=getState(),stateKey=`${state.mode}:${state.runId||state.seed}:${state.day}`;
-    if(lastStateKey&&lastStateKey!==stateKey){presentation.clear();animation?.cancel();hideHint();clearTimeout(breakTimer);for(const b of buttons)b.classList.remove('pressure-breaking');}
+    if(lastStateKey&&lastStateKey!==stateKey){lastQuote='';presentation.clear();animation?.cancel();hideHint();clearTimeout(breakTimer);for(const b of buttons)b.classList.remove('pressure-breaking');}
     lastStateKey=stateKey;
     const p=pressureStatus(state),visual=pressureVisual(p.taps,{reduced:reduced(),unlocked:p.extreme,target:p.target||5});
     for(const button of buttons){
@@ -52,18 +55,17 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
       for(const {path,at} of decoration.paths)path.style.opacity=p.intensity*12>=at?'1':'0';
       button.dataset.pressureFrame=p.taps?'cracking':'';
       for(const {line,dx,dy,at} of decoration.shards){const broken=p.intensity>=at;line.style.opacity=broken?'0':'1';line.style.transform=broken&&!reduced()?`translate(${dx}px,${dy}px)`:'none';}
-      decoration.count.textContent=`${p.taps}/${p.target||5}`;decoration.count.hidden=!p.taps||(!soft&&!p.extreme)||target(button).value<(target(button).kind==='stake'?.5:50);
+      decoration.count.textContent=`${p.taps}/${p.target||5}`;decoration.count.hidden=true;
       if(soft){
         button.setAttribute('aria-disabled','true');button.setAttribute('aria-describedby','emotion-pressure-instructions emotion-pressure-status');
-        button.setAttribute('aria-label',`${base.text}，暂未开放。连续按动仅积累压力，不会开仓`);button.removeAttribute('title');
+        button.setAttribute('aria-label',base.text);button.removeAttribute('title');
       }else{
         button.removeAttribute('aria-disabled');button.removeAttribute('aria-describedby');
         for(const [name,value] of [['aria-label',base.label],['title',base.title]])value===null?button.removeAttribute(name):button.setAttribute(name,value);
       }
     }
     panel.hidden=true;meter.max=p.target||5;meter.value=p.taps;meter.setAttribute('aria-valuetext',`${p.taps} / ${p.target||5}`);
-    const next=p.extreme?'已突破，再选一次。至少25×，新单不设止损。':p.taps?`突破进度 ${p.taps}/${p.target||5}。${p.direction==='despair'?'绝望':'亢奋'}压力正在积累。`:'连续点击可突破限制。';
-    if(status.textContent!==next)status.textContent=next;
+    if(status.textContent!==lastQuote)status.textContent=lastQuote;
     lastSignature=`${stateKey}:${p.taps}:${p.direction}`;
   }
   function onClick(event){
@@ -84,7 +86,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
     const feedback=pressureFeedback(result.intensity),visual=pressureVisual(result.taps,{reduced:reduced(),unlocked:result.unlocked,target:result.target,direction:result.direction});
     animation?.cancel();onChange(result);render();
     presentation.play(button,{taps:result.taps,unlocked:result.unlocked,target:result.target,direction:result.direction});
-    showHint(button,visual.hint,result.unlocked?3200:1600);
+    lastQuote=pickQuote(pressureQuoteFacts(getState()));status.textContent=lastQuote;showHint(button,lastQuote,result.unlocked?3200:1600);
     audio?.unlock();audio?.effect(result.unlocked?(result.direction==='despair'?'pressure-break-despair':'pressure-break'):'pressure-hit',{...feedback,onVoice:voice=>{pressureVoice=voice;}});
   }
   function onKey(event){
@@ -105,7 +107,7 @@ export function createEmotionControls({root=document,getState,getLimits,getConte
   const onPointerUp=event=>{if(!pointerPresses.has(event.pointerId))return;pointerPresses.get(event.pointerId).released=++inputOrder;clearTimeout(pointerReleaseTimers.get(event.pointerId));pointerReleaseTimers.set(event.pointerId,setTimeout(()=>{pointerPresses.delete(event.pointerId);pointerReleaseTimers.delete(event.pointerId);},1000));};
   const onPointerCancel=event=>{clearTimeout(pointerReleaseTimers.get(event.pointerId));pointerReleaseTimers.delete(event.pointerId);pointerPresses.delete(event.pointerId);};
   const onBlur=()=>{heldPressureKeys.clear();if(spacePress)spacePress.cancelled=true;if(spaceRelease)spaceRelease.cancelled=true;for(const p of pointerPresses.values())p.cancelled=true;presentation.clear();};
-  function onHint(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(button&&buttons.includes(button)&&classify(button)==='soft')showHint(button,pressureVisual(pressureStatus(getState()).taps,{direction:pressureStatus(getState()).direction,target:pressureStatus(getState()).target||pressureTarget(getState(),{...target(button),limits:getLimits(),...getContext(button)})}).hint,5000);}
+  function onHint(event){const button=event.target.closest?.('[data-stake],[data-leverage]');if(button&&buttons.includes(button)&&classify(button)==='soft')showHint(button,lastQuote||pressureLimitTooltip(getLimits(),target(button).kind),5000);}
   root.addEventListener('pointerdown',onPointerDown,true);root.addEventListener('pointerup',onPointerUp,true);root.addEventListener('pointercancel',onPointerCancel,true);root.addEventListener('click',onClick,true);root.addEventListener('keydown',onKey,true);root.addEventListener('keyup',onKeyUp,true);root.defaultView?.addEventListener?.('blur',onBlur);root.addEventListener('pointerover',onHint);root.addEventListener('focusin',onHint);root.addEventListener('scroll',hideHint,true);
   const interval=setInterval(()=>{if(disposed||root.hidden)return;const state=getState(),p=pressureStatus(state),signature=`${state.mode}:${state.runId||state.seed}:${state.day}:${p.taps}:${p.direction}`;if(signature!==lastSignature){onChange({cooled:true,...p});render();}},500);
   return {render,dispose(){disposed=true;clearTimeout(spaceReleaseTimer);spacePress=null;spaceRelease=null;heldPressureKeys.clear();for(const t of pointerReleaseTimers.values())clearTimeout(t);pointerReleaseTimers.clear();pointerPresses.clear();presentation.dispose();clearInterval(interval);clearTimeout(breakTimer);hideHint();animation?.cancel();tooltip.remove();root.removeEventListener('pointerdown',onPointerDown,true);root.removeEventListener('pointerup',onPointerUp,true);root.removeEventListener('pointercancel',onPointerCancel,true);root.removeEventListener('click',onClick,true);root.removeEventListener('keydown',onKey,true);root.removeEventListener('keyup',onKeyUp,true);root.defaultView?.removeEventListener?.('blur',onBlur);root.removeEventListener('pointerover',onHint);root.removeEventListener('focusin',onHint);root.removeEventListener('scroll',hideHint,true);}};

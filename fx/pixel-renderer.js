@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
@@ -121,7 +121,12 @@ export function createPixelRenderer({document:doc}) {
     const mode=native('mode-open'),stage=native('stage-name')?.textContent||'';
     if(mode){const label=mode.textContent.replace(/[▾▼]/g,'').trim();const day=stage.match(/第\s*\d+\s*天/)?.[0]||'';mode.dataset.pixelLabel=[label,day].filter(Boolean).join('\n');}
     const disclosure=native('market-disclosure')?.textContent||'';
-    const source=q('.pixel-source-status');if(source){const kind=native('terminal')?.dataset.marketSource;source.textContent=({live:'实时真实',historical:'历史真实',simulated:'模拟盘'}[kind]||'模拟盘');source.title=disclosure;}
+    const source=q('.pixel-source-status');if(source){
+      const meta=native('terminal')?.dataset||{},kind=meta.marketSource;
+      source.textContent=meta.marketSourceLabel||({live:'实时真实',historical:'历史真实','historical-mixed':'历史 · 含模拟',simulated:'模拟盘'}[kind]||'模拟盘');source.title=meta.marketSourceDescription||disclosure;
+      if(meta.marketSourceDescription){source.setAttribute('role','button');source.setAttribute('tabindex','0');source.setAttribute('aria-label',source.textContent+'，点击查看来源说明');source.style.cursor='help';source.onclick=()=>native('beat-label')?.onclick?.();source.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();source.onclick();}};}
+      else{source.removeAttribute('role');source.removeAttribute('tabindex');source.removeAttribute('aria-label');source.style.cursor='';source.onclick=null;source.onkeydown=null;}
+    }
     const pressure=native('emotion-pressure-panel');if(pressure&&!pressure.hidden){const drawer=pressure.closest('details');if(drawer)drawer.open=true;}
     mobileLayout?.refresh();
   }
@@ -142,6 +147,7 @@ export function createPixelRenderer({document:doc}) {
     render,
     dispose() {
       controller?.abort();
+      const source=q('.pixel-source-status');if(source){source.onclick=null;source.onkeydown=null;}
       mobileLayout?.dispose();mobileLayout=null;
       const percent=native('percent-slider-field');if(percent)percent.hidden=true;
       if(originalPercent){originalPercent.hidden=originalPercentHidden;originalPercent=null;originalPercentHidden=null;}

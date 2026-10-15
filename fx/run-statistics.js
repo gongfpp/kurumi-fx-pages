@@ -1,8 +1,8 @@
-import {safeLiveTradeEvidence} from './live-market-state.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {MARKETS,positionMarket} from './market-book.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals
@@ -16,7 +16,7 @@ const fresh=()=>({version:1,complete:true,closedOrders:0,winningOrders:0,losingO
 function safeTrade(t,s,{legacy=false}={}){
  const result={...(s.marketBook||t.symbol?{symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null}:{}),sequence:0,type:['open','half','close','rescue','stop','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
  for(const key of ['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'])result[key]=Number.isFinite(t[key])?t[key]:null;
- const evidence=safeLiveTradeEvidence(t.liveQuote);if(evidence){result.liveQuote=evidence;result.timePrecision='provider-quote';}
+ const evidence=safeLiveTradeEvidence(t.liveQuote);if(evidence){result.liveQuote=evidence;result.timePrecision=evidence.replay?'shared-replay-quote':'provider-quote';if(evidence.replay)result.sourceMode='shared-replay';}
  const historical=safeHistoricalTradeEvidence(t);if(historical){result.historicalQuote=historical;result.timePrecision='historical-quote';}
  const segment=safeHistoricalSegmentEvidence(t.marketSegment);if(segment){result.marketSegment=segment;if(segment.source==='simulated')result.timePrecision='simulated-continuation';}
  result.positionClosed=t.positionClosed===true;return result;

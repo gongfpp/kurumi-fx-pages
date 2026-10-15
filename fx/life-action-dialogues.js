@@ -1,4 +1,5 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {LIFE_WORK_JOBS} from './life-work.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Append-only receipt dialogue sources. Existing source IDs, scope and exact text
 // are a save-format contract, independent of the current action selector.
 // These two legacy snapshots intentionally preserve the original v17 bytes.
@@ -7,6 +8,7 @@ export const LIFE_ACTION_DIALOGUE_SOURCES=Object.freeze([
  source("friend","mochiko","O-F-TALK-01","existing-game-dialogue",[["久留美","我想找一份坐着就能发财的工作。"],["萌智子","售票窗口也能坐。"],["久留美","我说的是发财，不是找零。"],["萌智子","那你先把“工作”两个字划掉。"],["久留美","不要，这样听起来比较有志气。"]]),
  source("friend","yasuko","O-C-HIDE-02","existing-game-dialogue",[["久留美","今天我先当个省话的人。"],["安子","行，那我少问两句。"],["久留美","但不是不能理我。"]]),
  ...LIFE_SCENE_DIALOGUE_SOURCES,
+ ...LIFE_WORK_JOBS.filter(job=>!LIFE_SCENE_DIALOGUE_SOURCES.some(row=>row.category==='work'&&row.optionId===job.id&&row.dialogue.sourceId===job.dialogue.sourceId)).map(job=>Object.freeze({category:'work',optionId:job.id,dialogue:job.dialogue})),
 ]);
 // No fallback to today's selector or untrusted save text for an unknown identity.
 export function lifeActionDialogueForSource(option,sourceId){

@@ -1,15 +1,16 @@
-import {DINNER_OPTIONS} from './recap-choices.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkInventory} from './life-work.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // Initial game-balance value, not a real-world wage or a claim about the manga.
-// One completed life action per story day. Workplaces differ only in presentation.
+// One completed life action per story day; individual work terms live in life-work.js.
 export const LIFE_WORK_INCOME=2200;
 export const LIFE_ACTION_SAVE_VERSION=17;
 const option=(category,id,label,income=0)=>Object.freeze({category,id,label,income});
 export const LIFE_ACTION_CATALOG=Object.freeze({
  dinner:Object.freeze(DINNER_OPTIONS.map(row=>Object.freeze({...row,category:'dinner',income:0}))),
  friend:Object.freeze([option('friend','mochiko','萌智子'),option('friend','yasuko','安子')]),
- work:Object.freeze([option('work','convenience','便利店',LIFE_WORK_INCOME),option('work','cafe','咖啡店',LIFE_WORK_INCOME),option('work','bookstore','书店',LIFE_WORK_INCOME)]),
+ work:LIFE_WORK_JOBS,
  relax:Object.freeze([option('relax','shrine','神社'),option('relax','river','河边'),option('relax','park','公园')])
 });
 export const lifeActionRunId=s=>String(s.runId??`seed:${s.seed}:${s.mode}`);
@@ -28,10 +29,12 @@ export function lifeFriendKnown(s,id){
 // Select only frozen trusted text. Legacy friend receipts retain their exact
 // excerpts; routine additions have their own append-only source identities.
 export function lifeActionDialogue(option){
+ if(option.category==='work')return structuredClone(option.dialogue);
  const id=option.category==='friend'?option.id==='mochiko'?'O-F-TALK-01':'O-C-HIDE-02':['work','relax'].includes(option.category)?`life-action-20261012:${option.category}:${option.id}`:null;
  return lifeActionDialogueForSource(option,id);
 }
 export function validLifeActions(s){
+ if(!validWorkInventory(s))return false;
  const actions=s.lifeActions;
  if(actions===undefined)return (s.nonTradingIncome??0)===0&&(s.dayOpeningIncome??0)===0&&s.version!==LIFE_ACTION_SAVE_VERSION;
  if(!actions||actions.version!==1||![9,10,11,12,15,16].includes(actions.sourceVersion)||s.mode!=='story'||!Array.isArray(actions.receipts)||!actions.receipts.length||!Number.isFinite(s.nonTradingIncome)||s.nonTradingIncome<0||!Number.isFinite(s.dayOpeningIncome)||s.dayOpeningIncome<0||s.dayOpeningIncome>s.nonTradingIncome)return false;

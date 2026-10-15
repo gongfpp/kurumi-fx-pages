@@ -1,4 +1,4 @@
-import {inspectSave} from './save-codec.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {inspectSave} from './save-codec.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 // The local snapshot remains the default. An automatic compatibility archive
 // is restored only when the user explicitly selects it in the existing dialog.
 export const MAX_BACKUP_BYTES=32*1024*1024;
@@ -24,7 +24,9 @@ export function parseProgressBackup(text,{key,mode,historical,source,restore,isH
  }
  if(!original||!Number.isSafeInteger(original.day)||original.day<1||!Number.isSafeInteger(original.version))throw Error('备份进度不完整，未恢复。');
  const candidate=restore(raw??JSON.stringify(original));
- if(!candidate||candidate.mode!==mode||isHistorical(candidate)!==historical||source&&marketSourceOf&&marketSourceOf(candidate)!==source)throw Error('备份损坏、模式不匹配，或来自更新版本。');
+ // Mixed historical progress stays in its historical save slot; it remains mixed in reports.
+ const candidateSource=candidate&&marketSourceOf?.(candidate),candidateFamily=candidateSource==='historical-mixed'?'historical':candidateSource;
+ if(!candidate||candidate.mode!==mode||isHistorical(candidate)!==historical||source&&marketSourceOf&&candidateFamily!==source)throw Error('备份损坏、模式不匹配，或来自更新版本。');
  return candidate;
 }
 async function readBackupText(file){

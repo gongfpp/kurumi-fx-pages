@@ -1,13 +1,14 @@
-import {orderAmountRatio} from './amount-controls.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {orderAmountRatio} from './amount-controls.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 
-export function percentageAvailability({availableMargin,cap,enabled,blockedReason=''}){
+export function percentageAvailability({availableMargin,cap,enabled,blockedReason='',format=String}){
  const funded=Number.isFinite(availableMargin)&&availableMargin>0;
  const disabled=!enabled||!funded||!Number.isFinite(cap)||cap<100;
  const ceiling=disabled?0:Math.max(0,Math.min(100,cap/availableMargin*100));
  const limited=disabled||ceiling<99.995;
  const ceilingText=ceiling>0&&ceiling<.01?'不足 0.01%':`${Math.floor(ceiling*100)/100}%`;
- const reason=disabled?(blockedReason||(!funded?'当前没有可用保证金。':Number.isFinite(cap)&&cap<100?'当前可开仓额度不足 ¥100。':'当前不能新开仓，恢复后可调整额度。')):
-  limited?`当前最多投入可用资金的 ${ceilingText}。灰色部分超出本单上限，选择更高比例时仍按上限计算；上限已计入当前状态、已有持仓和开仓费用。`:'';
+ const limitSummary=`受心理承受力影响，当前上限 ${format(disabled?0:cap)}（可用资金的 ${ceilingText}）。`;
+ const reason=disabled?`${limitSummary}${blockedReason||(!funded?'当前没有可用保证金。':Number.isFinite(cap)&&cap<100?'当前可开仓额度不足 ¥100。':'当前不能新开仓，恢复后可调整额度。')}`:
+  limited?`${limitSummary}灰色部分超出本单上限，选择更高比例时仍按上限计算；上限同时计入已有持仓和开仓费用。`:'';
  return {disabled,ceiling,limited,reason};
 }
 
@@ -50,7 +51,7 @@ export function renderPercentageOrderControl({document,amount,availableMargin,ca
  const selectedPercent=`${Number(percent.toFixed(2))}%`;
  const clipped=intent?.mode==='ratio'&&actual!==null&&actual<intent.ratio-1e-6;
  const value=Number.isFinite(amount)?format(amount):'—';
- const availability=percentageAvailability({availableMargin,cap,enabled,blockedReason});
+ const availability=percentageAvailability({availableMargin,cap,enabled,blockedReason,format});
  slider.value=String(percent);slider.disabled=availability.disabled;
  slider.style?.setProperty('--percent-progress',`${percent}%`);
  slider.setAttribute?.('aria-valuetext',clipped?`${selectedPercent}，实际投入 ${actualPercent}，${value}`:`${actualPercent}，${value}`);

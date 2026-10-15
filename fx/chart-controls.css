@@ -48,6 +48,11 @@
    chart, order controls or position layout. Price labels and the time axis stay
    outside its bounds. Multiple warnings scroll inside the same capped panel. */
 .chart-risk-stage{position:relative;min-width:0}
+#chart{position:relative}
+#chart .chart-quote-label{position:absolute;left:12px;top:8px;max-width:calc(100% - 92px);font:inherit;font-size:12px;line-height:16px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:inherit}
+#chart .chart-quote-label>div{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px}
+#chart .chart-quote-label-primary>span{font-size:10px;line-height:16px}
+#chart .chart-quote-label strong{font-size:20px;line-height:24px;font-weight:650;transform:none;font-stretch:normal}
 #risk-alerts{position:absolute;z-index:2;left:8px;bottom:42px;width:min(360px,calc(100% - 98px));box-sizing:border-box;isolation:isolate;margin:0;max-height:124px;overflow:auto;overscroll-behavior:contain;border:1px solid #dbadbd;border-radius:10px;background:#fff4f8;box-shadow:0 6px 18px #08050b55;color:#5b3027;padding:6px}
 #risk-alerts[hidden],#risk-alerts:empty{display:none}
 #risk-alerts .risk-alert{color:inherit;margin:0;border:0;border-radius:6px;background:transparent;box-shadow:none}

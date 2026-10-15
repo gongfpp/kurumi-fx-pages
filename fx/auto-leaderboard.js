@@ -1,9 +1,10 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;
-const manualFailures=new Set(['invalid-score','no-trades','developer','mixed-historical','private-research','ineligible','unfinished','missing-run','input','capability','capability-conflict','storage-unavailable','coordination']);
+const manualFailures=new Set(['shared-replay','invalid-score','no-trades','developer','mixed-historical','private-research','ineligible','unfinished','missing-run','input','capability','capability-conflict','storage-unavailable','coordination']);
 export function automaticRankingStatusText(result={}){
  const reason=result.reason;
  if(result.state==='submitted')return '本局成绩已自动上榜，可在名人堂修改昵称。';
@@ -23,6 +24,7 @@ export function automaticRankingStatusText(result={}){
 }
 // Only a terminal game is eligible. A normal daily settlement is not game-over.
 export function terminalRankingEligibility(state,report,storage){
+ if(isSharedReplay(state))return {eligible:false,reason:'shared-replay'};
  if(hasHistoricalSimulation(state))return {eligible:false,reason:'mixed-historical'};
  if([2,3].includes(state?.historical?.version))return {eligible:false,reason:'private-research'};
  if(!ID.test(state?.runId||''))return {eligible:false,reason:'missing-run'};
