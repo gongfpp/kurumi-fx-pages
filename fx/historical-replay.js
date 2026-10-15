@@ -1,6 +1,7 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle} from './candle-period.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
@@ -11,16 +12,22 @@ export const hasHistoricalFeed=s=>isMultiHistory(s)?hasMultiHistoryFeed(s):feeds
 export const historicalReady=s=>!isHistorical(s)||historicalSimulationActive(s)||(s.historical.status==='ready'&&hasHistoricalFeed(s));
 const mid=q=>(q[1]+q[2])/2;
 export function historicalScript(){return{historical:true,tracks:[],events:Array.from({length:5},()=>({id:'historical',chain:'历史行情',title:'USD/JPY 历史回放',copy:'按当时的报价继续交易。',source:'历史外汇行情',time:'',flash:'USD/JPY 历史回放',flashCopy:'按当时的报价继续交易。'}))};}
-export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL}){
+export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL,opening}){
  if(manifest.schemaVersion==='research-multi-m1-close-v1')return initializeMultiHistory(s,{manifest,dayData,startDate,manifestURL},historicalScript);
- if(manifest.schemaVersion==='research-m1-close-v1')return initializeResearch(s,{manifest,dayData,startDate,manifestURL});
+ if(manifest.schemaVersion==='research-m1-close-v1')return initializeResearch(s,{manifest,dayData,startDate,manifestURL,opening});
  const entry=manifest.days.find(d=>d.date===startDate);if(!entry)throw Error('所选日期没有历史行情');
  s.version=[12,13].includes(s.version)?s.version:10;s.historical={version:1,datasetId:manifest.id??manifest.datasetId,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL:manifestURL||null,priceBasis:'bid-ask-mid',date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
  bindHistoricalDay(s,manifest,dayData);
- const quote=dayData.ticks[0];if(!quote)throw Error('当日没有报价');
+ const index=historicalOpeningIndex(dayData,opening),quote=dayData.ticks[index];if(!quote)throw Error('当日没有报价');
  s.price=mid(quote);s.startPrice=s.price;s.candles=[{open:s.price,close:s.price,high:s.price,low:s.price,closed:false,day:1,beat:0,timestamp:Math.floor(quote[0]/900000)*900000,timeSource:'historical',firstQuoteAt:quote[0],lastQuoteAt:quote[0]}];s.script=historicalScript();
  s.tradingClock={version:1,epochMs:Math.floor((quote[0]+JST)/DAY)*DAY-JST,timeZone:'Asia/Tokyo',candleMinutes:15,source:'historical',lastQuoteAt:quote[0],lastQuoteDay:s.day};
- commitHistoricalQuote(s,quote);recordDisplayQuote(s,quote[0],s.price);s.historical.status='ready';
+ if(opening){
+  for(const row of dayData.ticks.slice(0,index))if(row[0]>=opening.warmupFrom)recordDisplayQuote(s,row[0],mid(row));
+  const preview=aggregateCandles(s.displayMinutes||[],15,quote[0]).map(c=>({...c,closed:c.timestamp+900000<=quote[0],timeSource:'historical',historyWarmup:true}));
+  // The selected quote remains the first executable quote in this run.
+  s.candles=[...preview.filter(c=>c.timestamp<s.candles[0].timestamp),...s.candles];
+ }
+ s.historical.cursor=index;s.historical.dayOpeningAt=quote[0];commitHistoricalQuote(s,quote);recordDisplayQuote(s,quote[0],s.price);s.historical.status='ready';
  return s;
 }
 export function bindHistoricalDay(s,manifest,dayData){
@@ -76,12 +83,13 @@ export function validHistoricalSave(s){
 }
 export function markHistoricalRestored(s){if(isHistorical(s)&&s.historical.status==='ready'){s.historical.resumeAfterLoad=!s.marketPaused;s.historical.status='loading';}}
 
-function initializeResearch(s,{manifest,dayData,startDate,manifestURL}){
+function initializeResearch(s,{manifest,dayData,startDate,manifestURL,opening}){
  const entry=manifest.days.find(d=>d.date===startDate);if(!entry)throw Error('所选日期没有分钟行情');
  s.version=[12,13].includes(s.version)?s.version:11;s.historical={version:2,datasetId:manifest.id,sourceVersion:String(manifest.version),sourceHash:manifest.source.sha256,manifestURL,priceBasis:'observed-close-only',research:{...manifest.research},date:startDate,startDate,dayHash:entry.sha256,cursor:0,status:'loading',lastQuote:null,acceptedGapCursor:null};
- bindResearchDay(s,manifest,dayData);const bar=dayData.bars[0];s.price=bar.close;s.startPrice=s.price;s.candles=[researchCandle(s,bar)];s.completedCandles=1;s.script=historicalScript();
+ bindResearchDay(s,manifest,dayData);const index=historicalOpeningIndex(dayData,opening),bar=dayData.bars[index];s.price=bar.close;s.startPrice=s.price;s.candles=[researchCandle(s,bar)];s.completedCandles=1;s.script=historicalScript();
  s.tradingClock={version:1,epochMs:Math.floor((bar.availableAt+JST)/DAY)*DAY-JST,timeZone:'Asia/Tokyo',candleMinutes:1,source:'historical',lastQuoteAt:bar.availableAt,lastQuoteDay:s.day};
- commitHistoricalQuote(s,[bar.availableAt,bar.close]);recordDisplaySourceCandle(s,s.candles[0]);s.historical.status='ready';return s;
+ if(opening){const preview=dayData.bars.slice(0,index).filter(row=>row.availableAt>=opening.warmupFrom).map(row=>({...researchCandle(s,row),historyWarmup:true}));s.candles=[...preview.slice(-255),...s.candles];s.displayMinutes=preview.map(c=>({...c}));}
+ s.historical.cursor=index;s.historical.dayOpeningAt=bar.availableAt;commitHistoricalQuote(s,[bar.availableAt,bar.close]);recordDisplaySourceCandle(s,s.candles.at(-1));s.historical.status='ready';return s;
 }
 export function researchCandle(s,bar){return {open:bar.open,high:bar.high,low:bar.low,close:bar.close,closed:true,day:s.day,beat:Math.min(3,Math.floor(new Date(bar.availableAt+JST).getUTCHours()/6)),timestamp:bar.labelAt,timeSource:'historical',firstQuoteAt:bar.availableAt,lastQuoteAt:bar.availableAt,availableAt:bar.availableAt,research:true};}
 function bindResearchDay(s,manifest,data){

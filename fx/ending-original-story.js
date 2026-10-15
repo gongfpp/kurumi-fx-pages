@@ -1,9 +1,9 @@
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {endingPresentationMedia,endingPresentationContext,endingPresentationState} from './ending-presentation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {endingPresentationMedia,endingPresentationContext,endingPresentationState} from './ending-presentation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 
 export function endingOriginalPresentation(state,ending,art,manga,{memory=dailyArtMemory}={}){
  const media=endingPresentationMedia(state,ending,art,manga);

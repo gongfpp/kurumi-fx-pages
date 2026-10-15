@@ -1,10 +1,10 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {newsSourceDetails} from './news-source-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {displayedNewsItems} from './displayed-news-session.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {newsSourceDetails} from './news-source-view.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {displayedNewsItems} from './displayed-news-session.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 
 // Compact labels use the viewed market date only as a comparison. The item's
 // own publication instant supplies its JST day/time; availability is not a clock.

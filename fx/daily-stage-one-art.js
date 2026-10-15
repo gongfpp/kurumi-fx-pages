@@ -1,26 +1,26 @@
-import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {lifeSceneCandidates} from './life-scene-consumer.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {orderedDailyStories} from './daily-story-order.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {setImage} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {lifeSceneCandidates} from './life-scene-consumer.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {orderedDailyStories} from './daily-story-order.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {setImage} from './assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 const candidate=scene=>scene?.frames?{...scene,identity:'sequence:'+scene.frames.map(frame=>artIdentity(frame.art)).join('|')}:scene?.art?{...scene,identity:artIdentity(scene.art)}:null;
 // An exhausted illustration is not evidence that the activity really happened.
 // Validate its current receipt, offered price/outcome and paired positive debit
@@ -144,6 +144,7 @@ export function mountDailyArtwork(host,selection,{memory=dailyArtMemory,showHead
  selection=applyApprovedContextDialogue(selection);
  memory=memory.forSelection?.(selection)||memory;
  host.replaceChildren();host.hidden=false;host.className='daily-single-art';let dispose=()=>{};
+ delete host.dataset.contentIdentity;
  const doc=host.ownerDocument,make=(tag,text)=>{const el=doc.createElement(tag);if(text)el.textContent=text;return el;};
  if(!selection){host.hidden=true;return {dispose};}
  host.dataset.contentIdentity=selection.identity;

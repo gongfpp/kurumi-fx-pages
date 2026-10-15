@@ -1,7 +1,7 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

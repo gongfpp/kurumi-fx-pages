@@ -1,3 +1,5 @@
+import {UI_ICON_ASSET} from './ui-icon-assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {UI_EXTRA_ICON_ASSET} from './ui-extra-icon-assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 // UI assets keep their own identities, separate from story/trading-event pools.
 export const UI_ASSET_CATALOG=Object.freeze([Object.freeze({
  id:'pixel-interface-reference-atlas',path:'./pixel-assets/reference-atlas.png',
@@ -23,4 +25,14 @@ Object.freeze({
  source:Object.freeze({sha256:'3e2b88940445ca012fa4b72e6d39333cecda49b74a81b778844fe94a0442b23a',dimensions:Object.freeze([937,500]),sourceCommit:'98878f578e0b1c745851330569094c69a5441258',gitBlob:'1140416f540495da391e6306a0747a22d140ca80',metadataRefs:Object.freeze(['UI_ASSET_CATALOG:kurumi-default-user'])}),
  consumer:Object.freeze({module:'./final-portrait.js',displayModule:'./portrait-display.js',stylesheet:'./pixel-renderer.css',presentation:'whole-image-contain',preserveWholeImage:true,financialData:false}),
  review:Object.freeze({status:'pending',scope:'current-rendered-interface',reason:'Exact user image viewed and bytes verified; current-build browser visual acceptance remains required'})
+}),Object.freeze({
+ id:'ui-icons-transparent',path:UI_ICON_ASSET.path,purpose:'decorative-interface-sprites',kind:'generated-interface-derivative',
+ source:Object.freeze({sha256:UI_ICON_ASSET.sha256,dimensions:Object.freeze([UI_ICON_ASSET.width,UI_ICON_ASSET.height]),metadataRefs:Object.freeze(['UI_ICON_ASSET','UI_ASSET_CATALOG:pixel-interface-reference-atlas','UI_ASSET_CATALOG:life-menu-approved','UI_ASSET_CATALOG:life-work-approved','UI_ASSET_CATALOG:life-relax-approved'])}),
+ consumer:Object.freeze({stylesheet:'./ui-icons.css',presentation:'isolated-alpha-sprite-windows',financialData:false}),
+ review:Object.freeze({status:'pending',scope:'current-rendered-interface',reason:'All twelve icon objects visually reviewed; current-build browser acceptance remains required'})
+}),Object.freeze({
+ id:'ui-icons-extra-transparent',path:UI_EXTRA_ICON_ASSET.path,purpose:'decorative-interface-sprites',kind:'generated-interface-derivative',
+ source:Object.freeze({sha256:UI_EXTRA_ICON_ASSET.sha256,dimensions:Object.freeze([UI_EXTRA_ICON_ASSET.width,UI_EXTRA_ICON_ASSET.height]),metadataRefs:Object.freeze(['UI_EXTRA_ICON_ASSET','UI_ASSET_CATALOG:pixel-interface-reference-atlas'])}),
+ consumer:Object.freeze({stylesheet:'./ui-icons.css',presentation:'isolated-alpha-pseudo-element-windows',financialData:false}),
+ review:Object.freeze({status:'pending',scope:'current-rendered-interface',reason:'Trophy, medal and headphones visually reviewed; current-build browser acceptance remains required'})
 })]);

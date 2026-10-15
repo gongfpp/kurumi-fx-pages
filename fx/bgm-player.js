@@ -1,6 +1,6 @@
-import {AudioEnvelope} from './audio-envelope.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {assetURL} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {assetURL} from './assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {BGM_CATALOG,BGM_SCENE_TAGS,validateBgmCatalog} from './bgm-catalog.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 
 const clamp=(value,min,max,fallback)=>Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
 const gesture=event=>event?.isTrusted===true&&!event.repeat&&['click','pointerdown','keydown'].includes(event.type);

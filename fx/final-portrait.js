@@ -1,17 +1,31 @@
-import {tradingTrauma} from './trading-trauma.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {positionNetUnrealized,mood} from './engine.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {pressureMood} from './emotion-pressure.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {MOODS} from './content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {floatingReactionSnapshot} from './floating-reaction.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {speechForEmotion} from './dialogue.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {GENERATED_EXTREME_EXPRESSIONS} from './generated-emotion-assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {positionNetUnrealized,positionsOf,mood} from './engine.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {pressureMood} from './emotion-pressure.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {MOODS} from './content.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {floatingReactionSnapshot} from './floating-reaction.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {speechForEmotion} from './dialogue.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 
 const generated=(path,emotion,label,scope,evidence)=>({kind:'generated',path,emotion,label,scope,evidence,sourceLabel:'原创同人',origin:'generated-game-art'});
 const plain=(emotion,scope,evidence)=>generated(`./expressions/kurumi-${MOODS[emotion]?.[1]||'calm'}.webp`,emotion,MOODS[emotion]?.[0]||'平静',scope,evidence);
 const art=(key,emotion,label,scope,evidence)=>generated(GENERATED_EXTREME_EXPRESSIONS[key].path,emotion,label,scope,evidence);
 
-// The neutral market fallback may use the user-selected image. Authored fan-art
-// retains every emotion rule; story panels keep their separate matcher.
+const tradeTypes=new Set(['open','half','close','rescue','stop','liquidation','closing']);
+// Existing saves already retain filled-order evidence even after recent history
+// is trimmed. Reading it avoids rewriting or guessing an older run's progress.
+export function hasStartedPortraitTrading(state){
+  return state.portraitTradingStarted===true||positionsOf(state).length>0||state.nextOrderId>1
+    ||state.runStatistics?.executions>0||state.runStatistics?.closedOrders>0||state.performance?.closedTrades>0
+    ||tradeTypes.has(state.lastTrade?.type)||(state.history||[]).some(t=>tradeTypes.has(t?.type))
+    ||(state.feeLedger||[]).some(t=>['open','close'].includes(t?.side));
+}
+// Only a submitted trading instruction ends the initial portrait. Hovering,
+// changing ticket settings, waiting and rejected progress guards do not submit.
+export function markPortraitTradingAction(state,type){
+  if(!['long','short','half','close'].includes(type))return false;
+  state.portraitTradingStarted=true;return true;
+}
+
 function selectPortrait(state,{sealedOutcome=null,floatingReaction=null}={}){
   const sealed=sealedOutcome&&Number.isFinite(sealedOutcome.net)&&Number.isInteger(sealedOutcome.day)
     ?{...sealedOutcome,kind:sealedOutcome.net<0?'loss':sealedOutcome.net>0?'profit':'flat'}:null;
@@ -43,9 +57,8 @@ function selectPortrait(state,{sealedOutcome=null,floatingReaction=null}={}){
     return plain(last.pnl>0?'relieved':last.pnl<0?'regretful':'calm','realized',{net:last.pnl,positionId:last.positionId});
   const pressure=pressureMood(state);if(pressure)return plain(pressure,'pressure',{pressure:true});
   const market=plain(['calm','focused','determined','guilty','warm','lonely','exhausted'].includes(natural)?natural:'calm','market',{hasPositions:false});
-  // The user-selected image is only the neutral market fallback.
-  // Holding, realized, pressure, trauma and sealed-day portraits stay unchanged.
-  if(market.emotion==='calm')return {...market,kind:'user-image',path:'./expressions/kurumi-default-user.jpg',origin:'user-provided-image',sourceLabel:'用户指定人物图',preserveWholeImage:true,line:'先看看行情……'};
+  // The JPEG belongs only to the period before this run's first instruction.
+  if(market.emotion==='calm'&&!hasStartedPortraitTrading(state))return {...market,kind:'user-image',path:'./expressions/kurumi-default-user.jpg',origin:'user-provided-image',sourceLabel:'用户指定人物图',preserveWholeImage:true,line:'先看看行情……'};
   return market;
 }
 export function selectFinalPortrait(state,options={}){

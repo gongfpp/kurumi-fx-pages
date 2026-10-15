@@ -1,9 +1,13 @@
-import {setImage,retryImage} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {setImage,retryImage} from './assets.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 const notices=new WeakMap();
 export function showGeneratedPortrait(image,portrait){
+ image.parentElement?.classList.add('portrait-current');
  image.parentElement?.classList.toggle('portrait-preserve-whole',portrait.preserveWholeImage===true);
+ image.classList.toggle('portrait-exhilarated',portrait.emotion==='ecstatic'&&portrait.path==='./expressions/kurumi-exhilarated.webp');
  image.alt=`久留美 · ${portrait.label}`;image.dataset.mood=portrait.emotion;image.loading='eager';image.decoding='async';
  setImage(image,portrait.path,{onStatus:status=>{
+  // Hide the previous decoded bitmap until the current source has loaded.
+  image.style.opacity=status==='loading'?'0':'1';
   let notice=notices.get(image);
   if(status!=='unavailable'){notice?.remove();notices.delete(image);image.hidden=false;return;}
   image.hidden=true;if(notice)return;

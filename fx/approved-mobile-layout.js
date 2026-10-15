@@ -16,12 +16,13 @@ export function createApprovedMobileLayout({document:doc,root}={}){
   settingsOpen(true);target?.scrollIntoView?.({block:'nearest',behavior:'auto'});target?.focus?.({preventScroll:true});
  }
  function syncQuickTrade(){
-  const count=positionCount(),leverage=native('leverage-value')?.textContent?.trim()||'25×',raw=String(native('order-amount')?.value||'').trim();
+  const count=positionCount(),leverage=(native('leverage-value')?.textContent?.trim()||'25×').split(' · ')[0],raw=String(native('order-amount')?.value||'').trim();
   const numeric=Number(raw),amount=raw&&Number.isFinite(numeric)?'¥'+numeric.toLocaleString('zh-CN',{maximumFractionDigits:2}):'设置金额';
   text(quickLeverage,leverage);text(quickAmount,amount);text(quickPositions,`持仓 ${count}`);
   quickLeverage.setAttribute('aria-label',`修改杠杆，当前 ${leverage}`);quickAmount.setAttribute('aria-label',`修改保证金，当前 ${amount}`);
   quickAmount.disabled=Boolean(native('order-amount')?.disabled);
   quickLeverage.disabled=[...root.querySelectorAll('[data-leverage]')].every(node=>node.disabled);
+  quickLeverage.dataset.dailyUnlocked=String(leverage==='100×'&&root.querySelector('[data-leverage="100"]')?.dataset.dailyUnlocked==='true');
   quickBar.dataset.longAmount=String(amount.length>10);
   text(settingsInfo,`杠杆 ${leverage} · 保证金 ${amount} · 止损 ${native('stop-value')?.textContent?.trim()||'—'}`);
   if(count>0&&!preference.firstPositionSeen){
@@ -109,8 +110,15 @@ export function createApprovedMobileLayout({document:doc,root}={}){
   // Bottom navigation opens the existing content; secondary page designs are unchanged.
   const nav=make('nav','mobile-bottom-nav');nav.setAttribute('aria-label','游戏功能');root.append(nav);
   for(const selector of ['.pixel-items','#life-open','.pixel-comic','#leaderboard-open','#achievements-open'])move(q(selector),nav);
-  const more=make('button','mobile-more-button','更多');more.type='button';more.setAttribute('aria-label','打开更多设置');nav.append(more);
-  listen(more,'click',()=>{settings.open=true;settings.scrollIntoView?.({block:'start',behavior:'auto'});settings.querySelector('summary')?.focus?.({preventScroll:true});});
+  const more=make('button','mobile-more-button','更多');more.type='button';more.setAttribute('aria-controls','mobile-more-settings');nav.append(more);
+  const oldSettingsId=settings.getAttribute('id');settings.id='mobile-more-settings';
+  listeners.push(()=>{if(oldSettingsId===null)settings.removeAttribute('id');else settings.id=oldSettingsId;});
+  const syncMore=()=>{more.setAttribute('aria-expanded',String(settings.open));more.setAttribute('aria-label',settings.open?'关闭更多设置':'打开更多设置');};
+  const closeMore=()=>{settings.open=false;syncMore();more.focus?.({preventScroll:true});};
+  listen(more,'click',()=>{if(settings.open){closeMore();return;}settings.open=true;syncMore();settings.scrollIntoView?.({block:'start',behavior:'auto'});settings.querySelector('summary')?.focus?.({preventScroll:true});});
+  listen(settings,'toggle',syncMore);
+  listen(root,'keydown',event=>{if(event.key==='Escape'&&settings.open){event.preventDefault();closeMore();}});
+  syncMore();
   // The app-owned news list follows its native anchor and the same frontend flag.
   q('.pixel-news-panel').dataset.mobileNewsExtension='latest-three';
   for(const [node,label] of [[market,'行情与持仓'],[trade,'交易']]){labels.push([node,node.getAttribute('aria-label')]);node.setAttribute('aria-label',label);}

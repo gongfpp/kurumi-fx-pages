@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
@@ -41,7 +41,7 @@ export function createPixelRenderer({document:doc}) {
     const name=make('h3','pixel-character-name','久留美');card?.append(name);
     const actions=make('div','pixel-life-actions');container.append(actions);
     const items=drawer('道具','pixel-items');items.summary.prepend(icon('bag'));actions.append(items.node);move('inventory',items.content);
-    const lifeButton=native('life-open');if(lifeButton){moveNode(lifeButton,actions);lifeButton.classList.add('pixel-life-button');}
+    const lifeButton=native('life-open');if(lifeButton){moveNode(lifeButton,actions);lifeButton.classList.add('pixel-life-button');lifeButton.prepend(icon('house'));}
     const session=drawer('本局','pixel-session');container.append(session.node);move('heading',session.content);
     for(const id of ['day-review','restart'])moveNode(native(id),session.content);
     const comic=drawer('漫画','pixel-comic');comic.summary.prepend(icon('comic'));actions.append(comic.node);move('storyLibrary',comic.content);

@@ -1,16 +1,16 @@
-import {randomUUID} from './uuid.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {VOLATILITY_FIELDS} from './daily-volatility.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 export const LEADERBOARD_SORTS = Object.freeze(['survival','returnRate','dailyReturnRate','totalProfit','totalLoss','maxProfit','winRate','maxOrderLoss','maxDrawdown','dailyVolatility']);
 const LEGACY_SORTS=Object.freeze(LEADERBOARD_SORTS.filter(sort=>!['totalLoss','maxDrawdown','dailyVolatility'].includes(sort)));
 const sortNotice=sort=>`${({totalLoss:'累计亏损榜',maxDrawdown:'回撤榜',dailyVolatility:'日收益波动榜'})[sort]||'这个榜单'}尚未开放。`;
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {runPerformance} from './performance.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {runPerformance} from './performance.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -79,14 +79,20 @@ export class FXLeaderboard {
     this.assertConfigured();
     const scope=path==='/run'?'leaderboard-run':path==='/snapshot'?'leaderboard-snapshot':path==='/name'?'leaderboard-name':method==='GET'?'leaderboard-read':'leaderboard-publish';
     if(!this.fetch||this.navigator?.onLine===false){notifyFailure(this.onFailure,scope,'network-error');throw new LeaderboardError('当前离线，联网后可查看或提交排行榜','offline');}
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),this.timeout);
+    const controller=new AbortController();let timer,status=0;
+    // Embedded transports may ignore abort, including while decoding the body.
+    // Bound the whole request so a lost acknowledgement cannot hold pending.
+    const deadline=new Promise((_resolve,reject)=>{timer=setTimeout(()=>{reject(new LeaderboardError('排行榜连接超时，请重试','timeout',status));controller.abort();},this.timeout);});
     try{
+      return await Promise.race([deadline,(async()=>{
       const response=await this.fetch(this.endpoint+path,{method,keepalive,credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal,...(data?{headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}:{})});
+      status=response.status;
       let result;try{result=await response.json();}catch{throw new LeaderboardError('排行榜响应不完整，请稍后重试','response',response.status);}
       if(!response.ok)throw new LeaderboardError(result?.error||'排行榜暂时不可用，请稍后重试',response.status===429?'rate-limited':response.status===409?'conflict':'rejected',response.status);
       return result;
+      })()]);
     }catch(error){
-      notifyFailure(this.onFailure,scope,error instanceof LeaderboardError?(error.status>=400?'http-error':'invalid-response'):controller.signal.aborted?'timeout':'network-error',error instanceof LeaderboardError?error.status:0);
+      notifyFailure(this.onFailure,scope,error?.code==='timeout'||controller.signal.aborted?'timeout':error instanceof LeaderboardError?(error.status>=400?'http-error':'invalid-response'):'network-error',error instanceof LeaderboardError?error.status:0);
       if(error instanceof LeaderboardError)throw error;throw new LeaderboardError(error?.name==='AbortError'?'排行榜连接超时，请重试':'排行榜连接失败，请检查网络后重试',error?.name==='AbortError'?'timeout':'network');
     }
     finally{clearTimeout(timer);}
@@ -179,7 +185,10 @@ export class FXLeaderboard {
     }finally{this.pending=false;}
   }
   async publishFinished(state,report,{alias='',campaign=state?.runId}={}) {
-    const score=finishedLeaderboardScore(state,report,{storage:this.storage,includeVolatility:true}),name=normalizeLeaderboardAlias(alias);
+    let score;
+    try{score=finishedLeaderboardScore(state,report,{storage:this.storage,includeVolatility:true});}
+    catch(error){throw new LeaderboardError(error.message,error.code||'invalid-score');}
+    const name=normalizeLeaderboardAlias(alias);
     if(campaign!==state.runId)throw new LeaderboardError('成绩必须属于当前终局','input');
     this.assertConfigured();
     if(this.pending)throw new LeaderboardError('成绩正在处理，请稍候','pending');
@@ -187,6 +196,7 @@ export class FXLeaderboard {
     try{
       const token=await this.ensureToken(campaign);
       const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
+      if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
       if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       const result=await this.requestScore('',{method:'POST',data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign),this.volatilitySupported.has(campaign)),alias:name}});

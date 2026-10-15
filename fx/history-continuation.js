@@ -1,4 +1,4 @@
-import {simulationCalibration} from './quote-grid.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {simulationCalibration} from './quote-grid.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 const MINUTE=60000,SYMBOLS=['USD/JPY','AUD/JPY','GBP/JPY'];
 const active=s=>s.marketBook?.active||'USD/JPY';
 const price=(s,symbol)=>symbol===active(s)?s.price:s.marketBook?.markets?.[symbol]?.price;
@@ -8,9 +8,9 @@ export const historicalSimulationActive=s=>s?.historyContinuation?.version===1&&
 export const historicalEffectiveTime=s=>historicalSimulationActive(s)?s.historyContinuation.at:null;
 export const historicalMarkIsSimulated=(s,symbol=active(s))=>s?.historyContinuation?.origins?.[symbol]==='simulated';
 export function historicalSourceNotice(s){
- const c=s?.historyContinuation;if(!c)return '';
- if(!c.active)return c.simulatedSamples?'真实历史回放 · 本局含模拟补接':'';
- return c.reason==='exhausted'?'历史数据结束，已进入模拟续盘':'历史数据缺口，正在模拟补接';
+ // Normal transitions stay in source/segment evidence, away from play controls.
+ // An actual transport failure keeps its visible recovery path.
+ return s?.historical?.status==='error'?'行情加载失败，请重试。':'';
 }
 export function startHistoricalContinuation(s,reason='loading'){
  if(!s.historical||s.liveMarket)return false;

@@ -1,7 +1,7 @@
-import {PROP_STORIES} from './prop-stories.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {FATHER_THEFT_SCENES} from './father-theft-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {LIVING_MOVE_SCENES} from './living-move-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './approved-four-skits.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {PROP_STORIES} from './prop-stories.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './father-theft-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {LIVING_MOVE_SCENES} from './living-move-scenes.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './approved-four-skits.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 // Original four-panel game dialogue. Receipt gating lives in ../comic-scenes.js.
 // Keep this text aligned with the reviewed pixels; art/source records stay separate.
 const ORIGINAL_ACTION_SCENES = Object.freeze({

@@ -14,10 +14,13 @@ export class RankingLifecycle {
   this.clear();
   const task=Promise.resolve().then(async()=>{
    try{
-    const saved=await this.persist();
-    if(saved!==true||!same()){this.onStatus({state:'not-submitted',reason:saved===true?'stale':'save-pending'});return {submitted:false,reason:'save-pending'};}
+    // persist captures synchronously. Publish exactly that snapshot, never
+    // mutations made while its queued durable write is still pending.
+    const source=this.getState(),saving=this.persist(),snapshot=structuredClone(source);
+    const saved=await saving;
+    if(saved!==true||!same()||this.getState()!==source){const reason=saved===true?'stale':'save-pending';this.onStatus({state:'not-submitted',reason});return {submitted:false,reason};}
     this.onStatus({state:'submitting'});
-    const snapshot=structuredClone(this.getState()),result=await this.automatic.submitIfFinished(snapshot,this.report(snapshot));
+    const result=await this.automatic.submitIfFinished(snapshot,this.report(snapshot));
     if(same())this.onStatus({state:result?.submitted?'submitted':result?.retryAt?'retry-pending':result?.reason==='service-unconfigured'?'unconfigured':'not-submitted',reason:result?.reason});
     if(same()&&Number.isFinite(result?.retryAt))this.timer=this.schedule(()=>{this.timer=null;if(same())void this.submit();},Math.max(250,result.retryAt-Date.now()));
     return result;

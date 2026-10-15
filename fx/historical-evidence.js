@@ -1,6 +1,6 @@
 // Public report projection only. No provider, file path, local package URL or
 // unobserved price enters a result through arbitrary save metadata.
-import {hasHistoricalSimulation} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 const HASH=/^[a-f0-9]{64}$/;
 const symbols=['USD/JPY','AUD/JPY','GBP/JPY'];
 function validDate(value){return typeof value==='string'&&/^\d{4}-\d\d-\d\d$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;}

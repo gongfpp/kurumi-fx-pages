@@ -1,5 +1,5 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=259a194a807fb0628e1848b45093f34c3cbec7c9-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
 export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
