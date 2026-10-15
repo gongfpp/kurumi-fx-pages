@@ -1,4 +1,4 @@
-import {assetURL} from './assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {assetURL} from './assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 // Read-only presentation. The caller supplies certified realized trading net,
 // never balance, equity, borrowed cash, deposits or unrealized profit.
 const rows = {

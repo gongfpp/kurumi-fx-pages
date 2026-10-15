@@ -1,7 +1,7 @@
-import {marketPrice,positionMarket} from './market-book.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {DIALOGUE_BANK} from './dialogue-bank.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {DIALOGUE_BANK} from './dialogue-bank.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK,originalCandidates} from './original-dialogue.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 
 export const DIALOGUE_VERSION=7;
 const quotes=new Map(DIALOGUE_BANK.flatMap(q=>[[q.id,q],[q.alias,q]]));
@@ -120,6 +120,13 @@ function candidates(s,trigger){
   }).filter(entry=>entry.lines.length);
   if(trigger.startsWith('speech.')&&approved.length)return approved;
   return [...approved,...originalCandidates(s,trigger,dialogueFacts(s))];
+}
+// Display may use a sealed result or a floating reaction instead of the engine's
+// last mood. Resolve against that emotion and today's facts without advancing
+// dialogue memory, rewriting a save, or replaying an ineligible saved sentence.
+export function speechForEmotion(s,emotion){
+  const pool=candidates(s,'speech.'+emotion);
+  return (pool.find(entry=>entry.id===s.speech?.id)||pool[0])?.lines[0]?.text||'';
 }
 function hash(value){let n=2166136261;for(const c of value)n=Math.imul(n^c.charCodeAt(0),16777619);return n>>>0;}
 export function chooseDialogue(s,trigger){

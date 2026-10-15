@@ -1,6 +1,6 @@
-import {hasDevelopmentTaint} from './development-taint.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

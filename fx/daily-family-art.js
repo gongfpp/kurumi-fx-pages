@@ -1,10 +1,10 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {COMIC_SCENE_ASSETS} from './comic-scene-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {FATHER_DISCOVERY_ART} from './father-discovery.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 const FAMILY_EVENTS=new Set(['fatherDiscover','fatherUnlock','fatherFound','repayPartial','repayFull']);
 const positive=n=>Number.isFinite(n)&&n>0;
 const taken=s=>!!s.fatherUsed||!!s.family?.takenConfirmed||positive(s.family?.outstanding)||positive(s.family?.repaid)||positive(s.family?.withdrawal?.amount);

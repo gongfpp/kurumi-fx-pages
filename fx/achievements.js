@@ -1,8 +1,8 @@
-import {marketPrice,positionMarket} from './market-book.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {setImage} from './assets.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {setImage} from './assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -26,6 +26,17 @@ const finite = (n, fallback=0) => Number.isFinite(n) ? n : fallback;
 const positions = s => Array.isArray(s.positions) ? s.positions : s.position ? [s.position] : [];
 const closed = s => (s.history || []).filter(t => t.type !== 'open' && Number.isFinite(t.pnl));
 const pnl = (s,p) => finite(p.unrealized,finite(grossPnlAt(p,marketPrice(s,positionMarket(p)))));
+function profitBeforeMeal(s,trades){
+  // itemsUsed resets each day and says nothing about when profit was earned.
+  // Keep unlocked legacy profiles, but do not invent missing purchase history.
+  return (s.consumptionLedger||[]).some(receipt=>{
+    if(receipt.kind!=='item'||receipt.id!==`item:${receipt.day}:takeaway`||!(receipt.amount>0))return false;
+    if(typeof receipt.profitBeforePurchase==='boolean')return receipt.profitBeforePurchase;
+    // Old same-quote records cannot prove ordering. Only strictly earlier
+    // recorded profitable closes can recover an unlock without the new fact.
+    return Number.isFinite(receipt.timestamp)&&trades.some(trade=>trade.pnl>0&&Number.isFinite(trade.timestamp)&&trade.day<=receipt.day&&trade.timestamp<receipt.timestamp);
+  });
+}
 function evidence(s) {
   const trades=closed(s), active=positions(s), realized=Number.isFinite(s.performance?.totalProfit)&&s.performance.closedTrades>0?s.performance.totalProfit:trades.reduce((sum,t)=>sum+t.pnl,0);
   return {
@@ -39,7 +50,7 @@ function evidence(s) {
     'fully-repaid':s.fatherUsed&&s.family?.repaid>0&&s.family.repaid>=(Number.isFinite(s.family?.withdrawal?.amount)?s.family.withdrawal.amount:3000000)&&finite(s.family?.outstanding)===0?1:0,
     'accept-stop':trades.some(t=>t.type==='stop')?1:0,
     'mochiko-warning':s.itemsUsed?.mochiko||s.skills?.mochiko?1:0,
-    'profit-receipt':(s.itemsUsed?.takeaway&&realized>0)||trades.some(t=>t.type==='receipt'&&t.pnl>0)?1:0,
+    'profit-receipt':profitBeforeMeal(s,trades)?1:0,
     'saved-at-last':trades.some(t=>t.pnl>0&&(t.nearMiss||t.minUnrealized<=-t.margin*.65))?1:0,
     'walkaway':s.phase==='ending'&&s.ending?.id==='walkaway'?1:0,
     'twenty-million':Math.max(0,realized)

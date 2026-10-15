@@ -1,8 +1,8 @@
-import {randomUUID} from './uuid.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {safeFailure,ERROR_REPORT_LIMITS} from './error-reporting.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {safeFailure,ERROR_REPORT_LIMITS} from './error-reporting.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);

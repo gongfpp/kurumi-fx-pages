@@ -1,10 +1,10 @@
-import {MultiHistoryProvider} from './multi-history-provider.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=04c4c7b885b82e51359b1c13d8a6e7224b69e3c2-23f2a20b7717';
+import {MultiHistoryProvider} from './multi-history-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){
