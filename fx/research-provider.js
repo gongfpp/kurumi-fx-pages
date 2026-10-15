@@ -1,4 +1,6 @@
 // Separate research contract. M1 observations are never coerced into bid/ask ticks.
+import {describeHistoricalCoverage} from './history-coverage.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {validateM1DayLabels,validateM1ObservedCoverage} from './m1-source-contract.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const MAX=16*1024*1024;
 export const RESEARCH_SYMBOLS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);
 const HASH=/^[a-f0-9]{64}$/;const JST=32400000,DAY=86400000;
@@ -21,10 +23,12 @@ export class ResearchProvider{
   if(!Number.isSafeInteger(raw.rows)||raw.rows<1||raw.rows>31*1440||raw.days.length<1||raw.days.length>31||!/^\d{4}-(0[1-9]|1[0-2])$/.test(raw.utcMonth)||![raw.csv.bytes,raw.gzip.bytes].every(n=>Number.isSafeInteger(n)&&n>0&&n<=MAX)||!/^[-\w.]+\.csv\.gz$/.test(raw.gzip.file)||raw.gaps!=null&&(!Array.isArray(raw.gaps)||raw.gaps.length>raw.rows))fail('月份尺寸或路径无效');
   const base=new URL(baseURL);if(!['https:','http:'].includes(base.protocol)||base.username||base.password||!/^\/admin\/research\/months\/[-\w.]+\.json$/.test(base.pathname)||base.search||base.hash)fail('月份来源路径无效');
   this.#raw=JSON.parse(JSON.stringify(raw));this.#fetch=fetch;this.#base=baseURL;
+  validateM1DayLabels(raw);
   const dates=new Set();for(const d of raw.days){let first=Date.parse(d.firstLabelUTC)+60000,last=Date.parse(d.lastLabelUTC)+60000;if(!Number.isFinite(first+last)||last<first||last-first>=DAY||new Date(first-60000).toISOString().slice(0,7)!==raw.utcMonth||new Date(last-60000).toISOString().slice(0,7)!==raw.utcMonth)fail('日期无效');for(let t=Math.floor((first+JST)/DAY)*DAY-JST;t<=last;t+=DAY)dates.add(date(t));}
   this.manifest=Object.freeze({schemaVersion:'research-m1-close-v1',id:'research-forexite-'+(raw.symbol==='USDJPY'?'':raw.symbol.toLowerCase()+'-')+raw.utcMonth,version:raw.csv.sha256,symbol:raw.symbol,timeZone:'Asia/Tokyo',quoteType:'observed-single-close',gapThresholdMs:60000,source:{sha256:raw.csv.sha256,url:'https://www.forexite.com/free_forex_quotes/forex_history_arhiv.html'},research:{timestampMeaning:raw.timestampMeaning,quoteSide:raw.quoteSide,availabilityModel:'label-plus-60-seconds',executionModel:'observed-close-only',spreadModel:'none',feesModel:'game-fee-rate'},days:[...dates].sort().map(day=>({date:day,sha256:raw.csv.sha256,gaps:(raw.gaps||[]).filter(g=>date(Date.parse(g.to)+60000)===day).map(g=>({fromMs:Date.parse(g.from)+60000,toMs:Date.parse(g.to)+60000,classification:g.classification}))}))});
  }
  clear(){this.#month=null;}
+ get coverage(){return describeHistoricalCoverage(this.manifest,{rawM1:this.#raw,payloadVerified:this.#month!==null});}
  get cachedDates(){return this.#month?[...this.#month.keys()]:[];}
  async #load(){
   if(this.#month)return this.#month;if(this.#pending)return this.#pending;
@@ -41,6 +45,7 @@ export class ResearchProvider{
     const bar=Object.freeze({labelAt:t,availableAt:t+60000,open:o,high:h,low:l,close:c}),key=date(bar.availableAt);if(!days.has(key))days.set(key,[]);days.get(key).push(bar);
    }
    if(count!==this.#raw.rows||[...days.keys()].join()!==this.manifest.days.map(d=>d.date).join())fail('覆盖范围不符');
+   validateM1ObservedCoverage(this.#raw,[...days.values()].flatMap(bars=>bars.map(b=>b.labelAt)));
    this.#month=days;return days;
   })();try{return await this.#pending;}finally{this.#pending=null;}
  }

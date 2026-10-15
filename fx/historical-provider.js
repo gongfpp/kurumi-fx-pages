@@ -1,4 +1,5 @@
 // Historical data transport only. No prices are generated, interpolated or repaired.
+import {describeHistoricalCoverage} from './history-coverage.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export const EMPTY_HISTORICAL_CATALOG=Object.freeze({schemaVersion:1,datasets:Object.freeze([])});
 const DAY=86400000,JST=9*3600000,HASH=/^[a-f0-9]{64}$/;
 const DATE=/^\d{4}-\d{2}-\d{2}$/;
@@ -37,6 +38,7 @@ export class HistoricalProvider{
  #manifest;#fetch;#base;#cache=new Map();#pending=new Map();#generation=0;
  constructor(manifest,{fetch:fetchFn=globalThis.fetch,baseURL=globalThis.location?.href||'http://localhost/'}={}){this.#manifest=validateHistoricalManifest(manifest);if(typeof fetchFn!=='function')fail('fetch unavailable');this.#fetch=(...args)=>fetchFn(...args);this.#base=baseURL;}
  get manifest(){return this.#manifest;}
+ get coverage(){return describeHistoricalCoverage(this.#manifest);}
  get cachedDates(){return [...this.#cache.keys()];}
  clear(){this.#cache.clear();this.#pending.clear();this.#generation++;}
  async loadDay(date){

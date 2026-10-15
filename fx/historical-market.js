@@ -1,10 +1,12 @@
-import {MultiHistoryProvider} from './multi-history-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {MultiHistoryProvider} from './multi-history-provider.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){
@@ -28,11 +30,11 @@ export class HistoricalMarketLibrary{
 }
 // Pure chronological batching: all intermediate ticks execute, only paint is coalesced.
 export function advanceHistoricalBatch(state,step,{speed=1,maxTicks=256,budgetMs=8,now=()=>performance.now()}={}){
- const start=now(),until=state.historical.lastQuote[0]+7500*speed,exits=[];let result=null,count=0,candleClosed=false,gapDurationMs=0;
+ const start=now(),until=currentTradingTimestamp(state)+7500*speed,exits=[];let result=null,count=0,candleClosed=false,gapDurationMs=0;
  while(count<maxTicks&&now()-start<budgetMs){
-  if(state.marketPaused||state.historical.status!=='ready')break;
+  if(state.marketPaused||state.historical.status!=='ready'&&!historicalSimulationActive(state))break;
   result=step(state);count++;exits.push(...(result.exits||[]));candleClosed ||= !!result.candleClosed;gapDurationMs=Math.max(gapDurationMs,result.gapDurationMs||0);
-  if(result.blocked||result.dayEnded||state.historical.lastQuote[0]>=until||!['decision','playing'].includes(state.phase))break;
+  if(result.blocked||result.dayEnded||result.sourceBoundary||currentTradingTimestamp(state)>=until||!['decision','playing'].includes(state.phase))break;
  }
  return result?{...result,exits,exit:exits[0]||null,candleClosed,batchTicks:count,...(gapDurationMs?{gapDurationMs}:{})}:null;
 }

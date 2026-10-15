@@ -1,10 +1,10 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {originalPublicationUrl} from './news-source-view.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {displayedNewsItems} from './displayed-news-session.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {newsSourceDetails} from './news-source-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {displayedNewsItems} from './displayed-news-session.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 // Compact labels use the viewed market date only as a comparison. The item's
 // own publication instant supplies its JST day/time; availability is not a clock.
@@ -47,11 +47,11 @@ export function mountMobileNewsList({document:doc=globalThis.document,onClose=()
  function row(item,index,scope){const button=make('button','mobile-news-row'),time=make('time','',scope==='three'?(item.listTime??item.time??''):(item.time||'')),label=make('span','',item.title||'');button.type='button';button.dataset.newsIndex=String(index);button.dataset.newsScope=scope;button.setAttribute('aria-haspopup','dialog');time.setAttribute('aria-label',item.time||'');time.title=item.time||'';button.append(time,label,make('span','mobile-news-chevron','›'));return button;}
  function renderList(restore=false){listMode=true;back.hidden=true;title.textContent='市场快讯';body.replaceChildren();snapshot.forEach((item,index)=>body.append(row(item,index,'all')));if(!snapshot.length)body.append(make('p','','暂无快讯'));if(restore){body.scrollTop=listScroll;const scroller=dialog.querySelector('.dialog-scroll');if(scroller)scroller.scrollTop=listShellScroll;body.querySelectorAll('[data-news-index]')[selectedIndex]?.focus({preventScroll:true});}}
  function source(item,parent){
-  if(item.contentKind==='fictional_market_event'||item.swan)return;
-  const url=originalPublicationUrl(item);if(!url)return;
-  const line=make('p','mobile-news-source'),a=make('a','','原始发布');a.href=url;a.target='_blank';a.rel='noopener noreferrer';line.append(a);
-  if(item.sourceAttribution)line.append(make('span','',` · ${item.sourceAttribution}${item.summaryNotice?' · '+item.summaryNotice:''}`));
-  const license=originalPublicationUrl({sourceUrl:item.sourceLicenseUrl});if(license){const link=make('a','',' · CC BY 4.0');link.href=license;link.target='_blank';link.rel='noopener noreferrer';line.append(link);}parent.append(line);
+  const {url,attribution,licenseUrl}=newsSourceDetails(item);if(!url&&!attribution&&!licenseUrl)return;
+  const line=make('p','mobile-news-source');
+  if(url){const a=make('a','','原始发布');a.href=url;a.target='_blank';a.rel='noopener noreferrer';line.append(a);}
+  if(attribution)line.append(make('span','',`${url?' · ':''}${attribution}`));
+  if(licenseUrl){const link=make('a','',`${url||attribution?' · ':''}CC BY 4.0`);link.href=licenseUrl;link.target='_blank';link.rel='noopener noreferrer';line.append(link);}parent.append(line);
  }
  function showItem(item,fromList,index=0){
   if(fromList){selectedIndex=index;listScroll=body.scrollTop;listShellScroll=dialog.querySelector('.dialog-scroll')?.scrollTop||0;}

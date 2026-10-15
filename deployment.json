@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "0b963eb22fa5097125d08d271aff291f07e79853",
-  "assetVersion": "0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717",
+  "sourceCommit": "2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b",
+  "assetVersion": "2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -10,7 +10,7 @@
     "pagesPath": "/kurumi-fx-pages/"
   },
   "retainedHistory": {
-    "baseCommit": "8d517a91a79e62a896386fa812ffd2468bff94f0",
+    "baseCommit": "58c344f81be92cf70ebdc3b6416079dc5c0f7fa0",
     "entries": [
       {
         "path": "fx/history-data/2008-10/USDJPY-2008-10.forexite.m1.csv.gz",

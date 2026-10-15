@@ -7,6 +7,7 @@ export function simpleMovingAverage(candles,period){
  if(!Array.isArray(candles))return[];
  const window=[];
  return candles.map(candle=>{
+   if(candle?.sourceBreak===true)window.length=0;
    const close=candle?.close;
    if(candle?.closed!==true||!Number.isFinite(close)||close<=0){window.length=0;return null;}
    window.push(close);if(window.length>period)window.shift();if(window.length<period)return null;

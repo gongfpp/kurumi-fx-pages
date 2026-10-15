@@ -1,4 +1,4 @@
-import {sealedDailyTradeEvidence,retainedTimeline,shortProfitEvidence} from './contextual-trade-evidence.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline,shortProfitEvidence} from './contextual-trade-evidence.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 // Day two after an empty day one is not the first game day. Read-only proof.
 export function firstDayBackstoryEvidence(state){
  if(state?.day!==1||!shortProfitEvidence(state))return null;

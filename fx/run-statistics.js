@@ -1,6 +1,8 @@
-import {safeLiveTradeEvidence} from './live-market-state.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {MARKETS,positionMarket} from './market-book.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals
@@ -15,6 +17,8 @@ function safeTrade(t,s,{legacy=false}={}){
  const result={...(s.marketBook||t.symbol?{symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null}:{}),sequence:0,type:['open','half','close','rescue','stop','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
  for(const key of ['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'])result[key]=Number.isFinite(t[key])?t[key]:null;
  const evidence=safeLiveTradeEvidence(t.liveQuote);if(evidence){result.liveQuote=evidence;result.timePrecision='provider-quote';}
+ const historical=safeHistoricalTradeEvidence(t);if(historical){result.historicalQuote=historical;result.timePrecision='historical-quote';}
+ const segment=safeHistoricalSegmentEvidence(t.marketSegment);if(segment){result.marketSegment=segment;if(segment.source==='simulated')result.timePrecision='simulated-continuation';}
  result.positionClosed=t.positionClosed===true;return result;
 }
 function append(stats,trade){trade.sequence=++stats.executions;stats.trades.push(trade);if(stats.trades.length>RUN_TRADE_LIMIT){stats.trades=stats.trades.slice(-RUN_TRADE_LIMIT);stats.timelinePartial=true;}}

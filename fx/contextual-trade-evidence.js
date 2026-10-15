@@ -1,4 +1,15 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+
+function validExecutionTimeSource(state,trade){
+ if(trade.timePrecision==='game-clock')return !trade.historicalQuote&&!trade.marketSegment;
+ if(![1,2,3].includes(state.historical?.version))return false;
+ const segment=safeHistoricalSegmentEvidence(trade.marketSegment);
+ if(trade.marketSegment&&(!segment||segment.timestamp!==trade.timestamp||!hasHistoricalSimulation(state)))return false;
+ if(trade.timePrecision==='historical-quote')return safeHistoricalTradeEvidence(trade)?.sourceTimestamp===trade.timestamp&&(!segment||segment.source==='historical');
+ return trade.timePrecision==='simulated-continuation'&&segment?.source==='simulated'&&segment.timestamp===trade.timestamp;
+}
 
 const positive=n=>Number.isFinite(n)&&n>0;
 const nonnegative=n=>Number.isFinite(n)&&n>=0;
@@ -132,7 +143,7 @@ export function retainedTimeline(state,evidence){
  if(Object.hasOwn(stats,'runId')&&stats.runId!==state.runId)return null;
  const trades=stats.trades;
  for(const [index,t] of trades.entries()){
-  if(!t||t.sequence!==index+1||!Number.isSafeInteger(t.day)||t.day<1||t.day>state.day||!integer(t.beat)||!positive(t.timestamp)||t.timePrecision!=='game-clock'||!/^order-\d{1,15}$/.test(t.positionId||'')||![1,-1].includes(t.direction)||!['entry','quantity','margin','leverage'].every(k=>positive(t[k])))return null;
+  if(!t||t.sequence!==index+1||!Number.isSafeInteger(t.day)||t.day<1||t.day>state.day||!integer(t.beat)||!positive(t.timestamp)||!validExecutionTimeSource(state,t)||!/^order-\d{1,15}$/.test(t.positionId||'')||![1,-1].includes(t.direction)||!['entry','quantity','margin','leverage'].every(k=>positive(t[k])))return null;
   if(Object.hasOwn(t,'pnlModel')&&t.pnlModel!=='usd-jpy-v6')return null;
   if(t.type!=='open'&&!closeTypes.has(t.type))return null;
   if(index&&(t.day<trades[index-1].day||t.day===trades[index-1].day&&t.beat<trades[index-1].beat||t.timestamp<trades[index-1].timestamp))return null;

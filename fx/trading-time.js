@@ -1,4 +1,5 @@
-import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {historicalEffectiveTime} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 // A deterministic fictional market clock. Playback milliseconds never enter it.
 const MINUTE=60000,DAY=86400000;
 export const TRADING_CLOCK_VERSION=1;
@@ -17,6 +18,17 @@ export function tradingClock(state={}){
 export function ensureTradingClock(state){state.tradingClock=tradingClock(state);return state.tradingClock;}
 export function tradingTimestamp(state,{day=state.day||1,beat=0,candle=0,tick=0}={}){
  if(isLiveMarket(state))return day===state.day?state.liveMarket.openingAt??liveTimestamp(state):state.accountingJournal?.days?.find(row=>row.day===day)?.timestamp??null;
+ // Historical sessions have source timestamps, never the fictional session grid.
+ // During a next-day load, lastQuote still belongs to the preceding source day.
+ if([1,2,3].includes(state.historical?.version)){
+  const h=state.historical;
+  if(state.historyContinuation?.progressDay===day&&Number.isFinite(state.historyContinuation.dayOpeningAt))return state.historyContinuation.dayOpeningAt;
+  if(day===state.day&&h.cursor>0&&Number.isFinite(h.dayOpeningAt))return h.dayOpeningAt;
+  const report=state.dayReport?.day===day?state.dayReport:null;
+  if(Number.isFinite(report?.openedAt))return report.openedAt;
+  const opening=state.accountingJournal?.points?.find(row=>row.day===day&&['opening','start'].includes(row.kind));
+  return Number.isFinite(opening?.timestamp)?opening.timestamp:null;
+ }
  const clock=tradingClock(state),date=businessDate(clock.epochMs,Math.max(0,integer(day,1)-1));
  const b=integer(beat),start=SESSION_MINUTES[b]??SESSION_MINUTES.at(-1)+(b-4)*60;
  return date+(start+integer(candle)*CANDLE_MINUTES+Math.min(6,integer(tick))*CANDLE_MINUTES/6)*MINUTE;
@@ -30,6 +42,7 @@ function lastObservedTimestamp(state,day=state.day,cursor=state.pending||state.e
 }
 export function currentTradingTimestamp(state){
  if(isLiveMarket(state))return state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase)&&Number.isFinite(state.dayReport.closedAt)?state.dayReport.closedAt:liveTimestamp(state);
+ if(Number.isFinite(historicalEffectiveTime(state)))return state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase)&&Number.isFinite(state.dayReport.closedAt)?state.dayReport.closedAt:historicalEffectiveTime(state);
  if([1,2,3].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
  if(state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase))return reportTradingTimestamp(state,state.dayReport);
  if(state.earlyClose?.day===state.day&&state.phase==='closing')return Number.isFinite(state.earlyClose.timestamp)?state.earlyClose.timestamp:tradingTimestamp(state,state.earlyClose);
@@ -43,6 +56,7 @@ export function currentTradingTimestamp(state){
 export function reportTradingTimestamp(state,report=state.dayReport){
  if(isLiveMarket(state))return Number.isFinite(report?.closedAt)?report.closedAt:liveTimestamp(state);
  if(Number.isFinite(report?.closedAt))return report.closedAt;
+ if([1,2,3].includes(state.historical?.version))return report?.day===state.day||!report?historicalEffectiveTime(state)??state.historical.lastQuote?.[0]??null:state.accountingJournal?.days?.find(row=>row.day===report.day)?.timestamp??null;
  if(report?.earlyClose)return Number.isFinite(report.earlyClose.timestamp)?report.earlyClose.timestamp:lastObservedTimestamp(state,report.day,report.earlyClose)??tradingTimestamp(state,report.earlyClose);
  return tradingTimestamp(state,{day:report?.day||state.day||1,beat:Math.max(0,(report?.beat||4)-1),candle:3,tick:6});
 }

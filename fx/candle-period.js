@@ -1,7 +1,7 @@
-import {isLiveMarket} from './live-market-state.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export const CANDLE_PERIODS=Object.freeze([{minutes:1440,label:'日K',hz:1},{minutes:15,label:'15分钟',hz:1},{minutes:5,label:'5分钟',hz:1},{minutes:1,label:'1分钟',hz:1}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;
@@ -32,7 +32,7 @@ export function aggregateCandles(source,minutes,now){
  const result=[],duration=minutes*MINUTE,offset=minutes===1440?JST:0;
  for(const c of source){if(!Number.isFinite(c.timestamp)||c.timestamp>now||(c.availableAt??c.firstQuoteAt??c.timestamp)>now)continue;
   const bucket=Math.floor((c.timestamp+offset)/duration)*duration-offset,last=result.at(-1);
-  if(last&&last.timestamp===bucket){last.day=c.day;last.close=c.close;last.high=Math.max(last.high,c.high);last.low=Math.min(last.low,c.low);last.closed=last.closed&&c.closed;last.lastQuoteAt=c.lastQuoteAt??c.timestamp;}
+  if(last&&last.timestamp===bucket&&(last.sourceSegment??0)===(c.sourceSegment??0)&&(last.sourceKind??'historical')===(c.sourceKind??'historical')){last.day=c.day;last.close=c.close;last.high=Math.max(last.high,c.high);last.low=Math.min(last.low,c.low);last.closed=last.closed&&c.closed;last.lastQuoteAt=c.lastQuoteAt??c.timestamp;if(c.sourceKind)last.sourceKind=c.sourceKind;if(c.sourceSegment!==undefined)last.sourceSegment=c.sourceSegment;}
   else result.push({...c,timestamp:bucket,periodMinutes:minutes,closed:!!c.closed});
  }
  for(const c of result)c.closed=!!c.closed&&c.timestamp+duration<=now;
@@ -42,7 +42,7 @@ export function displayCandles(s){
  const minutes=candlePeriod(s),now=currentTradingTimestamp(s),research=[2,3].includes(s.historical?.version);
  const source=research?(s.displayMinutes?.length?s.displayMinutes:timedCandles(s)):minutes<15?(s.displayMinutes||[]):timedCandles(s);
  // Simulated source bars start on the actual session grid (09:10 etc.).
- if(minutes===15&&!research&&!isLiveMarket(s))return source.map(c=>({...c,periodMinutes:15}));
+ if(minutes===15&&!research&&!isLiveMarket(s)&&!s.historical)return source.map(c=>({...c,periodMinutes:15}));
  return aggregateCandles(source,minutes,now);
 }
 export function candlePeriodMarkup(s){

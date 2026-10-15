@@ -1,6 +1,8 @@
-import {pendingStory,chooseStory} from './story.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {pendingStory,chooseStory} from './story.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectMainStory,canCompleteMainStory,completeMainStory} from './main-story.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {captureFirstDayOriginalRecall} from './firstday-original-recall.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export function prepareDailyNarrative(state,{accountEquity}={}){
  if(state.mode==='endless'||state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
  applyFatherDiscovery(state,{type:'migrate'});
@@ -8,7 +10,10 @@ export function prepareDailyNarrative(state,{accountEquity}={}){
   const candidate=fatherDiscoveryCandidate(state,{accountEquity});
   if(candidate?.canPresent)applyFatherDiscovery(state,{type:'start'},{accountEquity});
  }
+ const fresh=!state.settlementNarrative||state.settlementNarrative.day!==state.day;
  const saved=keepNarrativeSnapshot(state,pendingStory(state));
+ // Never retrofit an already locked day, including a legacy empty snapshot.
+ if(fresh){saved.mainStory=selectMainStory(state);captureFirstDayOriginalRecall(state);}
  if(fatherDiscoveryPresentation(state)&&!saved.fatherFrames){saved.fatherFrames=fatherDiscoverySequence(state);saved.fatherDiscovery=true;}
  return saved;
 }
@@ -18,6 +23,7 @@ export function finishDailyNarrative(state,{choiceId}={}){
  const n=state.settlementNarrative;
  if(state.mode==='endless'||!n||n.day!==state.day||state.phase!=='resting')return{ok:false,reason:'no-current-narrative',hooks:[]};
  if(n.effectsApplied)return{ok:true,changed:false,hooks:[]};
+ if(!canCompleteMainStory(state,n.mainStory))return{ok:false,reason:'main-story-changed',hooks:[]};
  let result=null,hooks=[];
  if(n.fatherDiscovery){
   for(let count=0;count<3;count++){
@@ -38,6 +44,7 @@ export function finishDailyNarrative(state,{choiceId}={}){
   }
  }
  if(n.fatherDiscovery&&hooks.length){state.story.log ||= [];state.story.log.push({id:n.fatherFrames?.[0]?.purpose==='reminder'?'fatherCabinetReminder':'fatherDiscover',day:state.day,beat:state.beat,choice:'acknowledge-discovery'});state.story.log=state.story.log.slice(-40);}
+ completeMainStory(state,n.mainStory);
  state.story.presentedDay=state.day;n.effectsApplied=true;
  return{ok:true,changed:true,result,hooks};
 }

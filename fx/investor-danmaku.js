@@ -1,8 +1,8 @@
-import {LIBRARY_COPY} from './copy/library-ui.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {MARKET_COMMENTS} from './market-comments.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;
@@ -124,7 +124,7 @@ export function eligibleMarketComments(comments=MARKET_COMMENTS,state=null){
 export const COMMENT_LANE_GAP=42;
 export const COMMENT_MAX_VISIBLE=16;
 export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments=ORIGINAL_MARKET_COMMENTS,measureWidth=text=>text.length*14}={}){
- const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,active=[];
+ const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,active=[],datedPool=new Set();
  return{
   // Replace the public snapshot, rather than append on every poll or resume.
   setPlayerComments(rows){playerPool=eligiblePlayerComments(rows);},
@@ -132,11 +132,16 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    if(wall!==null&&!paused&&!pause)clock+=Math.max(0,Math.min(2000,now-wall)); // no replay after a sleeping tab
    wall=now;paused=pause;
    width=Math.max(200,width||400);
-   const pool=eligibleMarketComments(catalogue,state),originalPool=eligibleOriginalComments(state,originalComments),run=`${state.mode}:${state.runId||state.seed}`,scopeChanged=key!==run,reset=scopeChanged||reduced!==reduce;
+   const pool=eligibleMarketComments(catalogue,state),originalPool=eligibleOriginalComments(state,originalComments),run=`${state.mode}:${state.runId||state.seed}`,scopeChanged=key!==run,hardReset=scopeChanged||reduced!==reduce;
+   const nextDatedPool=new Set(pool.filter(row=>row.reuse_scope==='dated_personal_event').map(row=>row.id)),withdrawn=[...datedPool].filter(id=>!nextDatedPool.has(id));datedPool=nextDatedPool;
+   const reset=hardReset||withdrawn.length>0;
    // Eligibility and container width affect future rows, never the current run.
-   if(reset){key=run;reduced=reduce;lanes.fill(null);active=[];laneCursor=0;nextAt=clock;}
-   active=active.filter(row=>row.expires>clock);
-   const activity=marketCommentActivity(state),result={clock,reset,scopeChanged,paused:pause,reduced:reduce,activity,row:null};
+   if(hardReset){key=run;reduced=reduce;lanes.fill(null);active=[];laneCursor=0;nextAt=clock;}
+   // A date/source rollback must also withdraw an already visible dated event.
+   // Keep unrelated rows and lane reservations: clearing one reservation could
+   // let a new follower collide with an earlier line still travelling there.
+   active=active.filter(row=>row.expires>clock&&!(row.dated&&withdrawn.includes(row.id)));
+   const activity=marketCommentActivity(state),result={clock,reset,hardReset,withdrawn,scopeChanged:scopeChanged||withdrawn.length>0,paused:pause,reduced:reduce,activity,row:null};
    if(pause||clock<nextAt||active.length>=COMMENT_MAX_VISIBLE||!pool.length&&!originalPool.length)return result;
    let lane=reduce?0:-1;
    if(!reduce)for(let n=0;n<activity.lanes;n++){
@@ -172,7 +177,7 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    if(row.source==='player'){shownPlayerIds.add(row.id);marketSincePlayer=0;}else marketSincePlayer=Math.min(3,marketSincePlayer+1);
    if(row.source==='fictional'){seenThemes.set(row.theme_id,clock);marketSinceOriginal=0;}else if(row.source!=='player')marketSinceOriginal=1;
    seen.set(commentRepeatKey(row),clock);lanes[lane]={origin:width,startedAt:clock,textWidth,expires:clock+duration,speed};
-   active.push({expires:clock+duration});
+   active.push({expires:clock+duration,id:row.id,dated:row.reuse_scope==='dated_personal_event'&&row.source!=='player'});
    laneCursor=(lane+1)%activity.lanes;nextAt=clock+Math.max(activity.interval,reduce?30000:0);
    result.row={...row,lane,duration,textWidth,speed,origin:width,expires:clock+duration};return result;
   }
@@ -191,8 +196,9 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
    const effectivePaused=paused||root.contains?.(document.activeElement)===true;
    const frame=schedule.update(state,{now:now(),pause:effectivePaused,reduce:reducedMotion,width:root.clientWidth});
    root.dataset.activity=frame.activity.level;root.dataset.lanes=String(frame.activity.lanes);root.dataset.paused=String(effectivePaused);root.dataset.reduced=String(reducedMotion);
-   if(frame.reset)clearLines(reducedMotion&&!frame.scopeChanged?[...root.children].at(-1):null);
+   if(frame.hardReset)clearLines(reducedMotion&&!frame.scopeChanged?[...root.children].at(-1):null);
    for(const child of [...root.children]){
+    if(child.dataset.source!=='player'&&frame.withdrawn.includes(child.dataset.commentId)){removeLine(child);continue;}
     if(!reducedMotion&&Number(child.dataset.expires)<=frame.clock){removeLine(child);continue;}
     const record=lines.get(child),animation=child.getAnimations?.().find(a=>a.animationName==='investor-comment-right-to-left');
     // Moving the native list between skins can recreate its CSS animation.

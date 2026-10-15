@@ -1,4 +1,4 @@
-import {marketInfo} from './market-book.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {marketInfo} from './market-book.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export const PAIR='USD/JPY',QUOTE_UNIT='日元/1 美元',PIP_SIZE=.01;
 export const formatQuote=n=>Number.isFinite(n)?n.toFixed(3):'—';
 export const formatQuantity=n=>Number.isFinite(n)?n.toLocaleString('zh-CN',{maximumFractionDigits:2}):'—';

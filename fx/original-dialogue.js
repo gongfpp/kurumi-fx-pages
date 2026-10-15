@@ -1,5 +1,5 @@
-import {activeMarket,positionMarket,marketPrice} from './market-book.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {activeMarket,positionMarket,marketPrice} from './market-book.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {ORIGINAL_DIALOGUE_BANK} from './copy/original-lines.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 export {ORIGINAL_DIALOGUE_BANK};
 // All market/stance/swan directions refer to the USD/JPY quote, not yen strength.
 // Only public, already-rendered market observations are read here. Never inspect script/tracks.

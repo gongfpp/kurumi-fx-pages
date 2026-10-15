@@ -1,8 +1,8 @@
-import {followConfidenceDailyContentIdentity} from './contextual-manga-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {setImage} from './assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {fixedDailyContentIdentity} from './contextual-manga-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {setImage} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const mountedViews=new WeakMap();
 // Inline presentation only. Reading memory never changes game/account state.
 export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){
@@ -14,7 +14,7 @@ export function mountContextualManga(host,selection,{manual=true,unreadOnly=fals
  // Recover only from every current, nonempty content identity; never from the
  // chapter selection, a record number, or a partial/previous panel list.
  const completeRead=(choice,recover=false)=>{
-  if(choice.completionIdentity&&choice.completionIdentity!==followConfidenceDailyContentIdentity(choice))return false;
+  if(choice.completionIdentity&&choice.completionIdentity!==fixedDailyContentIdentity(choice))return false;
   const assets=choice.nodes.flatMap(node=>node.panels.map(panel=>CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record])),ids=assets.map(artIdentity);
   const complete=ids.length>0&&ids.every(id=>id&&memory.has(id));
   // Path-only legacy identities cannot establish unchanged content on mount.

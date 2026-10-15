@@ -1,5 +1,5 @@
-import {importHistoricalPackage} from './historical-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {createLocalResearchFile,importResearchPackage} from './research-import.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {importHistoricalPackage} from './historical-import.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {createLocalResearchFile,importResearchPackage} from './research-import.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const ORIGIN='https://kurumi-fx-api.gongfpp.chatgpt.site';
 const ROOT='/api/fx/history/';
 const TICK={path:'2014-02/package.fxhistory.gz',bytes:4916015,sha256:'bc75bc22cc39bc4226d2391d581edd19b6e14fefa4f09eacd7e0dfc608ff0b2a',plainBytes:30003926,plainHash:'be0c299bf10fe20ad23963fe2c39580e33a44fba9db6821fd279b18a6f5782a8'};

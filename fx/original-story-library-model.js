@@ -1,12 +1,12 @@
-import {ACTION_SCENES} from './copy/action-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {DINNER_STORIES} from './copy/dinner-stories.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {inspectDailyFallbackCatalog} from './daily-fallback-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {inspectLifeSceneCatalog} from './life-scene-schema.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {mangaLibraryEntries} from './manga-collection-model.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {DINNER_STORIES} from './copy/dinner-stories.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {inspectDailyFallbackCatalog} from './daily-fallback-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {inspectLifeSceneCatalog} from './life-scene-schema.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {mangaLibraryEntries} from './manga-collection-model.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 // A browse-only projection of the existing complete scripts and their own art.
 // No game state, receipt, trigger, achievement or natural-reading memory is used.

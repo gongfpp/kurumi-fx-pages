@@ -1,9 +1,10 @@
-import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 let worker=null,nextId=0;const pending=new Map();
 function failWorker(){for(const task of pending.values()){clearTimeout(task.timer);task.reject(new Error('Save encoder unavailable'));}pending.clear();worker?.terminate();worker=null;}
 export function encodeProgress(currentRaw,previousRaw=null,{replacement=false}={}){
  // Plain small saves preserve existing scheduling and compatibility.
- if(![15,16,17].includes(JSON.parse(currentRaw)?.version)&&!replacement&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!(previousRaw!==null&&inspectSave(previousRaw).compressed))return currentRaw;
+ const state=JSON.parse(currentRaw);
+ if(!state?.historyContinuation&&![15,16,17].includes(state?.version)&&!replacement&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!(previousRaw!==null&&inspectSave(previousRaw).compressed))return currentRaw;
  if(typeof globalThis.Worker!=='function')return encodeSaveRaw(currentRaw,previousRaw,{replacement});
  if(!worker){
   const url=new URL('./save-codec-worker.js',import.meta.url);url.search=new URL(import.meta.url).search;

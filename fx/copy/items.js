@@ -1,4 +1,4 @@
-import {LIVING_CHOICE_COPY} from './living-choices.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './living-choices.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 // 玩家可直接编辑名称与效果说明；cost 为游戏价格。
 export const PROPS = {
  // Game-original convenience item; the source scenes do not identify an exact drink.

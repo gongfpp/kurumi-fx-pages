@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});

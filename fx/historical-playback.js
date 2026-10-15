@@ -1,9 +1,10 @@
-import {isResearch} from './historical-replay.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {isResearch} from './historical-replay.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.
-export function historicalStepMilliseconds(state,speed=1){return isResearch(state)?400/multiplier(speed):50;}
+export function historicalStepMilliseconds(state,speed=1){return isResearch(state)||historicalSimulationActive(state)?400/multiplier(speed):50;}
 export function advanceHistoricalPlayback(state,step,{speed=1,...options}={}){
  return isResearch(state)?step(state):advanceHistoricalBatch(state,step,{...options,speed:multiplier(speed)});
 }

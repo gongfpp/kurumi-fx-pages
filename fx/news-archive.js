@@ -1,16 +1,18 @@
-import {NEWS_2014} from './news-2014.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_VERIFIED_EXPANSION} from './news-2014-verified-expansion.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_VERIFIED_FOLLOWUP} from './news-2014-verified-followup.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {NEWS_2014_VERIFIED_FIVE} from './news-2014-verified-five.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {NEWS_2014} from './news-2014.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_ADDITIONS} from './news-2014-additions.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_BATCH2} from './news-2014-batch2.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_REVIEWED} from './news-2014-reviewed.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_NEXT_BATCH} from './news-2014-next-batch.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_VERIFIED_EXPANSION} from './news-2014-verified-expansion.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_VERIFIED_FOLLOWUP} from './news-2014-verified-followup.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_VERIFIED_FIVE} from './news-2014-verified-five.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_PUBLIC_BATCH6} from './news-2014-public-batch6.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {NEWS_2014_PUBLIC_SUPPLEMENT} from './news-2014-public-supplement.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext} from './news-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {archiveTopicMatch,revealedNewsTopics} from './news-topics.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 // Display-only archive. No script tracks, future quote reads or price writes.
-export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH,...NEWS_2014_VERIFIED_EXPANSION,...NEWS_2014_VERIFIED_FOLLOWUP,...NEWS_2014_VERIFIED_FIVE]);
+export const NEWS_ARCHIVE=Object.freeze([...NEWS_2014,...NEWS_2014_ADDITIONS,...NEWS_2014_BATCH2,...NEWS_2014_REVIEWED,...NEWS_2014_NEXT_BATCH,...NEWS_2014_VERIFIED_EXPANSION,...NEWS_2014_VERIFIED_FOLLOWUP,...NEWS_2014_VERIFIED_FIVE,...NEWS_2014_PUBLIC_BATCH6,...NEWS_2014_PUBLIC_SUPPLEMENT]);
 const byId=new Map(NEWS_ARCHIVE.map(e=>[e.id,e]));
 const DIRECTIONS=['up','down','range'],VOLATILITY=['normal','high'];
 const validState=s=>s&&DIRECTIONS.includes(s.direction)&&VOLATILITY.includes(s.volatility);
@@ -48,7 +50,16 @@ function ensureMemory(state,context,eligible){
  memory.availableScope=scope;memory.available=[...ids];
  return {memory,scope};
 }
-const family=entry=>entry.eventFamily||new URL(entry.sourceUrl).hostname+':'+entry.catalyst;
+export function archiveEventFamily(entry={}){
+ if(entry.eventFamily)return entry.eventFamily;
+ // Optional display URLs do not establish fact eligibility or event identity.
+ // Keep the existing hostname grouping when present; use retained source
+ // metadata for reviewed records whose publication link is not displayed.
+ let source=entry.sourceName||entry.id||'unknown';
+ try{if(entry.sourceUrl)source=new URL(entry.sourceUrl).hostname||source;}catch{/* A missing or malformed link is not a family. */}
+ return source+':'+(entry.catalyst||entry.id||'news');
+}
+const family=archiveEventFamily;
 function diverseChoice(bag,memory,revealedTopics){
  const last=byId.get(memory.recent.at(-1));
  const recent=memory.recent.slice(-Math.max(1,Math.floor(bag.length/2)));

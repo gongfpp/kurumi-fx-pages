@@ -1,7 +1,7 @@
-import {ACHIEVEMENTS} from './achievements.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {setImage} from './assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {ACHIEVEMENTS} from './achievements.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {setImage} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 
 // A presentation-only companion to the original book. Original cards, controls,
 // reader sessions, unlock evaluation and persistence always stay with app.js.

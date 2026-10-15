@@ -1,26 +1,26 @@
-import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {lifeSceneCandidates} from './life-scene-consumer.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {orderedDailyStories} from './daily-story-order.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga} from './contextual-manga-scenes.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {setImage} from './assets.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=0b963eb22fa5097125d08d271aff291f07e79853-23f2a20b7717';
+import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {lifeSceneCandidates} from './life-scene-consumer.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {orderedDailyStories} from './daily-story-order.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {setImage} from './assets.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=2aaee9d9784e145682d6e458b5fcd9ab41d3ce7b-23f2a20b7717';
 const candidate=scene=>scene?.frames?{...scene,identity:'sequence:'+scene.frames.map(frame=>artIdentity(frame.art)).join('|')}:scene?.art?{...scene,identity:artIdentity(scene.art)}:null;
 // An exhausted illustration is not evidence that the activity really happened.
 // Validate its current receipt, offered price/outcome and paired positive debit
@@ -38,10 +38,10 @@ function validActivityForFallback(state,receipt){
 // unread paid/life story. Existing selectors own its certified receipt evidence;
 // the ordinary chapter-order and one-scene memory gates still apply below.
 function activityOriginalCandidates(state,activity){
- const id=activity?.id==='quiet-night'?'averaging-down-prayer':activity?.id==='dinner-friends'?'friends-different-ledgers':null;
- if(!id)return [];
+ const ids=activity?.id==='quiet-night'?['averaging-down-prayer','pause-and-return']:activity?.id==='dinner-friends'?['friends-different-ledgers']:[];
+ if(!ids.length)return [];
  const contextual=selectDailyContextualManga(state);
- return (contextual?[contextual,...(contextual.related||[])]:[]).filter(arc=>arc.id===id)
+ return (contextual?[contextual,...(contextual.related||[])]:[]).filter(arc=>ids.includes(arc.id))
   .map(arc=>({id:arc.id,identity:`arc:${arc.id}`,title:arc.title,selection:{...arc,related:undefined}}));
 }
 export function dailyArtworkCandidates(state,narrative,{memory=dailyArtMemory,lifeCatalog=LIFE_SCENE_CATALOG}={}){
@@ -58,7 +58,12 @@ export function dailyArtworkCandidates(state,narrative,{memory=dailyArtMemory,li
  const contextual=selectDailyContextualManga(state),choices=approvedDailySkitCandidates(state,{memory}).map(candidate);
  for(const arc of contextual?[contextual,...(contextual.related||[])]:[]){
   const selection={...arc,related:undefined};
-  choices.push({id:arc.id,identity:`arc:${arc.id}`,title:arc.title,selection});
+  const completeEdition=arc.completionIdentity&&arc.nodes.flatMap(node=>node.panels).every(panel=>memory.has(artIdentity(CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record])));
+  choices.push({id:arc.id,identity:arc.completionIdentity||`arc:${arc.id}`,title:arc.title,selection,...(completeEdition?{preserveLockedOnly:true}:{})});
+  if(arc.id==='opposite-directions'&&memory.day?.(`${state.runId||state.seed}:${state.day}`).identity==='arc:opposite-directions'){
+   const legacy={...selection,nodes:selection.nodes.filter(node=>node.id!=='tuition')};delete legacy.completionIdentity;
+   choices.push({id:arc.id,identity:'arc:opposite-directions',title:arc.title,selection:legacy,preserveLockedOnly:true});
+  }
  }
  // No unrelated picture underneath a narrative event. A missing exact match
  // keeps its honest text rather than inventing a happy/loss scene.
@@ -68,6 +73,12 @@ export function dailyArtworkCandidates(state,narrative,{memory=dailyArtMemory,li
  choices.push(...lifeSceneCandidates(state,narrative,{catalog:lifeCatalog,memory}));
  const trauma=tradingTrauma(state),art=state.dayReport.net>0&&!trauma.active?selectRealizedProfitArtwork(state.dayReport.net):settledComicArt({net:state.dayReport.net,settled:true,mood:trauma.active?'devastated':state.dayReport.mood,traumaActive:trauma.active,severeLoss:isSevereSettledLoss(state,state.dayReport)});
  if(art)choices.push(candidate({id:'daily-result',title:state.dayReport.net>0?'今天收盘了':state.dayReport.net<0?'今天先到这里':'收盘之后',art,lines:[]}));
+ const recalled=selectDeferredFirstDayContextualManga(state,narrative);
+ if(recalled){
+  const ids=recalled.nodes.flatMap(node=>node.panels.map(panel=>artIdentity(CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record])));
+  choices.push({id:recalled.id,identity:recalled.completionIdentity,title:recalled.title,selection:recalled,deferredOriginal:true,
+   preserveLockedOnly:ids.length>0&&ids.every(id=>id&&memory.has(id))});
+ }
  const deferred=selectDeferredFriendContextualManga(state,narrative);
  if(deferred){
   const ids=deferred.nodes.flatMap(node=>node.panels.map(panel=>artIdentity(CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record])));
@@ -107,7 +118,10 @@ export function selectDailyArtwork(state,narrative,{memory=dailyArtMemory,fallba
  // Keep legacy selected-day candidates for restoration and preserve empty locks.
  const roommate=!activity&&narrative?.event?.key==='roommate'&&fallback.length>0;
  const immediate=primary.filter(scene=>!scene.deferredOriginal).map(scene=>exhaustedLifeText&&scene===receiptAction?{...scene,preserveLockedOnly:true}:scene),deferred=primary.filter(scene=>scene.deferredOriginal);
- const candidates=roommate?[...fallback,...primary.map(scene=>({...scene,preserveLockedOnly:true}))]:[...immediate,...fallback,...deferred];
+ // A completed introduction must not wait behind the entire fifty-day daily
+ // pool. Its unchanged evidence/order gates run above; exact current actions
+ // still come first. pick() below preserves an existing old-day lock.
+ const candidates=roommate?[...fallback,...primary.map(scene=>({...scene,preserveLockedOnly:true}))]:[...immediate,...deferred,...fallback];
  // Legacy chapter locks still refer to the same chapter, not this newer
  // edition identity. Restore only certified original evidence; never reselect.
  if(memory.day?.(`${state.runId||state.seed}:${state.day}`).identity==='arc:follow-confidence'){
