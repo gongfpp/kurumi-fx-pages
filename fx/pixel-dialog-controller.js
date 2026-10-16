@@ -1,6 +1,6 @@
 // Optional dialog decoration loads only after selecting the pixel frontend.
 // An unavailable view leaves the original functional dialogs untouched.
-export function createPixelDialogController({document=globalThis.document,getSettlement=()=>null,load=()=>import('./pixel-dialogs.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717')}={}){
+export function createPixelDialogController({document=globalThis.document,getSettlement=()=>null,load=()=>import('./pixel-dialogs.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717')}={}){
  let module=null,instance=null,loading=null,disposed=false;
  const pixel=()=>document.body.dataset.frontend==='pixel';
  function refresh(kind){

@@ -1,6 +1,6 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 
 function validExecutionTimeSource(state,trade){
  if(trade.timePrecision==='game-clock')return !trade.historicalQuote&&!trade.marketSegment;

@@ -1,8 +1,8 @@
-import {fixedDailyContentIdentity} from './contextual-manga-scenes.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {setImage} from './assets.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {fixedDailyContentIdentity} from './contextual-manga-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {setImage} from './assets.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 const mountedViews=new WeakMap();
 // Inline presentation only. Reading memory never changes game/account state.
 export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){

@@ -1,6 +1,6 @@
-import {randomUUID} from './uuid.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 
 // Match the API's existing nickname rules without rewriting the player's input.
 const commentAliasError=value=>{

@@ -173,7 +173,6 @@
 #pixel-frontend[data-mobile-layout="true"] .amount-presets button[data-mobile-amount]{font-size:0}
 #pixel-frontend[data-mobile-layout="true"] .amount-presets button[data-mobile-amount]:after{content:attr(data-mobile-amount);font-size:13px;line-height:18px}
 
-#pixel-frontend[data-mobile-layout="true"] .mobile-bottom-nav #life-open:before{content:"";width:41px;height:44px;display:block;background-image:var(--px-atlas);background-position:-182px -594px}
 
 #pixel-frontend[data-mobile-layout="true"] .character-heading>span:first-child{display:block}
 #pixel-frontend[data-mobile-layout="true"] #frontend-switch{margin:0;padding:4px 0;flex-wrap:wrap;justify-content:flex-start}

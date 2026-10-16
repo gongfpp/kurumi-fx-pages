@@ -1,8 +1,8 @@
-import {isSharedReplay} from './shared-replay-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

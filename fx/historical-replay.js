@@ -1,7 +1,7 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;

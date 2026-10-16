@@ -1,5 +1,5 @@
-import {LIFE_WORK_JOBS} from './life-work.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {LIFE_WORK_JOBS} from './life-work.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 // Append-only receipt dialogue sources. Existing source IDs, scope and exact text
 // are a save-format contract, independent of the current action selector.
 // These two legacy snapshots intentionally preserve the original v17 bytes.

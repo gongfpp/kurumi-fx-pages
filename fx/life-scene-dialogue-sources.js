@@ -1,4 +1,4 @@
-import {LIFE_FRIEND_DIALOGUE_SOURCES} from './life-friend-dialogues.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
+import {LIFE_FRIEND_DIALOGUE_SOURCES} from './life-friend-dialogues.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
 // Append-only receipt snapshots, independent of scene artwork or retirement.
 // Preserve every published sourceId, origin, speaker and text byte forever.
 // Routine text-only sources do not count as new four-panel artwork.

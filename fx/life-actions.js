@@ -1,10 +1,10 @@
-import {LIFE_WORK_JOBS,validWorkInventory} from './life-work.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=3e46387a0af3c021f17bee9e9544bf62cd430c32-23f2a20b7717';
-// Initial game-balance value, not a real-world wage or a claim about the manga.
+import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay} from './life-work.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+// Convenience-shift default; actual per-job contracts live in life-work.js.
 // One completed life action per story day; individual work terms live in life-work.js.
-export const LIFE_WORK_INCOME=2200;
+export const LIFE_WORK_INCOME=LIFE_WORK_JOBS[0].income;
 export const LIFE_ACTION_SAVE_VERSION=17;
 const option=(category,id,label,income=0)=>Object.freeze({category,id,label,income});
 export const LIFE_ACTION_CATALOG=Object.freeze({
@@ -41,7 +41,7 @@ export function validLifeActions(s){
  const days=new Set();let total=0,beforeToday=0;
  for(const receipt of actions.receipts){
   const selected=lifeActionDefinition(receipt?.category,receipt?.optionId);
-  if(!selected||!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${lifeActionRunId(s)}:${receipt.day}`||receipt.label!==selected.label||receipt.income!==selected.income||receipt.cost!==(selected.cost||0)||!Number.isFinite(receipt.feeTotal)||receipt.feeTotal<0||!Number.isSafeInteger(receipt.closedPositions)||receipt.closedPositions<0||receipt.timestamp!==null&&!Number.isFinite(receipt.timestamp)||!Number.isFinite(receipt.assetsBefore)||!Number.isFinite(receipt.assetsAfter)||!validLifeActionDialogue(selected,receipt.dialogue))return false;
+  if(!selected||!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${lifeActionRunId(s)}:${receipt.day}`||receipt.label!==selected.label||(receipt.category==='work'?!validWorkPay(receipt,selected):receipt.income!==selected.income)||receipt.cost!==(selected.cost||0)||!Number.isFinite(receipt.feeTotal)||receipt.feeTotal<0||!Number.isSafeInteger(receipt.closedPositions)||receipt.closedPositions<0||receipt.timestamp!==null&&!Number.isFinite(receipt.timestamp)||!Number.isFinite(receipt.assetsBefore)||!Number.isFinite(receipt.assetsAfter)||!validLifeActionDialogue(selected,receipt.dialogue))return false;
   if(receipt.category==='dinner'){const meals=s.recapChoiceLedger;if(!Array.isArray(meals)||!meals.length||receipt.day>=Math.min(...meals.map(row=>row.day))&&!meals.some(row=>row.day===receipt.day&&row.id===receipt.optionId&&row.cost===receipt.cost))return false;}
   days.add(receipt.day);total+=receipt.income;if(receipt.day<s.day)beforeToday+=receipt.income;
  }
