@@ -1,6 +1,6 @@
-import {isResearch} from './historical-replay.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {isResearch} from './historical-replay.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.

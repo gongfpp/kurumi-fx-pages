@@ -10,8 +10,8 @@ const validId=value=>typeof value==='string'&&value.length>0&&value.length<=200;
 export function newStamina(){return{version:1,value:STAMINA_RULES.max,watchMinutes:0,spent:0,recovered:0,lastSample:null,recoveryReceipts:[]};}
 export function validStamina(value){
  if(value===undefined)return true;
- if(!value||![1,2].includes(value.version)||!bounded(value.value)||!['watchMinutes','spent','recovered'].every(key=>Number.isFinite(value[key])&&value[key]>=0)||value.lastSample!==null&&!validId(value.lastSample)||!Array.isArray(value.recoveryReceipts))return false;
- if(!validFatigue(value.fatigue)||value.fatigue!==undefined&&value.version!==2)return false;
+ if(!value||![1,2,3].includes(value.version)||!bounded(value.value)||!['watchMinutes','spent','recovered'].every(key=>Number.isFinite(value[key])&&value[key]>=0)||value.lastSample!==null&&!validId(value.lastSample)||!Array.isArray(value.recoveryReceipts))return false;
+ if(!validFatigue(value.fatigue)||value.fatigue!==undefined&&![2,3].includes(value.version))return false;
  const ids=new Set();
  return value.recoveryReceipts.every(row=>{
   if(!row||!validId(row.id)||ids.has(row.id)||!validId(row.source)||!bounded(row.before)||!bounded(row.after)||!Number.isFinite(row.amount)||row.amount<0||row.amount>STAMINA_RULES.max||!Number.isFinite(row.delta)||Math.abs(row.delta)>STAMINA_RULES.max||Math.abs(row.after-row.before-row.delta)>1e-7)return false;
@@ -69,7 +69,7 @@ export function queueStaminaFatigue(state){
  const sequence=(stamina.fatigue?.sequence||0)+1;
  // Only a real fatigue episode upgrades this optional component. Previous
  // engines reject version 2 rather than overwrite an unfinished transaction.
- stamina.version=2;
+ stamina.version=Math.max(2,stamina.version);
  // Seeded episode randomness is stable across saves and does not consume the
  // market generator, so exhaustion can never alter the price sequence.
  let hash=2166136261;for(const char of `${state.seed}:${state.runId||''}:${sequence}:${stamina.lastSample||'legacy'}`)hash=Math.imul(hash^char.charCodeAt(0),16777619)>>>0;

@@ -1,8 +1,8 @@
-import {LIFESTYLES} from './consumption-ledger.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {renderLivingCopy} from './copy/living-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIFESTYLES} from './consumption-ledger.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {renderLivingCopy} from './copy/living-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 const yen=value=>'¥'+value.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export const fillLivingCopy=renderLivingCopy;
-const planValues=(plan,option,extra={})=>({label:option?.label||plan.label,dailyBasics:yen(plan.dailyBasics),dailyRent:yen(plan.dailyRent),dailyTotal:yen(plan.dailyCost),extraStressRelief:plan.extraStressRelief,extraRestRecovery:plan.extraRestRecovery,restRecoveryCap:32,...extra});
+const planValues=(plan,option,extra={})=>({label:option?.label||plan.label,dailyBasics:yen(plan.dailyBasics),dailyRent:yen(plan.dailyRent),dailyTotal:yen(plan.dailyCost),moveInCost:yen(plan.moveInCost||0),sleepRecovery:plan.sleepRecovery,extraStressRelief:plan.extraStressRelief,extraRestRecovery:plan.extraRestRecovery,restRecoveryCap:32,...extra});
 // The caller supplies reviewed, authored copy. This view never chooses housing,
 // charges, schedules recovery, changes receipts or reconstructs old bills.
 export function mountLivingChoiceDetails(doc,statement,copy,{onLifestyle=()=>{}}={}){
@@ -14,11 +14,14 @@ export function mountLivingChoiceDetails(doc,statement,copy,{onLifestyle=()=>{}}
  adjustment.append(make('p','living-current-arrangement',fillLivingCopy(currentCopy.currentStatusTemplate,planValues(current,currentCopy))));
  const choices=make('div','living-plan-choices');
  for(const plan of LIFESTYLES){
-  const option=options.get(plan.id),short=shortOptions.get(plan.id),values=planValues(plan,option),button=make('button','secondary');button.type='button';button.value=plan.id;
+  const option=options.get(plan.id),short=shortOptions.get(plan.id);
+  const alreadySelected=plan.id===current.id||plan.id===statement.lifestyle.id||plan.id===statement.scheduledHousing?.toId;
+  const moveInCost=alreadySelected?0:plan.moveInCost;
+  const values=planValues(plan,option,{moveInCost:yen(moveInCost)}),button=make('button','secondary');button.type='button';button.value=plan.id;
   button.append(make('span','living-plan-label',fillLivingCopy(short.buttonTemplate,values)),make('small','living-plan-effect',fillLivingCopy(short.subtitleTemplate||option.recoveryDescription,values)));
   const pending=statement.scheduledHousing;
   if(pending?.toId===plan.id)button.append(make('small','living-pending-arrangement',fillLivingCopy(short.scheduledNextDayTemplate,planValues(plan,option,{effectiveDay:pending.effectiveDay}))));
-  const insufficient=Number.isFinite(statement.availableLivingCash)&&plan.dailyCost>statement.lifestyle.dailyCost&&statement.availableLivingCash+1e-6<plan.dailyCost;
+  const insufficient=Number.isFinite(statement.availableLivingCash)&&statement.availableLivingCash+1e-6<moveInCost;
   button.disabled=plan.id===statement.lifestyle.id||insufficient;
   if(insufficient)button.title=fillLivingCopy(option.insufficientBalanceText,values);
   button.onclick=()=>onLifestyle(plan);choices.append(button);
@@ -31,8 +34,9 @@ export function mountLivingChoiceDetails(doc,statement,copy,{onLifestyle=()=>{}}
  if(service){
   const plan=LIFESTYLES.find(plan=>plan.id===service.lifestyleId),option=options.get(service.lifestyleId),values=planValues(plan,option,{basicPaid:yen(service.basicPaid),rentPaid:yen(service.rentPaid)});
   const detail=make('div','living-paid-components');
-  if(service.rentDue>0&&service.fullyPaid)detail.append(make('p','living-paid-service',fillLivingCopy(shared.servicePaidTemplate,values)));
-  else{detail.append(make('p',null,fillLivingCopy(shared.basicsPaidTemplate,values)));if(service.rentDue>0){detail.append(make('p',null,fillLivingCopy(shared.rentPaidTemplate,values)));detail.append(make('p','living-paid-service',shared.servicePartialTemplate));}}
+  const paidCopy=service.version===1?Object.fromEntries(Object.entries(shared).map(([key,value])=>[key,typeof value==='string'?value.replaceAll('餐食','日常'):value])):shared;
+  if(service.rentDue>0&&service.fullyPaid)detail.append(make('p','living-paid-service',fillLivingCopy(paidCopy.servicePaidTemplate,values)));
+  else{detail.append(make('p',null,fillLivingCopy(paidCopy.basicsPaidTemplate,values)));if(service.rentDue>0){detail.append(make('p',null,fillLivingCopy(shared.rentPaidTemplate,values)));detail.append(make('p','living-paid-service',shared.servicePartialTemplate));}}
   details.append(detail);
  }
  const recovery=statement.livingRecovery;

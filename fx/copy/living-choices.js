@@ -1,83 +1,19 @@
-// Gemini 3.8-authored UI copy, 2026-10-10. Deterministic field extraction only.
-// Source JSON SHA-256: beb8613ca1b01d8d54571fb24b71c26111899cf43b65b16b3727b71345f37efd
+// Housing balance and short UI copy approved for the 2026-10-17 economy update.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+const homes=[['basic','父亲家·久留美的房间'],['comfortable','老旧木造公寓·1K'],['generous','团地·翻新2DK'],['premium','高级公寓·2LDK'],['penthouse','塔楼顶层·3LDK']];
 export const LIVING_CHOICE_COPY=freeze({
-  "options": [
-    {
-      "id": "basic",
-      "label": "宿舍",
-      "buttonTemplate": "安排{label}（日常 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日）",
-      "costBreakdownTemplate": "日常开销 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日",
-      "recoveryDescription": "基础休息压力最多减少4、休息恢复最多增加8；宿舍无额外住房恢复加成。",
-      "capDescription": "无额外住房加成。休息恢复累计上限为{restRecoveryCap}，压力最低降至0。原交易重创限制仍有效。",
-      "currentStatusTemplate": "当前安排：{label}",
-      "scheduledNextDayTemplate": "已预约：进入第{effectiveDay}日生效为{label}",
-      "insufficientBalanceText": "当前可用资金与生活预留金不足以安排{label}（需全额预留{dailyTotal}）。"
-    },
-    {
-      "id": "comfortable",
-      "label": "独住小套间",
-      "buttonTemplate": "安排{label}（日常 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日）",
-      "costBreakdownTemplate": "日常开销 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日",
-      "recoveryDescription": "在基础休息之上，额外压力最多减少{extraStressRelief}，额外休息恢复最多加{extraRestRecovery}。须当日全额付清生活支出并休息后结算。",
-      "capDescription": "额外压力最多减少{extraStressRelief}，额外休息恢复最多加{extraRestRecovery}。休息恢复累计上限为{restRecoveryCap}，压力最低降至0。原交易重创限制仍有效。",
-      "currentStatusTemplate": "当前安排：{label}",
-      "scheduledNextDayTemplate": "已预约：进入第{effectiveDay}日生效为{label}",
-      "insufficientBalanceText": "当前可用资金与生活预留金不足以安排{label}（需全额预留{dailyTotal}）。"
-    },
-    {
-      "id": "generous",
-      "label": "独住安静一居室",
-      "buttonTemplate": "安排{label}（日常 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日）",
-      "costBreakdownTemplate": "日常开销 {dailyBasics} ｜ 房租 {dailyRent} ｜ 合计 {dailyTotal}/日",
-      "recoveryDescription": "在基础休息之上，额外压力最多减少{extraStressRelief}，额外休息恢复最多加{extraRestRecovery}。须当日全额付清生活支出并休息后结算。",
-      "capDescription": "额外压力最多减少{extraStressRelief}，额外休息恢复最多加{extraRestRecovery}。休息恢复累计上限为{restRecoveryCap}，压力最低降至0。原交易重创限制仍有效。",
-      "currentStatusTemplate": "当前安排：{label}",
-      "scheduledNextDayTemplate": "已预约：进入第{effectiveDay}日生效为{label}",
-      "insufficientBalanceText": "当前可用资金与生活预留金不足以安排{label}（需全额预留{dailyTotal}）。"
-    }
-  ],
-  "shared": {
-    "adjustTitle": "住处与生活安排",
-    "terms": "点击选项不立即扣费，亦不产生恢复。今日未结算时选择将立即更新当前安排并搬入；今日已结算时安排将于进入次日生效。每日生活结算时统一扣除一次。全额付清当日生活支出并休息后结算额外住房恢复；未全额付清则无住房额外加成。",
-    "pendingMoveTemplate": "已预约住处调整，将于进入第{effectiveDay}日生效为{label}。",
-    "servicePaidTemplate": "已支付{label}生活支出：日常开销 {basicPaid}，房租 {rentPaid}。",
-    "servicePartialTemplate": "本日生活支出未全额付清，未获得住房额外恢复加成。",
-    "rentPaidTemplate": "房租支出：{rentPaid}",
-    "basicsPaidTemplate": "日常开销支出：{basicPaid}",
-    "receivedRecoveryTemplate": "住房额外恢复结算：压力实际减少 {actualStressRelief}，休息恢复实际增加 {actualRestRecovery}（休息恢复累计上限{restRecoveryCap}，压力下限0）。",
-    "discountDescription": "泡面优惠与朋友请客仅针对共同日常开销（{dailyBasics}）生效，房租不享受减免。",
-    "noodlesCaption": "¥150应急泡面餐（日常开销减40%，房租不减）",
-    "noodlesDescription": "花费¥150食用泡面，仅限今日共同日常开销减少40%，房租部分照常结算。",
-    "noodlesRecapDescription": "今日食用¥150泡面，日常开销减免40%，房租按原价计。",
-    "livingOrdinaryReceiptLabel": "生活支出结算（标准）",
-    "livingDiscountedReceiptLabel": "生活支出结算（日常减免）"
-  },
-  "compactDisplay": {
-    "options": [
-      {
-        "id": "basic",
-        "buttonTemplate": "{label} {dailyTotal}/日",
-        "subtitleTemplate": "房租 {dailyRent} ｜ 无额外加成",
-        "scheduledNextDayTemplate": "将于第{effectiveDay}日生效"
-      },
-      {
-        "id": "comfortable",
-        "buttonTemplate": "{label} {dailyTotal}/日",
-        "subtitleTemplate": "房租 {dailyRent} ｜ 额外压力-{extraStressRelief}、休息恢复+{extraRestRecovery}",
-        "scheduledNextDayTemplate": "将于第{effectiveDay}日生效"
-      },
-      {
-        "id": "generous",
-        "buttonTemplate": "{label} {dailyTotal}/日",
-        "subtitleTemplate": "房租 {dailyRent} ｜ 额外压力-{extraStressRelief}、休息恢复+{extraRestRecovery}",
-        "scheduledNextDayTemplate": "将于第{effectiveDay}日生效"
-      }
-    ],
-    "shared": {
-      "termsCompact": "生活费每日统一结算，全额付清并休息方可获得加成。上述效果均为最大值。",
-      "detailTitle": "查看明细"
-    }
-  }
+ options:homes.map(([id,label])=>({id,label,
+ buttonTemplate:'{label}（搬入 {moveInCost} ｜ {dailyTotal}/日）',
+ costBreakdownTemplate:'搬入一次 {moveInCost} ｜ 餐食 {dailyBasics} ｜ 住房 {dailyRent} ｜ 合计 {dailyTotal}/日',
+ recoveryDescription:'付清当日生活费后，睡眠恢复{sleepRecovery}体力。',
+ capDescription:'眼罩使下次睡眠额外恢复15体力，体力上限100。',
+ currentStatusTemplate:'当前住处：{label}',scheduledNextDayTemplate:'第{effectiveDay}日搬入{label}',
+ insufficientBalanceText:'可用资金不足，搬入{label}需要{moveInCost}。'})),
+ shared:{adjustTitle:'住处与生活安排',terms:'搬入费仅在更换住处时收取一次，新住处的每日生活费从下一交易日生效。付清当日生活费才有对应住房的睡眠恢复。',
+ pendingMoveTemplate:'第{effectiveDay}日搬入{label}。',servicePaidTemplate:'已支付{label}生活费：餐食 {basicPaid}，住房 {rentPaid}。',
+ servicePartialTemplate:'今日生活费未付清，睡眠按基础恢复。',rentPaidTemplate:'住房支出：{rentPaid}',basicsPaidTemplate:'餐食支出：{basicPaid}',
+ receivedRecoveryTemplate:'住房恢复：压力减少 {actualStressRelief}，休息恢复增加 {actualRestRecovery}。',
+ discountDescription:'今日已买餐食可抵扣日常生活费中的一餐300日元，最多一次。',noodlesCaption:'应急泡面餐',noodlesDescription:'恢复10体力，并抵扣今日生活费中的一餐300日元。',noodlesRecapDescription:'今日餐食已抵扣一餐300日元。',livingOrdinaryReceiptLabel:'每日生活费',livingDiscountedReceiptLabel:'每日生活费（已抵餐食）'},
+ compactDisplay:{options:homes.map(([id])=>({id,buttonTemplate:'{label} {dailyTotal}/日',subtitleTemplate:'搬入 {moveInCost} ｜ 睡眠恢复{sleepRecovery}',scheduledNextDayTemplate:'第{effectiveDay}日生效'})),shared:{termsCompact:'搬入费一次收取，新住处的每日费率下一交易日生效；付清生活费后享对应睡眠恢复。',detailTitle:'查看明细'}}
 });
 export const renderLivingCopy=(template,values)=>String(template||'').replace(/\{([a-zA-Z][a-zA-Z0-9]*)\}/g,(match,key)=>Object.hasOwn(values,key)?String(values[key]):match);

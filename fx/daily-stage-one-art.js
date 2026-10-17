@@ -1,26 +1,26 @@
-import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {lifeSceneCandidates} from './life-scene-consumer.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {orderedDailyStories} from './daily-story-order.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {setImage} from './assets.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {lifeSceneCandidates} from './life-scene-consumer.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {orderedDailyStories} from './daily-story-order.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {setImage} from './assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 const candidate=scene=>scene?.frames?{...scene,identity:'sequence:'+scene.frames.map(frame=>artIdentity(frame.art)).join('|')}:scene?.art?{...scene,identity:artIdentity(scene.art)}:null;
 // An exhausted illustration is not evidence that the activity really happened.
 // Validate its current receipt, offered price/outcome and paired positive debit
@@ -32,6 +32,12 @@ function validActivityForFallback(state,receipt){
   receipt.id==='noodles-today'?receipt.cost===150&&outcome.net<0:
   receipt.id==='quiet-night'?receipt.cost===0&&outcome.net<=-10000:false;
  if(!offered||!selectComicScene(state,{type:'activity',receipt}))return false;
+ if(receipt.id==='noodles-today'&&receipt.consumptionId===`item:${state.day}:noodles`){
+  const uses=state.dailySupplies?.uses?.filter(row=>row.day===state.day&&row.id==='noodles')||[];
+  const debits=state.consumptionLedger?.filter(row=>row.id===receipt.consumptionId)||[];
+  return uses.length===1&&uses[0].cost===150&&uses[0].consumptionId===receipt.consumptionId&&debits.length===1&&
+   debits[0].kind==='item'&&debits[0].day===state.day&&debits[0].amount===150&&Number.isFinite(debits[0].timestamp)&&debits[0].timestamp<=receipt.timestamp;
+ }
  return receipt.cost===0||!!state.consumptionLedger?.some(r=>r.id===`activity:${state.day}:${receipt.id}`&&r.kind==='activity'&&r.day===state.day&&r.amount===receipt.cost&&r.timestamp===receipt.timestamp);
 }
 // A matching original can follow exhausted activity art, but never displace an

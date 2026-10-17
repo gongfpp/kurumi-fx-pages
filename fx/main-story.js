@@ -1,4 +1,4 @@
-import {MAIN_STORY_EPISODES} from './copy/main-story.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {MAIN_STORY_EPISODES} from './copy/main-story.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 
 export {MAIN_STORY_EPISODES};
 const owner=state=>String(state.runId||state.seed);

@@ -1,9 +1,9 @@
-import {inspectSave} from './save-codec.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {inspectSave} from './save-codec.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // The local snapshot remains the default. An automatic compatibility archive
 // is restored only when the user explicitly selects it in the existing dialog.
 export const MAX_BACKUP_BYTES=32*1024*1024;
 const MAX_NODES=1000000,MAX_DEPTH=100;
-const recoveryFields=Object.freeze({'pre-stamina-fatigue-v2':'staminaFatigueRecoveryRaw','pre-life-actions-v1':'lifeActionsRecoveryRaw','pre-life-scenes-v1':'lifeSceneRecoveryRaw'});
+const recoveryFields=Object.freeze({'pre-stamina-fatigue-v2':'staminaFatigueRecoveryRaw','pre-life-actions-v1':'lifeActionsRecoveryRaw','pre-life-scenes-v1':'lifeSceneRecoveryRaw','pre-economy-v1':'economyRecoveryRaw'});
 function validateObject(object){
  const stack=[[object,0]];let nodes=0;
  while(stack.length){const [value,depth]=stack.pop();if(++nodes>MAX_NODES||depth>MAX_DEPTH)throw Error('备份内容过大或层级异常。');if(typeof value==='number'&&!Number.isFinite(value))throw Error('备份含有无效数值。');if(value&&typeof value==='object'){for(const name of Object.keys(value)){if(['__proto__','prototype','constructor'].includes(name))throw Error('备份含有不安全的内容。');if(stack.length+nodes>=MAX_NODES)throw Error('备份内容过大。');stack.push([value[name],depth+1]);}}}

@@ -1,58 +1,60 @@
-import {workUnlockReason,awardWorkItem} from './life-work.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {captureSkitState,makeSkitOutcome} from './skit-outcome.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {hasHistoricalSimulation,historicalSimulationActive,historicalMarkIsSimulated,historicalEffectiveTime,startHistoricalContinuation,resetHistoricalContinuationDay,simulateHistoricalMarks,recordHistoricalSource,historicalSimulationEvidence,validHistoricalContinuation} from './history-continuation.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {recoverLifeAction,recoverRecapAction,recoverProp,recoverLifeSleep} from './life-recovery.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {STAMINA_RULES,newStamina,ensureStamina,validStamina,staminaStatus,consumeTradingStamina,consumeStamina} from './stamina.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {STAMINA_RULES,staminaStatus} from './stamina.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {selectLifeSceneDialogue} from './life-scene-dialogue-selector.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {LIFE_ACTION_SAVE_VERSION,LIFE_ACTION_CATALOG,lifeActionDefinition,lifeActionRunId,lifeActionReceipt,lifeActionDialogue,lifeFriendKnown,validLifeActions} from './life-actions.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {LIFE_ACTION_CATALOG,LIFE_WORK_INCOME} from './life-actions.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {beginFatherTheftWatch,checkFatherTheftAtClose,validFatherTheftWatch} from './father-theft-discovery.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {isMultiHistory,consumeMultiHistoryEvent,multiHistoryTimestamp,multiHistoryTradeEvidence,multiHistoryQuoteCurrent,multiHistoryPositionsCurrent,multiHistorySymbolEnded,multiHistoryEntryOpen} from './multi-history-state.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {LIVING_CHOICE_COPY,renderLivingCopy} from './copy/living-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {LIVE_MARKET_VERSION,LIVE_SYMBOLS,isLiveMarket,initializeLiveMarket,liveScript,liveQuote,liveTimestamp,liveTradingReady,livePositionsReady,liveQuoteReady,liveStatusLabel,liveTradeEvidence,validLiveQuote,validLiveMarket,markLiveRestored} from './live-market-state.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {newHallMetrics,recordHallPosition} from './hall-metrics.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {MULTI_MARKET_VERSION,activeMarket,marketSeed,positionMarket,marketPrice,captureMarket,createMarketBook,switchMarket,renewMarketScripts,advanceHiddenMarkets,validMarketBook} from './market-book.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {activeMarket,marketPrice} from './market-book.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {workUnlockReason,awardWorkItem,effectiveWorkTerms,validWorkInventory,initializeWorkEconomy} from './life-work.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {DAILY_SUPPLY_IDS,ensureDailySupplies,supplyUsedToday,supplyReceipt,recordSupplyUse,applySupplyMood,supplyMood,validDailySupplies,takeawayLine,TRADING_NOTES_LINE} from './daily-supplies.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {captureSkitState,makeSkitOutcome} from './skit-outcome.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {hasHistoricalSimulation,historicalSimulationActive,historicalMarkIsSimulated,historicalEffectiveTime,startHistoricalContinuation,resetHistoricalContinuationDay,simulateHistoricalMarks,recordHistoricalSource,historicalSimulationEvidence,validHistoricalContinuation} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {recoverLifeAction,recoverRecapAction,recoverProp,recoverLifeSleep} from './life-recovery.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {STAMINA_RULES,newStamina,ensureStamina,validStamina,staminaStatus,consumeTradingStamina,consumeStamina} from './stamina.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {STAMINA_RULES,staminaStatus} from './stamina.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {selectLifeSceneDialogue} from './life-scene-dialogue-selector.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIFE_ACTION_SAVE_VERSION,LIFE_ACTION_CATALOG,lifeActionDefinition,lifeActionRunId,lifeActionReceipt,lifeActionDialogue,lifeFriendKnown,validLifeActions} from './life-actions.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {LIFE_ACTION_CATALOG,LIFE_WORK_INCOME} from './life-actions.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {beginFatherTheftWatch,checkFatherTheftAtClose,validFatherTheftWatch} from './father-theft-discovery.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {isMultiHistory,consumeMultiHistoryEvent,multiHistoryTimestamp,multiHistoryTradeEvidence,multiHistoryQuoteCurrent,multiHistoryPositionsCurrent,multiHistorySymbolEnded,multiHistoryEntryOpen} from './multi-history-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIVING_CHOICE_COPY,renderLivingCopy} from './copy/living-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIVE_MARKET_VERSION,LIVE_SYMBOLS,isLiveMarket,initializeLiveMarket,liveScript,liveQuote,liveTimestamp,liveTradingReady,livePositionsReady,liveQuoteReady,liveStatusLabel,liveTradeEvidence,validLiveQuote,validLiveMarket,markLiveRestored} from './live-market-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {newHallMetrics,recordHallPosition} from './hall-metrics.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {MULTI_MARKET_VERSION,activeMarket,marketSeed,positionMarket,marketPrice,captureMarket,createMarketBook,switchMarket,renewMarketScripts,advanceHiddenMarkets,validMarketBook} from './market-book.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {activeMarket,marketPrice} from './market-book.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 export function selectMarket(s,symbol){const upgraded=s.version===LIFE_ACTION_SAVE_VERSION;const result=switchMarket(s,symbol,planDay);if(upgraded&&s.version!==LIFE_ACTION_SAVE_VERSION){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return result;}
 export function enableMarkets(s){const upgraded=s.version===LIFE_ACTION_SAVE_VERSION;if(!s.historical)createMarketBook(s,planDay);if(upgraded&&s.version!==LIFE_ACTION_SAVE_VERSION){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return s;}
-import {decodeSaveRaw} from './save-codec.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,skipElapsedHistoricalSource,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {validOrderRatio,quoteOrderIntent} from './amount-controls.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {livingChargeParts,paidLivingService,applyPaidLivingRecovery,scheduleHousingSelection,activateSelectedHousing,validLivingServices} from './living-services.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {quotePackageState} from './quote-packages.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {dailyReturnMetrics} from './daily-performance.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {decodeSaveRaw} from './save-codec.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {CANDLE_PERIODS,recordDisplayQuote,recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {isResearch,researchCandle,isHistorical,historicalReady,hasHistoricalFeed,historicalScript,initializeHistorical,peekHistoricalQuote,skipElapsedHistoricalSource,commitHistoricalQuote,prepareNextHistoricalDay,nextHistoricalDate,validHistoricalSave,markHistoricalRestored} from './historical-replay.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {emptyComicAutoplay,reconcileComicAutoplay,validComicAutoplay} from './comic-autoplay.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {validOrderRatio,quoteOrderIntent} from './amount-controls.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {livingChargeParts,paidLivingService,applyPaidLivingRecovery,activateSelectedHousing,validLivingServices,initializeHousingEconomy,quoteHousingSelection,commitHousingSelection} from './living-services.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {lifestylePlan,validLifestyle,recordConsumption,consumptionStatement,validConsumptionLedger} from './consumption-ledger.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {lifestylePlan,consumptionStatement,LIFESTYLES} from './consumption-ledger.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {generateQuoteGrid,hasCanonicalGrid,validQuoteGrid,quoteSubstep,QUOTE_SUBSTEPS,QUOTE_GRID_VERSION,MARKET_BALANCE,shouldScheduleShock,calibratedShock} from './quote-grid.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {quotePackageState,planQuotePackagePurchase,quotePackageOffer,quoteCostRepresentable} from './quote-packages.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {quotePackageState} from './quote-packages.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {dailyReturnMetrics} from './daily-performance.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {quoteLivingMeal,livingDayRoll,validLivingSettlement} from './living-settlement.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {ensureRunStatistics,recordOrderOpened,recordOrderExits} from './run-statistics.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 
-import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {recapChoices} from './recap-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {ensureTradingClock,stampCandleTime,stampQuoteTime,currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {ensureAccountingJournal,recordAccountingPoint,recordAccountingDay,sealAccountingDay} from './accounting-journal.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {recapChoices} from './recap-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {observeTradingTrauma,recoverTradingTrauma,tradingTrauma,capTraumaSanity,validTradingTrauma,tradingCapitalSafety} from './trading-trauma.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 
 
-import {creditTerms} from './credit-policy.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {NEWS_CHAINS,PROPS} from './content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {BLACK_SWANS} from './story-content.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {creditTerms} from './credit-policy.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {pressureMood,pressureIntensity} from './emotion-pressure.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {PIP_SIZE,grossPnlAt,pnlCoefficients,positionQuantity,isLegacyPosition} from './market.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {itemUnlocked,discoverItems,itemDiscovered,itemUnavailableReason} from './item-events.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {NEWS_CHAINS,PROPS} from './content.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {BLACK_SWANS} from './story-content.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {ensureStory,checkStories,restrictions as baseRestrictions,addEffect,ageEffects,queueStory,pendingStory} from './story.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {pendingStory,chooseStory,DEBUFFS} from './story.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {appendDialogue,chooseDialogue,ensureDialogue,updateSpeech,chapterChat} from './dialogue.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 export const VERSION = 9;
 export const STORY_CAPITAL_VERSION = 12;
 export const ENDLESS_CAPITAL_VERSION = 13;
 export const FEE_RATE = .00005;
 export const STOP_OUT_LEVEL = .5;
-export const LIVING_DAILY = 2200;
+export const LIVING_DAILY = 1500;
 export const FATHER_SAVINGS = 3000000;
 export const TARGET_PROFIT = 20000000;
 export const START_PRICE = 150;
@@ -162,7 +164,7 @@ function historyCandles(seed) {
   for (const c of candles) for (const key of ['open','close','high','low']) c[key] *= ratio;
   return candles;
 }
-import {initializeSharedReplay,isSharedReplay,prepareSharedReplayEvent,resetSharedReplay} from './shared-replay-state.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {initializeSharedReplay,isSharedReplay,prepareSharedReplayEvent,resetSharedReplay} from './shared-replay-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 const replayApplication=Symbol('validated replay application');
 export function createGame(seed = Date.now(), {mode = 'story',historical=null,multiMarket=false,live=false,sharedReplay=false} = {}) {
   if(sharedReplay&&(!live||historical))throw Error('Replay requires a new live-shaped game');
@@ -176,6 +178,7 @@ export function createGame(seed = Date.now(), {mode = 'story',historical=null,mu
     fatherUsed:false,externalFunding:0,dayOpeningFunding:0,stress:0,heat:0,peakPersonal:startingCapital,equityTrail:[startingCapital],nextStop:null,
     lastEvent:null, lastTrade:null, lastReaction:null, dayReport:null};
   if(historical){initializeHistorical(state,historical);state.accountingJournal={version:1,points:[],days:[],startedDay:1,legacyPartial:false};}
+  initializeHousingEconomy(state);initializeWorkEconomy(state);ensureDailySupplies(state);state.stamina.version=3;
   ensureRunStatistics(state);ensureTradingClock(state);ensureAccountingJournal(state);recordAccountingPoint(state,'opening');
   state.script = historical?historicalScript():planDay(seed, 1, state.price);
   chapterChat(state);ensureStory(state);discoverItems(state);observeTradingTrauma(state,{accountEquity:startingCapital});updateSpeech(state,'hopeful');state.dayOpeningLine=state.speech.text;
@@ -332,7 +335,6 @@ function closePosition(s, fraction, reason, positionId){
   const peakUnrealized=p.maxUnrealized*fraction,openFee=p.openFeeRemaining*fraction,closeFee=money((p.notional??p.margin*p.leverage)*fraction*FEE_RATE);
   let pnl=raw-openFee-closeFee;
   let lossReduction=0;
-  if(reason==='liquidation'&&s.skills?.mochiko&&pnl<0){lossReduction=-pnl*.25;pnl+=lossReduction;s.protectionPaid=(s.protectionPaid||0)+lossReduction;s.protectionLedger ||= [];s.protectionLedger.push({day:s.day,positionId:p.id,amount:lossReduction});}
 
   s.cash+=margin+raw-closeFee+lossReduction;s.feesPaid+=closeFee;s.feeLedger.push({day:s.day,beat:Math.min(s.beat,beatsPerDay(s)-1),positionId:p.id,side:'close',amount:closeFee});
   p.notional=(p.notional??p.margin*p.leverage)*(1-fraction);p.initialMargin=(p.initialMargin??p.margin)*(1-fraction);p.margin-=margin;p.maxUnrealized*=1-fraction;p.openFeeRemaining-=openFee;
@@ -401,7 +403,8 @@ function closeOrders(s,fraction,reason,positionId){
   // batch: balance protection must reach the last exit before statistics copy it.
   enforceMargin(s,trades);mentalState(s);return trades;
 }
-export function mood(s) {
+export function mood(s){const baseline=baseMood(s);return tradingTrauma(s).active?baseline:supplyMood(s,baseline);}
+function baseMood(s) {
   const trauma=tradingTrauma(s);if(trauma.active)return trauma.mood;
   const current=s.recent.filter(entry=>entry.day===s.day||(entry.day===undefined&&s.developer?.edited));
   const latest = current[0];
@@ -446,9 +449,9 @@ export function currentEvent(s){
 
 export function useProp(s,id,{amount=FATHER_SAVINGS}={}){
  ensureStory(s);ensureOrders(s);
- if(!tradingOpen(s)&&!(['day_end','resting','bankrupt'].includes(s.phase)&&id==='father'))throw Error('当前无法使用物品');
+ if(!tradingOpen(s)&&!(['day_end','resting'].includes(s.phase)&&(DAILY_SUPPLY_IDS.includes(id)||id==='tradingNotes'))&&!(['day_end','resting','bankrupt'].includes(s.phase)&&id==='father'))throw Error('当前无法使用物品');
  if(!PROPS[id])throw Error('没有这个物品');
- if(isHistorical(s)&&id==='energy')throw Error('历史行情按实际日期收盘，无需延长');
+ if(DAILY_SUPPLY_IDS.includes(id)&&supplyUsedToday(s,id))throw Error('今天已经用过了');
  const unavailable=itemUnavailableReason(s,id);if(unavailable)throw Error(unavailable);
  if(!itemUnlocked(s,id))throw Error('这个物品还没获得');
  if(id==='father'){
@@ -459,25 +462,42 @@ export function useProp(s,id,{amount=FATHER_SAVINGS}={}){
   s.family.outstanding=amount;s.family.borrowedAt=(s.day-1)*4+s.beat;addEffect(s,'guilt',null);s.family.takenConfirmed=true;beginFatherTheftWatch(s,{tradingProfit:theftTradingProfit});
   if(s.phase==='bankrupt')s.phase='day_end';refreshReport(s);mentalState(s);return{id,amount,trades:[],line:'这笔钱要还。'};
  }
- if(s.itemsUsed[id])throw Error('今天已经用过了');
+ if(id==='tradingNotes'){
+  if(!validWorkInventory(s)||!s.workInventory?.memo)throw Error('还没有交易笔记');
+  if(s.dailySupplies?.noteUsedDay===s.day)throw Error('今天已经用过了');
+  ensureDailySupplies(s).noteUsedDay=s.day;s.itemsUsed.tradingNotes=true;
+  s.stress=Math.max(0,(s.stress||0)-3);
+  s.chat.friend.push({from:'久留美',text:TRADING_NOTES_LINE,kind:'self',dialogueId:`trading-notes:${s.day}`});s.chat.friend=s.chat.friend.slice(-60);
+  mentalState(s);refreshReport(s);return{id,cost:0,trades:[],line:TRADING_NOTES_LINE,monologue:TRADING_NOTES_LINE};
+ }
+ if(!DAILY_SUPPLY_IDS.includes(id))throw Error('没有这个物品');
  const cost=PROPS[id].cost||0;if(accountMetrics(s).availableMargin<cost)throw Error('可用资金不足');
- s.cash-=cost;s.expenses+=cost;s.itemsUsed[id]=true;const consumption=recordConsumption(s,{id:`item:${s.day}:${id}`,kind:'item',label:PROPS[id].name,amount:cost,timestamp:currentTradingTimestamp(s)});
+ const previousMood=mood(s),baselineMood=baseMood(s);
+ s.cash-=cost;s.expenses+=cost;const consumption=recordConsumption(s,{id:`item:${s.day}:${id}`,kind:'item',label:PROPS[id].name,amount:cost,timestamp:currentTradingTimestamp(s)});
+ recordSupplyUse(s,id,consumption.id);
  // Record event order at purchase: several clicks can share one quote timestamp.
  // This is achievement evidence only; the charge and trading rules stay above.
  if(id==='takeaway')consumption.profitBeforePurchase=(s.history||[]).some(t=>t.type!=='open'&&Number.isFinite(t.pnl)&&t.pnl>0)||(s.performance?.closedTrades>0&&s.performance?.maxProfit>0);
  if(id==='dailyDrink')s.dailyLeverageUnlock=`${s.mode||'story'}:${s.runId||s.seed}:${s.day}`;
- if(id==='takeaway')s.mentalBoost=Math.min(50,(s.mentalBoost||0)+10);
- if(id==='celebration')s.mentalBoost=Math.min(50,(s.mentalBoost||0)+20);
- if(id==='noodles')s.livingDiscount=.4;
- if(id==='mochiko')s.skills.mochiko=true;
- if(id==='energy'){
-  s.bonusBeats=(s.bonusBeats||0)+1;
-  const expanded=planDay(marketSeed(s),s.day,s.script.tracks.at(-1).at(-1).at(-1),beatsPerDay(s),{swanEffects:false,gridVersion:hasCanonicalGrid(s.script)?QUOTE_GRID_VERSION:1,symbol:activeMarket(s)});
-  if(s.marketBook){for(const [symbol,book] of Object.entries(s.marketBook.markets)){if(symbol===activeMarket(s))continue;const e=planDay(marketSeed(s,symbol),s.day,book.script.tracks.at(-1).at(-1).at(-1),beatsPerDay(s),{swanEffects:false,gridVersion:hasCanonicalGrid(book.script)?QUOTE_GRID_VERSION:1,symbol});book.script.events.push({...e.events[0],time:'23:30'});book.script.tracks.push(e.tracks[0]);if(hasCanonicalGrid(book.script))book.script.subtracks.push(e.subtracks[0]);}}
-  s.script.events.push({...expanded.events[0],time:'23:30'});s.script.tracks.push(expanded.tracks[0]);if(hasCanonicalGrid(s.script))s.script.subtracks.push(expanded.subtracks[0]);
- }
+ const moodShift=tradingTrauma(s).active?null:applySupplyMood(s,id,previousMood,baselineMood);
+ if(['noodles','takeaway'].includes(id))refreshPendingLivingMeal(s);
  const staminaRecovery=recoverProp(s,id);
- mentalState(s);return{id,cost,trade:null,trades:[],line:PROPS[id].copy,staminaRecovery};
+ mentalState(s);refreshReport(s);return{id,cost,trade:null,trades:[],line:id==='takeaway'?takeawayLine(s):PROPS[id].copy,staminaRecovery,moodShift};
+}
+function refreshPendingLivingMeal(s){
+ const report=s.dayReport;
+ if(report?.day!==s.day||report.livingSettlement?.status!=='pending')return;
+ const prior=report.livingSettlement.quote;
+ if(s.housingEconomy?.effectiveDay>s.day&&prior.pricingVersion!==2){
+  // Keep an existing legacy discount and the original housing components.
+  if(prior.supplyMealCredit===300||prior.discount>0||prior.kind==='friend-treat')return;
+  const quote={...prior,baseAmount:Math.max(0,prior.baseAmount-300),supplyMealCredit:300,kind:'thrifty',label:LIVING_CHOICE_COPY.shared.livingDiscountedReceiptLabel};
+  if(Number.isFinite(prior.basicAmount))quote.basicAmount=Math.max(0,prior.basicAmount-300);
+  quote.amount=Math.min(Math.max(0,s.cash),Math.max(0,prior.amount-300));
+  report.livingSettlement.quote=quote;report.pendingLivingCost=quote.amount;return;
+ }
+ const quote=dayLivingQuote(s,report,report.livingSettlement.quote.roll);
+ report.livingSettlement.quote=quote;report.pendingLivingCost=quote.amount;
 }
 // Explicit game-only after-close decisions. Merely showing/replaying a recap has no effect.
 export function chooseRecapAction(s,id){
@@ -485,7 +505,21 @@ export function chooseRecapAction(s,id){
  if(!['day_end','resting'].includes(s.phase)||s.dayReport?.day!==s.day||s.mode==='endless')throw Error('只有今天收盘后才能选择生活安排');
  s.recapChoiceLedger ||= [];
  if(s.recapChoiceLedger.some(e=>e.day===s.day&&e.id===id))throw Error('今天已经选择过了');
- const r=s.dayReport;if(id==='noodles-today'&&r.livingSettlement?.status!=='pending')throw Error('今天的日常开销已经结清，不能重算');if(id==='noodles-today'&&s.itemsUsed.noodles)throw Error('今天已经吃过泡面了');
+ if(id==='noodles-today'){
+  const report=s.dayReport;
+  if(report.livingSettlement?.status!=='pending')throw Error('今天的日常开销已经结清，不能重算');
+  const skitBefore=captureSkitState(s,mood(s));
+  let paid=supplyReceipt(s,'noodles');
+  if(!paid&&s.itemsUsed?.noodles){
+   const old=(s.consumptionLedger||[]).find(row=>row.day===s.day&&row.id===`item:${s.day}:noodles`&&row.amount===150);
+   if(old)paid={consumptionId:old.id,legacy:true};else throw Error('今天已经吃过泡面了');
+  }
+  if(!paid){useProp(s,'noodles');paid=supplyReceipt(s,'noodles');}
+  const receipt={day:s.day,id,cost:150,consumptionId:paid.consumptionId,timestamp:currentTradingTimestamp(s),label:'今天关灯吃泡面'};
+  s.recapChoiceLedger.push(receipt);s.recapChoiceLedger=s.recapChoiceLedger.slice(-200);
+  if(!paid.legacy)refreshPendingLivingMeal(s);receipt.skitOutcome=makeSkitOutcome(s,`activity:${s.day}:${id}`,skitBefore,captureSkitState(s,mood(s)));refreshReport(s);return receipt;
+ }
+ const r=s.dayReport;
  const choices=recapChoices({sealed:true,mode:s.mode,daily:{tradingNet:r.net,openingNominal:r.opening,livingStatus:r.livingSettlement?.status||'legacy-paid',noodlesUsed:!!s.itemsUsed.noodles},account:{netAssets:equity(s)-debtSummary(s).total}},{cash:accountMetrics(s).availableMargin});
  const choice=choices.find(c=>c.id===id);if(!choice||choice.loan)throw Error('没有这个生活选项');
  if(!choice.enabled)throw Error('可用资金不足');
@@ -493,8 +527,7 @@ export function chooseRecapAction(s,id){
  const skitBefore=captureSkitState(s,mood(s));
  s.cash-=choice.cost;s.expenses+=choice.cost;
  const receipt={day:s.day,id,group:choice.group,cost:choice.cost,timestamp:currentTradingTimestamp(s),label:choice.label};s.recapChoiceLedger.push(receipt);s.recapChoiceLedger=s.recapChoiceLedger.slice(-200);recordConsumption(s,{id:`activity:${s.day}:${id}`,kind:'activity',label:choice.label,amount:choice.cost,timestamp:receipt.timestamp});
- if(id==='noodles-today'){s.livingDiscount=.4;s.itemsUsed.noodles=true;const q=dayLivingQuote(s,r,r.livingSettlement.quote.roll);r.livingSettlement.quote=q;r.pendingLivingCost=q.amount;}
- else if(id==='quiet-night')s.stress=Math.max(0,(s.stress||0)-3);
+ if(id==='quiet-night')s.stress=Math.max(0,(s.stress||0)-3);
  else s.mentalBoost=Math.min(50,(s.mentalBoost||0)+Math.min(20,4+Math.log10(1+choice.cost)*2));
  recoverRecapAction(s,id);
  mentalState(s);receipt.skitOutcome=makeSkitOutcome(s,`activity:${s.day}:${id}`,skitBefore,captureSkitState(s,mood(s)));refreshReport(s);return receipt;
@@ -549,15 +582,14 @@ export function livingCost(s){
 }
 export function selectLifestyle(s,id){
  if(!tradingOpen(s)&&!['day_end','resting'].includes(s.phase))throw Error('当前不能调整生活安排');
- const plan=lifestylePlan({lifestyle:{id}});if(plan.id!==id)throw Error('没有这个生活水平');
- const previous=lifestylePlan(s),effectiveDay=s.dayReport?.day===s.day&&['finalized','legacy-paid'].includes(s.dayReport.livingSettlement?.status)?s.day+1:s.day;
- if(previous.id===id)return {...plan,recurring:true,effectiveDay,changed:false,move:null};
- const available=accountMetrics(s).availableMargin+(s.reserve||0);
- if(plan.dailyCost>previous.dailyCost&&available+1e-6<plan.dailyCost)throw Object.assign(Error(renderLivingCopy(LIVING_CHOICE_COPY.options.find(option=>option.id===id).insufficientBalanceText,{label:plan.label,dailyTotal:'¥'+plan.dailyCost.toLocaleString('zh-CN')})),{code:'insufficient-living-cash'});
- s.lifestyle={version:s.mode==='endless'?1:2,id,selectedDay:s.day};
- const move=scheduleHousingSelection(s,{fromId:previous.id,toId:id,effectiveDay,timestamp:currentTradingTimestamp(s)});
- if(s.dayReport?.day===s.day&&s.dayReport.livingSettlement?.status==='pending'){const quote=dayLivingQuote(s,s.dayReport,s.dayReport.livingSettlement.quote.roll);s.dayReport.livingSettlement.quote=quote;s.dayReport.pendingLivingCost=quote.amount;}
- return {...plan,recurring:true,effectiveDay,changed:true,move};
+ const quote=quoteHousingSelection(s,id);
+ if(!quote.changed)return {...quote,recurring:true,move:null};
+ if(accountMetrics(s).availableMargin+1e-6<quote.moveInCost)throw Object.assign(Error('可用资金不足以支付搬入费'),{code:'insufficient-living-cash'});
+ const timestamp=currentTradingTimestamp(s);
+ s.cash-=quote.moveInCost;s.expenses+=quote.moveInCost;
+ const selection=commitHousingSelection(s,quote,{paidAmount:quote.moveInCost,timestamp});
+ if(quote.moveInCost)recordConsumption(s,{id:`housing:${s.day}:${(s.consumptionLedger||[]).filter(r=>r.kind==='housing').length+1}`,kind:'housing',label:`搬入${quote.label}`,amount:quote.moveInCost,timestamp});
+ mentalState(s);refreshReport(s);return {...selection,recurring:true};
 }
 function refreshReport(s){if(!s.dayReport||s.dayReport.day!==s.day)return;ensureReportLiving(s);const funding=s.externalFunding-s.dayOpeningFunding,costs=s.expenses-s.dayOpeningExpenses,income=(s.nonTradingIncome||0)-(s.dayOpeningIncome||0);s.dayReport.closing=equity(s);s.dayReport.funding=funding;s.dayReport.costs=costs;if(s.lifeActions)s.dayReport.nonTradingIncome=income;s.dayReport.net=Number.isFinite(s.dayReport.closedTradeNet)?s.dayReport.closedTradeNet:equity(s)-s.dayOpening-funding-income+costs;s.dayReport.externalFunding=s.externalFunding;s.dayReport.tradeNet=s.dayReport.net;s.dayReport.netTradingProfit=s.dayReport.net;sealAccountingDay(s);}
 const canRentQuote=s=>(tradingOpen(s)||isHistorical(s)&&s.phase==='decision'&&s.historical.status==='loading')&&(isHistorical(s)||isLiveMarket(s)||hasCanonicalGrid(s.script));
@@ -755,7 +787,8 @@ function settleLifeActionDay(s){
  return finishTradingDay(s);
 }
 export function lifeActionOptions(s,category){
- const status=lifeActionStatus(s);let dinners=new Map(),dinnerError=null;
+ const status=lifeActionStatus(s);let dinners=new Map(),dinnerError=null,relaxCash=accountMetrics(s).availableMargin;
+ if(category==='relax'&&status.enabled){try{const preview=structuredClone(s);settleLifeActionDay(preview);relaxCash=accountMetrics(preview).availableMargin;}catch{relaxCash=0;}}
  if(category==='dinner'&&status.enabled){
   // Exact fee/interest/tier preview on a disposable copy. The player's account,
   // story, market cursor and persisted receipts are untouched by opening a menu.
@@ -763,13 +796,15 @@ export function lifeActionOptions(s,category){
   catch(error){dinnerError=error.message;}
  }
  return (LIFE_ACTION_CATALOG[category]||[]).map(row=>{
+  const terms=category==='work'?effectiveWorkTerms(s,row):{};
   const known=category==='friend'?lifeFriendKnown(s,row.id):true;
   const dinner=category==='dinner',offer=dinners.get(row.id),used=dinner&&s.recapChoiceLedger?.some(entry=>entry.day===s.day&&entry.group==='dinner');
   const workReason=category==='work'?workUnlockReason(s,row,{knowsFriend:id=>lifeFriendKnown(s,id),netAssets:equity(s)-debtSummary(s).total}):null;
-  const enoughStamina=category!=='work'||staminaStatus(s).value>=row.staminaCost;
-  const enabled=known&&!workReason&&status.enabled&&enoughStamina&&(!dinner||!!offer?.enabled&&!used);
-  const reason=!known?'还未相识':status.reason||workReason||(!enoughStamina?'体力不足，先休息':null)||(!dinner?null:used?'今晚已经请过客':dinnerError||(!offer?`今日交易净收益需达到 ¥${row.minGain.toLocaleString('zh-CN')}`:!offer.enabled?'可用资金不足':null));
-  return {...row,...(category==='friend'?{known}:{}),unlocked:known&&!workReason,enabled,reason};
+  const enoughStamina=category!=='work'||staminaStatus(s).value>=terms.staminaCost;
+  const enoughCash=category!=='relax'||relaxCash>=(row.cost||0);
+  const enabled=known&&!workReason&&status.enabled&&enoughStamina&&enoughCash&&(!dinner||!!offer?.enabled&&!used);
+  const reason=!known?'还未相识':status.reason||workReason||(!enoughStamina?'体力不足，先休息':null)||(!enoughCash?'可用资金不足':null)||(!dinner?null:used?'今晚已经请过客':dinnerError||(!offer?`今日交易净收益需达到 ¥${row.minGain.toLocaleString('zh-CN')}`:!offer.enabled?'可用资金不足':null));
+  return {...row,...terms,...(category==='friend'?{known}:{}),...(category==='relax'?{staminaRecovery:row.id==='onsen'?40:18,stressDelta:row.id==='onsen'?-8:-3}:{}),unlocked:known&&!workReason,enabled,reason};
  });
 }
 export function commitLifeAction(s,{category,optionId,day,runId}={}){
@@ -779,9 +814,9 @@ export function commitLifeAction(s,{category,optionId,day,runId}={}){
  const previous=lifeActionReceipt(s);
  if(previous)return {applied:false,alreadyApplied:true,receipt:previous,report:s.dayReport};
  const status=lifeActionStatus(s);if(!status.enabled)throw Error(status.reason);
- if(category==='work'){const reason=workUnlockReason(s,selected,{knowsFriend:id=>lifeFriendKnown(s,id),netAssets:equity(s)-debtSummary(s).total});if(reason)throw Error(reason);if(staminaStatus(s).value<selected.staminaCost)throw Error('体力不足，先休息');}
+ if(category==='work'){const reason=workUnlockReason(s,selected,{knowsFriend:id=>lifeFriendKnown(s,id),netAssets:equity(s)-debtSummary(s).total});if(reason)throw Error(reason);if(staminaStatus(s).value<effectiveWorkTerms(s,selected).staminaCost)throw Error('体力不足，先休息');}
  if(category==='friend'&&!lifeFriendKnown(s,optionId))throw Error('还未相识');
- if(category==='dinner'||category==='work'){
+ if(category==='dinner'||category==='work'||selected.cost>0){
   // A changed quote or inadequate cash must never end the original day before
   // the existing dinner rule has accepted the exact chosen option and cost.
   const sealedReport=s.phase==='day_end'&&s.dayReport?.day===s.day?s.dayReport:null;
@@ -797,30 +832,36 @@ export function commitLifeAction(s,{category,optionId,day,runId}={}){
  }
  return applyLifeAction(s,selected);
 }
+const lifeActionDialogueForCatToy=selected=>lifeActionDialogueForSource(selected,'yasuko-cat-toy-20261017');
 function applyLifeAction(s,selected){
  const {category,id:optionId}=selected,before=equity(s),fees=s.feesPaid||0,orderCount=positionsOf(s).length,timestamp=currentTradingTimestamp(s);
  // One synchronous transition: queued quotes and repeated clicks cannot interleave.
  const report=settleLifeActionDay(s),skitBefore=captureSkitState(s,mood(s));
- let work=null;
+ let work=null;const terms=category==='work'?effectiveWorkTerms(s,selected):{income:selected.income};
  if(category==='work'){
-  const spent=consumeStamina(s,{amount:selected.staminaCost,id:`stamina:work:${s.day}`,source:'work'});
+  const spent=consumeStamina(s,{amount:terms.staminaCost,id:`stamina:work:${s.day}`,source:'work'});
   if(!spent.applied)throw Error('体力不足，先休息');
   const stressBefore=s.stress||0;s.stress=Math.max(0,stressBefore+selected.stressDelta);
-  work={pay:{...selected.pay},staminaCost:selected.staminaCost,stressDelta:selected.stressDelta,stressBefore,stressAfter:s.stress,reward:awardWorkItem(s,selected,`life:${lifeActionRunId(s)}:${s.day}`)};
+  work={pay:{...selected.pay},terms:terms.terms,staminaCost:terms.staminaCost,stressDelta:selected.stressDelta,stressBefore,stressAfter:s.stress,reward:awardWorkItem(s,selected,`life:${lifeActionRunId(s)}:${s.day}`)};
  }
  if(category==='dinner')chooseRecapAction(s,optionId);
+ if(category==='relax'&&selected.cost){
+  if(accountMetrics(s).availableMargin<selected.cost)throw Error('可用资金不足');
+  s.cash-=selected.cost;s.expenses+=selected.cost;recordConsumption(s,{id:`life-cost:${lifeActionRunId(s)}:${s.day}`,kind:'relax',label:selected.label,amount:selected.cost,timestamp});
+ }
  const sourceVersion=s.version===LIFE_ACTION_SAVE_VERSION?s.lifeActions.sourceVersion:s.version;
  s.lifeActions ||= {version:1,sourceVersion,receipts:[]};
  s.nonTradingIncome ??= 0;s.dayOpeningIncome ??= 0;
- s.cash+=selected.income;s.nonTradingIncome=money(s.nonTradingIncome+selected.income);
+ s.cash+=terms.income;s.nonTradingIncome=money(s.nonTradingIncome+terms.income);
  // Existing friend / quiet-night mental recovery and bounded stamina recovery.
  // Dinner recovery is owned by chooseRecapAction, so it cannot apply twice.
  if(category==='friend'){s.relationship++;s.stress=Math.max(0,s.stress-4);}
- if(category==='relax')s.stress=Math.max(0,s.stress-3);
- const staminaRecovery=recoverLifeAction(s,category,`life:${lifeActionRunId(s)}:${s.day}`);
- const dialogue=selectLifeSceneDialogue(selected,s)||lifeActionDialogue(selected);
+ if(category==='relax')s.stress=Math.max(0,s.stress-(optionId==='onsen'?8:3));
+ const catToy=category==='friend'&&optionId==='yasuko'&&!!s.workInventory?.catToy&&validWorkInventory(s);
+ const staminaRecovery=recoverLifeAction(s,category,`life:${lifeActionRunId(s)}:${s.day}`,optionId,{catToy});
+ const dialogue=catToy?lifeActionDialogueForCatToy(selected):selectLifeSceneDialogue(selected,s)||lifeActionDialogue(selected);
  if(dialogue){s.chat.friend.push(...dialogue.lines.map((line,index)=>({...line,dialogueId:`${dialogue.sourceId}:${index}`,kind:line.from==='久留美'?'self':'friend'})));s.chat.friend=s.chat.friend.slice(-60);}
- const receipt={id:`life:${lifeActionRunId(s)}:${s.day}`,day:s.day,category,optionId,label:selected.label,income:selected.income,cost:selected.cost||0,feeTotal:money((s.feesPaid||0)-fees),closedPositions:orderCount,timestamp,assetsBefore:before,assetsAfter:equity(s),dialogue,...(work?{work}: {})};
+ const receipt={id:`life:${lifeActionRunId(s)}:${s.day}`,day:s.day,category,optionId,label:selected.label,income:terms.income,cost:selected.cost||0,feeTotal:money((s.feesPaid||0)-fees),closedPositions:orderCount,timestamp,assetsBefore:before,assetsAfter:equity(s),dialogue,...(work?{work}: {})};
  s.lifeActions.receipts.push(receipt);s.version=LIFE_ACTION_SAVE_VERSION;
  mentalState(s);receipt.skitOutcome=makeSkitOutcome(s,receipt.id,skitBefore,captureSkitState(s,mood(s)));report.lifeAction=structuredClone(receipt);refreshReport(s);return {applied:true,alreadyApplied:false,receipt,report,staminaRecovery};
 }
@@ -853,7 +894,7 @@ function dayLivingQuote(s,report,roll,{legacyPricing=false}={}){
  const knowsFriend=s.story?.seen?.includes('friendStudy')||s.story?.log?.some(entry=>entry.id==='friendStudy')||s.itemUnlocks?.mochiko?.event==='friendStudy';
  const parts=legacyPricing?{basics:livingCost(s),rent:0}:livingChargeParts(s);
  if(legacyPricing)parts.basics=money(Math.min(Math.max(0,equity(s)),lifestylePlan(s).dailyCost*(1-(s.livingDiscount||0))));
- return {...quoteLivingMeal({seed:s.seed,day:report.day,baseAmount:parts.basics,rentAmount:parts.rent,cash:Math.max(0,s.cash),openingNetAssets:dailyReturnMetrics(s,{report}).denominator,tradingNet:report.closedTradeNet??report.net,knowsFriend,lastSpecialDay:s.livingPolicy?.lastSpecialDay??null,discount:s.livingDiscount||0,lifestyleId:lifestylePlan(s).id,allowFeast:false,roll}),...(legacyPricing?{legacyPricing:true}:{})};
+ return {...quoteLivingMeal({seed:s.seed,day:report.day,baseAmount:parts.basics,rentAmount:parts.rent,cash:Math.max(0,s.cash),openingNetAssets:dailyReturnMetrics(s,{report}).denominator,tradingNet:report.closedTradeNet??report.net,knowsFriend,lastSpecialDay:s.livingPolicy?.lastSpecialDay??null,discount:parts.mealCredit?1:0,lifestyleId:parts.lifestyleId??lifestylePlan(s).id,pricingVersion:parts.pricingVersion,allowFeast:false,roll}),...(legacyPricing?{legacyPricing:true}:{})};
 }
 function ensureReportLiving(s){
  const report=s.dayReport;if(!report||!Number.isSafeInteger(report.day)||report.day<1)return null;
@@ -875,7 +916,9 @@ export function finalizeDayLiving(s){
  if(settlement.status!=='pending')return{charged:false,amount:settlement.receipt.amount,receipt:settlement.receipt};
  const ledger=s.expenseLedger?.findLast(row=>row.day===s.day&&row.livingStatus==='pending');
  if(!ledger||ledger.living!==0)throw Error('生活费流水不一致，未重复扣款');
- const quote=dayLivingQuote(s,report,settlement.quote.roll,{legacyPricing:!Object.hasOwn(settlement.quote,'rentAmount')}),amount=quote.amount,assetsBefore=equity(s),netAssetsBefore=assetsBefore-debtSummary(s).total;
+ const preserveLegacy=s.housingEconomy?.effectiveDay>s.day&&settlement.quote.pricingVersion!==2;
+ const quote=preserveLegacy?{...settlement.quote,amount:Math.min(settlement.quote.amount,Math.max(0,s.cash)),...(!Object.hasOwn(settlement.quote,'rentAmount')?{legacyPricing:true}:{})}:dayLivingQuote(s,report,settlement.quote.roll,{legacyPricing:!Object.hasOwn(settlement.quote,'rentAmount')});
+ const amount=quote.amount,assetsBefore=equity(s),netAssetsBefore=assetsBefore-debtSummary(s).total;
  // One synchronous state transition. Animation/playback never commits money.
  s.cash-=amount;s.expenses+=amount;s.livingPaid=(s.livingPaid||0)+amount;recordConsumption(s,{id:`living:${s.seed}:${s.day}`,kind:'living',label:quote.label,amount,timestamp:currentTradingTimestamp(s)});
  report.livingCost=amount;report.pendingLivingCost=0;settlement.status='finalized';settlement.quote=quote;
@@ -1020,7 +1063,8 @@ export function restoreGame(raw) {
     if(s&&[2,3].includes(s.version)&&Number.isFinite(s.cash)&&s.cash<0)return null;
     if(s&&Number.isFinite(s.cash)&&s.cash<0&&s.cash>=-1e-8)s.cash=0;
     if(!s||![2,3,4,5,6,7,8,VERSION,10,11,STORY_CAPITAL_VERSION,ENDLESS_CAPITAL_VERSION,MULTI_MARKET_VERSION,LIVE_MARKET_VERSION].includes(s.version)||!Number.isFinite(s.seed)||!Number.isFinite(s.price)||s.price<=0||!Number.isFinite(s.cash)||!Array.isArray(s.candles)||!s.script?.tracks||!['decision','playing','closing','day_end','resting','ending','bankrupt'].includes(s.phase))return null;
-    if(!validStamina(s.stamina)||!validLiveMarket(s)||!validHistoricalContinuation(s)||!validMarketBook(s))return null;
+    if(!validStamina(s.stamina)||!validDailySupplies(s)||!validLiveMarket(s)||!validHistoricalContinuation(s)||!validMarketBook(s))return null;
+    if(s.housingEconomy!==undefined&&(!s.housingEconomy||s.housingEconomy.version!==1||!Number.isSafeInteger(s.housingEconomy.effectiveDay)||s.housingEconomy.effectiveDay<1||s.housingEconomy.effectiveDay>s.day+1))return null;
     if(!validHistoricalSave(s)||[10,11].includes(s.version)&&!isHistorical(s))return null;
     if(!validComicAutoplay(s.comicAutoplay)||!validCandleDisplay(s))return null;
     if(!isHistorical(s)&&!validQuoteGrid(s.script))return null;const packageState=quotePackageState(s);if(packageState.paid>0&&(!Number.isFinite(s.quotePackageExpense)||s.quotePackageExpense!==packageState.paid||!Number.isFinite(s.expenses)||s.expenses+1e-6<packageState.paid))return null;
@@ -1076,7 +1120,8 @@ export function restoreGame(raw) {
     ensureRunStatistics(s);ensureTradingClock(s);ensureAccountingJournal(s);ensureDialogue(s);if(!(oldVersion>=8&&hasCanonicalGrid(s.script)&&s.phase==='playing'&&s.pending?.subtick>0))mentalState(s);networkLoanTerms(s);s.dayOpeningLine ??= s.speech.text;
 
 
-    ensureStamina(s);captureMarket(s);markHistoricalRestored(s);markLiveRestored(s);if(lifeVersion){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return s;
+    initializeHousingEconomy(s,{restored:true});initializeWorkEconomy(s,{restored:true});ensureDailySupplies(s);ensureStamina(s).version=3;
+    captureMarket(s);markHistoricalRestored(s);markLiveRestored(s);if(lifeVersion){s.lifeActions.sourceVersion=s.version;s.version=LIFE_ACTION_SAVE_VERSION;}return s;
   }catch{return null;}
 }
 function migrateV2(s){

@@ -1,5 +1,5 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
 export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
@@ -10,6 +10,7 @@ const allowed=new Set(['fx-api-v1-comment-visitor','fx-api-v1-live-ranking-recei
 // Migration backups are exact recovery bytes for explicitly listed save slots.
 // They never fall back to another project's unscoped storage.
 const migrationBackups=new Set([...migrationSaveSlots.map(key=>key+':pre-stamina-fatigue-v2'),...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-life-scenes-v1'),...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-life-actions-v1'),'fx-girl-campaign-v3:pre-v9','fx-girl-endless-v1:pre-v9',...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-father-theft-v1'),...migrationSaveSlots.map(key=>key+':pre-living-v2')]);
+for(const key of migrationSaveSlots)migrationBackups.add(key+':pre-economy-v1');
 // Pending telemetry is deliberately not replayed from the old site's outbox.
 const noLegacy=new Set(['fx-daily-art-memory-v1','fx-bgm-preferences-v1','fx-moving-averages','fx-telemetry-outbox','fx-telemetry-seen','fx-anon-visitor','fx-anon-session','fx-last-visit','fx-leaderboard-submit-session']);
 const serviceOnly=key=>historicalKeys.includes(key)||migrationBackups.has(key)||key.startsWith('fx-api-v1-')||key.startsWith('fx-leaderboard-capability-')||noLegacy.has(key);

@@ -1,4 +1,4 @@
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
@@ -65,7 +65,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
   const footer=make('footer','life-picker-footer'),returnButton=button('life-picker-return','‹ 返回交易');returnButton.dataset.lifeClose='true';footer.append(returnButton);body.append(footer);
  }
  function renderOptions(m){
-  const heading=make('h3','life-picker-section-title',CATEGORIES[category].heading),grid=make('div',`life-picker-option-grid life-picker-${category}-grid`);grid.setAttribute('aria-label',CATEGORIES[category].heading);body.append(heading);if(category==='work')body.append(make('p','life-picker-work-terms','按所列班次结算，工资参考税前报酬，游戏不另扣工资税。'));body.append(grid);
+  const heading=make('h3','life-picker-section-title',CATEGORIES[category].heading),grid=make('div',`life-picker-option-grid life-picker-${category}-grid`);grid.setAttribute('aria-label',CATEGORIES[category].heading);body.append(heading);body.append(grid);
   const options=optionsOf(m,category);let enabledCount=0;
   for(const option of options){
    const card=make('article','life-picker-option-card');card.dataset.optionId=option.id;
@@ -75,8 +75,9 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    // Unknown future options remain usable, but never borrow another person's art.
    if(ART_IDS.has(option.id))card.append(art(option.id,option.label));
    if(category==='dinner'&&Number.isFinite(option.cost))card.append(make('p','life-picker-income',`请客费用 ¥${number(option.cost)}`));
+   if(category==='relax'&&Number.isFinite(option.cost))card.append(make('p','life-picker-income',`费用 ¥${number(option.cost)}`));
+   if(category==='relax'&&Number.isFinite(option.staminaRecovery))card.append(make('p','life-picker-work-details',`体力 +${option.staminaRecovery} · 压力 ${option.stressDelta>0?'+':''}${option.stressDelta||0}`));
    if(category==='work'&&Number.isFinite(option.income))card.append(make('p','life-picker-income',`工作收入 ¥${number(option.income)}`));
-   if(category==='work'&&option.pay)card.append(make('p','life-picker-work-details',`${option.pay.hours} 小时 · 时薪 ¥${number(option.pay.rate)}`));
    if(category==='work'&&Number.isFinite(option.staminaCost)){card.append(make('p','life-picker-work-details',`体力 −${option.staminaCost} · ${option.stressDelta>0?'压力 +'+option.stressDelta:'压力 '+option.stressDelta}`));card.append(make('p','life-picker-work-reward',`初次完成获得：${option.rewardLabel}`));}
    const disabled=busy||!statusOf(m).enabled||!option.enabled||stale(m),reason=option.reason||statusOf(m).reason;
    if(option.enabled)enabledCount++;

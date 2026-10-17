@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "553e629fa4c529b0c37c46225ae9c87b691d663f",
-  "assetVersion": "553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717",
+  "sourceCommit": "9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1",
+  "assetVersion": "9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -44,16 +44,5 @@
       "compatibilityOnly": true,
       "activeModuleFiles": 0
     }
-  },
-  "retainedPublicAssets": [
-    {
-      "path": "fx/pixel-assets/ui-icons-transparent.png",
-      "bytes": 1365143,
-      "sha256": "28a284485aa795fab7b6d17070109a8e3c96881424849bc7ef10b5d7172a17ac",
-      "gitBlob": "7787d12ff45aba2906e016096bbc2386831e0fea",
-      "sourcePublicCommit": "4c814417b4d8ac893465df3748555600e23ea132",
-      "localArtifactContainsBytes": false,
-      "publicationPolicy": "preserve exact existing public blob at the same path"
-    }
-  ]
+  }
 }

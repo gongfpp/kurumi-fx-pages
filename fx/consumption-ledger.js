@@ -1,11 +1,14 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // Consumption is a separate, itemized cash ledger. Legacy totals are retained;
 // missing old item names are never reconstructed from guesses.
 export const LIFESTYLES=Object.freeze([
- Object.freeze({id:'basic',label:LIVING_CHOICE_COPY.options[0].label,dailyCost:2200,dailyBasics:2200,dailyRent:0,extraStressRelief:0,extraRestRecovery:0}),
- Object.freeze({id:'comfortable',label:LIVING_CHOICE_COPY.options[1].label,dailyCost:3300,dailyBasics:2200,dailyRent:1100,extraStressRelief:2,extraRestRecovery:4}),
- Object.freeze({id:'generous',label:LIVING_CHOICE_COPY.options[2].label,dailyCost:5500,dailyBasics:2200,dailyRent:3300,extraStressRelief:4,extraRestRecovery:8}),
+ ...[ ['basic',1500,0,28,0,0],['comfortable',3000,45000,40,0,0],['generous',6000,135000,50,0,0],['premium',12000,315000,58,0,0],['penthouse',30000,855000,64,0,0] ].map(([id,dailyCost,moveInCost,sleepRecovery,extraStressRelief,extraRestRecovery],index)=>Object.freeze({id,label:LIVING_CHOICE_COPY.options[index].label,dailyCost,baseDailyCost:1500,dailyBasics:300,dailyRent:dailyCost-300,mealCost:300,moveInCost,sleepRecovery,extraStressRelief,extraRestRecovery}))
 ]);
+export const LEGACY_LIFESTYLES=Object.freeze([
+ {id:'basic',dailyBasics:2200,dailyRent:0,extraStressRelief:0,extraRestRecovery:0},
+ {id:'comfortable',dailyBasics:2200,dailyRent:1100,extraStressRelief:2,extraRestRecovery:4},
+ {id:'generous',dailyBasics:2200,dailyRent:3300,extraStressRelief:4,extraRestRecovery:8}
+].map(Object.freeze));
 export function lifestylePlan(state={}){return LIFESTYLES.find(x=>x.id===state.lifestyle?.id)||LIFESTYLES[0];}
 export function validLifestyle(record){return record===undefined||!!record&&[1,2].includes(record.version)&&LIFESTYLES.some(x=>x.id===record.id)&&Number.isSafeInteger(record.selectedDay)&&record.selectedDay>=1;}
 export function recordConsumption(state,{id,kind,label,amount,timestamp}){

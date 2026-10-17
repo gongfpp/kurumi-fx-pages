@@ -1,7 +1,7 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {storageFailure} from './storage.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {storageFailure} from './storage.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -11,6 +11,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
   const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
   const staminaBackupKey=staminaFatigueMigration&&(MAIN_GAME_SAVE_SLOTS.includes(key)||['fx-girl-shared-replay-story-v1','fx-girl-shared-replay-endless-v1'].includes(key))?key+':pre-stamina-fatigue-v2':null;
+  const economyBackupKey=staminaBackupKey?key+':pre-economy-v1':null;
   const lifeBackupKey=staminaBackupKey&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-actions-v1':null;
   const read=()=>{
     const current=storage.readItem(key);
@@ -23,7 +24,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   let baselineMetadata=null,completedSnapshot=null;
   const invalidate=()=>{baselineMetadata=null;completedSnapshot=null;};
   // Retain only immutable migration decisions, never the caller's state object.
-  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state),fatigueV2:!!staminaBackupKey&&state?.stamina?.version===2});
+  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state),fatigueV2:!!staminaBackupKey&&(state?.stamina?.version===2||state?.stamina?.version===3&&!!state.stamina.fatigue),economyV1:!!economyBackupKey&&state?.stamina?.version===3&&state?.housingEconomy?.version===1&&state?.workEconomy?.version===1});
   const previousMetadata=()=>{
     if(baselineMetadata?.raw===baseline.raw)return baselineMetadata.value;
     let value={};
@@ -93,6 +94,11 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
               status='saved';reason='';failure=null;return true;
             }
             const nextMetadata=metadata(JSON.parse(text)),previous=previousMetadata();
+            // Keep the exact last pre-economy envelope in this registered slot.
+            if(nextMetadata.economyV1&&baseline.raw!==null&&!previous.economyV1){
+              const backup=storage.readItem(economyBackupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(economyBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(economyBackupKey));
+            }
             // Preserve the exact pre-v9 bytes once before replacing an older schema.
             // Backups stay in this mode's namespace and are never overwritten.
             if(previous.preV9&&nextMetadata.v9){
@@ -171,11 +177,13 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
       const sceneRecovery=sceneBackup?.available&&sceneBackup.value!==null?{lifeSceneRecoveryRaw:sceneBackup.value}:{};
       const staminaBackup=staminaBackupKey?storage.readItem(staminaBackupKey):null;
       const staminaRecovery=staminaBackup?.available&&staminaBackup.value!==null?{staminaFatigueRecoveryRaw:staminaBackup.value}:{};
+      const economyBackup=economyBackupKey?storage.readItem(economyBackupKey):null;
+      const economyRecovery=economyBackup?.available&&economyBackup.value!==null?{economyRecoveryRaw:economyBackup.value}:{};
       // If life upgraded first, this older checkpoint is the pre-v17 recovery.
       // Both archives keep their own compatibility boundary and exact bytes.
       const lifeBackup=lifeBackupKey?storage.readItem(lifeBackupKey):null;
       const lifeRecovery=lifeBackup?.available&&lifeBackup.value!==null?{lifeActionsRecoveryRaw:lifeBackup.value}:{};
-      return {...sceneRecovery,...staminaRecovery,...lifeRecovery,recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
+      return {...sceneRecovery,...staminaRecovery,...economyRecovery,...lifeRecovery,recoveryRaw,importRaws,format:'fx-save-conflict-backup-v1',key,local:state,baselineRaw:raw,
         storedRaw:latest.current.available?latest.current.value:null,
         legacyRaw:latest.legacy?.available?latest.legacy.value:null,
         storageReadable:available(latest),saveDiagnostic:{status:status==='saved'&&savedText!==localRaw?'pending':status,reason,failure:failure?{...failure}:null,localCharacters:localRaw?.length??0,storedCharacters:latest.current.value?.length??0}};

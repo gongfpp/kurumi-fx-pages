@@ -1,7 +1,7 @@
-import {createFrontendHost} from './frontend-host.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {createFrontendHost} from './frontend-host.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 
 // The host moves the original controls; no game, clock or save is recreated.
-export function mountFrontendSwitcher({document=globalThis.document,onLayout=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717'),startupTimeoutMs=5000,setTimer=globalThis.setTimeout,clearTimer=globalThis.clearTimeout}={}){
+export function mountFrontendSwitcher({document=globalThis.document,onLayout=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717'),startupTimeoutMs=5000,setTimer=globalThis.setTimeout,clearTimer=globalThis.clearTimeout}={}){
  const boot=document.defaultView?.kurumiFrontendBoot;
  const nav=document.getElementById('frontend-switch');
  if(!nav){boot?.finish('legacy');return null;}

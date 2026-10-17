@@ -1,7 +1,7 @@
-import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay} from './life-work.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay} from './life-work.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // Convenience-shift default; actual per-job contracts live in life-work.js.
 // One completed life action per story day; individual work terms live in life-work.js.
 export const LIFE_WORK_INCOME=LIFE_WORK_JOBS[0].income;
@@ -11,7 +11,7 @@ export const LIFE_ACTION_CATALOG=Object.freeze({
  dinner:Object.freeze(DINNER_OPTIONS.map(row=>Object.freeze({...row,category:'dinner',income:0}))),
  friend:Object.freeze([option('friend','mochiko','萌智子'),option('friend','yasuko','安子')]),
  work:LIFE_WORK_JOBS,
- relax:Object.freeze([option('relax','shrine','神社'),option('relax','river','河边'),option('relax','park','公园')])
+ relax:Object.freeze([option('relax','shrine','神社'),option('relax','river','河边'),option('relax','park','公园'),Object.freeze({...option('relax','onsen','温泉与按摩'),cost:8000})])
 });
 export const lifeActionRunId=s=>String(s.runId??`seed:${s.seed}:${s.mode}`);
 export const lifeActionDefinition=(category,id)=>LIFE_ACTION_CATALOG[category]?.find(row=>row.id===id)||null;
@@ -30,6 +30,7 @@ export function lifeFriendKnown(s,id){
 // excerpts; routine additions have their own append-only source identities.
 export function lifeActionDialogue(option){
  if(option.category==='work')return structuredClone(option.dialogue);
+ if(option.category==='relax'&&option.id==='onsen')return lifeActionDialogueForSource(option,'onsen-rest-20261017');
  const id=option.category==='friend'?option.id==='mochiko'?'O-F-TALK-01':'O-C-HIDE-02':['work','relax'].includes(option.category)?`life-action-20261012:${option.category}:${option.id}`:null;
  return lifeActionDialogueForSource(option,id);
 }

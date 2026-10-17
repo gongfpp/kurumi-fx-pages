@@ -1,12 +1,12 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=553e629fa4c529b0c37c46225ae9c87b691d663f-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
 // Configurable game balance, not a claim about real living costs or behavior.
 export const LIVING_SETTLEMENT_VERSION=1;
 export const LIVING_POLICY=Object.freeze({gainThreshold:20000,openingNetRatio:.25,feastChance:.12,feastMultiplier:1.5,friendChance:.15,cooldownDays:3});
 const finite=(value,fallback=0)=>Number.isFinite(value)?value:fallback;
 const money=value=>Math.round((value+Number.EPSILON*Math.abs(value)*2)*100)/100;
 export function livingDayRoll(seed,day){let x=((seed>>>0)^Math.imul(day,0x9e3779b9)^0x4c495649)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return((x^(x>>>16))>>>0)/4294967296;}
-export function quoteLivingMeal({seed,day,baseAmount,rentAmount=0,cash,openingNetAssets,tradingNet,knowsFriend=false,lastSpecialDay=null,discount=0,lifestyleId='basic',allowFeast=false,roll=livingDayRoll(seed,day)}={}){
+export function quoteLivingMeal({seed,day,baseAmount,rentAmount=0,cash,openingNetAssets,tradingNet,knowsFriend=false,lastSpecialDay=null,discount=0,lifestyleId='basic',pricingVersion=2,allowFeast=false,roll=livingDayRoll(seed,day)}={}){
  const budget=Math.max(0,finite(cash)),base=Math.max(0,finite(baseAmount)),rent=Math.max(0,finite(rentAmount)),threshold=Math.max(LIVING_POLICY.gainThreshold,Math.max(0,finite(openingNetAssets))*LIVING_POLICY.openingNetRatio);
  const cooled=lastSpecialDay===null||!Number.isFinite(lastSpecialDay)||day-lastSpecialDay>LIVING_POLICY.cooldownDays;
  const draw=Number.isFinite(roll)&&roll>=0&&roll<1?roll:livingDayRoll(seed,day);
@@ -15,7 +15,7 @@ export function quoteLivingMeal({seed,day,baseAmount,rentAmount=0,cash,openingNe
  if(allowFeast&&cooled&&finite(tradingNet)>=threshold&&draw<LIVING_POLICY.feastChance&&feast>0&&budget>=feast){kind='feast';label='难得吃顿大餐';amount=feast;}
  else if(cooled&&knowsFriend&&finite(tradingNet)<=-threshold&&draw<LIVING_POLICY.friendChance){kind='friend-treat';label='朋友请客';amount=0;}
  // Sub-cent legacy cash is an asset, not permission to charge beyond that cash.
- return{version:1,day,lifestyleId,amount:Math.min(budget,money(amount+rent)),baseAmount:base+rent,basicAmount:base,rentAmount:rent,kind,label,roll:draw,seedLocked:true,threshold,discount:Math.max(0,finite(discount)),cooldownDays:LIVING_POLICY.cooldownDays};
+ return{version:1,pricingVersion,day,lifestyleId,amount:Math.min(budget,money(amount+rent)),baseAmount:base+rent,basicAmount:base,rentAmount:rent,kind,label,roll:draw,seedLocked:true,threshold,discount:Math.max(0,finite(discount)),cooldownDays:LIVING_POLICY.cooldownDays};
 }
 export function validLivingSettlement(record,day){
  if(!record||record.version!==1||record.day!==day||!['pending','finalized','legacy-paid'].includes(record.status))return false;
