@@ -1,9 +1,11 @@
+import {ownsTradingNotes} from './life-work.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 // Approved game-only daily supplies. Receipts own payment and meal credit;
 // these helpers never touch quotes, orders, borrowing or permanent attributes.
 export const DAILY_SUPPLY_IDS=Object.freeze(['dailyDrink','energy','noodles','takeaway','chocolate','eyeMask']);
-export const ACTIVE_SUPPLY_IDS=Object.freeze(['tradingNotes','energy','noodles','takeaway']);
+export const ACTIVE_SUPPLY_IDS=Object.freeze(['energy','noodles','takeaway']);
 export function supplyUnavailableReason(state,id){
- if(!ACTIVE_SUPPLY_IDS.includes(id))return '这个物品已停止购买';
+ if(id==='tradingNotes'&&!ownsTradingNotes(state))return '还没获得交易笔记';
+ if(id!=='tradingNotes'&&!ACTIVE_SUPPLY_IDS.includes(id))return '这个物品已停止购买';
  if(supplyUsedToday(state,id)||id==='tradingNotes'&&state.dailySupplies?.noteUsedDay===state.day)return '今天已经用过了';
  if(['noodles','takeaway'].includes(id)&&(state.dailySupplies?.mealCreditDay===state.day||state.dailySupplies?.uses?.some(row=>row.day===state.day&&['noodles','takeaway'].includes(row.id))))return '今天已经吃过这一餐了';
  return '';
@@ -62,4 +64,6 @@ export const TAKEAWAY_LINES=Object.freeze([
  '乌冬面的汤差一点洒出来。先扶稳碗，再把手机放远一点。'
 ]);
 export function takeawayLine(state){return TAKEAWAY_LINES[((state.seed>>>0)+Math.imul(state.day,31))%TAKEAWAY_LINES.length];}
-export const TRADING_NOTES_LINE='先写今天做了什么，输赢分开记。下一次别急着把这一笔追回来。';
+// Visible Chinese excerpt in the existing chapter19/page21 context-calm.jpg.
+// Its published source/hash remains in manga-context-panels.js; not a Japanese transcript.
+export const TRADING_NOTES_LINE='但我也差不多要小心了';

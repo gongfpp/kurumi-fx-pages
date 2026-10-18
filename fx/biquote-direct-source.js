@@ -1,4 +1,4 @@
-import {BIQUOTE_SYMBOLS, createBiquoteSource} from './biquote-source.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {BIQUOTE_SYMBOLS, createBiquoteSource} from './biquote-source.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export const BIQUOTE_HUB = 'https://biquote.io/hubs/tick';
 export const SIGNALR_BROWSER_CLIENT = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js';
 // These are recommended defaults, injectable pending product parameter approval.
@@ -30,25 +30,27 @@ export function createDirectBiquoteSource({connectionFactory=createBrowserBiquot
   watchdog=setTimer(()=>watch(token),options.intervalMs??DIRECT_SOURCE_DEFAULTS.intervalMs);
  }
  const fallback=(token,reason)=>{
-  if(!running||generation!==token)return;
+  if(!running||generation!==token||path==='rest')return;
+  clearTimer(deadline);deadline=null;
   streamError=reason;path='rest';source.disconnect(reason);source.start();
  };
  async function connect(token){
   try{
    const candidate=await connectionFactory();
-   if(!running||generation!==token){await candidate.stop();return;}
+   if(!running||generation!==token||path!=='connecting'){if(connection===candidate)connection=null;await candidate.stop();return;}
    connection=candidate;
    candidate.on('ReceiveTick',tick=>{if(running&&generation===token&&path==='signalr')source.ingestTick(tick);});
    candidate.onreconnecting?.(()=>fallback(token,'signalr-reconnecting'));
    candidate.onclose?.(()=>fallback(token,'signalr-closed'));
    candidate.onreconnected?.(async()=>{
-    try{await candidate.invoke('Subscribe',[...BIQUOTE_SYMBOLS]);if(running&&generation===token){source.stop();path='signalr';streamError=null;}}
+    if(!running||generation!==token||connection!==candidate)return;
+    try{await candidate.invoke('Subscribe',[...BIQUOTE_SYMBOLS]);if(running&&generation===token&&connection===candidate){source.stop();path='signalr';streamError=null;}}
     catch{fallback(token,'signalr-subscribe-failed');}
    });
    await candidate.start();
-   if(!running||generation!==token){await candidate.stop();return;}
+   if(!running||generation!==token||path!=='connecting'){if(connection===candidate)connection=null;await candidate.stop();return;}
    await candidate.invoke('Subscribe',[...BIQUOTE_SYMBOLS]);
-   if(!running||generation!==token){await candidate.stop();return;}
+   if(!running||generation!==token||path!=='connecting'){if(connection===candidate)connection=null;await candidate.stop();return;}
    clearTimer(deadline);deadline=null;source.stop();path='signalr';streamError=null;
    // REST establishes source/state metadata immediately, including weekend closure.
    // It also supplies the initial quote if the hub has no new tick to push.

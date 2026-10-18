@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 // Per-shift game contracts informed by 2014 Japanese part-time wage references.
 // Income uses the gross hourly reference; this game does not simulate wage tax.
 export const LEGACY_WORK_INCOMES=Object.freeze({"convenience":2200,"cafe":2500,"bookstore":1800,"flyer":1600,"warehouse":3400,"dishwashing":2800,"campusArchive":1300,"tutoring":3600,"proofreading":2100,"eventSetup":4200,"petCare":2300,"translation":4600,"remoteData":2600,"buildingCaretaker":3000,"radioMonitor":1900});
@@ -52,7 +52,7 @@ export const WORK_ITEM_EFFECTS=Object.freeze({
  headphones:Object.freeze({jobId:'radioMonitor',income:4488,label:'音频标注每次工资提高至¥4,488'}),
  catToy:Object.freeze({friendId:'yasuko',staminaRecovery:16,label:'见安子时恢复16点体力'}),
  eventPass:Object.freeze({unlocks:'eventAssist',label:'可应聘展会现场协助'}),
- memo:Object.freeze({collectibleOnly:true,label:'便利店工作的纪念笔记'}),
+ memo:Object.freeze({manualUse:'tradingNotes',label:'手动翻看，每天压力 -5'}),
  teachingNotes:Object.freeze({unlocks:'translation',label:'可应聘翻译助理'}),
  bookmark:Object.freeze({unlocks:'radioMonitor',label:'可应聘音频标注'}),
  indexCards:Object.freeze({unlocks:'radioMonitor',label:'可应聘音频标注'}),
@@ -187,4 +187,9 @@ export function validWorkInventory(s){
   acquired.add(job.rewardId);
  }
  return Object.keys(inventory).length===acquired.size;
+}
+
+// A display flag or a loose item is not proof of the earned work reward.
+export function ownsTradingNotes(s={}){
+ return Object.hasOwn(s.workInventory||{},'memo')&&validWorkInventory(s);
 }

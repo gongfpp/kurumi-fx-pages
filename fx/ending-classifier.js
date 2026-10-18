@@ -1,5 +1,6 @@
-import {accountingValues} from './accounting-journal.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {readEndingLifeChoice} from './ending-life-choice.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({
@@ -50,5 +51,7 @@ export function classifyEnding(state={}){
  }else if(baseId==='walkaway'&&debtsKnown&&totalDebt<=.005&&fatherRepaid>0){
   variant='debt-free';matchedRule='主动离场；有实际父亲借款归还记录，父亲欠款与网贷欠款均已清零';
  }
- return {rulesVersion:ENDING_RULES_VERSION,baseId,variant,catalog:endingCatalogEntry(variant||baseId),...(variant?ENDING_VARIANTS[variant]:BASE_ENDINGS[baseId]),evidence,matchedRule};
+ const lifeChoice=!variant&&baseId==='walkaway'?readEndingLifeChoice(state):null;
+ const presentation=variant?ENDING_VARIANTS[variant]:BASE_ENDINGS[baseId];
+ return {rulesVersion:ENDING_RULES_VERSION,baseId,variant,catalog:endingCatalogEntry(variant||baseId),...presentation,...(lifeChoice?{contextReason:'life-choice',lifeChoice,description:`${presentation.description} · ${lifeChoice.label}`} : {}),evidence,matchedRule};
 }

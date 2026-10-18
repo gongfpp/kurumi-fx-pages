@@ -1,4 +1,4 @@
-import {LotteryPresentation} from './lottery-presentation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {LotteryPresentation} from './lottery-presentation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 // Candidate renderer only: no CSS or app mount is selected before visual review.
 // The host supplies its existing container and its durable settlement receipt.
 export function mountLotteryView(root,{ticket,saved=false,now,schedule=callback=>requestAnimationFrame(callback),cancel=id=>cancelAnimationFrame(id),onClose=()=>{},reducedMotion=false}={}){

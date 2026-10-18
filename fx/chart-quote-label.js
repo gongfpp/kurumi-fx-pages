@@ -1,6 +1,6 @@
 // Read-only display model. No orders, OHLC, clocks or persisted state are edited.
-import {activeMarket} from './market-book.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 const positive=n=>Number.isFinite(n)&&n>0;
 const signed=(n,d)=>`${n>=0?'+':''}${(Object.is(n,-0)?0:n).toFixed(d)}`;
 export function createChartQuoteLabel(){

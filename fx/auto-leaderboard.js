@@ -1,7 +1,7 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;

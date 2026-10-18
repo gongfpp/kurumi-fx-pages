@@ -1,8 +1,8 @@
-import {safeLiveTradeEvidence} from './live-market-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {MARKETS,positionMarket} from './market-book.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals

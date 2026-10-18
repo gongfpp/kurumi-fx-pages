@@ -1,5 +1,5 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {mountLivingChoiceDetails} from './living-choice-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountLivingChoiceDetails} from './living-choice-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 const yen=n=>'¥'+n.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export function mountConsumptionStatement(container,statement,{onLifestyle=()=>{}}={}){
  const doc=container.ownerDocument,section=doc.createElement('section');section.className='consumption-statement';

@@ -1,8 +1,9 @@
-import {fixedDailyContentIdentity} from './contextual-manga-scenes.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {fixedDailyContentIdentity} from './contextual-manga-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountContextualOriginalVoices} from './original-scene-voice.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 const mountedViews=new WeakMap();
 // Inline presentation only. Reading memory never changes game/account state.
 export function mountContextualManga(host,selection,{manual=true,unreadOnly=false,showHeading=true,memory=dailyArtMemory,root=host.ownerDocument||document}={}){
@@ -35,6 +36,7 @@ export function mountContextualManga(host,selection,{manual=true,unreadOnly=fals
   for(const node of active.nodes){const remaining=node.panels.filter(panel=>{const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record];return !unreadOnly||replay||!memory.has(artIdentity(asset));});if(!remaining.length)continue;const story=make('section'),title=make('h4',node.title);story.dataset.node=node.id;story.append(title,make('p',node.before));
    for(const panel of remaining){if(panel.before)story.append(make('p',panel.before));const asset=CONTEXTUAL_MANGA_ASSETS[panel.record]||CHARACTER_STORY_ASSETS[panel.record],figure=make('figure'),img=make('img'),missing=make('p','图片暂未加载。');missing.hidden=true;missing.setAttribute('role','status');img.alt=panel.alt;img.width=asset.dimensions[0];img.height=asset.dimensions[1];img.dataset.sourceRecord=String(panel.record);img.loading='eager';img.decoding='async';setImage(img,asset.path,{onStatus:status=>{missing.hidden=status!=='unavailable';img.hidden=status==='unavailable';}});figure.append(img,missing);story.append(figure);observers.push(observeSeenArtwork(img,{memory,identities:[artIdentity(asset)],onSeen:()=>completeRead(active)}));}
    story.append(make('p',node.after));content.append(story);
+   observers.push(mountContextualOriginalVoices(story,{selection:active,node,visiblePanels:remaining,root,owner:host}));
   }
  }
  if(showHeading)section.append(heading);

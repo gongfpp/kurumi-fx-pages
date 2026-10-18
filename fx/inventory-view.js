@@ -1,21 +1,22 @@
 // Inventory presentation only. Prices and effects are executed by the engine.
-import {supplyUnavailableReason,supplyUsedToday} from './daily-supplies.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {supplyUnavailableReason,supplyUsedToday} from './daily-supplies.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {ownsTradingNotes} from './life-work.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export const SUPPLY_CARDS=Object.freeze([
- {id:'tradingNotes',name:'交易笔记',cost:0,effect:'压力 -5',detail:'每天免费一次，不恢复体力',icon:'work'},
  {id:'energy',name:'魔爪能量饮料',cost:300,effect:'体力 +25',detail:'体力恢复25，情绪更亢奋，当日破限免连点。接下来四分之一交易日耗体八折，随后半个交易日耗体增加五成。每天一罐。',icon:'drink'},
  {id:'noodles',name:'泡面',cost:150,effect:'体力 +8',detail:'与外卖共用一餐位，抵扣餐费 ¥300',icon:'meal'},
  {id:'takeaway',name:'外卖',cost:1200,effect:'体力 +20',detail:'情绪向平静移动一档，与泡面共用餐位',icon:'meal'}
 ]);
 const ICON_PATHS={drink:'M8 3h8v3l2 3v12H6V9l2-3z M8 12h8 M9 3v3h6',meal:'M3 12h18l-3 8H6z M7 8V3 M12 8V2 M17 8V3',chocolate:'M5 3h14v18H5z M5 9h14 M5 15h14 M12 3v18',sleep:'M3 9c3-3 6-3 9 0 3-3 6-3 9 0l-2 8h-5l-2-3-2 3H5z',work:'M3 7h18v14H3z M8 7V3h8v4 M3 12h18 M10 12v3h4v-3'};
 export function inventoryModel({state,props={},jobs=[],effects={},availableMargin=0,canUse=false,busy=false,canUseFather=false,itemDiscovered=()=>false,itemUnlocked=()=>false}){
+ const notesOwned=ownsTradingNotes(state);
  const supplies=SUPPLY_CARDS.map(spec=>({...spec,pending:false,used:supplyUsedToday(state,spec.id)||spec.id==='tradingNotes'&&state.dailySupplies?.noteUsedDay===state.day,disabled:busy||!canUse||!!supplyUnavailableReason(state,spec.id)||availableMargin<spec.cost}));
- const work=Object.values(state.workInventory||{}).map(item=>{
+ const work=Object.values(state.workInventory||{}).filter(item=>item.id!=='memo'||notesOwned).map(item=>{
   const job=jobs.find(row=>row.id===item.jobId),effect=effects[item.id];
-  return {...item,name:item.id==='memo'?'交易笔记':item.label,source:`${job?.label||'打工'} · 第 ${item.day} 天获得`,effect:effect?.label||'工作纪念品',collectibleOnly:!!effect?.collectibleOnly,active:false,used:item.id==='memo'&&(!!state.itemsUsed?.tradingNotes||state.dailySupplies?.noteUsedDay===state.day),disabled:busy||!canUse||!!state.itemsUsed?.tradingNotes||state.dailySupplies?.noteUsedDay===state.day};
+  return {...item,name:item.id==='memo'?'交易笔记':item.label,source:`${job?.label||'打工'} · 第 ${item.day} 天获得`,effect:effect?.label||'工作纪念品',collectibleOnly:!!effect?.collectibleOnly,active:item.id==='memo'&&notesOwned,used:item.id==='memo'&&(!!state.itemsUsed?.tradingNotes||state.dailySupplies?.noteUsedDay===state.day),disabled:busy||!canUse||!!state.itemsUsed?.tradingNotes||state.dailySupplies?.noteUsedDay===state.day};
  });
  const father=itemDiscovered(state,'father')?{...props.father,id:'father',disabled:busy||!canUseFather||!itemUnlocked(state,'father')||!!state.fatherUsed,used:!!state.fatherUsed}:null;
  const excluded=new Set([...SUPPLY_CARDS.map(x=>x.id),'father','mochiko','celebration','tradingNotes','dailyDrink','chocolate','eyeMask']);
- const unknownWork=[...new Map(jobs.filter(job=>job.rewardId&&!state.workInventory?.[job.rewardId]).map(job=>[job.rewardId,job])).values()];
+ const unknownWork=[...new Map(jobs.filter(job=>job.rewardId&&(job.rewardId==='memo'?!notesOwned:!state.workInventory?.[job.rewardId])).map(job=>[job.rewardId,job])).values()];
  const unknown=Object.keys(props).filter(id=>!excluded.has(id)&&!itemDiscovered(state,id)).length+unknownWork.length;
  return {supplies,work,father,unknown,unknownWork,count:supplies.length+work.length+(father?1:0)};
 }

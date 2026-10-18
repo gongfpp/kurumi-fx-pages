@@ -1,11 +1,11 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {NEWS_ARCHIVE} from './news-archive.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {newsSourceDetails} from './news-source-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {displayedNewsItems} from './displayed-news-session.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {newsSourceDetails} from './news-source-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {displayedNewsItems} from './displayed-news-session.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 
 // Compact labels use the viewed market date only as a comparison. The item's
 // own publication instant supplies its JST day/time; availability is not a clock.

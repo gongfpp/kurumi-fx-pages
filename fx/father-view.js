@@ -1,4 +1,4 @@
-import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 const el=(doc,tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderFatherIllustration(container,description){
  container.replaceChildren();container.hidden=!description;if(!description)return;

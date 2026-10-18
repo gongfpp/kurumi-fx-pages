@@ -1,5 +1,5 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';

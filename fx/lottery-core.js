@@ -1,4 +1,4 @@
-import {validateLotteryRules,drawLotteryResult} from './lottery-rules.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {validateLotteryRules,drawLotteryResult} from './lottery-rules.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export const newLotteryState=()=>({version:1,tickets:[],drawsWithoutTop3:0,cheatRedeemed:false});
 const dayValid=d=>Number.isSafeInteger(d)&&d>0;
 const top3=r=>r.tier>=1&&r.tier<=3;

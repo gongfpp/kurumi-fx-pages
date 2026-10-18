@@ -1,2 +1,2 @@
-import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export function sharedReplayPresentation(state,symbol){if(!isSharedReplay(state))return null;const r=state.liveMarket.replay,q=state.liveMarket.quotes[symbol];const time=n=>Number.isFinite(n)?new Date(n).toISOString():'—';return {label:'延迟共享回放',price:q?Number(q.mid).toFixed(3):'—',description:q?`延迟共享回放 · ${q.source} · 来源 ${time(q.sourceTimestamp)} · 接收 ${time(q.receivedAt)} · 回放 ${time(r.playbackClock)} · 播出 ${time(r.wallPlayedAt)} · 播出延迟 ${Math.max(0,r.wallPlayedAt-q.sourceTimestamp)}ms`:'延迟共享回放 · 等待真实报价'};}

@@ -1,9 +1,9 @@
-import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap,receiptRecapFrame} from './recap-receipts.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {receiptCueData} from './receipt-audio.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {recapImpact,boundedRecapCues} from './recap-impact.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap,receiptRecapFrame} from './recap-receipts.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {receiptCueData} from './receipt-audio.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {recapImpact,boundedRecapCues} from './recap-impact.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,variant='classic',enabled=true,reducedMotion=false,playbackRate=1,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const candidate=variant===RECEIPT_RECAP_CANDIDATE?buildReceiptRecap(snapshot):null;

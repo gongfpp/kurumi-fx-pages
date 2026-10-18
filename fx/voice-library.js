@@ -1,4 +1,4 @@
-import {bindAuditionEnvelope} from './audio-envelope.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {bindAuditionEnvelope} from './audio-envelope.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 // Native controls provide keyboard-accessible play, pause, seeking and volume.
 export function coordinateAuditions(players,{beforePlay=()=>{},onPlay=()=>{}}={}){
   const listeners=players.map(player=>{
@@ -8,16 +8,16 @@ export function coordinateAuditions(players,{beforePlay=()=>{},onPlay=()=>{}}={}
   return ()=>{for(const [player,play] of listeners){player.removeEventListener('play',play);player.pause();}};
 }
 
-export function mountVoiceLibrary(container,lines,{beforePlay,onPlay,onError}={}){
+export function mountVoiceLibrary(container,lines,{beforePlay,onPlay,onError,root=container.ownerDocument||globalThis.document}={}){
   const players=[],envelopes=[];container.replaceChildren();
   for(const line of lines){
-    const row=document.createElement('article');row.className='voice-audition';
-    const heading=document.createElement('div');heading.className='voice-audition-heading';
-    const title=document.createElement('strong');title.textContent=line.speaker+' · '+line.zh;
-    const duration=document.createElement('span');duration.textContent=(line.end-line.start+(line.leadInSeconds||0)).toFixed(1)+' 秒';
+    const row=root.createElement('article');row.className='voice-audition';
+    const heading=root.createElement('div');heading.className='voice-audition-heading';
+    const title=root.createElement('strong');title.textContent=line.speaker+' · '+line.zh;
+    const duration=root.createElement('span');duration.textContent=(line.end-line.start+(line.leadInSeconds||0)).toFixed(1)+' 秒';
     heading.append(title,duration);
-    const caption=document.createElement('p');caption.lang='ja';caption.textContent=line.ja;
-    const player=document.createElement('audio');player.controls=true;player.preload='metadata';player.src=line.file;player.volume=.55;player.dataset.voiceId=line.id;player.setAttribute('aria-label','试听：'+line.speaker+' · '+line.zh);
+    const caption=root.createElement('p');caption.lang='ja';caption.textContent=line.ja;
+    const player=root.createElement('audio');player.controls=true;player.preload='metadata';player.src=line.file;player.volume=.55;player.dataset.voiceId=line.id;player.setAttribute('aria-label','试听：'+line.speaker+' · '+line.zh);
     player.addEventListener('loadedmetadata',()=>{if(Number.isFinite(player.duration))duration.textContent=player.duration.toFixed(1)+' 秒';});
     player.addEventListener('error',()=>{row.classList.add('voice-unavailable');duration.textContent='暂不可播放';onError?.(line);});
     envelopes.push(bindAuditionEnvelope(player,{leadInSeconds:line.leadInSeconds??.4}));

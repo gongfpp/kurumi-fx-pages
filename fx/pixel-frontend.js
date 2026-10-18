@@ -1,8 +1,8 @@
-import {createDOMPortals} from './dom-portals.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {createDOMPortals} from './dom-portals.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 
 // One presentation over the existing controls. This module never owns a game,
 // storage session, network source or quotation clock and has no legacy branch.
-export function mountPixelFrontend({document=globalThis.document,onLayout=()=>{},onAvailabilityChange=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717'),startupTimeoutMs=5000,setTimer=globalThis.setTimeout,clearTimer=globalThis.clearTimeout}={}){
+export function mountPixelFrontend({document=globalThis.document,onLayout=()=>{},onAvailabilityChange=()=>{},loadPixel=()=>import('./pixel-renderer.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717'),startupTimeoutMs=5000,setTimer=globalThis.setTimeout,clearTimer=globalThis.clearTimeout}={}){
  const boot=document.defaultView?.kurumiPixelBoot;
  document.body.dataset.frontend='pixel';
  const portals=createDOMPortals({document});

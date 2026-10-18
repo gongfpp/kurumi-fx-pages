@@ -1,19 +1,19 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {selectDinnerAwareComicScene} from './dinner-story-scenes.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {comicContinuity} from './comic-continuity.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {preserveScroll} from './preserve-scroll.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {selectDinnerAwareComicScene} from './dinner-story-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {comicContinuity} from './comic-continuity.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -69,7 +69,7 @@ export function createEventComicPresenter({root=document,artMemory=dailyArtMemor
   contextualView=mountContextualManga(contextual,scene.contextualManga,{manual:true,root,memory:artMemory});
   receipt.textContent=comicReceiptText(scene);receipt.hidden=!receipt.textContent;next.textContent=state.pending.length?'下一幕':'回到游戏';
   if(!dialog.open){opener=prepareModalFocus(root);preserveScroll(root.documentElement,()=>dialog.showModal());}body.scrollTop=0;syncRoot();next.focus({preventScroll:true});
-  if(panelArtwork)stopArtObservation=panelView.observe({memory:artMemory});else if(scene.ready)stopArtObservation=observeSeenArtwork(image,{memory:artMemory,identities:[artIdentity(scene.art)].filter(Boolean)});
+  if(panelArtwork)stopArtObservation=panelView.observe({memory:artMemory});else{const stopImage=scene.ready?observeSeenArtwork(image,{memory:artMemory,identities:[artIdentity(scene.art)].filter(Boolean)}):()=>{};stopArtObservation=()=>{stopImage();panelView.dispose();};}
   if(scene.automatic&&!autoShown.has(scene.receiptKey)){autoShown.add(scene.receiptKey);markAutomaticComicShown(currentState,scene);onAutoShown();}
  }
  queue=createEventComicQueue({onChange:paint});
@@ -115,7 +115,7 @@ export function createEventComicPresenter({root=document,artMemory=dailyArtMemor
   invalidate:()=>gate.invalidate(),
   refresh:refreshPresentation,
   presentPending:()=>{if(!safe())return false;clearTimeout(deliveryTimer);deliveryTimer=null;flushDeliveries();return !!queue.state.active||queue.state.pending.length>0;},
-  dispose(){disposed=true;gate.invalidate();root.removeEventListener?.('close',afterOtherDialogClose,true);win?.removeEventListener('popstate',dismissNavigation);win?.removeEventListener('pagehide',dismissNavigation);dialog.remove();launcher.remove();},
+  dispose(){disposed=true;stopArtObservation();contextualView?.dispose();gate.invalidate();root.removeEventListener?.('close',afterOtherDialogClose,true);win?.removeEventListener('popstate',dismissNavigation);win?.removeEventListener('pagehide',dismissNavigation);dialog.remove();launcher.remove();},
   readCurrentDay:()=>currentState.mode==='endless'?[]:structuredClone(savedReplay.filter(scene=>scene.receipt?.day===currentState.day).map(scene=>comicContinuity(scene,continuityState))),
   get state(){return queue.state;},
  };

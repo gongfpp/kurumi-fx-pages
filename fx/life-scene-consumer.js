@@ -1,11 +1,11 @@
-import {validWorkPayDialogue} from './life-work.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {validWorkPayDialogue} from './life-work.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export function currentLifeSceneReceipt(state){
  if(state?.mode!=='story'||state.position||state.positions!==undefined&&!Array.isArray(state.positions)||!sealedDailyMangaOutcome(state)||!validLifeActions(state))return null;
  const receipt=lifeActionReceipt(state);

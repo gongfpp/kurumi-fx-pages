@@ -1,12 +1,14 @@
-import {createSkitLine} from './skit-dialogue.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountComicOriginalVoices} from './original-scene-voice.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+const mountedDialogues=new WeakMap();
+import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.
 export function mountComicDialogue(host,scene,{root=host.ownerDocument||document}={}){
- host.replaceChildren();
- const panels=scene.dialoguePanels||scene.lines.map(line=>({lines:[line]})),images=[];let stops=[];
+ mountedDialogues.get(host)?.();host.replaceChildren();
+ const panels=scene.dialoguePanels||scene.lines.map(line=>({lines:[line]})),images=[],voiceStops=[];let stops=[];
  for(const [index,panel] of panels.entries()){
   const item=root.createElement('li'),caption=root.createElement('div');caption.className='comic-panel-caption';item.dataset.panel=String(index+1);
   if(usesPanelArtwork(scene)){
@@ -20,9 +22,11 @@ export function mountComicDialogue(host,scene,{root=host.ownerDocument||document
   for(const [speaker,text] of panel.lines)caption.append(createSkitLine(root,speaker,text));
   item.append(caption);
   host.append(item);
+  voiceStops.push(mountComicOriginalVoices(item,{scene,panelIndex:index,root,owner:host}));
  }
- const dispose=()=>{for(const stop of stops)stop();stops=[];};
+ const stopObservers=()=>{for(const stop of stops)stop();stops=[];};
+ const dispose=()=>{stopObservers();for(const stop of voiceStops)stop();voiceStops.length=0;if(mountedDialogues.get(host)===dispose)mountedDialogues.delete(host);};mountedDialogues.set(host,dispose);
  return {count:panels.length,images,dispose,observe({memory=dailyArtMemory,identities=[artIdentity(scene.art)]}={}){
-  dispose();const seen=new Set();stops=images.map(({image,crop,caption,hasCaption},index)=>observeSeenArtwork(image,{memory:{seen(){}},identities:[],visibilityTargets:hasCaption?[crop,caption]:[crop],minVisibleRatio:.9,accumulateVisibility:true,onSeen:()=>{seen.add(index);if(seen.size===4)memory.seen(identities.filter(Boolean));}}));return dispose;
+  stopObservers();const seen=new Set();stops=images.map(({image,crop,caption,hasCaption},index)=>observeSeenArtwork(image,{memory:{seen(){}},identities:[],visibilityTargets:hasCaption?[crop,caption]:[crop],minVisibleRatio:.9,accumulateVisibility:true,onSeen:()=>{seen.add(index);if(seen.size===4)memory.seen(identities.filter(Boolean));}}));return dispose;
  }};
 }
