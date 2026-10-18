@@ -31,7 +31,7 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
       !positive(intervalMs) || intervalMs < 1000 || !positive(maxAgeMs) || !positive(requestTimeoutMs)) throw TypeError('Invalid source configuration');
   const quotes = new Map(), issues = new Map(), listeners = new Set();
   let transport = 'idle', responseAt = null, retryAfterMs = intervalMs, blockedUntil = 0;
-  let observation = 0;
+  let observation = 0, lastError = null;
   let accessDenied = false, running = false, generation = 0, timer = null, inFlight = null, controller = null, cancelPoll = null;
   const now = () => { const t = clock(); if (!Number.isSafeInteger(t) || t <= 0) throw TypeError('Invalid receipt clock'); return t; };
   function snapshot(symbol) {
@@ -43,14 +43,15 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
       quote.providerStale || sourceAgeMs > maxAgeMs ? 'stale' : 'current');
     return freeze({transport, status, quote, responseAt, sourceAgeMs,
       receivedAgeMs: quote ? Math.max(0, time - quote.receivedAt) : null,
-      canTrade: transport === 'online' && status === 'current', retryAfterMs});
+      lastError, canTrade: transport === 'online' && status === 'current', retryAfterMs});
   }
   function notify() { for (const listener of [...listeners]) { try { listener(all()); } catch {} } }
   function all() { return freeze(Object.fromEntries(BIQUOTE_SYMBOLS.map(s => [s, snapshot(s)]))); }
-  function apply(payload, at) {
+  function apply(payload, at, partial = false) {
     if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw Error('invalid-payload');
     const outcomes = {};
     for (const symbol of BIQUOTE_SYMBOLS) {
+      if (partial && !Object.hasOwn(payload, symbol)) continue;
       try {
         const candidate = parseBiquoteTick(payload[symbol], {symbol, now: at});
         const previous = quotes.get(symbol);
@@ -94,21 +95,23 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) { transport = 'denied'; accessDenied = true; running = false; }
           else transport = 'disconnected';
+          lastError = `http-${response.status}`;
           const retryHeader = response.headers?.get('Retry-After');
           const retrySeconds = retryHeader && /^\d+$/.test(retryHeader) ? Number(retryHeader) * 1000 :
             retryHeader ? Math.max(0, Date.parse(retryHeader) - now()) : 0;
           retryAfterMs = Math.max(intervalMs, Number.isFinite(retrySeconds) ? retrySeconds : 0,
-            response.status === 429 ? 60000 : intervalMs * 2);
+            response.status === 429 ? (retryHeader ? 0 : 60000) : intervalMs * 2);
           if (response.status === 429 || (Number.isFinite(retrySeconds) && retrySeconds > 0)) blockedUntil = now() + retryAfterMs;
           notify(); return freeze({ok: false, reason: `http-${response.status}`});
         }
         if (thisGeneration !== generation) return freeze({ok: false, reason: 'canceled'});
         const at = now(), outcomes = apply(payload, at);
-        responseAt = at; transport = 'online'; blockedUntil = 0;
+        responseAt = at; transport = 'online'; lastError = null; blockedUntil = 0;
         retryAfterMs = BIQUOTE_SYMBOLS.every(s => snapshot(s).status === 'closed') ? Math.max(60000, intervalMs) : intervalMs; notify();
         return freeze({ok: true, outcomes});
       } catch (error) {
         if (thisGeneration !== generation) return freeze({ok: false, reason: 'canceled'});
+        lastError = activeController.signal.aborted ? 'timeout' : 'network-or-payload-error';
         transport = 'disconnected'; retryAfterMs = Math.min(60000, Math.max(intervalMs, retryAfterMs * 2));
         notify(); return freeze({ok: false, reason: activeController.signal.aborted ? 'timeout' : 'network-or-payload-error'});
       } finally { clearTimer(timeout); if (thisGeneration === generation) { inFlight = null; controller = null; cancelPoll = null; } }
@@ -140,5 +143,14 @@ export function createBiquoteSource({fetchImpl = globalThis.fetch, clock = Date.
       return freeze({...view.quote, priceBasis, price: view.quote[priceBasis]});
     }});
   }
-  return freeze({snapshot, all, poll, start, stop, subscribe, forMode});
+  // Stream ingress shares exactly the REST validation, sequence and freshness policy.
+  function ingestTick(raw) {
+    const symbol = symbolKey(raw?.symbol);
+    if (!BIQUOTE_SYMBOLS.includes(symbol)) return false;
+    const at = now(), outcomes = apply({[symbol]: raw}, at, true);
+    responseAt = at; transport = 'online'; lastError = null; notify();
+    return outcomes[symbol] === 'accepted' || outcomes[symbol] === 'duplicate';
+  }
+  function disconnect(reason = 'stream-disconnected') {transport = 'disconnected'; lastError = reason; notify();}
+  return freeze({snapshot, all, poll, start, stop, subscribe, forMode, ingestTick, disconnect});
 }

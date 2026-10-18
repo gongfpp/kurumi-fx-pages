@@ -1,6 +1,18 @@
 // Approved game-only daily supplies. Receipts own payment and meal credit;
 // these helpers never touch quotes, orders, borrowing or permanent attributes.
 export const DAILY_SUPPLY_IDS=Object.freeze(['dailyDrink','energy','noodles','takeaway','chocolate','eyeMask']);
+export const ACTIVE_SUPPLY_IDS=Object.freeze(['tradingNotes','energy','noodles','takeaway']);
+export function supplyUnavailableReason(state,id){
+ if(!ACTIVE_SUPPLY_IDS.includes(id))return '这个物品已停止购买';
+ if(supplyUsedToday(state,id)||id==='tradingNotes'&&state.dailySupplies?.noteUsedDay===state.day)return '今天已经用过了';
+ if(['noodles','takeaway'].includes(id)&&(state.dailySupplies?.mealCreditDay===state.day||state.dailySupplies?.uses?.some(row=>row.day===state.day&&['noodles','takeaway'].includes(row.id))))return '今天已经吃过这一餐了';
+ return '';
+}
+export function recordTradingNotes(state){
+ const reason=supplyUnavailableReason(state,'tradingNotes');if(reason)throw Error(reason);
+ ensureDailySupplies(state).noteUsedDay=state.day;state.itemsUsed ||= {};state.itemsUsed.tradingNotes=true;
+ return {id:'tradingNotes',day:state.day,cost:0};
+}
 export const SUPPLY_PRICES=Object.freeze({dailyDrink:300,energy:300,noodles:150,takeaway:1200,chocolate:200,eyeMask:500});
 const MOOD_STEPS=Object.freeze(['despair','anxious','nervous','calm','hopeful','smug','ecstatic']);
 const moodRank=emotion=>({exhausted:1,regretful:2,guilty:2,irritated:2,stunned:2,lonely:2,relieved:3,warm:3,focused:3,determined:3}[emotion]??Math.max(0,MOOD_STEPS.indexOf(emotion)));
@@ -11,7 +23,7 @@ export function supplyUsedToday(state,id){return state.itemsUsed?.[id]===true||s
 export function supplyReceipt(state,id){return state.dailySupplies?.uses?.find(row=>row.day===state.day&&row.id===id)||null;}
 export function recordSupplyUse(state,id,consumptionId){
  const supplies=ensureDailySupplies(state);
- if(supplyReceipt(state,id))throw Error('今天已经用过了');
+ const reason=supplyUnavailableReason(state,id);if(reason)throw Error(reason);
  const receipt={id,day:state.day,cost:SUPPLY_PRICES[id],consumptionId};
  supplies.uses.push(receipt);state.itemsUsed ||= {};state.itemsUsed[id]=true;
  if(['noodles','takeaway'].includes(id))supplies.mealCreditDay=state.day;

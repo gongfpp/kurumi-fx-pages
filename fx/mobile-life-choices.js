@@ -44,7 +44,7 @@ export function renderMobileLifeChoices({document:doc,body,model,selections,busy
   section.append(grid);
   const selected=options.find(option=>option.id===selections[group.id]);
   if(group.id==='work'&&Number.isFinite(selected?.income)){
-   const income=make('p','life-mobile-income');income.append(sprite('coins'),make('span','','收入'),make('strong','',`${selected.income>=0?'+':''}¥${number(selected.income)}`));section.append(income);
+   const income=make('p','life-mobile-income');income.append(sprite('coins'),make('span','','工资'),make('strong','',`${selected.income>=0?'+':''}¥${number(selected.income)}`));section.append(income);
    if(Number.isFinite(selected.staminaCost)){section.append(make('p','life-mobile-work-details',`体力 −${selected.staminaCost} · 压力 ${selected.stressDelta>0?'+':''}${selected.stressDelta}`),make('p','life-mobile-work-reward',`初次完成获得：${selected.rewardLabel}`));}
   }
   if(group.id==='relax'&&selected){if(Number.isFinite(selected.cost))section.append(make('p','life-mobile-income',`费用 ¥${number(selected.cost)}`));if(Number.isFinite(selected.staminaRecovery))section.append(make('p','life-mobile-work-details',`体力 +${selected.staminaRecovery} · 压力 ${selected.stressDelta>0?'+':''}${selected.stressDelta||0}`));}

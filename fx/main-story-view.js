@@ -1,6 +1,6 @@
-import {createSkitLine} from './skit-dialogue.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {setImage} from './assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {mainStoryArtForDay} from './main-story-art-assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {mainStoryArtForDay} from './main-story-art-assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 // The existing settlement scroll area owns layout. No new modal, continuation
 // button, account action or automatic pagination is introduced.

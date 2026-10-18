@@ -1,17 +1,18 @@
-import {isSharedReplay} from './shared-replay-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {randomUUID} from './uuid.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {VOLATILITY_FIELDS} from './daily-volatility.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {assertLotteryRankingEligible,lotteryScoreFields,lotteryScoreForServer} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 export const LEADERBOARD_SORTS = Object.freeze(['survival','returnRate','dailyReturnRate','totalProfit','totalLoss','maxProfit','winRate','maxOrderLoss','maxDrawdown','dailyVolatility']);
 const LEGACY_SORTS=Object.freeze(LEADERBOARD_SORTS.filter(sort=>!['totalLoss','maxDrawdown','dailyVolatility'].includes(sort)));
 const sortNotice=sort=>`${({totalLoss:'累计亏损榜',maxDrawdown:'回撤榜',dailyVolatility:'日收益波动榜'})[sort]||'这个榜单'}尚未开放。`;
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {runPerformance} from './performance.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {runPerformance} from './performance.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;
@@ -26,6 +27,7 @@ export function normalizeLeaderboardAlias(value='') {
   return alias;
 }
 export function completedLeaderboardScore(state) {
+  assertLotteryRankingEligible(state);
   if(isSharedReplay(state))throw Object.assign(Error('Shared replay is excluded from ranking'),{code:'shared-replay'});
   const report=state?.dayReport,gameMode=state?.mode??'story';
   if(state?.developer?.edited) throw new Error('开发者测试局不能提交排行榜');
@@ -42,7 +44,7 @@ export function completedLeaderboardScore(state) {
     if(!all.length||all.length>20000)throw new Error('本局成绩数据不完整');
     const totalProfit=cents(all.reduce((sum,trade)=>sum+trade.pnl,0));
     if(Math.abs(dayProfit)>1e10||Math.abs(totalProfit)>1e10)throw new Error('本局成绩超过排行榜范围');
-    return {day,dayProfit,totalProfit,closedTrades:all.length};
+    return {day,dayProfit,totalProfit,closedTrades:all.length,...lotteryScoreFields(state)};
   }
   // A saved report is a snapshot; current-day beat/bonus rounds must never
   // shorten yesterday's elapsed time or alter its daily return rate.
@@ -52,7 +54,7 @@ export function completedLeaderboardScore(state) {
   if(!closedTrades)throw new Error(gameMode==='endless'?'完成至少一笔平仓交易后，可以提交成绩':'本局成绩数据不完整');
   if(!Number.isFinite(performance.totalProfit)||Math.abs(performance.totalProfit)>1e10||Math.abs(dayProfit)>1e10)throw new Error('本局成绩超过排行榜范围');
   const totalProfit=cents(performance.totalProfit),initialEquity=performance.initialEquity??state.startEquity??100000,returnRate=totalProfit/initialEquity;
-  return {day,dayProfit,totalProfit,closedTrades,gameMode,initialEquity,daysSurvived:performance.daysSurvived,elapsedDays:performance.elapsedDays,returnRate,dailyReturnRate:returnRate/performance.elapsedDays,maxLoss:cents(performance.maxLoss),maxProfit:cents(performance.maxProfit),maxDrawdown:performance.maxDrawdown};
+  return {...lotteryScoreFields(state),day,dayProfit,totalProfit,closedTrades,gameMode,initialEquity,daysSurvived:performance.daysSurvived,elapsedDays:performance.elapsedDays,returnRate,dailyReturnRate:returnRate/performance.elapsedDays,maxLoss:cents(performance.maxLoss),maxProfit:cents(performance.maxProfit),maxDrawdown:performance.maxDrawdown};
 }
 export function buildLeaderboardSubmission(state,{campaign=state?.runId,token,alias=''}={}) {
   if(!ID.test(campaign||''))throw new Error('本局缺少游戏标识，请重新打开游戏后再试');
@@ -73,7 +75,7 @@ export class FXLeaderboard {
     this.configuration=serviceConfiguration({serviceOrigin:options.serviceOrigin,location});
     this.endpoint=this.configuration.leaderboardEndpoint;
     this.onStatus=options.onStatus??(()=>{});this.onFailure=options.onFailure??(()=>{});this.timeout=options.timeout??10000;
-    this.registered=new Set();this.hallSupported=new Set();this.volatilitySupported=new Set();this.pending=false;this.capabilities=new Map();this.session=null;this.sortCapabilities=null;
+    this.lotterySupported=new Set();this.registered=new Set();this.hallSupported=new Set();this.volatilitySupported=new Set();this.pending=false;this.capabilities=new Map();this.session=null;this.sortCapabilities=null;
   }
   status(value){try{this.onStatus(value);}catch{}}
   assertConfigured() {if(!this.configuration.configured)throw new LeaderboardError(SERVICE_UNCONFIGURED_MESSAGE,'service-unconfigured');}
@@ -100,6 +102,7 @@ export class FXLeaderboard {
     finally{clearTimeout(timer);}
   }
   async requestScore(path,options) {
+    lotteryScoreForServer(options.data,this.lotterySupported.has(options.data.campaign));
     if(VOLATILITY_FIELDS.some(key=>Object.hasOwn(options.data,key))){
       try{return await this.request(path,options);}
       catch(error){if(error.status!==400)throw error;this.volatilitySupported.delete(options.data.campaign);const data={...options.data};for(const key of VOLATILITY_FIELDS)delete data[key];return this.requestScore(path,{...options,data});}
@@ -179,7 +182,7 @@ export class FXLeaderboard {
       if(!this.registered.has(campaign)){
         const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
         if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
-        if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);this.registered.add(campaign);
+        if(registration.lotteryMetricsVersion===1)this.lotterySupported.add(campaign);else this.lotterySupported.delete(campaign);if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);this.registered.add(campaign);
       }
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       if(!isAllowed())throw new LeaderboardError('进度更新已暂停','ineligible');
@@ -199,12 +202,22 @@ export class FXLeaderboard {
       const token=await this.ensureToken(campaign);
       const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:score.gameMode,initialEquity:score.initialEquity}});
       if(registration?.tainted)throw new LeaderboardError('开发测试局不能自动上榜','developer');
-      if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);
+      if(registration.lotteryMetricsVersion===1)this.lotterySupported.add(campaign);else this.lotterySupported.delete(campaign);if(registration.hallMetricsVersion===1)this.hallSupported.add(campaign);else this.hallSupported.delete(campaign);if(registration.volatilityMetricsVersion===1)this.volatilitySupported.add(campaign);else this.volatilitySupported.delete(campaign);
       if(hasDevelopmentTaint(state,this.storage))throw new LeaderboardError('开发测试局不能自动上榜','developer');
       const result=await this.requestScore('',{method:'POST',data:{campaign,token,...hallScoreForServer(score,this.hallSupported.has(campaign),this.volatilitySupported.has(campaign)),alias:name}});
       if(result?.ok!==true){notifyFailure(this.onFailure,'leaderboard-publish','invalid-response',200);throw new LeaderboardError('成绩未获确认，请稍后重试','response');}
       this.status({state:'published',duplicate:!!result.duplicate});return result;
     }finally{this.pending=false;}
+  }
+  async disqualifyLottery(state,{saved=false}={}) {
+    if(saved!==true)throw new LeaderboardError('请先保存本局进度','save-pending');
+    if(state?.lottery?.cheatRedeemed!==true)throw new LeaderboardError('本局没有兑换暗号彩票','input');
+    const campaign=state.runId,token=this.storedToken(campaign);
+    // No registration or new capability just to remove a never-published run.
+    if(!token)return {ok:true,notRegistered:true};
+    const result=await this.request('/lottery-disqualify',{method:'POST',data:{campaign,token}});
+    if(result?.ok!==true||result?.excluded!==true)throw new LeaderboardError('公共成绩撤回尚未确认','response');
+    return result;
   }
   async rename(campaign,alias='') {
     const name=normalizeLeaderboardAlias(alias);
@@ -228,7 +241,8 @@ export class FXLeaderboard {
     try{
       this.assertConfigured();
       const token=await this.ensureToken(campaign),submission=buildLeaderboardSubmission(state,{campaign,token,alias});
-      await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:state?.mode??'story'}});
+      const registration=await this.request('/run',{method:'POST',data:{campaign,session:this.sessionFor(),token,gameMode:state?.mode??'story'}});
+      lotteryScoreForServer(submission,registration?.lotteryMetricsVersion===1);
       const result=await this.request('',{method:'POST',data:submission});this.status({state:'published',duplicate:result.duplicate});return result;
     }catch(error){this.status({state:'error',code:error.code||'input',message:error.message});throw error;}
     finally{this.pending=false;}

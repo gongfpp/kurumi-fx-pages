@@ -1,15 +1,15 @@
-import {isLiveMarket} from './live-market-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {activeMarket} from './market-book.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {displayCandles,candlePeriodNotice} from './candle-period.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {readRunStatistics} from './run-statistics.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {runPerformance} from './performance.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {displayCandles,candlePeriodNotice} from './candle-period.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {runPerformance} from './performance.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -20,6 +20,9 @@ export function buildRecapSnapshot(state={},options={}){
  const dailyTrades=(report?.trades||state.history||[]).filter(t=>t.day===state.day&&t.type!=='open'&&Number.isFinite(t.pnl));
  const dayMetrics=dailyReturnMetrics(state,{report:report||null}),tradingNet=dayMetrics.tradingNet;
  const expensesToday=(state.expenseLedger||[]).filter(e=>e.day===state.day),living=finite(report?.livingCost,expensesToday.reduce((n,e)=>n+finite(e.living),0)),interest=finite(report?.interest,expensesToday.reduce((n,e)=>n+finite(e.interest),0)),costs=finite(report?.costs,finite(state.expenses)-finite(state.dayOpeningExpenses)),consumption=Math.max(0,costs-living-interest);
+ const lotteryIncome=finite(report?.lotteryIncome,finite(state.lotteryIncome)-finite(state.dayOpeningLotteryIncome)),cheatLotteryIncome=finite(report?.cheatLotteryIncome,finite(state.cheatLotteryIncome)-finite(state.dayOpeningCheatLotteryIncome));
+ const openingLottery=finite(state.dayOpeningLotteryIncome)+finite(state.dayOpeningCheatLotteryIncome);
+ const mainRecoveryUsed=!!(state.lifeActions?.receipts?.some(row=>row.day===state.day&&['friend','relax','dinner'].includes(row.category))||state.recapChoiceLedger?.some(row=>row.day===state.day&&(row.id==='quiet-night'||row.group==='dinner')));
  const income=finite(report?.nonTradingIncome,finite(state.nonTradingIncome)-finite(state.dayOpeningIncome));
  const opening=finite(report?.opening,finite(state.dayOpening)),funding=finite(report?.funding,finite(state.externalFunding)-finite(state.dayOpeningFunding)),interestAccrued=finite(report?.interestAccrued,expensesToday.reduce((n,e)=>n+finite(e.interestAccrued),0));
  const points=(Array.isArray(recorded?.points)?recorded.points:state.accountingJournal?.points?.filter(x=>x.day===state.day)||[]).filter(x=>Number.isFinite(x.timestamp)&&Number.isFinite(x.nominalAssets));
@@ -37,9 +40,9 @@ export function buildRecapSnapshot(state={},options={}){
  // Presentation curves remove every non-trading cash flow, while the journal
  // and account balances above retain the actual assets and liabilities.
  const tradingPoint=(point,{daily=false}={})=>{
-  const raw=Number.isFinite(point.tradingAssets)?point.tradingAssets:Number.isFinite(point.netFunding)&&Number.isFinite(point.expenses)?point.nominalAssets-point.netFunding-finite(point.nonTradingIncome)+point.expenses-finite(state.developer?.profitOffset):point.kind==='start'?point.nominalAssets:point.kind==='opening'?opening-finite(state.dayOpeningFunding)-finite(state.dayOpeningIncome)+finite(state.dayOpeningExpenses)-finite(state.developer?.profitOffset):null;
+  const raw=Number.isFinite(point.tradingAssets)?point.tradingAssets:Number.isFinite(point.netFunding)&&Number.isFinite(point.expenses)?point.nominalAssets-point.netFunding-finite(point.nonTradingIncome)-finite(point.lotteryIncome)-finite(point.cheatLotteryIncome)+point.expenses-finite(state.developer?.profitOffset):point.kind==='start'?point.nominalAssets:point.kind==='opening'?opening-finite(state.dayOpeningFunding)-finite(state.dayOpeningIncome)-openingLottery+finite(state.dayOpeningExpenses)-finite(state.developer?.profitOffset):null;
   if(raw===null)return null;
-  return {...point,originalNominalAssets:point.nominalAssets,originalNetAssets:point.netAssets,nominalAssets:raw+(daily?finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset):0),netAssets:null};
+  return {...point,originalNominalAssets:point.nominalAssets,originalNetAssets:point.netAssets,nominalAssets:raw+(daily?finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)+openingLottery-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset):0),netAssets:null};
  };
  const closingTrading={day:state.day,timestamp:closeTime,kind:'trading-close',...currentValues};
  today.push(closingTrading);cumulative.push(closingTrading);
@@ -47,8 +50,8 @@ export function buildRecapSnapshot(state={},options={}){
  // Only persisted, already observed account points participate in the replay.
  // The adjusted asset path removes borrowing, repayments and spending, while
  // unrealized remains an independent observation rather than invented profit.
- const observations=points.filter(x=>x.timestamp<=closeTime&&Number.isFinite(x.unrealized)&&Number.isFinite(x.tradingAssets)).map(x=>({timestamp:x.timestamp,tradingAssets:x.tradingAssets+finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset),unrealized:x.unrealized}));
- const observedClosing=closingTrading.tradingAssets+finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset);
+ const observations=points.filter(x=>x.timestamp<=closeTime&&Number.isFinite(x.unrealized)&&Number.isFinite(x.tradingAssets)).map(x=>({timestamp:x.timestamp,tradingAssets:x.tradingAssets+finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)+openingLottery-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset),unrealized:x.unrealized}));
+ const observedClosing=closingTrading.tradingAssets+finite(state.dayOpeningFunding)+finite(state.dayOpeningIncome)+openingLottery-finite(state.dayOpeningExpenses)+finite(state.developer?.profitOffset);
  if(Number.isFinite(observedClosing))observations.push({timestamp:closeTime,tradingAssets:observedClosing,unrealized:finite(currentValues.unrealized)});
  const todaySampled=!!recorded?.sampled||accountingDaySampled(journal,state.day);
  const todayMissing=!journal||!!journal.legacyPartial&&journal.startedDay===state.day||accountingDayMissing(journal,state.day)||(recorded?.partial&&!todaySampled);
@@ -61,7 +64,7 @@ export function buildRecapSnapshot(state={},options={}){
  const primary=state.mode==='endless'?{scope:'cumulative',label:'累计已实现交易收益',profit:totalProfit,returnRate:totalReturn}:{scope:'today',label:dayMetrics.tradingNetPartial?'今日交易盈亏 · 留存样本':report?'今日交易净盈亏':'今日已实现交易盈亏',profit:tradingNet,returnRate:dayReturn};
  const allCandles=displayCandles(state),dayCandleStart=allCandles.findIndex(c=>c.day===state.day),dayCandleEnd=allCandles.findLastIndex(c=>c.day===state.day)+1,candleMovingAverages=dayCandleStart<0?[]:movingAverageSeries(allCandles,{start:dayCandleStart,end:dayCandleEnd});
  const snapshot={version:1,id:`${state.runId||state.seed||0}:${state.day}:${closeTime}:${tradingNet}:${costs}${state.lifeActions?`:${income}`:''}`,day:state.day||1,mode:state.mode||'story',sealed:!!report,timestamp:closeTime,
-  primary,daily:{tradingNet,tradingNetPartial:dayMetrics.tradingNetPartial,returnRate:dayReturn,returnDenominator:dayMetrics.denominator,returnDenominatorSource:dayMetrics.source,returnBasis:'今日收益率 = 今日已实现净盈亏 ÷ 开盘净资产',openingNominal:opening,closingNominal:closing,nominalChange:amount(closing-opening),costs:{total:costs,living,interest,consumption},netResult:amount(tradingNet+income-costs),...(state.lifeActions?{nonTradingIncome:income}:{}),fundingIncludingAccruedInterest:funding,fundingPrincipal:amount(funding-interestAccrued),interestAccrued,returnUnavailable:dayMetrics.returnUnavailable,noodlesUsed:!!state.itemsUsed?.noodles,livingStatus:report?.livingSettlement?.status||(report?'legacy-paid':'not-due'),pendingLivingCost:finite(report?.pendingLivingCost)},
+  primary,daily:{...(mainRecoveryUsed?{mainRecoveryUsed:true}:{}),tradingNet,tradingNetPartial:dayMetrics.tradingNetPartial,returnRate:dayReturn,returnDenominator:dayMetrics.denominator,returnDenominatorSource:dayMetrics.source,returnBasis:'今日收益率 = 今日已实现净盈亏 ÷ 开盘净资产',openingNominal:opening,closingNominal:closing,nominalChange:amount(closing-opening),costs:{total:costs,living,interest,consumption},netResult:amount(tradingNet+income+lotteryIncome+cheatLotteryIncome-costs),...(state.lottery?{lotteryIncome,cheatLotteryIncome}:{}),...(state.lifeActions?{nonTradingIncome:income}:{}),fundingIncludingAccruedInterest:funding,fundingPrincipal:amount(funding-interestAccrued),interestAccrued,returnUnavailable:dayMetrics.returnUnavailable,noodlesUsed:!!state.itemsUsed?.noodles,livingStatus:report?.livingSettlement?.status||(report?'legacy-paid':'not-due'),pendingLivingCost:finite(report?.pendingLivingCost)},
   cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计收益率 = 累计已实现净盈亏 ÷ 初始本金'},
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
@@ -82,4 +85,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';

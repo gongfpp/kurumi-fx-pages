@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
@@ -39,6 +39,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
   const meter=make('div','pixel-stamina'),label=make('div','pixel-stamina-label'),number=make('b','pixel-stamina-value'),stateLabel=make('span','pixel-stamina-state');
   const track=make('div','pixel-stamina-track'),fill=make('span','pixel-stamina-fill');
   label.append(make('span','pixel-stamina-caption','体力'),number,stateLabel);track.append(fill);meter.append(label,track);
+  const energyHint=make('small','energy-stage-hint');energyHint.setAttribute('role','status');meter.append(energyHint);
   track.setAttribute('role','progressbar');track.setAttribute('aria-label','体力');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
   const eyelids=make('div','stamina-eyelids');eyelids.setAttribute('aria-hidden','true');eyelids.hidden=true;
   eyelids.append(make('div','stamina-eyelid stamina-eyelid-top'),make('div','stamina-eyelid stamina-eyelid-bottom'));
@@ -49,7 +50,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
   const text=(node,value)=>{if(node.textContent!==value)node.textContent=value;};
   const restoreFocus=()=>{
     if(!card.contains(root.activeElement))return;
-    for(const id of ['position-close-all','life-open','order-amount']){const target=root.getElementById(id);if(target&&!target.disabled&&target.getClientRects().length){target.focus?.({preventScroll:true});break;}}
+    for(const id of ['position-close-all','life-open','pixel-frontend']){const target=root.getElementById(id);if(target&&!target.disabled&&target.getClientRects().length){target.focus?.({preventScroll:true});break;}}
   };
   const hideCard=()=>{restoreFocus();card.hidden=true;close.hidden=true;rest.hidden=true;rest.disabled=true;};
   const stopBlink=()=>{
@@ -106,6 +107,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     const actionAnchor=quickTrade&&host.contains(quickTrade)?quickTrade:stage;
     if(slot.parentElement!==stage.parentElement||slot.previousSibling!==actionAnchor)actionAnchor.after(slot);
     const value=Math.max(0,Math.min(100,Number.isFinite(model.stamina?.value)?model.stamina.value:100));
+    const energy=model.energyStage;energyHint.hidden=!energy?.label;text(energyHint,energy?.label?`${energy.label} · ${energy.phase==='fatigue'?'盯盘耗体增加':'随后进入疲劳期'}`:'');
     text(number,`${Math.round(value)}/100`);text(stateLabel,model.stamina?.low?'困倦':'');stateLabel.hidden=!model.stamina?.low;
     meter.dataset.low=String(Boolean(model.stamina?.low));track.setAttribute('aria-valuenow',String(Math.round(value)));track.setAttribute('aria-valuetext',`${Math.round(value)}/100${model.stamina?.low?'，困倦':''}`);fill.style.width=`${value}%`;
     view=singleActionCardView(model);

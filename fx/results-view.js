@@ -1,6 +1,6 @@
-import {COMPLETE_ORDER_HELP} from './copy/complete-order-help.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {downloadResults} from './results-report.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {COMPLETE_ORDER_HELP} from './copy/complete-order-help.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {downloadResults} from './results-report.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';
@@ -19,6 +19,8 @@ export function mountResultsReport(root,report,options={}){
  const fees=make('details',undefined,'results-details');fees.append(make('summary','费用与统计口径'),make('p','收益率按初始本金计算，使用借款后亏损可能超过 100%。'),make('p',COMPLETE_ORDER_HELP.winRate));
  for(const [label,value] of [['累计交易手续费（已计入净盈亏）',f.trading],['已付网贷利息',f.interestPaid],['累计未付、计入债务利息',f.interestAccrued],['已付生活费',f.living],['可选消费',f.consumption]])fees.append(make('p',`${label}：${amount(value)}`));
  if(report.income?.work)fees.append(make('p',`累计工作收入：${amount(report.income.work)}`));
+ if(report.income?.lotteryIncome>0)fees.append(make('p',`彩票税前奖金：${amount(report.income.lotteryIncome)}`));
+ if(report.income?.cheatLotteryIncome>0)fees.append(make('p',`暗号彩票税前奖金：${amount(report.income.cheatLotteryIncome)}`));
  fees.append(make('p',COMPLETE_ORDER_HELP.extremes),make('p',report.definitions.maxDrawdown));root.append(fees);
  if(report.specialRecords.length){const section=make('section',undefined,'results-special');section.append(make('h4','特别记录'));const list=make('ul');for(const record of report.specialRecords)list.append(make('li',`${record.label}：${['negative-net-assets','loss-over-initial'].includes(record.id)?amount(record.value):record.value+(record.id==='max-leverage'?'×':'')}`));section.append(list);root.append(section);}
  for(const warning of report.dataQuality.warnings)root.append(make('p',warning,'results-warning'));

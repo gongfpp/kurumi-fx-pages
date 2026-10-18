@@ -1,7 +1,8 @@
-import {isSharedReplay} from './shared-replay-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 // Retain the compact legacy receipt for older tabs, but compare every public
@@ -33,7 +34,7 @@ export class LiveRanking {
   Object.assign(this,{client,storage,getState,persist,report,isBlocked,enabled,visible,online,now,schedule,cancel,onSubmitted});this.interval=Math.max(90000,Math.min(120000,interval));this.timer=null;this.timerCampaign=null;this.pending=null;this.runs=new Map();
  }
  clear(){if(this.timer!==null)this.cancel(this.timer);this.timer=null;this.timerCampaign=null;}
- eligible(){try{const s=this.getState();return !isSharedReplay(s)&&this.enabled()&&!this.isBlocked()&&this.online()&&!hasHistoricalSimulation(s)&&s?.phase!=='ending'&&![2,3].includes(s?.historical?.version)&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
+ eligible(){try{const s=this.getState();return !hasLotteryCheat(s)&&!isSharedReplay(s)&&this.enabled()&&!this.isBlocked()&&this.online()&&!hasHistoricalSimulation(s)&&s?.phase!=='ending'&&![2,3].includes(s?.historical?.version)&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
  update(){if(!this.eligible()||!this.visible()){this.clear();return;}const campaign=this.getState().runId;if(this.timer!==null&&this.timerCampaign!==campaign)this.clear();const run=this.record();if(run.attempts>=3){this.clear();return;}if(this.timer!==null)return;this.timerCampaign=campaign;this.timer=this.schedule(()=>{this.timer=null;this.timerCampaign=null;void this.submit().finally(()=>this.update());},Math.max(1000,run.nextAt-this.now()));}
  record(){const id=this.getState().runId;if(!this.runs.has(id)){
   let r;try{r=receipts(this.storage).find(r=>r.id===id);}catch{r={attempts:3,storageBlocked:true};}
@@ -78,7 +79,7 @@ export class LiveRanking {
     if(!leaving&&this.visible())try{this.onSubmitted(result);}catch{}
     return {submitted:true,...result};
    }catch(error){
-    if(['no-trades','ineligible'].includes(error.code))return {submitted:false,reason:error.code};
+    if(['no-trades','ineligible','lottery-cheat','lottery-unavailable'].includes(error.code))return {submitted:false,reason:error.code};
     if(error.message==='receipt-storage'||error instanceof SyntaxError){run.attempts=3;run.storageBlocked=true;return {submitted:false,reason:'storage'};}
     // Attempt/backoff were durably recorded before publishSnapshot.
     if(error.status>=400&&error.status<500&&![409,429].includes(error.status))run.attempts=3;

@@ -1,8 +1,8 @@
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 export const DAILY_FALLBACK_MAX_DAY=50;
 const contexts=new Set(['quiet','roommate']),outcomes=new Set(['flat','profit','loss']);

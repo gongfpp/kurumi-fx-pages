@@ -1,3 +1,4 @@
+import {restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Approved main-screen presentation only. The original controls, listeners,
 // quote clock and save session stay owned by the app. No financial state here.
 export const mobileTradingViewport=({innerWidth=0,innerHeight=0}={})=>innerWidth<=759||(innerWidth<=1024&&innerHeight<=600&&innerWidth>innerHeight);
@@ -85,7 +86,6 @@ export function createApprovedMobileLayout({document:doc,root}={}){
   const settings=q('.pixel-settings'),settingsContent=settings.querySelector('.pixel-drawer-content');
   for(const selector of ['.pixel-exit-region','#share-open','.pixel-session','.pixel-conversation','#voice-library-open','#voice-toggle'])move(q(selector),settingsContent);
   move(native('amount-random'),q('.pixel-financial-details .pixel-drawer-content'));
-  move(native('frontend-switch'),settingsContent);
 
   // The approved chart-edge strip moves the actual order buttons. Only the
   // two numeric shortcuts are new; they reveal the existing editable controls.
@@ -126,7 +126,7 @@ export function createApprovedMobileLayout({document:doc,root}={}){
  function refresh(){
   if(disposed)return;
   const wanted=mobileTradingViewport(doc.defaultView);
-  if(wanted!==active){const focus=doc.activeElement;wanted?activate():restore();if(focus?.isConnected&&doc.activeElement!==focus)focus.focus?.({preventScroll:true});}
+  if(wanted!==active){const focus=doc.activeElement;wanted?activate():restore();restoreFocus({node:focus},doc);}
   if(!active)return;
   syncQuickTrade();
   const mode=native('mode-open');if(mode)mode.dataset.mobileLabel=mode.textContent.replace(/[▾▼]/g,'').trim();

@@ -1,5 +1,5 @@
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {setImage} from './assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 // Decorative inventory previews reuse the existing corresponding story images.
 // They neither trigger the story nor claim a purchase has already occurred.

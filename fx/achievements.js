@@ -1,8 +1,9 @@
-import {marketPrice,positionMarket} from './market-book.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {setImage} from './assets.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {normalLotteryFacts} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {setImage} from './assets.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});
@@ -22,6 +23,12 @@ export const ACHIEVEMENTS = Object.freeze([
   define('walkaway','屏幕之外还有明天','完成主动离场结局。','休','主动离场为本作原创结局；借原作久留美说放弃FX的瞬间呼应决定，不把它当作永久退休。'),
   define('twenty-million','妈妈……我赚到钱了……','正常游戏中，累计已实现交易净利润达到 ¥20,000,000；扣交易费用，不含借款、浮盈或账户本金。','2000','游戏自拟标题，呼应原作第 1 话第 11 页赚回两千万的目标；不是原作兑现台词。',20000000)
 ]);
+// Preserve the original-art catalog for collection/source consumers.
+export const LOTTERY_ACHIEVEMENTS=Object.freeze([
+  define('lottery-first-win','初次中奖','普通彩票首次获得奖金。','奖','本作原创彩票玩法成就；不取自原作场景。'),
+  define('lottery-top-three','一夜翻身','普通彩票首次中三等奖或以上。','票','本作原创彩票玩法成就；暗号票不计。'),
+]);
+export const ALL_ACHIEVEMENTS=Object.freeze([...ACHIEVEMENTS,...LOTTERY_ACHIEVEMENTS]);
 const finite = (n, fallback=0) => Number.isFinite(n) ? n : fallback;
 const positions = s => Array.isArray(s.positions) ? s.positions : s.position ? [s.position] : [];
 const closed = s => (s.history || []).filter(t => t.type !== 'open' && Number.isFinite(t.pnl));
@@ -38,8 +45,10 @@ function profitBeforeMeal(s,trades){
   });
 }
 function evidence(s) {
-  const trades=closed(s), active=positions(s), realized=Number.isFinite(s.performance?.totalProfit)&&s.performance.closedTrades>0?s.performance.totalProfit:trades.reduce((sum,t)=>sum+t.pnl,0);
+  const lottery=normalLotteryFacts(s),trades=closed(s), active=positions(s), realized=Number.isFinite(s.performance?.totalProfit)&&s.performance.closedTrades>0?s.performance.totalProfit:trades.reduce((sum,t)=>sum+t.pnl,0);
   return {
+    'lottery-first-win':lottery.wins>0?1:0,
+    'lottery-top-three':lottery.topThreeWins>0?1:0,
     'first-profit':trades.some(t=>t.pnl>0)?1:0,
     'million-thirty':Math.max(0,realized),
     'liquidated':trades.some(t=>t.type==='liquidation')?1:0,
@@ -58,12 +67,12 @@ function evidence(s) {
 }
 export function normalizeAchievementProfile(profile={}) {
   const unlocked={};
-  for(const def of ACHIEVEMENTS){const entry=profile?.unlocked?.[def.id];if(entry&&Number.isFinite(entry.at)&&entry.at>=0)unlocked[def.id]={at:entry.at,day:Math.max(1,Math.floor(finite(entry.day,1))),...(def.id==='twenty-million'&&entry.ruleVersion===2?{ruleVersion:2}:{})};}
+  for(const def of ALL_ACHIEVEMENTS){const entry=profile?.unlocked?.[def.id];if(entry&&Number.isFinite(entry.at)&&entry.at>=0)unlocked[def.id]={at:entry.at,day:Math.max(1,Math.floor(finite(entry.day,1))),...(def.id==='twenty-million'&&entry.ruleVersion===2?{ruleVersion:2}:{})};}
   return {version:1,unlocked};
 }
 export function achievementProgress(state={},profile={}) {
   const saved=normalizeAchievementProfile(profile), values=(state.developmentTaint||state.developer?.edited)?{}:evidence(state);
-  return ACHIEVEMENTS.map(def=>({...def,unlocked:!!saved.unlocked[def.id],unlockedAt:saved.unlocked[def.id]?.at,legacyUnlocked:def.id==='twenty-million'&&!!saved.unlocked[def.id]&&saved.unlocked[def.id].ruleVersion!==2,
+  return ALL_ACHIEVEMENTS.map(def=>({...def,unlocked:!!saved.unlocked[def.id],unlockedAt:saved.unlocked[def.id]?.at,legacyUnlocked:def.id==='twenty-million'&&!!saved.unlocked[def.id]&&saved.unlocked[def.id].ruleVersion!==2,
     progress:Math.max(0,Math.min(def.goal,finite(values[def.id])))}));
 }
 export function evaluateAchievements(state,profile={}, {now=Date.now()}={}) {
@@ -71,7 +80,7 @@ export function evaluateAchievements(state,profile={}, {now=Date.now()}={}) {
   if(state?.developmentTaint||state?.developer?.edited)return {profile:saved,newlyUnlocked};
   for(const def of achievementProgress(state,saved))if(!def.unlocked&&def.progress>=def.goal){
     saved.unlocked[def.id]={at:finite(now,Date.now()),day:Math.max(1,Math.floor(finite(state.day,1))),...(def.id==='twenty-million'?{ruleVersion:2}:{})};
-    newlyUnlocked.push(ACHIEVEMENTS.find(a=>a.id===def.id));
+    newlyUnlocked.push(ALL_ACHIEVEMENTS.find(a=>a.id===def.id));
   }
   return {profile:saved,newlyUnlocked};
 }
@@ -111,6 +120,7 @@ export function createAchievementToast(def,{document:doc=globalThis.document,dur
 export function renderAchievementBook(container,profile={},state={}) {
   const doc=container.ownerDocument;styles(doc);container.replaceChildren();container.classList.add('fx-ach-book');
   for(const def of achievementProgress(state,profile)){
+    if(def.id.startsWith('lottery-')&&!state.lottery&&!def.unlocked)continue;
     const card=el(doc,'article','fx-ach-entry'+(def.unlocked?'':' locked'));card.append(badge(doc,def,{locked:!def.unlocked}));
     const text=el(doc,'div','fx-ach-content');text.append(el(doc,'div','fx-ach-name',def.name),el(doc,'div','fx-ach-copy',def.description));
     const status=def.unlocked?`已解锁 · ${new Date(def.unlockedAt).toLocaleDateString('zh-CN')}`:def.goal>1?`未解锁 · ${Math.floor(def.progress).toLocaleString('zh-CN')} / ${def.goal.toLocaleString('zh-CN')}`:'未解锁';

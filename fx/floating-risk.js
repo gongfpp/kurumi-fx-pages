@@ -1,6 +1,6 @@
-import {closeAllModalOpen} from './close-all-control.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {bindFloatingDismissal} from './floating-dismissal.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {bindFloatingDismissal} from './floating-dismissal.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 // Existing position risk displays stay in the document; close uses a shared action gate.
 // Block complete trading panels as well as controls, so click-through is only a
@@ -91,7 +91,7 @@ export function createFloatingRisk({root=document,closeControl=null,getRiskConte
   };
   const restoreFocus=()=>{
     if(!panel.contains(root.activeElement))return;
-    for(const selector of ['#position-close-all','#order-amount','#long']){
+    for(const selector of ['#position-close-all','#long','#pixel-frontend']){
       const target=root.querySelector(selector);
       if(target&&!target.disabled&&target.getClientRects().length){target.focus?.({preventScroll:true});return;}
     }

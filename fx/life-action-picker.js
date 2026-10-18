@@ -1,4 +1,5 @@
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
@@ -109,7 +110,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
  function open(next='menu'){
   if(disposed)return false;
   if(next!=='menu'&&!CATEGORIES[next])return false;
-  if(!dialog.open){opener=doc.activeElement;const m=model(),s=statusOf(m);snapshot={day:s.day,runId:s.runId,contextToken:m.contextToken??getContext()};session++;dialog.showModal();}
+  if(!dialog.open){opener=prepareModalFocus(doc);const m=model(),s=statusOf(m);snapshot={day:s.day,runId:s.runId,contextToken:m.contextToken??getContext()};session++;dialog.showModal();}
   category=next;setMessage('');render({force:true});focusStart();return true;
  }
  async function choose(optionId,event,choiceCategory=category){
@@ -145,7 +146,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
  listen(back,'click',()=>{if(!busy){if(mobile)close();else open('menu');}});listen(closeButton,'click',close);
  listen(dialog,'click',event=>{if(event.target===dialog)close();});
  listen(dialog,'cancel',event=>{event.preventDefault();close();});
- listen(dialog,'close',()=>{if(dialog.open)return;const another=[...doc.querySelectorAll('dialog[open]')].some(n=>n!==dialog);if(!another&&opener?.isConnected)opener.focus({preventScroll:true});onClose();});
+ listen(dialog,'close',()=>{if(dialog.open)return;const another=[...doc.querySelectorAll('dialog[open]')].some(n=>n!==dialog);if(!another)restoreFocus({node:opener},doc);onClose();});
  listen(dialog,'keydown',event=>{
   // Keep the app's trading hotkeys outside every modal interaction.
   event.stopPropagation();

@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Per-shift game contracts informed by 2014 Japanese part-time wage references.
 // Income uses the gross hourly reference; this game does not simulate wage tax.
 export const LEGACY_WORK_INCOMES=Object.freeze({"convenience":2200,"cafe":2500,"bookstore":1800,"flyer":1600,"warehouse":3400,"dishwashing":2800,"campusArchive":1300,"tutoring":3600,"proofreading":2100,"eventSetup":4200,"petCare":2300,"translation":4600,"remoteData":2600,"buildingCaretaker":3000,"radioMonitor":1900});
@@ -52,7 +52,7 @@ export const WORK_ITEM_EFFECTS=Object.freeze({
  headphones:Object.freeze({jobId:'radioMonitor',income:4488,label:'音频标注每次工资提高至¥4,488'}),
  catToy:Object.freeze({friendId:'yasuko',staminaRecovery:16,label:'见安子时恢复16点体力'}),
  eventPass:Object.freeze({unlocks:'eventAssist',label:'可应聘展会现场协助'}),
- memo:Object.freeze({dailyStressRecovery:3,label:'每天免费复盘一次，压力降低3点'}),
+ memo:Object.freeze({collectibleOnly:true,label:'便利店工作的纪念笔记'}),
  teachingNotes:Object.freeze({unlocks:'translation',label:'可应聘翻译助理'}),
  bookmark:Object.freeze({unlocks:'radioMonitor',label:'可应聘音频标注'}),
  indexCards:Object.freeze({unlocks:'radioMonitor',label:'可应聘音频标注'}),
@@ -72,6 +72,21 @@ export function effectiveWorkTerms(s,job){
  const acquired=new Set(validWorkInventory(s)?Object.keys(s.workInventory||{}):[]);
  return termsFor(job,acquired);
 }
+// Settlement records the stamina at the start of the shift, before any debit.
+export function calculateWorkPay(startStamina,requiredStamina,baseWage){
+ if(!Number.isFinite(startStamina)||startStamina<0||startStamina>100||!Number.isFinite(requiredStamina)||requiredStamina<0||!Number.isSafeInteger(baseWage)||baseWage<0)throw Error('Invalid work pay inputs');
+ return Math.floor(baseWage*(requiredStamina===0?1:Math.min(1,startStamina/requiredStamina)));
+}
+export function workPayDialogue(baseDialogue,{baseWage,income,startStamina,requiredStamina}){
+ if(!baseDialogue)return null;
+ const text=income<baseWage?`今天体力只够做完一部分。工资拿到 ¥${income.toLocaleString('en-US')}，比整份少了 ¥${(baseWage-income).toLocaleString('en-US')}。`:`收工，工资 ¥${income.toLocaleString('en-US')} 到手了。`;
+ return {...structuredClone(baseDialogue),sourceId:`${baseDialogue.sourceId}:pay-v1`,origin:'original-game-adaptation',lines:[...structuredClone(baseDialogue.lines),{from:'久留美',text}]};
+}
+export function validWorkPayDialogue(job,receipt){
+ const ratio=receipt?.work?.payRatio;
+ if(!ratio)return false;
+ return JSON.stringify(receipt.dialogue)===JSON.stringify(workPayDialogue(job.dialogue,{...ratio,income:receipt.income}));
+}
 export function validWorkPay(receipt,job){
  if(!receipt||!job)return false;
  if(!Object.hasOwn(receipt,'work'))return validLegacyBareWorkReceipt(receipt,job);
@@ -80,7 +95,13 @@ export function validWorkPay(receipt,job){
  if(terms!==undefined&&(!terms||typeof terms!=='object'||Array.isArray(terms)||Object.keys(terms).length!==2||terms.version!==2||!Object.hasOwn(terms,'effectId')||terms.effectId!==null&&WORK_ITEM_EFFECTS[terms.effectId]?.jobId!==job.id))return false;
  if(!Object.hasOwn(receipt.work,'pay'))return terms===undefined&&Object.hasOwn(LEGACY_WORK_INCOMES,job.id)&&receipt.income===LEGACY_WORK_INCOMES[job.id];
  const pay=receipt.work.pay,expected=job.pay;
- const income=terms===undefined?job.income:termsFor(job,new Set(terms.effectId?[terms.effectId]:[])).income;
+ const baseWage=terms===undefined?job.income:termsFor(job,new Set(terms.effectId?[terms.effectId]:[])).income;
+ let income=baseWage;
+ if(Object.hasOwn(receipt.work,'payRatio')){
+  const ratio=receipt.work.payRatio,required=terms===undefined?job.staminaCost:termsFor(job,new Set(terms.effectId?[terms.effectId]:[])).staminaCost;
+  if(!ratio||typeof ratio!=='object'||Array.isArray(ratio)||Object.keys(ratio).length!==4||ratio.version!==1||ratio.baseWage!==baseWage||ratio.requiredStamina!==required||!Number.isFinite(ratio.startStamina)||ratio.startStamina<0||ratio.startStamina>100)return false;
+  income=calculateWorkPay(ratio.startStamina,ratio.requiredStamina,baseWage);
+ }
  return !!pay&&typeof pay==='object'&&!Array.isArray(pay)&&Object.keys(pay).length===3&&
   ['version','hours','rate'].every(key=>Object.hasOwn(pay,key)&&pay[key]===expected[key])&&receipt.income===income;
 }
@@ -142,7 +163,7 @@ export function validWorkInventory(s){
   if(receipt.category!=='work')continue;
   const job=LIFE_WORK_JOBS.find(j=>j.id===receipt.optionId);if(!job)return false;
   // Null is the established legacy dialogue payload; never backfill today's text.
-  if(!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${runId}:${receipt.day}`||receipt.label!==job.label||!validWorkPay(receipt,job)||receipt.cost!==0||(receipt.dialogue!==null&&JSON.stringify(receipt.dialogue)!==JSON.stringify(job.dialogue)))return false;
+  if(!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${runId}:${receipt.day}`||receipt.label!==job.label||!validWorkPay(receipt,job)||receipt.cost!==0||(receipt.dialogue!==null&&JSON.stringify(receipt.dialogue)!==JSON.stringify(job.dialogue)&&!validWorkPayDialogue(job,receipt)))return false;
   days.add(receipt.day);
   if(economy){const legacy=receipts.indexOf(receipt)<economy.legacyReceiptCount;if(legacy?receipt.work?.terms!==undefined:receipt.work?.terms===undefined)return false;}
   if(!Object.hasOwn(receipt,'work')){if(hasStructuredWork||!validBareWorkEvidence(s,receipt,job))return false;continue;}
@@ -153,6 +174,12 @@ export function validWorkInventory(s){
   if(job.id==='eventAssist'&&(!current||!acquired.has('eventPass')))return false;
   if(receipt.work.staminaCost!==effective.staminaCost||receipt.work.stressDelta!==effective.stressDelta)return false;
   if(!Number.isFinite(receipt.work.stressBefore)||!Number.isFinite(receipt.work.stressAfter)||receipt.work.stressBefore<0||receipt.work.stressAfter!==Math.max(0,receipt.work.stressBefore+job.stressDelta))return false;
+  if(receipt.work.payRatio){
+   const ratio=receipt.work.payRatio,rows=s.stamina?.recoveryReceipts?.filter(row=>row.id===`stamina:work:${receipt.day}`);
+   if(!rows||rows.length!==1)return false;
+   const row=rows[0],amount=Math.min(ratio.startStamina,ratio.requiredStamina),after=Math.round(Math.max(0,ratio.startStamina-amount)*1e9)/1e9;
+   if(row.source!=='work'||row.before!==ratio.startStamina||row.amount!==amount||row.after!==after||row.delta!==Math.round((after-ratio.startStamina)*1e9)/1e9)return false;
+  }
   const reward=receipt.work.reward;
   if(acquired.has(job.rewardId)){if(reward!==null)return false;continue;}
   const expected={id:job.rewardId,label:job.id==='convenience'&&!current?'便签本':job.rewardLabel,jobId:job.id,day:receipt.day,receiptId:receipt.id};

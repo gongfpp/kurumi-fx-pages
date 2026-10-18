@@ -1,10 +1,11 @@
-import {NEWS_ARCHIVE} from './news-archive.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {newsSourceDetails} from './news-source-view.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {displayedNewsItems} from './displayed-news-session.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {NEWS_ARCHIVE} from './news-archive.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {availableNews,newsAvailableAt,newsContext,newsDate} from './news-context.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {newsSourceDetails} from './news-source-view.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {displayedNewsItems} from './displayed-news-session.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 // Compact labels use the viewed market date only as a comparison. The item's
 // own publication instant supplies its JST day/time; availability is not a clock.
@@ -64,7 +65,7 @@ export function mountMobileNewsList({document:doc=globalThis.document,onClose=()
  function open(index=null){
   if(disposed||!active||dialog.open||closeAllModalOpen(doc)||index!==null&&(!Number.isInteger(index)||!items[index]))return false;
   snapshot=items.map(item=>({...item,recap:item.recap?{...item.recap}:null,background:item.background?{...item.background}:null}));
-  opener=doc.activeElement;selectedIndex=0;listScroll=0;listShellScroll=0;index===null?renderList():showItem(snapshot[index],false);dialog.showModal();close.focus({preventScroll:true});return true;
+  opener=prepareModalFocus(doc);selectedIndex=0;listScroll=0;listShellScroll=0;index===null?renderList():showItem(snapshot[index],false);dialog.showModal();close.focus({preventScroll:true});return true;
  }
  function sync(){
   if(disposed)return;
@@ -92,7 +93,7 @@ export function mountMobileNewsList({document:doc=globalThis.document,onClose=()
    if(disposed||doc.querySelector('dialog[open]'))return;
    const visible=node=>node?.isConnected&&!node.disabled&&!node.closest('[hidden]')&&(!node.closest('dialog')||node.closest('dialog').open);
    const fallback=active?more:[doc.getElementById('market-symbol'),doc.getElementById('help')].find(visible);
-   const target=active&&visible(opener)?opener:fallback;target?.focus?.({preventScroll:true});
+   const target=active&&visible(opener)?opener:fallback;restoreFocus({node:target},doc);
   }));
  });
  listen(dialog,'keydown',event=>{

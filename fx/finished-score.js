@@ -1,8 +1,9 @@
-import {isSharedReplay} from './shared-replay-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {lotteryScoreFields} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -28,7 +29,7 @@ function projectLeaderboardScore(state,report,{storage,live=false,includeVolatil
  const rawReturnRate=rawTotalProfit/initialEquity,rawDailyReturnRate=rawReturnRate/elapsedDays;
  const returnRate=totalProfit/initialEquity,dailyReturnRate=returnRate/elapsedDays;
  if(Math.abs(finite(p.returnRate,'returnRate')-rawReturnRate)>1e-8||Math.abs(finite(p.dailyReturnRate,'dailyReturnRate')-rawDailyReturnRate)>1e-8)throw Error('终局收益率与净交易账本不一致');
- const score={schemaVersion:live?'1.1.0':'1.0.0',gameFinished:!live,completionReason:live?null:report.completionReason,developmentTaint:false,statisticsComplete:p.complete,gameMode:report.mode,day,initialEquity,daysSurvived,elapsedDays,returnRate,dailyReturnRate,totalProfit,closedTrades:integer(p.closeExecutions,'closeExecutions'),maxDrawdown:nullable(p.maxDrawdown,v=>finite(v,'maxDrawdown',0,1))};
+ const score={...lotteryScoreFields(state),schemaVersion:live?'1.1.0':'1.0.0',gameFinished:!live,completionReason:live?null:report.completionReason,developmentTaint:false,statisticsComplete:p.complete,gameMode:report.mode,day,initialEquity,daysSurvived,elapsedDays,returnRate,dailyReturnRate,totalProfit,closedTrades:integer(p.closeExecutions,'closeExecutions'),maxDrawdown:nullable(p.maxDrawdown,v=>finite(v,'maxDrawdown',0,1))};
  for(const key of counts)score[key]=nullable(p[key],v=>integer(v,key));
  score.winRate=nullable(p.winRate,v=>finite(v,'winRate',0,1));
  score.maxOrderLoss=nullable(p.maxOrderLoss,v=>cents(finite(v,'maxOrderLoss',-1e10,0)));

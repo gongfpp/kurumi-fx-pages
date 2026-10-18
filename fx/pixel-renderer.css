@@ -1,6 +1,6 @@
 /* Approved pink-pixel renderer. Every rule is scoped; legacy rendering is untouched. */
 body[data-frontend="pixel"]{background:#ffe3f1;color:#0a1255}
-#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
+#pixel-frontend{--px-ink:#0a1255;--px-pink:#ff329d;--px-mint:#4beed8;--px-line:#b878b3;--px-atlas:url('./pixel-assets/reference-atlas.png?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717');width:1536px;max-width:none;min-height:1024px;margin:0 auto;padding:0 0 16px;zoom:var(--pixel-scale,1);color:var(--px-ink);font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;font-size:18px;line-height:1.4;background:radial-gradient(ellipse at 25% 8%,#fff8fc,transparent 50%),linear-gradient(115deg,#ffd4ec,#fff2f8 65%,#ffd2e9);font-synthesis:none}
 #pixel-frontend *,#pixel-frontend *:before,#pixel-frontend *:after{box-sizing:border-box}
 #pixel-frontend [hidden]{display:none!important}
 #pixel-frontend button,#pixel-frontend input,#pixel-frontend select,#pixel-frontend textarea{font:inherit;color:var(--px-ink)}
@@ -98,8 +98,8 @@ body[data-frontend="pixel"]{background:#ffe3f1;color:#0a1255}
 #pixel-frontend .pixel-drawer .page-heading .mission{display:flex;flex-direction:column;gap:6px;margin:8px 0;align-items:start}
 #pixel-frontend .pixel-drawer .inventory{border:0;padding:0;margin:0;background:none}
 #pixel-frontend .pixel-drawer :is(.lower-heading h2,.story-library-actions button){font-size:19px}
-#pixel-frontend .pixel-drawer .tool-row{display:flex;flex-direction:column;gap:8px}
-#pixel-frontend .pixel-drawer #tool-list button{white-space:normal;text-align:left}
+#pixel-frontend .pixel-drawer .tool-row:not(.inventory-view){display:flex;flex-direction:column;gap:8px}
+#pixel-frontend .pixel-drawer #tool-list>button{white-space:normal;text-align:left}
 #pixel-frontend #terminal{display:flex;flex-direction:column;padding:11px 11px 0;border:0;background:none;color:var(--px-ink);border-radius:0;box-shadow:none;min-width:0;overflow:visible;gap:0}
 #pixel-frontend .pixel-currency-tabs{order:0;display:flex;gap:0;margin:0 0 12px;align-items:stretch}
 #pixel-frontend .pixel-currency-button{height:47px;min-width:116px;padding:0 19px;font-size:21px;margin-right:-1px;letter-spacing:-.3px}

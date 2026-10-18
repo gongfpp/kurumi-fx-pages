@@ -1,7 +1,7 @@
-import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay} from './life-work.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay,validWorkPayDialogue} from './life-work.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Convenience-shift default; actual per-job contracts live in life-work.js.
 // One completed life action per story day; individual work terms live in life-work.js.
 export const LIFE_WORK_INCOME=LIFE_WORK_JOBS[0].income;
@@ -42,7 +42,7 @@ export function validLifeActions(s){
  const days=new Set();let total=0,beforeToday=0;
  for(const receipt of actions.receipts){
   const selected=lifeActionDefinition(receipt?.category,receipt?.optionId);
-  if(!selected||!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${lifeActionRunId(s)}:${receipt.day}`||receipt.label!==selected.label||(receipt.category==='work'?!validWorkPay(receipt,selected):receipt.income!==selected.income)||receipt.cost!==(selected.cost||0)||!Number.isFinite(receipt.feeTotal)||receipt.feeTotal<0||!Number.isSafeInteger(receipt.closedPositions)||receipt.closedPositions<0||receipt.timestamp!==null&&!Number.isFinite(receipt.timestamp)||!Number.isFinite(receipt.assetsBefore)||!Number.isFinite(receipt.assetsAfter)||!validLifeActionDialogue(selected,receipt.dialogue))return false;
+  if(!selected||!Number.isSafeInteger(receipt.day)||receipt.day<1||receipt.day>s.day||days.has(receipt.day)||receipt.id!==`life:${lifeActionRunId(s)}:${receipt.day}`||receipt.label!==selected.label||(receipt.category==='work'?!validWorkPay(receipt,selected):receipt.income!==selected.income)||receipt.cost!==(selected.cost||0)||!Number.isFinite(receipt.feeTotal)||receipt.feeTotal<0||!Number.isSafeInteger(receipt.closedPositions)||receipt.closedPositions<0||receipt.timestamp!==null&&!Number.isFinite(receipt.timestamp)||!Number.isFinite(receipt.assetsBefore)||!Number.isFinite(receipt.assetsAfter)||!(validLifeActionDialogue(selected,receipt.dialogue)||receipt.category==='work'&&validWorkPayDialogue(selected,receipt)))return false;
   if(receipt.category==='dinner'){const meals=s.recapChoiceLedger;if(!Array.isArray(meals)||!meals.length||receipt.day>=Math.min(...meals.map(row=>row.day))&&!meals.some(row=>row.day===receipt.day&&row.id===receipt.optionId&&row.cost===receipt.cost))return false;}
   days.add(receipt.day);total+=receipt.income;if(receipt.day<s.day)beforeToday+=receipt.income;
  }

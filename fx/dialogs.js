@@ -1,11 +1,12 @@
-import {preserveScroll} from './preserve-scroll.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isTextEntry,prepareModalFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Every modal owns one fixed control strip and one scrollable content region.
 // Closing a narrative window dismisses its presentation, never chooses a story.
 export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={}) {
-  const dialogs=[...root.querySelectorAll('dialog')],records=new Map();
+  const dialogs=[...root.querySelectorAll('dialog')].filter(dialog=>dialog.id!=='pixel-boot-error'),records=new Map();
   const openDialogs=()=>dialogs.filter(d=>d.open);
   const sync=()=>root.documentElement.classList.toggle('dialog-active',openDialogs().length>0);
-  const focusable=node=>node?.isConnected&&!node.disabled&&!node.closest?.('[hidden]');
+  const focusable=node=>node?.isConnected&&!node.disabled&&!node.closest?.('[hidden]')&&!isTextEntry(node);
   for(const dialog of dialogs) {
     if(dialog.classList.contains('dialog-shell'))continue;
     const scroller=root.createElement('div');scroller.className='dialog-scroll';
@@ -22,7 +23,11 @@ export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={
     const record={opener:null,show:dialog.showModal.bind(dialog),scroller};records.set(dialog,record);
     dialog.showModal=()=>{
       if(dialog.open)return;
-      record.opener=root.activeElement;preserveScroll(root.documentElement,()=>record.show());scroller.scrollTop=0;sync();
+      record.opener=prepareModalFocus(root);
+      // Native dialog close also restores its remembered focus. Release an
+      // editable opener before showModal so a later automatic close cannot
+      // reopen the phone keyboard. Direct input and Tab stay native.
+      preserveScroll(root.documentElement,()=>record.show());scroller.scrollTop=0;sync();
       close.focus({preventScroll:true});
     };
     const nativeClose=dialog.close.bind(dialog);
@@ -49,7 +54,7 @@ export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={
         const active=openDialogs().at(-1),opener=record.opener;
         if(active){if(focusable(opener)&&active.contains(opener))opener.focus({preventScroll:true});else if(!active.contains(root.activeElement))active.querySelector('.x-close')?.focus({preventScroll:true});}
         else if(focusable(opener))opener.focus({preventScroll:true});
-        else root.getElementById('scene-resume')?.focus({preventScroll:true});
+        else {const resume=root.getElementById('scene-resume');(focusable(resume)?resume:root.getElementById('pixel-frontend'))?.focus({preventScroll:true});}
       });
     });
   }

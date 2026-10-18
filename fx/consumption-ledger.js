@@ -1,8 +1,9 @@
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Consumption is a separate, itemized cash ledger. Legacy totals are retained;
 // missing old item names are never reconstructed from guesses.
 export const LIFESTYLES=Object.freeze([
- ...[ ['basic',1500,0,28,0,0],['comfortable',3000,45000,40,0,0],['generous',6000,135000,50,0,0],['premium',12000,315000,58,0,0],['penthouse',30000,855000,64,0,0] ].map(([id,dailyCost,moveInCost,sleepRecovery,extraStressRelief,extraRestRecovery],index)=>Object.freeze({id,label:LIVING_CHOICE_COPY.options[index].label,dailyCost,baseDailyCost:1500,dailyBasics:300,dailyRent:dailyCost-300,mealCost:300,moveInCost,sleepRecovery,extraStressRelief,extraRestRecovery}))
+ ...[ ['basic',1500,0,28,0,0],['comfortable',3000,45000,40,0,0],['generous',6000,135000,50,0,0],['premium',12000,315000,58,0,0],['penthouse',30000,855000,64,0,0] ].map(([id,dailyCost,moveInCost,_priorSleepRecovery,extraStressRelief,extraRestRecovery],index)=>Object.freeze({id,label:LIVING_CHOICE_COPY.options[index].label,dailyCost,baseDailyCost:1500,dailyBasics:300,dailyRent:dailyCost-300,mealCost:300,moveInCost,sleepRecovery:HOUSING_SLEEP_RECOVERY[id],extraStressRelief,extraRestRecovery}))
 ]);
 export const LEGACY_LIFESTYLES=Object.freeze([
  {id:'basic',dailyBasics:2200,dailyRent:0,extraStressRelief:0,extraRestRecovery:0},

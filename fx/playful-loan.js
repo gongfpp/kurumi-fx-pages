@@ -1,3 +1,4 @@
+import {restoreFocus} from './focus-safety.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // A local game animation, deliberately independent of media devices or identity services.
 export const LOAN_POSES = Object.freeze([
  {id:'blink',label:'眨眨眼',line:'眼睛还睁得开，问题不大！'},
@@ -32,7 +33,7 @@ export function mountPlayfulLoan({dialog,controls,getContext,getTerms,commit,onE
  const flow=createPlayfulLoan({commit}),avatar=host.querySelector('.loan-avatar'),status=host.querySelector('.loan-pose-status'),offer=host.querySelector('.loan-offer'),pose=host.querySelector('.loan-pose'),confirm=host.querySelector('.loan-confirm'),cancel=host.querySelector('.loan-cancel');
  let ticket=null,timer=null,busy=false,opener=null;
  function stop(){if(timer!==null)unschedule(timer);timer=null;busy=false;ticket=null;flow.cancel();host.hidden=true;controls.hidden=false;avatar.removeAttribute('data-pose');}
- function dismiss(){stop();if(dialog.open)opener?.focus();}
+ function dismiss(){stop();if(dialog.open)restoreFocus({node:opener},doc);}
  function renderStep(){const step=ticket.step;pose.hidden=step===LOAN_POSES.length;confirm.hidden=step!==LOAN_POSES.length;pose.disabled=false;if(step<LOAN_POSES.length){pose.textContent=LOAN_POSES[step].label;status.textContent=`${step+1} / ${LOAN_POSES.length} · ${LOAN_POSES[step].label}`;}else{status.textContent='动作完成！要借这笔钱吗？';confirm.focus();}}
  pose.onclick=()=>{
   if(busy||!ticket||!dialog.open)return;

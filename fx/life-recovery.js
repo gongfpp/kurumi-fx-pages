@@ -1,5 +1,7 @@
-import {recoverStamina} from './stamina.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {SUPPLY_POLICY,HOUSING_SLEEP_RECOVERY,ONSEN_POLICY} from './economy-plan-config.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {clearEnergyAfterSleep} from './energy-stage.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {recoverStamina} from './stamina.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 // Game-balance values for existing actions and items. No new purchases,
 // unlocks, story events or fees are introduced here. All values are bounded by
@@ -9,12 +11,12 @@ export const RECAP_STAMINA_RECOVERY=Object.freeze({
  'noodles-today':6,'quiet-night':18,
  'dinner-small':12,'dinner-friends':20,'dinner-feast':28,'dinner-banquet':36
 });
-export const PROP_STAMINA_RECOVERY=Object.freeze({dailyDrink:10,noodles:10,takeaway:30,energy:30,chocolate:5,eyeMask:0,celebration:25});
+export const PROP_STAMINA_RECOVERY=Object.freeze({dailyDrink:10,noodles:SUPPLY_POLICY.noodlesRecovery,takeaway:SUPPLY_POLICY.takeawayRecovery,energy:SUPPLY_POLICY.energyRecovery,chocolate:5,eyeMask:0,celebration:25});
 // Fully paid housing determines the sleep benefit; unpaid days use basic rest.
-export const SLEEP_STAMINA_RECOVERY=Object.freeze({basic:28,comfortable:40,generous:50,premium:58,penthouse:64});
+export const SLEEP_STAMINA_RECOVERY=HOUSING_SLEEP_RECOVERY;
 
 export function recoverLifeAction(state,category,receiptId,optionId,{catToy=false}={}){
- const amount=category==='friend'&&optionId==='yasuko'&&catToy?16:category==='relax'&&optionId==='onsen'?40:LIFE_STAMINA_RECOVERY[category];
+ const amount=category==='friend'&&optionId==='yasuko'&&catToy?16:category==='relax'&&optionId==='onsen'?ONSEN_POLICY.recovery:LIFE_STAMINA_RECOVERY[category];
  return amount?recoverStamina(state,{amount,id:`stamina:${receiptId}`,source:category}):null;
 }
 export function recoverRecapAction(state,id){
@@ -36,6 +38,6 @@ export function sleepStaminaRecovery(state){
 export function recoverLifeSleep(state,{id=`stamina:rest:${state.day}`}={}){
  const bonus=state.dailySupplies?.eyeMaskPending?15:0;
  const result=recoverStamina(state,{amount:sleepStaminaRecovery(state)+bonus,id,source:'sleep'});
- if(result.applied&&bonus)state.dailySupplies.eyeMaskPending=false;
+ if(result.applied){clearEnergyAfterSleep(state);if(bonus)state.dailySupplies.eyeMaskPending=false;}
  return result;
 }

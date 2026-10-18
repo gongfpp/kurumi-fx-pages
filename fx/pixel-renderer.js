@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.

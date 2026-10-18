@@ -1,5 +1,5 @@
-import {CCSE_MARKET_COMMENTS} from './market-comments-ccse.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {MARKET_COMMENTS_20261015} from './market-comments-20261015.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {CCSE_MARKET_COMMENTS} from './market-comments-ccse.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {MARKET_COMMENTS_20261015} from './market-comments-20261015.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 // Licensed quotation data; each Chinese translation shares its source license.
 export const MARKET_COMMENTS=Object.freeze([
   {

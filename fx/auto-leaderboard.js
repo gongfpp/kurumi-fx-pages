@@ -1,12 +1,15 @@
-import {isSharedReplay} from './shared-replay-state.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;
-const manualFailures=new Set(['shared-replay','invalid-score','no-trades','developer','mixed-historical','private-research','ineligible','unfinished','missing-run','input','capability','capability-conflict','storage-unavailable','coordination']);
+const manualFailures=new Set(['lottery-cheat','lottery-unavailable','shared-replay','invalid-score','no-trades','developer','mixed-historical','private-research','ineligible','unfinished','missing-run','input','capability','capability-conflict','storage-unavailable','coordination']);
 export function automaticRankingStatusText(result={}){
  const reason=result.reason;
+ if(reason==='lottery-cheat')return '暗号彩票局不会进入公共排行榜。';
+ if(reason==='lottery-unavailable')return '排行榜尚未支持彩票奖金，本局成绩暂未提交。';
  if(result.state==='submitted')return '本局成绩已自动上榜，可在名人堂修改昵称。';
  if(result.state==='submitting')return '正在自动提交匿名终局成绩…';
  if(result.state==='retry-pending')return '成绩暂未确认，稍后会自动重试。';
@@ -24,6 +27,7 @@ export function automaticRankingStatusText(result={}){
 }
 // Only a terminal game is eligible. A normal daily settlement is not game-over.
 export function terminalRankingEligibility(state,report,storage){
+ if(hasLotteryCheat(state))return {eligible:false,reason:'lottery-cheat'};
  if(isSharedReplay(state))return {eligible:false,reason:'shared-replay'};
  if(hasHistoricalSimulation(state))return {eligible:false,reason:'mixed-historical'};
  if([2,3].includes(state?.historical?.version))return {eligible:false,reason:'private-research'};

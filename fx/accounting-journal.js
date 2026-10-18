@@ -1,7 +1,7 @@
-import {marketPrice,positionMarket} from './market-book.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
-import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=9ba5ed087d3fbe3b4e6ddd0a44fcb3bc7087a3f1-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {compactAccountingJournal,accountingDaySampled,accountingDayMissing,reconcileAccountingObservations} from './accounting-retention.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
+import {currentTradingTimestamp,reportTradingTimestamp,ensureTradingClock,tradingTimestamp} from './trading-time.js?v=312310b759c9c281ed2d9f234cc9c6ec9eec4de2-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 export function accountingValues(state){
  const positions=state.positions?.length?state.positions:state.position?[state.position]:[];
@@ -9,8 +9,8 @@ export function accountingValues(state){
  const nominalAssets=Math.max(0,finite(state.cash)+margin+floating)+finite(state.reserve);
  const debt=finite(state.family?.outstanding)+finite(state.loan?.outstanding);
  const realized=finite(state.performance?.totalProfit,(state.history||[]).filter(t=>t.type!=='open').reduce((sum,t)=>sum+finite(t.pnl),0));
- const expenses=finite(state.expenses),netFunding=finite(state.externalFunding),nonTradingIncome=finite(state.nonTradingIncome),tradingAssets=nominalAssets-netFunding-nonTradingIncome+expenses-finite(state.developer?.profitOffset);
- return{nominalAssets,netAssets:nominalAssets-debt,debt,realizedProfit:realized,unrealized:floating,expenses,netFunding,...(state.lifeActions?{nonTradingIncome}:{}),tradingAssets};
+ const expenses=finite(state.expenses),netFunding=finite(state.externalFunding),nonTradingIncome=finite(state.nonTradingIncome),lotteryIncome=finite(state.lotteryIncome),cheatLotteryIncome=finite(state.cheatLotteryIncome),tradingAssets=nominalAssets-netFunding-nonTradingIncome-lotteryIncome-cheatLotteryIncome+expenses-finite(state.developer?.profitOffset);
+ return{...(state.lottery?{lotteryIncome,cheatLotteryIncome}:{}),nominalAssets,netAssets:nominalAssets-debt,debt,realizedProfit:realized,unrealized:floating,expenses,netFunding,...(state.lifeActions?{nonTradingIncome}:{}),tradingAssets};
 }
 export function ensureAccountingJournal(state){
  ensureTradingClock(state);
