@@ -96,10 +96,11 @@ export class AudioEnvelope {
   }
 }
 
-export function bindAuditionEnvelope(media,{leadInSeconds=.4,envelope=new AudioEnvelope()}={}) {
-  let target=bounded(media.volume,.65),record=envelope.prepare(media,{target,leadInSeconds});
+export function bindAuditionEnvelope(media,{leadInSeconds=.4,coldMs=450,warmMs=180,tailMs=120,envelope=new AudioEnvelope()}={}) {
+  const prepare=target=>envelope.prepare(media,{target,leadInSeconds,coldMs,warmMs,tailMs});
+  let target=bounded(media.volume,.65),record=prepare(target);
   // The Web Audio gain is already zero before native playback can start.
-  const play=()=>{record=envelope.prepare(media,{target,leadInSeconds});envelope.start(media,record);};
+  const play=()=>{record=prepare(target);envelope.start(media,record);};
   const stop=()=>envelope.stop(media);
   const volume=()=>{
     if(record&&Math.abs(media.volume-record.lastVolume)<.00001)return;

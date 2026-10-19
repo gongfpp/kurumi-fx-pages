@@ -1,9 +1,10 @@
-import {DINNER_STORIES} from './copy/dinner-stories.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {DINNER_STORIES} from './copy/dinner-stories.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 // Existing prices and gain thresholds, copied as evidence checks only. The
 // engine/recap choice remains the sole owner of the bill and account effects.
@@ -23,7 +24,7 @@ export function dinnerCastKnown(state,script,memory=dailyArtMemory){
 }
 export function dinnerStoryCandidates(state,receipt,{memory=dailyArtMemory,assets=DINNER_PRESENTATION_ASSETS,legacyAssets=COMIC_PRESENTATION_ASSETS}={}){
  const tier=DINNER_TIERS[receipt?.id],outcome=sealedDailyMangaOutcome(state);
- if(!tier||state.mode!=='story'||!outcome||outcome.net<tier.minGain||receipt.day!==state.day||receipt.cost!==tier.cost)return [];
+ if(!tier||state.mode!=='story'||!outcome||!dailyRoutineSceneAllowed(state)||outcome.net<tier.minGain||receipt.day!==state.day||receipt.cost!==tier.cost)return [];
  const base=selectComicScene(state,{type:'activity',receipt},{assets:legacyAssets});if(!base)return [];
  // Require the paired debit, not just a matching display receipt or cash value.
  const debit=state.consumptionLedger?.find(r=>r.id===`activity:${state.day}:${receipt.id}`&&r.kind==='activity'&&r.day===state.day&&r.amount===tier.cost&&r.timestamp===receipt.timestamp);

@@ -1,8 +1,8 @@
-import {STAMINA_FATIGUE,queueStaminaFatigue,beginStaminaFatigue,recoverStaminaFatigue,completeStaminaFatigue,staminaFatigueActive} from './stamina.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isHistorical,peekHistoricalQuote} from './historical-replay.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isLiveMarket} from './live-market-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {STAMINA_FATIGUE,queueStaminaFatigue,beginStaminaFatigue,recoverStaminaFatigue,completeStaminaFatigue,staminaFatigueActive} from './stamina.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isHistorical,peekHistoricalQuote} from './historical-replay.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 // A new session cursor can point beyond the last quote actually consumed.
 // In particular, endless settlement opens the next day in the same engine call.

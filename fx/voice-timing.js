@@ -1,14 +1,15 @@
-import {tradingTrauma} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Commentary follows observed/settled P&L. This gate never changes the market.
 export const VOICE_STABLE_MS=2500;
 export const VOICE_REVERSAL_MS=3500;
 export const pnlDirection=value=>Number.isFinite(value)&&Math.abs(value)>=1?Math.sign(value):0;
+const sceneGroupFor=phase=>phase==='ending'?'ending':phase==='resting'?'story':['closing','day_end','bankrupt'].includes(phase)?'settlement':phase?'trading':undefined;
 
 export class VoiceTimingGate {
   constructor({stableMs=VOICE_STABLE_MS,reversalMs=VOICE_REVERSAL_MS}={}){this.stableMs=stableMs;this.reversalMs=reversalMs;this.current=null;this.revision=0;}
   observe(context,now){
     const session=`${context.run}:${context.mode}`,direction=pnlDirection(context.pnl),key=String(context.eventKey||'market');
-    const previous=this.current,changed=!previous||previous.session!==session||previous.direction!==direction||previous.key!==key||previous.scope!==context.scope||previous.eventKind!==context.eventKind;
+    const previous=this.current,changed=!previous||previous.session!==session||previous.direction!==direction||previous.key!==key||previous.scope!==context.scope||previous.eventKind!==context.eventKind||previous.day!==context.day||previous.sceneGroup!==context.sceneGroup;
     if(changed){
       const reversed=previous&&previous.session===session&&previous.direction&&direction&&previous.direction!==direction;
       this.current={session,direction,key,revision:++this.revision,since:now,readyAt:now+(context.settled?0:reversed?this.reversalMs:this.stableMs)};
@@ -19,6 +20,16 @@ export class VoiceTimingGate {
   token(now){return this.current&&now>=this.current.readyAt?{...this.current,stableForMs:Math.max(0,now-this.current.since),eventAgeMs:(this.current.eventAgeMs||0)+Math.max(0,now-this.current.observedAt)}:null;}
   manualToken(now){return this.current?{...this.current,stableForMs:Math.max(0,now-this.current.since),eventAgeMs:(this.current.eventAgeMs||0)+Math.max(0,now-this.current.observedAt)}:null;}
   valid(token){return !!token&&!!this.current&&token.revision===this.current.revision&&token.session===this.current.session&&token.direction===this.current.direction;}
+  // Once an explicitly requested line has started, ordinary prices, opening or
+  // closing a position do not cut its words. Leaving the session or entering a
+  // critical scene still takes precedence over the rest of the recording.
+  canFinish(token){
+    if(!token||!this.current||token.session!==this.current.session||this.current.suppressCommentary)return false;
+    // Older consumers omit these fields; known major-scene boundaries must
+    // still cancel a line even when its P&L scope and event key stay unchanged.
+    const sameKnown=key=>token[key]==null||this.current[key]==null||token[key]===this.current[key];
+    return sameKnown('day')&&sameKnown('sceneGroup');
+  }
 }
 
 // Saved old trades are not new events. A live confirmed close has an eight-second
@@ -32,7 +43,7 @@ export function createVoiceContextSelector({now=()=>Date.now()}={}){
     const positionDirection=!hasPositions?'flat':directions.size>1?'mixed':directions.has(-1)?'short':'long';
     const latest=state.recent?.[0],volatility=Math.abs(latest?.observedMove||0)>=.004||state.lastEvent?.swan?'spike':'normal';
     const trauma=tradingTrauma(state);
-    const base={run:state.runId,mode:state.mode,hasPositions,positionDirection,volatility,suppressCommentary:trauma.active,traumaLevel:trauma.level||null};
+    const base={run:state.runId,mode:state.mode,day:state.day,phase:state.phase,sceneGroup:sceneGroupFor(state.phase),hasPositions,positionDirection,volatility,suppressCommentary:trauma.active,traumaLevel:trauma.level||null};
     const trade=state.lastTrade,closed=trade&&trade.type!=='open'&&trade.day===state.day&&Number.isFinite(trade.pnl);
     const closeKey=closed?`close:${trade.day}:${trade.beat}:${trade.positionId}:${trade.type}:${trade.pnl}:${trade.margin}:${state.performance?.closedTrades}`:null;
     if(closeKey!==lastClose){lastClose=closeKey;closeAt=first?-Infinity:time;}

@@ -1,4 +1,4 @@
-import {bindBgmLifecycle} from './bgm-player.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {bindBgmLifecycle} from './bgm-player.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 const STATUS={empty:'曲目还在准备中',muted:'背景音乐已静音',paused:'背景音乐已暂停',loading:'正在载入曲目…',hidden:'切到后台，音乐已暂停',playing:'正在播放',destroyed:'播放器已关闭'};
 const TAGS={neutral:'日常',focus:'专注',tension:'紧张',gain:'盈利',loss:'亏损',crisis:'危机',numb:'麻木',relief:'缓和'};

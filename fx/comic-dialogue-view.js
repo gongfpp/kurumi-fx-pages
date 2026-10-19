@@ -1,8 +1,8 @@
-import {createSkitLine} from './skit-dialogue.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {mountComicOriginalVoices} from './original-scene-voice.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {mountComicOriginalVoices} from './original-scene-voice.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 const mountedDialogues=new WeakMap();
-import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {setImage} from './assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.

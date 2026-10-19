@@ -1,5 +1,5 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {mobileLifeViewport,renderMobileLifeChoices} from './mobile-life-choices.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices,renderMobileLifeCharacter} from './mobile-life-choices.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
@@ -33,23 +33,29 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
  const closeButton=button('life-picker-close','×');closeButton.setAttribute('aria-label','关闭生活菜单');header.append(back,title,closeButton);
  const content=make('div','life-picker-content'),notice=make('p','life-picker-consequence',LIFE_ACTION_CONSEQUENCE);notice.id='life-picker-consequence';
  const feedback=make('p','life-picker-feedback');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.hidden=true;
- const body=make('div','life-picker-body');content.append(notice,feedback,body);shell.append(header,content);dialog.append(shell);doc.body.append(dialog);
+ const body=make('div','life-picker-body'),actionDock=make('footer','life-picker-action-dock');actionDock.hidden=true;content.append(notice,feedback,body);shell.append(header,content,actionDock);dialog.append(shell);doc.body.append(dialog);
  const selections={};
+ const pages=new Map();
  let mobile=false;
  let category='menu',snapshot=null,opener=null,disposed=false,busy=false,session=0,lastSignature='',message='';
  const listeners=[];
  const listen=(node,type,handler)=>{node.addEventListener(type,handler);listeners.push(()=>node.removeEventListener(type,handler));};
  const model=()=>getModel()||{};
+ const syncModalState=()=>doc.documentElement.classList.toggle('dialog-active',doc.querySelectorAll('dialog[open]').length>0);
  const statusOf=m=>m.status||{};
  const optionsOf=(m,c)=>(Array.isArray(m.options?.[c])?m.options[c]:[]).filter(o=>o&&typeof o.id==='string'&&typeof o.label==='string');
  const setMessage=text=>{message=text||'';feedback.textContent=message;feedback.hidden=!message;};
  const stale=m=>snapshot&&(snapshot.day!==statusOf(m).day||snapshot.runId!==statusOf(m).runId||snapshot.contextToken!==(m.contextToken??getContext()));
- const focusStart=()=>{const preferred=mobile?[...body.querySelectorAll('[data-life-select]')].find(node=>!node.disabled):category==='menu'?body.querySelector('[data-life-open="housing"]'):back;const target=preferred&&!preferred.disabled?preferred:closeButton;target.focus({preventScroll:true});};
- function setTitle(){title.replaceChildren(icon(mobile?'house':CATEGORIES[category]?.icon||'house'),doc.createTextNode(mobile?'生活':CATEGORIES[category]?.label||'生活'));}
+ const focusKeyOf=node=>node?.dataset?.lifeSelect?`select:${node.dataset.lifeSelectCategory}:${node.dataset.lifeSelect}`:node?.dataset?.lifeChoose?`choose:${node.dataset.lifeCategory||category}:${node.dataset.lifeChoose}`:node?.dataset?.lifeOpen;
+ const findFocus=key=>key?[...dialog.querySelectorAll('button')].find(node=>focusKeyOf(node)===key&&!node.disabled):null;
+ const rememberPage=()=>pages.set(category,{scrollTop:content.scrollTop,focusKey:focusKeyOf(doc.activeElement)});
+ const focusStart=(key)=>{const preferred=findFocus(key)||(mobile&&category!=='menu'?[...body.querySelectorAll('[data-life-select]')].find(node=>!node.disabled):category==='menu'?body.querySelector('[data-life-open="housing"]'):back);const target=preferred&&!preferred.disabled?preferred:closeButton;target.focus({preventScroll:true});};
+ function setTitle(){title.replaceChildren(icon(CATEGORIES[category]?.icon||'house'),doc.createTextNode(CATEGORIES[category]?.label||'生活'));}
  function actionButton(label,attrs,disabled=false,reason=''){
   const node=button('life-picker-primary',label);for(const [key,value]of Object.entries(attrs))node.dataset[key]=value;node.disabled=disabled;if(disabled&&reason)node.title=reason;node.append(make('span','life-picker-chevron','›'));return node;
  }
  function renderMenu(m){
+  if(mobile)renderMobileLifeCharacter({document:doc,body,model:m,make,icon});
   const housing=make('section','life-picker-housing'),housingArt=art('housing','宿舍与独住居所'),housingCopy=make('div','life-picker-housing-copy'),housingHeading=make('h3','');housingHeading.append(icon('house'),doc.createTextNode('住房'));housingCopy.append(housingHeading,make('p','',m.housingLabel||'选择住宿形式'));
   housing.append(housingArt,housingCopy,actionButton('选择住房',{lifeOpen:'housing'},busy||m.housingEnabled===false||typeof onHousing!=='function'));body.append(housing);
   const section=make('section','life-picker-today'),heading=make('h3','life-picker-section-title');heading.append(icon('bag'),doc.createTextNode('今日行动'));section.append(heading);
@@ -75,10 +81,12 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    card.append(h);
    // Unknown future options remain usable, but never borrow another person's art.
    if(ART_IDS.has(option.id))card.append(art(option.id,option.label));
+   else{const symbol=make('div','life-picker-art life-picker-art-symbol');symbol.append(icon(CATEGORIES[category].icon));symbol.setAttribute('aria-hidden','true');card.append(symbol);}
    if(category==='dinner'&&Number.isFinite(option.cost))card.append(make('p','life-picker-income',`请客费用 ¥${number(option.cost)}`));
    if(category==='relax'&&Number.isFinite(option.cost))card.append(make('p','life-picker-income',`费用 ¥${number(option.cost)}`));
    if(category==='relax'&&Number.isFinite(option.staminaRecovery))card.append(make('p','life-picker-work-details',`体力 +${option.staminaRecovery} · 压力 ${option.stressDelta>0?'+':''}${option.stressDelta||0}`));
-   if(category==='work'&&Number.isFinite(option.income))card.append(make('p','life-picker-income',`工作收入 ¥${number(option.income)}`));
+   if(category==='work'&&Number.isFinite(option.income))card.append(make('p','life-picker-income',`本次预计收入 ¥${number(option.income)}`));
+   if(category==='work'&&option.partialWork&&Number.isFinite(option.baseIncome))card.append(make('p','life-picker-work-details',`整份工作 ¥${number(option.baseIncome)} · 需${option.requiredStamina}体力`));
    if(category==='work'&&Number.isFinite(option.staminaCost)){card.append(make('p','life-picker-work-details',`体力 −${option.staminaCost} · ${option.stressDelta>0?'压力 +'+option.stressDelta:'压力 '+option.stressDelta}`));card.append(make('p','life-picker-work-reward',`初次完成获得：${option.rewardLabel}`));}
    const disabled=busy||!statusOf(m).enabled||!option.enabled||stale(m),reason=option.reason||statusOf(m).reason;
    if(option.enabled)enabledCount++;
@@ -91,18 +99,18 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
  function render({force=false}={}){
   if(disposed||!dialog.open)return;
   const m=model(),status=statusOf(m);
-  mobile=mobileLifeViewport(doc)&&category!=='dinner';dialog.dataset.mobileLife=String(mobile);
-  dialog.dataset.category=category;dialog.dataset.busy=String(busy);dialog.setAttribute('aria-busy',String(busy));back.hidden=!mobile&&category==='menu';back.disabled=busy;back.setAttribute('aria-label',mobile?'返回交易':'返回生活');
-  notice.textContent=mobile?'选择行动后，自动平仓并进入结算':LIFE_ACTION_CONSEQUENCE;
+  mobile=mobileLifeViewport(doc);dialog.dataset.mobileLife=String(mobile);
+  dialog.dataset.category=category;dialog.dataset.busy=String(busy);dialog.setAttribute('aria-busy',String(busy));back.hidden=category==='menu';back.disabled=busy;back.setAttribute('aria-label','返回生活');
+  notice.textContent=mobile?'开始行动后，自动平仓并进入结算':LIFE_ACTION_CONSEQUENCE;
   const signature=JSON.stringify({category,mobile,selections,character:m.character,busy,status,contextToken:m.contextToken??getContext(),options:m.options,housingLabel:m.housingLabel,housingEnabled:m.housingEnabled,dinnerEnabled:m.dinnerEnabled,dinnerReason:m.dinnerReason});
   if(!force&&signature===lastSignature)return;
-  const focusKeyOf=node=>node?.dataset?.lifeSelect?`select:${node.dataset.lifeSelectCategory}:${node.dataset.lifeSelect}`:node?.dataset?.lifeChoose?`choose:${node.dataset.lifeCategory||category}:${node.dataset.lifeChoose}`:node?.dataset?.lifeOpen;
   const active=doc.activeElement,focusKey=focusKeyOf(active);
-  const wasInBody=body.contains(active);lastSignature=signature;setTitle();body.replaceChildren();
+  const wasInBody=body.contains(active)||actionDock.contains(active),scrollTop=content.scrollTop;lastSignature=signature;setTitle();body.replaceChildren();actionDock.replaceChildren();actionDock.hidden=true;
   if(stale(m))setMessage('今天的安排已变化，请重新打开生活菜单。');else if(!status.enabled&&status.reason)setMessage(status.reason);
-  if(mobile)renderMobileLifeChoices({document:doc,body,model:m,selections,busy,stale:stale(m),optionsOf,make,button,icon,actionButton,onHousing,onDinner});
+  if(mobile&&category!=='menu')renderMobileLifeChoices({document:doc,body,actionDock,category,model:m,selections,busy,stale:stale(m),optionsOf,make,button,icon,actionButton});
   else category==='menu'?renderMenu(m):renderOptions(m);
-  if(wasInBody){const replacement=[...body.querySelectorAll('button')].find(n=>focusKeyOf(n)===focusKey&&!n.disabled);(replacement||(mobile||category==='menu'?closeButton:back))?.focus({preventScroll:true});}
+  content.scrollTop=scrollTop;
+  if(wasInBody)(findFocus(focusKey)||(category==='menu'?closeButton:back))?.focus({preventScroll:true});
  }
  function close(){
   if(!dialog.open)return;session++;dialog.close();
@@ -110,9 +118,18 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
  function open(next='menu'){
   if(disposed)return false;
   if(next!=='menu'&&!CATEGORIES[next])return false;
-  if(!dialog.open){opener=prepareModalFocus(doc);const m=model(),s=statusOf(m);snapshot={day:s.day,runId:s.runId,contextToken:m.contextToken??getContext()};session++;dialog.showModal();}
-  category=next;setMessage('');render({force:true});focusStart();return true;
+  const alreadyOpen=dialog.open,previous=category;
+  if(!alreadyOpen){opener=prepareModalFocus(doc);const m=model(),s=statusOf(m);snapshot={day:s.day,runId:s.runId,contextToken:m.contextToken??getContext()};session++;pages.clear();dialog.showModal();syncModalState();}
+  else rememberPage();
+  category=next;setMessage('');render({force:true});const saved=pages.get(category);content.scrollTop=saved?.scrollTop||0;focusStart(next==='menu'&&alreadyOpen?previous:saved?.focusKey);return true;
  }
+ function openChild(callback){
+  rememberPage();const currentSession=session,currentCategory=category,saved=pages.get(category);
+  // Keep the parent modal and its selection alive while the child owns focus.
+  // The app calls onReturn after its native child has closed.
+  callback?.({onReturn:()=>{if(disposed||!dialog.open||session!==currentSession||category!==currentCategory)return;syncModalState();render({force:true});content.scrollTop=saved?.scrollTop||0;focusStart(saved?.focusKey);}});
+ }
+ const goBack=()=>{if(!busy){if(category==='menu')close();else open('menu');}};
  async function choose(optionId,event,choiceCategory=category){
   if(disposed||!dialog.open||busy||event?.detail>1||event?.repeat||!CATEGORIES[choiceCategory])return;
   const m=model(),option=optionsOf(m,choiceCategory).find(o=>o.id===optionId);
@@ -128,11 +145,12 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
   }catch(error){if(!disposed&&requestSession===session)setMessage(error?.message||'这次行动尚未完成，请稍后再试。');}
   finally{busy=false;if(!disposed)render({force:true});}
  }
- listen(body,'click',event=>{
+ const handleChoiceClick=event=>{
+  event.stopPropagation();
   const target=event.target.closest('button');if(!target||target.disabled||!body.contains(target)||event.detail>1)return;
   if(target.dataset.lifeSelect){
    if(busy||!mobile)return;const selectedCategory=target.dataset.lifeSelectCategory;
-   if(!['friend','work','relax'].includes(selectedCategory))return;
+   if(!CATEGORIES[selectedCategory])return;
    const m=model(),option=optionsOf(m,selectedCategory).find(o=>o.id===target.dataset.lifeSelect);
    if(stale(m)||!statusOf(m).enabled||!option?.enabled)return;
    selections[selectedCategory]=option.id;setMessage('');render({force:true});return;
@@ -140,17 +158,21 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
   if(target.dataset.lifeChoose)return void choose(target.dataset.lifeChoose,event,target.dataset.lifeCategory||category);
   if(target.dataset.lifeClose)return close();
   const next=target.dataset.lifeOpen;if(!next||busy)return;
-  if(next==='housing'||next==='dinner'&&!Array.isArray(model().options?.dinner)){close();(next==='housing'?onHousing:onDinner)?.();return;}
+  if(next==='housing'||next==='dinner'&&!Array.isArray(model().options?.dinner)){openChild(next==='housing'?onHousing:onDinner);return;}
   open(next);
- });
- listen(back,'click',()=>{if(!busy){if(mobile)close();else open('menu');}});listen(closeButton,'click',close);
- listen(dialog,'click',event=>{if(event.target===dialog)close();});
- listen(dialog,'cancel',event=>{event.preventDefault();close();});
- listen(dialog,'close',()=>{if(dialog.open)return;const another=[...doc.querySelectorAll('dialog[open]')].some(n=>n!==dialog);if(!another)restoreFocus({node:opener},doc);onClose();});
+ };
+ listen(body,'click',handleChoiceClick);
+ listen(actionDock,'click',event=>{event.stopPropagation();const target=event.target.closest('button');if(target?.dataset.lifeChoose&&!target.disabled&&actionDock.contains(target))void choose(target.dataset.lifeChoose,event,target.dataset.lifeCategory||category);});
+ listen(back,'click',goBack);listen(closeButton,'click',close);
+ let backdropPressed=false;
+ listen(dialog,'pointerdown',event=>{backdropPressed=event.target===dialog;});
+ listen(dialog,'click',event=>{event.stopPropagation();if(event.target===dialog&&(backdropPressed||!event.detail)){close();}backdropPressed=false;});
+ listen(dialog,'cancel',event=>{event.preventDefault();event.stopPropagation();goBack();});
+ listen(dialog,'close',()=>{if(dialog.open)return;syncModalState();const another=[...doc.querySelectorAll('dialog[open]')].some(n=>n!==dialog);if(!another)restoreFocus({node:opener},doc);onClose();});
  listen(dialog,'keydown',event=>{
   // Keep the app's trading hotkeys outside every modal interaction.
   event.stopPropagation();
-  if(event.key==='Escape'){event.preventDefault();close();return;}
+  if(event.key==='Escape'){event.preventDefault();goBack();return;}
   if(event.key!=='Tab')return;
   const nodes=[...dialog.querySelectorAll('button')].filter(n=>!n.disabled&&!n.hidden&&!n.closest('[hidden]'));
   const first=nodes[0],last=nodes.at(-1);if(!first)return;

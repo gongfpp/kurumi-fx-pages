@@ -1,5 +1,5 @@
-import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {historicalEffectiveTime} from './history-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {historicalEffectiveTime} from './history-continuation.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // A deterministic fictional market clock. Playback milliseconds never enter it.
 const MINUTE=60000,DAY=86400000;
 export const TRADING_CLOCK_VERSION=1;

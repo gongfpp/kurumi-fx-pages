@@ -1,10 +1,11 @@
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {BORROWING_CONTINUATION_ASSETS} from './contextual-manga-borrowing-continuation.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {DAILY_STORY_TRACKS} from './daily-story-order.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 export function approvedSkit(id,{assets=APPROVED_FOUR_SKIT_ASSETS}={}){
  const script=APPROVED_FOUR_SKITS[id];if(!script)return null;
@@ -32,7 +33,7 @@ export function approvedDailySkitCandidates(state,{assets=APPROVED_FOUR_SKIT_ASS
  if(state?.mode!=='story'||!sealedDailyMangaOutcome(state))return [];
  const result=[],evidence=holdingLossSkitEvidence(state),loss=approvedSkit('holding-loss-companion',{assets});
  if(evidence&&loss?.ready)result.push({...loss,title:'久留美·再等一下',evidence});
- if(mebukiPromiseStoryRead(memory)){const borrowed=approvedSkit('mebuki-after-loan',{assets});if(borrowed?.ready)result.push({...borrowed,title:'芽吹·与此同时'});}
+ if(dailyRoutineSceneAllowed(state)&&mebukiPromiseStoryRead(memory)){const borrowed=approvedSkit('mebuki-after-loan',{assets});if(borrowed?.ready)result.push({...borrowed,title:'芽吹·与此同时'});}
  return result;
 }
 

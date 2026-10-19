@@ -1,8 +1,8 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isTraumaMood} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {STORIES,getStory} from './story-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isTraumaMood} from './trading-trauma.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {ITEM_EVENTS,itemUnlocked} from './item-events.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {STORIES,getStory} from './story-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export const DEBUFFS={guilt:{name:'父亲的柜中存款',copy:'未还清时心理压力增加 8',stress:8},familyWatch:{name:'父亲开始查账',copy:'心理压力增加 6',stress:6}};
 export function ensureStory(s){
  s.story ||= {seen:[],queue:[],log:[],flags:{}};s.story.seen ||= [];s.story.queue ||= [];s.story.log ||= [];s.story.flags ||= {};s.story.presentedDay ||= 0;

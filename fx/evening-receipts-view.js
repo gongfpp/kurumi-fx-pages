@@ -1,6 +1,6 @@
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {comicReceiptText} from './event-comic-presenter.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {setImage} from './assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {comicReceiptText} from './event-comic-presenter.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // The daily story already owns settlement, trade recap and the living receipt.
 // Keep other durable same-day events in that very window, not another modal.
 export function eveningReceiptScenes(scenes,{day,narrative}={}){

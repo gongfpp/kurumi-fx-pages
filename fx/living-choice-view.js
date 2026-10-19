@@ -1,5 +1,5 @@
-import {LIFESTYLES} from './consumption-ledger.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {renderLivingCopy} from './copy/living-choices.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {LIFESTYLES} from './consumption-ledger.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {renderLivingCopy} from './copy/living-choices.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 const yen=value=>'¥'+value.toLocaleString('zh-CN',{maximumFractionDigits:2});
 export const fillLivingCopy=renderLivingCopy;
 const planValues=(plan,option,extra={})=>({label:option?.label||plan.label,dailyBasics:yen(plan.dailyBasics),dailyRent:yen(plan.dailyRent),dailyTotal:yen(plan.dailyCost),moveInCost:yen(plan.moveInCost||0),sleepRecovery:plan.sleepRecovery,extraStressRelief:plan.extraStressRelief,extraRestRecovery:plan.extraRestRecovery,restRecoveryCap:32,...extra});
@@ -24,7 +24,11 @@ export function mountLivingChoiceDetails(doc,statement,copy,{onLifestyle=()=>{}}
   const insufficient=Number.isFinite(statement.availableLivingCash)&&statement.availableLivingCash+1e-6<moveInCost;
   button.disabled=plan.id===statement.lifestyle.id||insufficient;
   if(insufficient)button.title=fillLivingCopy(option.insufficientBalanceText,values);
-  button.onclick=()=>onLifestyle(plan);choices.append(button);
+  // These receipt cards only preview a target. The owning app opens the same
+  // housing summary as the life menu; its separate confirm owns any payment.
+  button.append(make('small','living-plan-action','查看费用与预约'));
+  button.setAttribute?.('aria-label',`${option.label}，查看费用与预约`);
+  button.onclick=event=>{event?.stopPropagation();onLifestyle(plan,{opener:button});};choices.append(button);
  }
  adjustment.append(choices);
  if(compact?.shared.termsCompact)adjustment.append(make('small','living-choice-terms',compact.shared.termsCompact));

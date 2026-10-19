@@ -1,4 +1,4 @@
-import {setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {setImage} from './assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Existing approved UI art. The purple-haired Mochiko portrait comes from the
 // labelled friends design, not the incompatible older brown-haired mini-icon.
 export const SKIT_AVATAR_ASSETS=Object.freeze({

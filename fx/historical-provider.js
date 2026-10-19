@@ -1,5 +1,5 @@
 // Historical data transport only. No prices are generated, interpolated or repaired.
-import {describeHistoricalCoverage} from './history-coverage.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {describeHistoricalCoverage} from './history-coverage.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export const EMPTY_HISTORICAL_CATALOG=Object.freeze({schemaVersion:1,datasets:Object.freeze([])});
 const DAY=86400000,JST=9*3600000,HASH=/^[a-f0-9]{64}$/;
 const DATE=/^\d{4}-\d{2}-\d{2}$/;

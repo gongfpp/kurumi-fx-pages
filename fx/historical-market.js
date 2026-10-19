@@ -1,13 +1,13 @@
-import {MultiHistoryProvider} from './multi-history-provider.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {selectHistoricalOpening} from './historical-opening.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {MultiHistoryProvider} from './multi-history-provider.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {selectHistoricalOpening} from './historical-opening.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.datasets=[];this.providers=new Map();}
  async catalog(){

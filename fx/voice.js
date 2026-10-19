@@ -1,7 +1,8 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {VoiceTimingGate} from './voice-timing.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {assetURL} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {VoiceTimingGate} from './voice-timing.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {assetURL} from './assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
@@ -25,34 +26,55 @@ export const VOICE_LINES=Object.freeze([
  clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
  clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
 // Gameplay voice is strictly manual. sync observes validity; it never starts audio.
 export class VoicePlayer{
  constructor({makeAudio=()=>new Audio(),onUpdate=()=>{},onPlay=()=>{},onReject=()=>{},lines=VOICE_LINES,now=()=>Date.now(),maxLoadMs=3000}={}){
-  this.lines=lines;this.audio=makeAudio();this.audio.preload='none';this.audio.volume=0;this.envelope=new AudioEnvelope({now});
+  this.lines=lines;this.makeAudio=makeAudio;this.envelope=new AudioEnvelope({now});this.fading=new Set();
   this.onUpdate=onUpdate;this.onPlay=onPlay;this.onReject=onReject;this.now=now;this.maxLoadMs=maxLoadMs;
   this.presentation=null;this.playing=false;this.loading=false;this.lastError=null;this.generation=0;this.sequence={};this.lastMood=null;this.lastRun=null;
   this.unlocked=false;this.failed=new Set();this.timing=new VoiceTimingGate();this.hasContext=false;this.activeToken=null;
-  this.audio.addEventListener('ended',()=>{this.stop();this.onUpdate();});
-  this.audio.addEventListener('error',()=>{const line=this.presentation;if(!line)return;this.failed.add(line.id);this.stop();this.lastError='unavailable';this.onReject(line);this.onUpdate();});
+  this.audio=this.configureAudio(makeAudio());
  }
+ configureAudio(audio){
+  audio.preload='none';audio.volume=0;
+  audio.addEventListener('ended',()=>{if(audio!==this.audio)return;this.stop({fadeMs:0});this.onUpdate();});
+  audio.addEventListener('error',()=>{if(audio!==this.audio)return;const line=this.presentation;if(!line)return;this.failed.add(line.id);this.stop({fadeMs:0});this.lastError='unavailable';this.onReject(line);this.onUpdate();});
+  return audio;
+ }
+ get audible(){return this.playing||this.fading.size>0;}
  // Invoked by a dedicated play button, never by ordinary page gestures.
  unlock(){this.unlocked=true;this.lastError=null;return true;}
- stop(){++this.generation;this.envelope.stop(this.audio);this.audio.volume=0;this.audio.pause();this.playing=false;this.loading=false;this.lastError=null;this.presentation=null;this.activeToken=null;}
+ stop({fadeMs=VOICE_STOP_FADE_MS}={}){
+  const audio=this.audio,wasPlaying=this.playing;++this.generation;
+  this.playing=false;this.loading=false;this.lastError=null;this.presentation=null;this.activeToken=null;
+  const finish=()=>{this.envelope.stop(audio);audio.volume=0;audio.pause();this.fading.delete(audio);if(audio!==this.audio)this.envelope.dispose(audio);this.onUpdate();};
+  if(wasPlaying&&audio.paused!==true&&fadeMs>0){this.fading.add(audio);this.envelope.fadeOut(audio,{duration:fadeMs,onComplete:finish});}
+  else if(fadeMs<=0||!this.fading.has(audio)) {this.envelope.stop(audio);audio.volume=0;audio.pause();this.fading.delete(audio);}
+ }
  accepts(line,token){return !token||this.timing.valid(token)&&voiceSceneMatches(line,this.timing.manualToken(this.now()),{stage:'manual'});}
  async start(line,speechId,emotion,token=null){
   if(!this.unlocked||!line||this.failed.has(line.id)||!this.accepts(line,token))return false;
-  this.stop();const gen=this.generation,requestedAt=this.now();this.audio.src=line.file;this.audio.currentTime=0;
-  const envelope=this.envelope.prepare(this.audio,{target:.5,leadInSeconds:line.leadInSeconds??.4,coldMs:500,warmMs:220});
+  const previous=this.audio,replacing=!!this.presentation||this.loading||this.playing||this.fading.has(previous);this.stop();
+  if(replacing){
+   const next=this.makeAudio();
+   // Real playback gets a fresh element so a new explicit request can keep its
+   // gesture while the old element fades, and late load events remain with the
+   // abandoned request. Single-element adapters cancel the old envelope first.
+   if(next!==previous){this.audio=this.configureAudio(next);if(!this.fading.has(previous))this.envelope.dispose(previous);}
+   else {this.envelope.stop(previous);previous.pause();this.fading.delete(previous);}
+  }
+  const audio=this.audio,gen=this.generation,requestedAt=this.now();audio.src=line.file;audio.currentTime=0;
+  const envelope=this.envelope.prepare(audio,{target:.5,...recordedVoiceEnvelope(line)});
   this.activeToken=token;this.presentation={...line,mood:emotion,speechId};this.loading=true;this.onUpdate();
   try{
    if(gen!==this.generation||!this.accepts(line,token))return false;
-   await this.audio.play();
-   if(gen!==this.generation){if(!this.presentation){this.audio.pause();this.audio.volume=0;}return false;}
-   if(!this.accepts(line,token)||this.now()-requestedAt>this.maxLoadMs){this.stop();this.lastError='stale';this.onUpdate();return false;}
-   this.envelope.start(this.audio,envelope);this.loading=false;this.playing=true;this.onPlay(line);this.onUpdate();return true;
+   await audio.play();
+   if(gen!==this.generation){if(audio!==this.audio||!this.presentation){audio.pause();audio.volume=0;}return false;}
+   if(!this.accepts(line,token)||this.now()-requestedAt>this.maxLoadMs){this.stop({fadeMs:0});this.lastError='stale';this.onUpdate();return false;}
+   this.envelope.start(audio,envelope);this.loading=false;this.playing=true;this.onPlay(line);this.onUpdate();return true;
   }catch(error){
    if(gen===this.generation){this.stop();this.lastError=error?.name==='NotAllowedError'?'blocked':'unavailable';if(error?.name==='NotAllowedError')this.unlocked=false;this.onReject(line);this.onUpdate();}
    return false;
@@ -78,7 +100,8 @@ export class VoicePlayer{
   if(context){this.hasContext=true;this.timing.observe(context,this.now());}
   const runChanged=this.lastRun!==null&&this.lastRun!==run;
   this.lastMood=emotion;this.lastRun=run;
-  if(!enabled||runChanged||this.activeToken&&!this.accepts(this.presentation,this.activeToken)){if(this.presentation||this.playing||this.loading)this.stop();}
+  const interrupted=this.activeToken&&(this.loading?!this.accepts(this.presentation,this.activeToken):!this.timing.canFinish(this.activeToken));
+  if(!enabled||runChanged||interrupted){if(this.presentation||this.playing||this.loading)this.stop();}
   return this.presentation&&(this.playing||this.loading)?this.presentation:null;
  }
 }

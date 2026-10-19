@@ -1,4 +1,4 @@
-import {orderAmountRatio} from './amount-controls.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {orderAmountRatio} from './amount-controls.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 export function percentageAvailability({availableMargin,cap,enabled,blockedReason='',format=String}){
  const funded=Number.isFinite(availableMargin)&&availableMargin>0;

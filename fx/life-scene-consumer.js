@@ -1,17 +1,19 @@
-import {validWorkPayDialogue} from './life-work.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {validWorkPayDialogue} from './life-work.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export function currentLifeSceneReceipt(state){
  if(state?.mode!=='story'||state.position||state.positions!==undefined&&!Array.isArray(state.positions)||!sealedDailyMangaOutcome(state)||!validLifeActions(state))return null;
  const receipt=lifeActionReceipt(state);
  return receipt&&receipt.id===`life:${lifeActionRunId(state)}:${state.day}`&&JSON.stringify(receipt)===JSON.stringify(state.dayReport.lifeAction)?receipt:null;
 }
 export function lifeSceneCandidates(state,narrative,{catalog=LIFE_SCENE_CATALOG,...inspection}={}){
+ if(!dailyRoutineSceneAllowed(state))return [];
  if(narrative?.day!==undefined&&narrative.day!==state?.day||isDailyFamilyNarrative(narrative)||narrative?.event?.key&&narrative.event.key!=='quietNight'||(state?.recapChoiceLedger||[]).some(r=>r.day===state.day))return [];
  const receipt=currentLifeSceneReceipt(state);if(!receipt||receipt.category==='dinner'||receipt.category==='friend'&&!lifeFriendKnown(state,receipt.optionId))return [];
  const workJob=receipt.category==='work'?lifeActionDefinition('work',receipt.optionId):null,paidDialogue=!!workJob&&validWorkPayDialogue(workJob,receipt);

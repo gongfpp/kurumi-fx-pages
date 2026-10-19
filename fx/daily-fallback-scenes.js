@@ -1,8 +1,9 @@
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {artIdentity,dailyArtMemory} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 export const DAILY_FALLBACK_MAX_DAY=50;
 const contexts=new Set(['quiet','roommate']),outcomes=new Set(['flat','profit','loss']);
@@ -41,7 +42,7 @@ export function inspectDailyFallbackCatalog(catalog=DAILY_FALLBACK_CATALOG){
 export function dailyFallbackCandidates(state,narrative,{catalog=DAILY_FALLBACK_CATALOG,memory=dailyArtMemory,allowExhaustedActivity=false}={}){
  const outcome=sealedDailyMangaOutcome(state);
  if(narrative?.day!==undefined&&narrative.day!==state?.day)return [];
- if(state?.mode!=='story'||!outcome||state.day<1||state.day>DAILY_FALLBACK_MAX_DAY||isDailyFamilyNarrative(narrative))return [];
+ if(state?.mode!=='story'||!outcome||!dailyRoutineSceneAllowed(state)||state.day<1||state.day>DAILY_FALLBACK_MAX_DAY||isDailyFamilyNarrative(narrative))return [];
  // Only the daily selector opens this route after validating a real activity.
  // Its image can be exhausted; its receipt, bill and narrative stay untouched.
  if(!allowExhaustedActivity&&(state.recapChoiceLedger||[]).some(r=>r.day===state.day))return [];

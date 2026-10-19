@@ -16,8 +16,12 @@ export function scheduleAudioTimeline(cues,{context,load,connect,startedAt,now=(
   settle(cue);
   // Never ask an existing suspended device to queue audio beyond this beat.
   if(context&&context.state!=='running'){report(cue,'dropped-not-ready');return;}
-  let voice;try{voice=fallback(cue);}catch{}if(voice)lastFallbackAt=now();
+  const remaining=Number.isFinite(cue.audioBudgetMs)?cue.audioBudgetMs-Math.max(0,late):null;
+  if(remaining!==null&&remaining<=0){report(cue,'dropped-expired');return;}
+  const recoveryCue=remaining===null?cue:Object.freeze({...cue,audioBudgetMs:remaining});
+  let voice;try{voice=fallback(recoveryCue);}catch{}if(voice)lastFallbackAt=now();
   if(voice&&typeof voice.stop==='function'){
+   if(remaining!==null)voice.releaseWithin?.(remaining);
    fallbackVoices.add(voice);
    const expiry=schedule(()=>{timers.delete(expiry);fallbackVoices.delete(voice);voice.stop();if(schedulingDone&&!sources.size&&!fallbackVoices.size)cleanupClock();},Math.min(750,Math.max(350,Number(voice.durationMs)||0)));timers.add(expiry);
   }
@@ -56,12 +60,12 @@ export function scheduleAudioTimeline(cues,{context,load,connect,startedAt,now=(
    if(late>0){recover(cue);return;}
    source=context.createBufferSource();gain=context.createGain();source.buffer=buffer;
    const rate=Math.max(.8,Math.min(1.25,Number.isFinite(cue.rate)?cue.rate:1));source.playbackRate.value=rate;
-   const duration=buffer.duration/rate,target=Math.min(.65,Math.max(0,level)*Math.max(0,Math.min(1,cue.level??1))*mixGain);
+   const duration=Math.min(buffer.duration/rate,Number.isFinite(cue.audioBudgetMs)?Math.max(0,cue.audioBudgetMs)/1000:Infinity),target=Math.min(.65,Math.max(0,level)*Math.max(0,Math.min(1,cue.level??1))*mixGain);
    gain.gain.setValueAtTime(0,when);gain.gain.linearRampToValueAtTime(target,when+Math.min(.008,duration/4));
    gain.gain.setValueAtTime(target,when+Math.max(duration/2,duration-.02));gain.gain.linearRampToValueAtTime(0,when+duration);
    source.connect(gain);const disconnect=connect({source,gain,cue,when,target,rate});
    let released=false;entry={source,gain,release(){if(released)return;released=true;disconnect?.();source.disconnect();gain.disconnect();sources.delete(entry);if(schedulingDone&&!sources.size&&!fallbackVoices.size)cleanupClock();}};
-   sources.add(entry);source.onended=()=>entry.release();try{source.start(when);}catch(error){entry.release();throw error;}settle(cue);report(cue,'scheduled',{audioTime:when,duration,rate,target,...(loaded?.profile?{receiptProfile:loaded.profile}: {})});
+   sources.add(entry);source.onended=()=>entry.release();try{source.start(when);if(Number.isFinite(cue.audioBudgetMs))source.stop(when+duration);}catch(error){entry.release();throw error;}settle(cue);report(cue,'scheduled',{audioTime:when,duration,rate,target,...(loaded?.profile?{receiptProfile:loaded.profile}: {})});
   } catch(error){if(!entry){try{source?.disconnect();gain?.disconnect();}catch{}}if(valid()&&!settled.has(cue)){report(cue,'sample-error',{error:error?.name||'AudioError'});if(now()>=began+cue.atMs)recover(cue);}}
  });
  handle.ready=Promise.all(score.map(cue=>new Promise(resolve=>{if(settled.has(cue)||cancelled)resolve();else completions.set(cue,resolve);}))).then(()=>{schedulingDone=true;if(!sources.size&&!fallbackVoices.size)cleanupClock();return handle;});

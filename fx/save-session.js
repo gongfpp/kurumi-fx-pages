@@ -1,7 +1,7 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {storageFailure} from './storage.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {storageFailure} from './storage.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.

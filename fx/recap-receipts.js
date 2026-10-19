@@ -1,5 +1,5 @@
-import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 // Explicit opt-in only. The app keeps its existing presentation until acceptance.
 export const RECEIPT_RECAP_CANDIDATE='trade-receipts-v1';
@@ -32,7 +32,20 @@ export function buildReceiptRecap(snapshot){
  // Reuse the existing receipt reconciliation, simultaneous groups and audio
  // planner. Quote candles and floating equity do not define earned P/L bars.
  const receiptSnapshot={...snapshot,primary:{...snapshot.primary,scope:'today',profit:net,returnRate:rate},trades:(snapshot.trades||[]).filter(trade=>trade.type==='open'||Number.isFinite(trade.pnl)),candles:[],replay:{observations:[],partial:!!snapshot.replay?.partial}};
- const basePresentation=recapPresentation(receiptSnapshot),source=buildRecapTimeline(receiptSnapshot,basePresentation);
+ let basePresentation=recapPresentation(receiptSnapshot),source=buildRecapTimeline(receiptSnapshot,basePresentation);
+ const receiptCount=source.events.filter(event=>event.type!=='open').length;
+ if(receiptCount<=2){
+  // Project pacing choices, not official Balatro timings. Sparse receipts do
+  // not inherit several seconds of empty travel from the classic replay.
+  // Keep the existing landing and 250ms major-event slowdowns below intact.
+  const ceiling=receiptCount===0?180:basePresentation.catastrophic?(receiptCount===1?1500:2200):(receiptCount===1?[440,760,950,1200]:[700,1150,1450,1800])[basePresentation.rank];
+  const countDuration=Math.min(basePresentation.countDuration,ceiling);
+  if(countDuration<basePresentation.countDuration){
+   const ratio=countDuration/basePresentation.countDuration;
+   basePresentation={...basePresentation,countDuration,duration:countDuration+basePresentation.landingDuration,beatTimes:basePresentation.beatTimes.map(time=>time*ratio)};
+   source=buildRecapTimeline(receiptSnapshot,basePresentation);
+  }
+ }
  source.closing=opening+net;
  const slowdowns=[];
  let added=0,previousEnd=0;
@@ -45,14 +58,36 @@ export function buildReceiptRecap(snapshot){
   added+=100;slowdowns.push({sourceStart,sourceEnd:beat.atMs,start,end:start+250,addedAfter:added});previousEnd=beat.atMs;
  }
  const at=sourceTime=>receiptDeadline(slowdowns,sourceTime);
- const scoreBeats=source.scoreBeats.map(beat=>({...beat,atMs:at(beat.atMs)}));
- const events=source.events.map(event=>({...event,sourceAtMs:event.atMs,atMs:at(event.atMs),beats:event.beats.map(beat=>scoreBeats[beat.index])}));
+ // Plan once at the fastest supported speed: 130 virtual ms is 65 wall ms
+ // at 2×. Dense fills share one exact amount change, scan hit and audio cue.
+ // Merge adjacent groups before the 64-cue audio budget, rather than dropping
+ // sounds while the visual performance continues to punch every raw fill.
+ const batches=[];
+ for(let i=source.events.length-1;i>=0;i--){const event=source.events[i],next=batches[0];if(next&&at(next.at(-1).atMs)-at(event.atMs)<130)next.unshift(event);else batches.unshift([event]);}
+ while(batches.length>63){let nearest=0,gap=Infinity;for(let i=0;i<batches.length-1;i++){const distance=at(batches[i+1].at(-1).atMs)-at(batches[i].at(-1).atMs);if(distance<gap){gap=distance;nearest=i;}}batches.splice(nearest,2,[...batches[nearest],...batches[nearest+1]]);}
+ const events=[],scoreBeats=[],sourceEvents=[],sourceBeats=[];
+ for(const batch of batches){
+  const last=batch.at(-1),sourceAtMs=net&&batch===batches.at(-1)&&at(source.finishAt)-at(last.atMs)<130?source.finishAt:last.atMs,atMs=at(sourceAtMs),closed=batch.filter(e=>e.type!=='open'),marker=closed.at(-1),eventId=`receipt:${batch[0].index}-${last.index}`;
+  let beat=null;
+  if(marker&&closed.some(e=>e.delta)){
+   const before=batch[0].before,after=last.after,delta=after-before;
+   const effectBudget=basePresentation.catastrophic&&closed.some(e=>e.type==='liquidation')?1250:Math.max(550,[0,340,390,450][basePresentation.rank]+122),completion=at(source.finishAt)+basePresentation.landingDuration;
+   beat={eventId,eventIndex:marker.index,delta,receiptBefore:before,receiptAfter:after,displayValue:after,displayDelta:delta,realized:after,step:0,count:1,atMs,timestamp:marker.timestamp,fraction:1,index:scoreBeats.length,strength:.35+.65*(last.index+1)/Math.max(1,source.events.length),direction:delta<0?'loss':delta>0?'profit':'flat',endMs:sourceAtMs===source.finishAt?completion:Math.min(completion,atMs+effectBudget)};
+   scoreBeats.push(beat);sourceBeats.push({...beat,atMs:sourceAtMs});
+  }
+  for(const event of batch){events.push({...event,eventId,sourceAtMs,atMs,beats:beat&&event.index===marker.index?[beat]:[]});sourceEvents.push({...event,eventId,atMs:sourceAtMs,beats:beat&&event.index===marker.index?[sourceBeats.at(-1)]:[]});}
+ }
+ const groupedSource={...source,events:sourceEvents,scoreBeats:sourceBeats};
+ const receipts=events.filter(e=>e.type!=='open');
+ for(const beat of scoreBeats){const first=receipts.findIndex(e=>e.eventId===beat.eventId),last=receipts.findLastIndex(e=>e.eventId===beat.eventId);beat.position=(first+last+1)/(2*Math.max(1,receipts.length));}
  const groups=new Map();
  for(const event of events){
-  if(event.type==='open'||event.summary)continue;
-  const group=groups.get(event.atMs)||{count:0,delta:0};group.count++;group.delta+=event.delta;group.lastEventIndex=event.index;groups.set(event.atMs,group);
+  if(event.type==='open')continue;
+  const group=groups.get(event.atMs)||{eventId:event.eventId,atMs:event.atMs,count:0,delta:0,before:event.before,position:scoreBeats.find(b=>b.eventId===event.eventId)?.position,types:[],hasLiquidation:false,receipts:[]};
+  if(!event.summary)group.count++;group.delta+=event.delta;group.after=event.after;group.lastEventIndex=event.index;group.direction=group.delta<0?'loss':group.delta>0?'profit':'flat';
+  if(!group.types.includes(event.type))group.types.push(event.type);group.hasLiquidation||=event.type==='liquidation';group.receipts.push(event);groups.set(event.atMs,group);
  }
- const timeline={...source,source,slowdowns,events,scoreBeats,groups,assetBeats:[],observationTimes:[],finishAt:at(source.finishAt)};
+ const timeline={...source,source:groupedSource,slowdowns,events,scoreBeats,groups,firstLiquidationAt:events.find(event=>event.type==='liquidation')?.atMs,assetBeats:[],observationTimes:[],finishAt:at(source.finishAt)};
  const presentation={...basePresentation,countDuration:timeline.finishAt,duration:timeline.finishAt+basePresentation.landingDuration,beatTimes:basePresentation.beatTimes.map(at)};
  return {timeline,presentation};
 }
@@ -60,10 +95,10 @@ export function buildReceiptRecap(snapshot){
 export function receiptRecapFrame(timeline,elapsed,options={}){
  const sourceTime=receiptSourceTime(timeline,elapsed),frame=recapTimelineFrame(timeline.source,sourceTime,options);
  const seen=options.complete?timeline.events.length:recapUpperBound(timeline.events,elapsed,e=>e.atMs),active=timeline.events[seen-1]||null;
- const receiptGroup=active&&!active.summary?timeline.groups.get(active.atMs):null,event=receiptGroup?timeline.events[receiptGroup.lastEventIndex]:active;
+ const receiptGroup=active?timeline.groups.get(active.atMs):null,event=receiptGroup?timeline.events[receiptGroup.lastEventIndex]:active;
  const scoreBeat=timeline.scoreBeats[recapUpperBound(timeline.scoreBeats,elapsed,b=>b.atMs)-1]||null;
  const slowdown=timeline.slowdowns[recapUpperBound(timeline.slowdowns,elapsed,w=>w.start)-1];
- return {...frame,event,eventCount:seen,scoreBeat,assetBeat:null,receiptGroup,
+ return {...frame,event,eventCount:seen,scoreBeat,assetBeat:null,receiptGroup,liquidationSeen:Number.isFinite(timeline.firstLiquidationAt)&&(options.complete||elapsed>=timeline.firstLiquidationAt),
   receiptScanProgress:options.complete?1:clamp(sourceTime/Math.max(1,timeline.source.finishAt)),
   slowing:!!slowdown&&elapsed<slowdown.end};
 }
@@ -73,7 +108,7 @@ export function receiptRecapFrame(timeline,elapsed,options={}){
 export function receiptRecapBars(timeline){
  let receipt=0;
  return timeline.events.filter(event=>event.type!=='open').map(event=>({
-  eventIndex:event.index,value:event.delta,timestamp:event.timestamp,atMs:event.atMs,
+  eventId:event.eventId,eventIndex:event.index,value:event.delta,timestamp:event.timestamp,atMs:event.atMs,
   progress:event.sourceAtMs/Math.max(1,timeline.source.finishAt),summary:!!event.summary,
   label:event.summary?'收盘汇总':`第${++receipt}笔`,
  }));

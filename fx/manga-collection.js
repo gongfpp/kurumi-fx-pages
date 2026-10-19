@@ -1,9 +1,10 @@
-import {mangaLibraryEntries} from './manga-collection-model.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {assetURL,setImage} from './assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {collectionHdEdition} from './manga-collection-hd.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {LIBRARY_COPY} from './copy/library-ui.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {mangaLibraryEntries} from './manga-collection-model.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {assetURL,setImage} from './assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {collectionHdEdition} from './manga-collection-hd.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 const mounts=new WeakMap();
 const put=(node,text)=>{if(node.textContent!==text)node.textContent=text;};
@@ -31,17 +32,18 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
  const count=make('span','manga-collection-count'),mobileHeading=make('h3','manga-collection-mobile-heading','原作片段');
  header.append(make('h3','manga-collection-desktop-heading',LIBRARY_COPY.manga),mobileHeading,count);if(chapters)header.append(chapters);
  const filters=make('div','manga-collection-filters');filters.setAttribute('role','group');filters.setAttribute('aria-label','漫画筛选');
+ const search=make('input','manga-collection-search');search.type='search';search.placeholder='搜索场景或人物';search.setAttribute('aria-label','搜索场景、人物或对白');
  const grid=make('div','manga-collection-grid'),empty=make('p','manga-collection-empty','还没有符合筛选条件的漫画。');empty.setAttribute('role','status');
  const listNav=make('nav','manga-collection-list-nav'),listBack=button('','‹'),listPosition=make('span',''),listNext=button('','›');listBack.setAttribute('aria-label','上一组漫画');listNext.setAttribute('aria-label','下一组漫画');listNav.setAttribute('aria-label','漫画目录翻页');listNav.append(listBack,listPosition,listNext);
  const nextGroup=button('manga-collection-next-group','下一组 ›');
  const detail=make('section','manga-collection-detail'),detailThumb=make('div','manga-collection-detail-thumb'),detailCopy=make('div','manga-collection-detail-copy'),detailTitle=make('h4',''),detailStatus=make('span','manga-collection-status'),condition=make('p','manga-collection-condition');
- detailCopy.append(detailTitle,detailStatus);detail.append(detailThumb,detailCopy);catalog.append(header,filters,grid,empty,listNav,nextGroup,detail);
+ detailCopy.append(detailTitle,detailStatus);detail.append(detailThumb,detailCopy);catalog.append(header,filters,search,grid,empty,listNav,nextGroup,detail);
  const reader=make('section','manga-collection-reader'),readerHeader=make('header','manga-collection-reader-header'),choice=make('select','manga-collection-choice');choice.setAttribute('aria-label','选择漫画');const readerBack=button('manga-collection-reader-back','‹ 返回目录');readerHeader.append(readerBack,make('h3','',LIBRARY_COPY.manga),choice);
  const page=make('div','manga-collection-page'),caption=make('p','manga-collection-caption'),nav=make('nav','manga-collection-reader-nav'),back=button('','‹ 上一页'),position=make('span',''),next=button('','下一页 ›');nav.setAttribute('aria-label','漫画翻页');position.setAttribute('aria-live','polite');nav.append(back,position,next);reader.append(readerHeader,page,caption,nav);view.append(catalog,reader);
  const mobileMedia=root.defaultView?.matchMedia?.('(max-width:760px)');let mobileMode=false;view.dataset.readerOpen='false';
  let active='achievements',filter='original',entries=[],selectedId=null,listPage=0,disposed=false,signature='',pictureSignature='';
  const filterButtons=new Map();
- const available=()=>entries;
+ const available=()=>{const term=search.value?.trim().toLocaleLowerCase();return term?entries.filter(entry=>[entry.title,entry.alt,entry.sourceLabel,entry.context?.title,...(entry.context?.characters||[]),...(entry.context?.paragraphs||[]),...(entry.context?.lines||[]).flat()].filter(Boolean).join(' ').toLocaleLowerCase().includes(term)):entries;};
  function syncMobile(){
   const nextMode=root.body.dataset.frontend==='pixel'&&mobileMedia?.matches===true;
   if(nextMode===mobileMode)return;mobileMode=nextMode;
@@ -107,6 +109,7 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
   if(chapters)chapters.style.display=filter==='original'?'':'none';
   put(mobileHeading,filter==='original'?'原作片段':'同人漫画');
   const items=available();if(!items.some(e=>e.id===selectedId))selectedId=items[0]?.id||null;
+  put(count,LIBRARY_COPY.mangaCount.replace('{count}',String(items.length)));
   const selected=items.find(e=>e.id===selectedId),index=items.findIndex(e=>e.id===selectedId);
   if(selected&&(index<listPage*4||index>=listPage*4+4))listPage=Math.floor(index/4);
   for(const [key,b]of filterButtons)b.setAttribute('aria-pressed',String(key===filter));
@@ -125,6 +128,20 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
   const key=selected.id;
   if(key!==pictureSignature){
    art(page,selected);art(detailThumb,selected,{thumbnail:true});
+   const context=selected.context;
+   if(context){
+    const text=make('section','manga-collection-scene-context');text.append(make('h4','',context.title||selected.title));
+    if(context.characters?.length)text.append(make('p','manga-collection-scene-cast',context.characters.join('、')));
+    if(context.setting)text.append(make('p','',context.setting));
+    for(const paragraph of context.paragraphs||[])text.append(make('p','',paragraph));
+    // Complete frozen exchanges are shown in their existing panel/speaker order.
+    // Browsing never invokes a natural scene observer or an action callback.
+    if(context.dialoguePanels?.length){
+     const panels=make('ol','manga-collection-dialogue-panels');
+     for(const panel of context.dialoguePanels){const item=make('li','');for(const [from,line]of panel.lines)item.append(createSkitLine(root,from,line));panels.append(item);}text.append(panels);
+    }else for(const [from,line]of context.lines||[])text.append(createSkitLine(root,from,line));
+    page.append(text);
+   }
    pictureSignature=key;
   }
   page.dataset.locked='false';put(caption,`${selected.sourceLabel} · ${selected.title}`);
@@ -137,6 +154,7 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
  listen(tabs,'keydown',event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)||event.repeat)return;event.preventDefault();selectTab(event.key==='Home'?'achievements':event.key==='End'?'manga':active==='manga'?'achievements':'manga',{focus:true});});
  listen(readerBack,'click',()=>{if(disposed||active!=='manga')return;showReader(false,{focus:true});});
  listen(back,'click',event=>move(-1,event));listen(next,'click',event=>move(1,event));listen(choice,'change',()=>select(choice.value));
+ listen(search,'input',()=>{if(disposed||active!=='manga')return;listPage=0;selectedId=null;paintSelection({resetScroll:true});});
  listen(listBack,'click',event=>{if(disposed||active!=='manga'||event.detail>1)return;const e=available()[(listPage-1)*4];if(e)select(e.id);});const nextListPage=event=>{if(disposed||active!=='manga'||event.detail>1)return;const e=available()[(listPage+1)*4];if(e)select(e.id);};listen(listNext,'click',nextListPage);listen(nextGroup,'click',nextListPage);
  function refresh(){
   if(disposed)return false;syncMobile();applyTab();if(active!=='manga')return true;

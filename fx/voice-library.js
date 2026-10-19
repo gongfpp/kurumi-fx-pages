@@ -1,4 +1,5 @@
-import {bindAuditionEnvelope} from './audio-envelope.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {bindAuditionEnvelope} from './audio-envelope.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {recordedVoiceEnvelope} from './voice-playback.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Native controls provide keyboard-accessible play, pause, seeking and volume.
 export function coordinateAuditions(players,{beforePlay=()=>{},onPlay=()=>{}}={}){
   const listeners=players.map(player=>{
@@ -20,7 +21,7 @@ export function mountVoiceLibrary(container,lines,{beforePlay,onPlay,onError,roo
     const player=root.createElement('audio');player.controls=true;player.preload='metadata';player.src=line.file;player.volume=.55;player.dataset.voiceId=line.id;player.setAttribute('aria-label','试听：'+line.speaker+' · '+line.zh);
     player.addEventListener('loadedmetadata',()=>{if(Number.isFinite(player.duration))duration.textContent=player.duration.toFixed(1)+' 秒';});
     player.addEventListener('error',()=>{row.classList.add('voice-unavailable');duration.textContent='暂不可播放';onError?.(line);});
-    envelopes.push(bindAuditionEnvelope(player,{leadInSeconds:line.leadInSeconds??.4}));
+    envelopes.push(bindAuditionEnvelope(player,recordedVoiceEnvelope(line)));
     players.push(player);row.append(heading,caption,player);container.append(row);
   }
   const stop=coordinateAuditions(players,{beforePlay,onPlay:player=>onPlay?.(lines.find(line=>line.id===player.dataset.voiceId))});

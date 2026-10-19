@@ -99,8 +99,23 @@ body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .dialo
  #pixel-frontend .pixel-trading-panel{grid-column:2;grid-row:2/5}
  #pixel-frontend .pixel-news-panel{grid-column:1;grid-row:3}
  #pixel-frontend .pixel-comments-panel{grid-column:1;grid-row:4}
- #pixel-frontend .pixel-character-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+ #pixel-frontend .pixel-character-body{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:10px;align-items:start}
+ #pixel-frontend #character-card{display:grid;grid-template-columns:110px minmax(0,1fr);grid-template-rows:40px auto 12px auto;gap:4px 10px;min-height:0}
+ #pixel-frontend .pixel-character-body #character-card>.portrait{grid-column:1;grid-row:1/4;width:110px;height:107px;align-self:start;margin:0;background-size:574.7px 383.1px;background-position:-7.85px -50.85px}
+ #pixel-frontend .pixel-character-name{grid-column:1;grid-row:4;margin:0;font-size:20px;line-height:28px}
+ #pixel-frontend #character-card>.character-heading{grid-column:2;grid-row:1;height:auto;min-height:40px;margin:0;padding:4px 6px;gap:4px;flex-wrap:wrap;font-size:16px}
+ #pixel-frontend .character-heading>span:first-child:after{font-size:15px}
+ #pixel-frontend #emotion-label{width:auto;height:30px;padding:0 6px;gap:4px;font-size:16px}
+ #pixel-frontend #emotion-label:before{font-size:22px}
+ #pixel-frontend #character-card>.sanity-label{grid-column:2;grid-row:2;padding:0;font-size:15px;line-height:26px;flex-wrap:wrap}
+ #pixel-frontend #sanity-text{font-size:18px}
+ #pixel-frontend #character-card>.sanity-meter{grid-column:2;grid-row:3;margin:0;height:12px}
+ #pixel-frontend #character-card>.pixel-stamina{grid-column:2;grid-row:4;margin:0}
+ #pixel-frontend .pixel-stamina-label{font-size:15px;line-height:24px;flex-wrap:wrap}
+ #pixel-frontend .pixel-stamina-value{font-size:18px}
  #pixel-frontend .pixel-life-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0;align-self:start}
+ #pixel-frontend .pixel-life-actions>.pixel-drawer>.pixel-drawer-content{top:48px;max-height:60dvh}
+ #pixel-frontend .pixel-life-actions>.pixel-comic>.pixel-drawer-content{top:98px}
  #pixel-frontend .pixel-conversation{grid-column:1/-1}
  #pixel-frontend .pixel-account-summary{grid-template-columns:minmax(0,1fr);gap:8px}
  #pixel-frontend .pixel-account-summary>.account-row{border-left:0;border-top:1px solid #edc9df;padding-top:5px}

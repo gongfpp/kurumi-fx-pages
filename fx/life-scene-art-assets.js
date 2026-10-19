@@ -1,6 +1,6 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {inspectLifeSceneCatalog} from './life-scene-schema.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {ASSET_USAGE_CATALOG,ASSET_PRIMARY_USES} from './asset-usage-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {inspectLifeSceneCatalog} from './life-scene-schema.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {ASSET_USAGE_CATALOG,ASSET_PRIMARY_USES} from './asset-usage-catalog.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 // Preserve the five existing routine entries; append the four reviewed friends.
 // Browsing the book cannot award a natural action, a read receipt or a meal.

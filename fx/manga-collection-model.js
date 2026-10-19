@@ -1,19 +1,20 @@
-import {LIFE_SCENE_ART_ENTRIES} from './life-scene-art-assets.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {ASSET_USAGE_CATALOG} from './asset-usage-catalog.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {ACHIEVEMENTS,normalizeAchievementProfile} from './achievements.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {OPENING_PAGES} from './opening-story.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {FIRSTDAY_BACKSTORY_NODES} from './contextual-manga-firstday-backstory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {LINK_DAILY_NODES} from './contextual-manga-links-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {VERIFIED_DAILY_NODES} from './contextual-manga-verified-daily.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {LIFE_SCENE_ART_ENTRIES} from './life-scene-art-assets.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {ASSET_USAGE_CATALOG} from './asset-usage-catalog.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {ACHIEVEMENTS,normalizeAchievementProfile} from './achievements.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {OPENING_PAGES} from './opening-story.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {CHARACTER_STORY_NODES} from './character-story-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES} from './contextual-manga-firstday-backstory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {LINK_DAILY_NODES} from './contextual-manga-links-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {VERIFIED_DAILY_NODES} from './contextual-manga-verified-daily.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
+import {mangaLibrarySceneContext} from './manga-library-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const nodes=[...FIRSTDAY_BACKSTORY_NODES,...BORROWING_CONTINUATION_NODES,...LINK_DAILY_NODES,...REVERSAL_DAILY_NODES,...CHARACTER_STORY_NODES,...CONTEXTUAL_MANGA_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES];
@@ -49,7 +50,9 @@ function makeCatalog(){
    sourceLabel:chapter?`第${chapter}话${page?` · 第${page}页`:''}`:'原作漫画',
    alt:opening?.alt||node?.panels.find(p=>p.record===asset.source.record)?.alt||`${asset.character} · ${title}`,
    dimensions:asset.source.dimensions,record:asset.source.record,condition,encountered,
-   achievementIds:triggers.map(a=>a.id),source:asset.source,storyNodeIds:asset.storyNodeIds});
+   achievementIds:triggers.map(a=>a.id),source:asset.source,storyNodeIds:asset.storyNodeIds,
+   context:opening?{title:opening.title,paragraphs:[opening.text]}:node?{sceneId:node.id,title:node.title,characters:typeof node.people==='string'?[node.people]:[],
+    paragraphs:[node.before,...node.panels.flatMap(p=>[p.before,p.after]),node.after].filter(Boolean)}:null});
  }
  return [...groups.values()].sort((a,b)=>rank(a)-rank(b)||(a.chapter??99)-(b.chapter??99)||(a.page??99)-(b.page??99)||(a.record??999)-(b.record??999));
 }
@@ -75,7 +78,8 @@ function makeLibraryCatalog(){
   if(!fanKinds.has(asset.source.kind)||asset.review?.status!=='verified'||asset.publication?.scope==='local-only'||!/^\.\/(?:generated|comics|expressions|homage)\//.test(asset.path)||!/^[a-f0-9]{64}$/.test(asset.source.sha256||'')||seen.has(asset.source.sha256))continue;
   seen.add(asset.source.sha256);
   const characters=(asset.characters||[]).filter(name=>name&&name!=='未核定').join('、');
-  fan.push({id:'sha256:'+asset.source.sha256,sha256:asset.source.sha256,path:asset.path,paths:[asset.path],category:'fan',title:`${characters||asset.label} · ${fan.length+1}`,sourceLabel:'同人',alt:characters||asset.label,dimensions:asset.source.dimensions,source:asset.source,storyNodeIds:asset.storyNodeIds});
+  const context=mangaLibrarySceneContext(asset.source.sha256),event=context?.title||asset.emotion||asset.label;
+  fan.push({id:'sha256:'+asset.source.sha256,sha256:asset.source.sha256,path:asset.path,paths:[asset.path],category:'fan',title:`${characters||context?.characters?.join('、')||asset.label} · ${event}`,sourceLabel:'同人',alt:characters||asset.label,dimensions:asset.source.dimensions,source:asset.source,storyNodeIds:asset.storyNodeIds,context});
  }
  // Separate read-only gallery entries; preserve the 202 manga identities and
  // every existing trigger/seen record. No emotion-to-outcome scene assignment.

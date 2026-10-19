@@ -1,18 +1,18 @@
-import {assertLotteryRankingEligible,lotteryScoreFields,lotteryScoreForServer} from './lottery-ranking.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {randomUUID} from './uuid.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {notifyFailure} from './error-reporting.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {VOLATILITY_FIELDS} from './daily-volatility.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {assertLotteryRankingEligible,lotteryScoreFields,lotteryScoreForServer} from './lottery-ranking.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 export const LEADERBOARD_SORTS = Object.freeze(['survival','returnRate','dailyReturnRate','totalProfit','totalLoss','maxProfit','winRate','maxOrderLoss','maxDrawdown','dailyVolatility']);
 const LEGACY_SORTS=Object.freeze(LEADERBOARD_SORTS.filter(sort=>!['totalLoss','maxDrawdown','dailyVolatility'].includes(sort)));
 const sortNotice=sort=>`${({totalLoss:'累计亏损榜',maxDrawdown:'回撤榜',dailyVolatility:'日收益波动榜'})[sort]||'这个榜单'}尚未开放。`;
-import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {runPerformance} from './performance.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {HALL_FIELDS,hallScoreForServer} from './hall-metrics.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {finishedLeaderboardScore,liveLeaderboardScore} from './finished-score.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {serviceConfiguration,SERVICE_UNCONFIGURED_MESSAGE} from './service-config.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {runPerformance} from './performance.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {BEATS_PER_DAY,CANDLES_PER_BEAT} from './engine.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Optional public score publishing is independent of anonymous usage statistics.
 // Only publish() writes; reading the board never creates a run or an identifier.
 const ID = /^[a-zA-Z0-9_-]{8,80}$/;

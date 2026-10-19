@@ -1,6 +1,6 @@
-import {COMPLETE_ORDER_HELP} from './copy/complete-order-help.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {downloadResults} from './results-report.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
-import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {COMPLETE_ORDER_HELP} from './copy/complete-order-help.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {downloadResults} from './results-report.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {AI_ROAST_VOICES,buildAIRoastPrompt} from './ai-roast-prompts.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 const amount=v=>Number.isFinite(v)?`${v<0?'−':''}¥${Math.abs(v).toLocaleString('zh-CN',{maximumFractionDigits:2})}`:'未知';
 const signed=v=>Number.isFinite(v)?`${v>0?'+':''}${amount(v)}`:'未知';
 const percent=v=>Number.isFinite(v)?`${(v*100).toFixed(2)}%`:'—';

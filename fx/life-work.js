@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=12bbce5584c8b4366889740b782b99852f64ce30-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
 // Per-shift game contracts informed by 2014 Japanese part-time wage references.
 // Income uses the gross hourly reference; this game does not simulate wage tax.
 export const LEGACY_WORK_INCOMES=Object.freeze({"convenience":2200,"cafe":2500,"bookstore":1800,"flyer":1600,"warehouse":3400,"dishwashing":2800,"campusArchive":1300,"tutoring":3600,"proofreading":2100,"eventSetup":4200,"petCare":2300,"translation":4600,"remoteData":2600,"buildingCaretaker":3000,"radioMonitor":1900});
@@ -76,6 +76,12 @@ export function effectiveWorkTerms(s,job){
 export function calculateWorkPay(startStamina,requiredStamina,baseWage){
  if(!Number.isFinite(startStamina)||startStamina<0||startStamina>100||!Number.isFinite(requiredStamina)||requiredStamina<0||!Number.isSafeInteger(baseWage)||baseWage<0)throw Error('Invalid work pay inputs');
  return Math.floor(baseWage*(requiredStamina===0?1:Math.min(1,startStamina/requiredStamina)));
+}
+// Browsing uses the same earned item terms and wage rule as settlement. Keep
+// the full-shift contract alongside this action's actual income and debit.
+export function quoteWorkAction(s,job,startStamina){
+ const terms=effectiveWorkTerms(s,job),baseIncome=terms.income,requiredStamina=terms.staminaCost;
+ return {...terms,income:calculateWorkPay(startStamina,requiredStamina,baseIncome),staminaCost:Math.min(startStamina,requiredStamina),baseIncome,requiredStamina,partialWork:startStamina<requiredStamina};
 }
 export function workPayDialogue(baseDialogue,{baseWage,income,startStamina,requiredStamina}){
  if(!baseDialogue)return null;

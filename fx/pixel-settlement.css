@@ -112,3 +112,18 @@ body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .pixel
  body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .pixel-settlement-balance-value{font-size:18px;margin-left:0}
 }
 @media(prefers-reduced-motion:reduce){body:not(.motion-full)[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .pixel-settlement-paid{animation:none;transition:none}}
+/* Receipt signs match the pixel amount: profit pink, loss teal. */
+body[data-frontend="pixel"] .recap-receipt-chart [data-direction="profit"] rect{fill:var(--settle-pink,#ff238d)}
+body[data-frontend="pixel"] .recap-receipt-chart [data-direction="loss"] rect{fill:var(--settle-teal,#00bdb9)}
+body[data-frontend="pixel"] .recap-receipt-chart [data-direction="profit"] rect[stroke]{stroke:var(--settle-pink,#ff238d)}
+body[data-frontend="pixel"] .recap-receipt-chart [data-direction="loss"] rect[stroke]{stroke:var(--settle-teal,#00bdb9)}
+body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .recap-playback[data-event-direction="profit"] .recap-event-card{border-left-color:var(--settle-pink)}
+body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .recap-playback[data-event-direction="loss"] .recap-event-card{border-left-color:var(--settle-teal)}
+body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .recap-playback[data-event-direction="profit"] .recap-event-delta{color:var(--settle-pink)}
+body[data-frontend="pixel"] #day-dialog[data-recap-layout="profit-first"] .recap-playback[data-event-direction="loss"] .recap-event-delta{color:#087e85}
+/* The virtual player owns the entire effect budget, including particle delay.
+   All keyframes reach their transparent/resting end before complete clears. */
+.recap-screen[data-recap-budget="true"][data-stage="landing"]>*{animation-duration:calc(var(--recap-landing-duration) - var(--delay,0ms))!important}
+.recap-playback[data-recap-budget="true"][data-stage="landing"]{animation-duration:var(--recap-impact-duration,420ms)}
+.recap-playback[data-recap-budget="true"][data-stage="landing"] .recap-spark{animation-duration:calc(var(--recap-landing-duration) - var(--spark-delay,0ms))}
+.recap-playback[data-recap-budget="true"][data-stage="landing"] .recap-outcome-art{animation-duration:var(--recap-landing-duration)}
