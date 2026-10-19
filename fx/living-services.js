@@ -1,4 +1,4 @@
-import {LIFESTYLES,LEGACY_LIFESTYLES,lifestylePlan} from './consumption-ledger.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFESTYLES,LEGACY_LIFESTYLES,lifestylePlan} from './consumption-ledger.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 // Completed paid services grant recovery. Choosing/replaying a home cannot
 // improve trading P&L, prices or trauma. These are game balance parameters.
 export const LIVING_MOVE_SCENE_IDS=Object.freeze({basic:'move-home-basic',comfortable:'move-home-comfortable',generous:'move-home-generous',premium:'move-home-premium',penthouse:'move-home-penthouse'});

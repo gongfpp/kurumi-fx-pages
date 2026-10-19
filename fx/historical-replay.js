@@ -1,7 +1,7 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
@@ -10,6 +10,11 @@ export const isResearch=s=>[2,3].includes(s?.historical?.version);
 export const isHistorical=s=>[1,2,3].includes(s?.historical?.version);
 export const hasHistoricalFeed=s=>isMultiHistory(s)?hasMultiHistoryFeed(s):feeds.has(s);
 export const historicalReady=s=>!isHistorical(s)||historicalSimulationActive(s)||(s.historical.status==='ready'&&hasHistoricalFeed(s));
+// Display reference only: freeze the known mark at the game-day boundary.
+export function markHistoricalOpening(s){
+ s.dayOpeningPrice=s.price;s.dayOpeningPriceDay=s.day;
+ for(const book of Object.values(s.marketBook?.markets||{}))book.dayOpeningPrice=book.price;
+}
 const mid=q=>(q[1]+q[2])/2;
 export function historicalScript(){return{historical:true,tracks:[],events:Array.from({length:5},()=>({id:'historical',chain:'历史行情',title:'USD/JPY 历史回放',copy:'按当时的报价继续交易。',source:'历史外汇行情',time:'',flash:'USD/JPY 历史回放',flashCopy:'按当时的报价继续交易。'}))};}
 export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL,opening}){

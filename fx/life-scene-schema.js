@@ -1,5 +1,5 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {lifeActionDialogueForSource} from './life-action-dialogues.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 const options={friend:['mochiko','yasuko'],work:['convenience','cafe','bookstore','flyer','warehouse','dishwashing','campusArchive','proofreading','eventSetup','petCare','translation','remoteData','buildingCaretaker','radioMonitor','tutoring'],relax:['shrine','river','park']};
 // New work sheets are limited to their reviewed identity, exact source and cast.
 const additionalWorkArt=Object.freeze({

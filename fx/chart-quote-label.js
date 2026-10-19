@@ -1,8 +1,16 @@
 // Read-only display model. No orders, OHLC, clocks or persisted state are edited.
-import {activeMarket} from './market-book.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 const positive=n=>Number.isFinite(n)&&n>0;
 const signed=(n,d)=>`${n>=0?'+':''}${(Object.is(n,-0)?0:n).toFixed(d)}`;
+function historicalReference(state,symbol){
+ if(state.dayOpeningPriceDay===state.day)return state.dayOpeningPrice;
+ const book=state.marketBook?.markets?.[symbol];
+ // Older saves have no dated display reference. Reconstruct only from marks
+ // already retained in that save, never today's first render or a future feed.
+ if(state.day===1)return book?book.dayOpeningPrice:state.startPrice;
+ return (book?.candles||state.candles||[]).findLast(c=>c.day===state.day-1&&!c.historyWarmup)?.close;
+}
 export function createChartQuoteLabel(){
  let run=null;const references=new Map(),latest=new Map();
  return (state,{now=Date.now(),sourceMode='live',referenceClock}={})=>{
@@ -19,7 +27,7 @@ export function createChartQuoteLabel(){
   if(live&&previous&&(timestamp<previous.timestamp||timestamp===previous.timestamp&&current!==previous.price&&!(Number.isSafeInteger(observation)&&Number.isSafeInteger(previous.observation)&&observation>previous.observation)))ready=false;
   if(live&&ready){latest.set(symbol,{price:current,timestamp,observation});if(!references.has(symbol))references.set(symbol,current);}
   const display=live&&!ready&&previous?previous.price:current;
-  const reference=live?references.get(symbol):state.dayOpeningPrice;
+  const reference=live?references.get(symbol):state.historical?historicalReference(state,symbol):state.dayOpeningPrice;
   const valid=ready&&positive(reference),delta=valid?current-reference:null;
   const basis=live?'相对本次行情会话首个有效中间价':'相对本日开盘价';
   const sourceTimestamp=live&&!ready&&previous?previous.timestamp:timestamp;

@@ -1,6 +1,6 @@
-import {historicalDayInfo} from './historical-replay.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {historicalDayInfo} from './historical-replay.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
 // 16 x 15 minutes: calm watching spends 40 points. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;

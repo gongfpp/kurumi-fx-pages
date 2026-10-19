@@ -24,7 +24,7 @@
 #pixel-frontend .single-action-message{margin:1px 0 0;font-size:15px;line-height:22px;overflow-wrap:anywhere}
 #pixel-frontend .single-action-card[data-kind="risk"]{border-color:#ef9a85;background:linear-gradient(105deg,#fff7ee,#fff2ee)}
 #pixel-frontend .single-action-card[data-kind="risk"] .single-action-title{color:#a4412f}
-#pixel-frontend .single-action-card :is(.single-action-close,.single-action-rest){grid-column:3;grid-row:1;min-height:44px;border-color:#f075b1;background:linear-gradient(#ffb6d9,#ff87bf);font-size:17px;font-weight:700;color:var(--px-ink)}
+#pixel-frontend .single-action-card :is(.single-action-close,.single-action-rest){grid-column:3;grid-row:1;min-width:0;min-height:44px;white-space:normal;overflow-wrap:anywhere;line-height:1.35;border-color:#f075b1;background:linear-gradient(#ffb6d9,#ff87bf);font-size:17px;font-weight:700;color:var(--px-ink)}
 #pixel-frontend .single-action-dismiss{grid-column:4;grid-row:1;align-self:start;min-width:28px;min-height:28px;padding:0;background:transparent;border-color:transparent;color:#9b6682;font-size:22px;line-height:26px}
 #pixel-frontend .single-action-card button:disabled{opacity:.55;cursor:default}
 /* The lids are clipped to the chart stage, below its risk actions (z-index 2).

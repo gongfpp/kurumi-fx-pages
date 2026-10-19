@@ -1,15 +1,15 @@
-import {isLiveMarket} from './live-market-state.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {activeMarket} from './market-book.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {displayCandles,candlePeriodNotice} from './candle-period.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {readRunStatistics} from './run-statistics.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {runPerformance} from './performance.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {displayCandles,candlePeriodNotice} from './candle-period.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {runPerformance} from './performance.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -85,4 +85,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';

@@ -1,4 +1,4 @@
-import {observeSeenArtwork} from './daily-art-memory.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {observeSeenArtwork} from './daily-art-memory.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // The engine has already sealed the account. This optional record controls only
 // the two views of that result, never its classification, money or rewards.

@@ -1,10 +1,10 @@
-import {createSkitLine} from './skit-dialogue.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {LIFE_WORK_JOBS,validWorkPayDialogue} from './life-work.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkPayDialogue} from './life-work.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.

@@ -1,8 +1,8 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {VoiceTimingGate} from './voice-timing.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {assetURL} from './assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {VoiceTimingGate} from './voice-timing.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {assetURL} from './assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
@@ -26,7 +26,7 @@ export const VOICE_LINES=Object.freeze([
  clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
  clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
 // Gameplay voice is strictly manual. sync observes validity; it never starts audio.

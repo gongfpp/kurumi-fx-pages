@@ -1,7 +1,7 @@
-import {SUPPLY_POLICY,HOUSING_SLEEP_RECOVERY,ONSEN_POLICY} from './economy-plan-config.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {clearEnergyAfterSleep} from './energy-stage.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {recoverStamina} from './stamina.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {validLivingService} from './living-services.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {SUPPLY_POLICY,HOUSING_SLEEP_RECOVERY,ONSEN_POLICY} from './economy-plan-config.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {clearEnergyAfterSleep} from './energy-stage.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {recoverStamina} from './stamina.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {validLivingService} from './living-services.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // Game-balance values for existing actions and items. No new purchases,
 // unlocks, story events or fees are introduced here. All values are bounded by

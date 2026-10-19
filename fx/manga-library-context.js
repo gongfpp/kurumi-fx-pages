@@ -1,18 +1,18 @@
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {DINNER_STORIES} from './copy/dinner-stories.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {DINNER_STORY_ASSETS,DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {PROP_STORIES} from './copy/prop-stories.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {PROP_STORY_ASSETS} from './prop-story-assets.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {DINNER_STORIES} from './copy/dinner-stories.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {DINNER_STORY_ASSETS,DINNER_PRESENTATION_ASSETS} from './dinner-story-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {FATHER_THEFT_ASSETS} from './father-theft-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {LIVING_MOVE_SCENES} from './copy/living-move-scenes.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {LIVING_MOVE_ASSETS} from './living-move-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {PROP_STORIES} from './copy/prop-stories.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {PROP_STORY_ASSETS} from './prop-story-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // The existing gallery projects exact shipped scripts by image hash. No game,
 // action, reader-memory or reward callbacks are inputs to this lookup.

@@ -1,6 +1,6 @@
-import {createSkitStatusIcon} from './skit-dialogue.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {MOODS} from './content.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {staminaStatus} from './stamina.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {createSkitStatusIcon} from './skit-dialogue.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {MOODS} from './content.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {staminaStatus} from './stamina.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // Optional presentation evidence, never a source of rewards or game balance.
 // Old saves lack before-values: display their actual current state, not a guess.

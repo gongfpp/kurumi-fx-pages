@@ -1,16 +1,21 @@
-import {closeAllModalOpen} from './close-all-control.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
 
 // Pure view selection. It does not close orders, spend stamina or advance time.
-export function singleActionCardView({stamina,positions=[],risk,active=true,context='',portfolioToken=''}={}) {
+export function singleActionCardView({mode,stamina,positions=[],risk,active=true,context='',portfolioToken=''}={}) {
   if(!active)return null;
   const meter=liquidationMeter(risk);
   if(positions.length&&!meter.hidden&&meter.tone==='critical')return {
     kind:'risk',key:`${context}:risk:${portfolioToken}`,title:'接近强平',message:meter.label,
     action:'close',actionLabel:'一键平仓',icon:'warning'
+  };
+  if(mode==='story')return {
+    kind:stamina?.low?'rest':'early-close',key:`${context}:finish-day:${stamina?.low?'sleep':'early'}:${portfolioToken}`,
+    title:stamina?.low?'爸在门外':'提前收盘',message:stamina?.low?'久留美，该睡觉了。':'今天就到这里，早点睡吧。',
+    action:'finish-day',actionLabel:'提前收盘睡觉',icon:'door'
   };
   if(!stamina?.low)return null;
   if(positions.length)return {
@@ -26,7 +31,7 @@ const ICONS={
   door:'<svg viewBox="0 0 48 52" aria-hidden="true"><path d="M6 49V6l28-4v47Z" fill="#deacb0" stroke="#91466e" stroke-width="2.5"/><path d="M34 3h5v46H6" fill="none" stroke="#c67a9a" stroke-width="2.5"/><circle cx="28" cy="28" r="2" fill="#fff0d7"/><path d="m40 11 4-3m-3 10h5m-6 6 4 3" fill="none" stroke="#f24898" stroke-width="2.5" stroke-linecap="round"/></svg>'
 };
 
-export function mountSingleActionCard({root=document,getModel=()=>({}),closeControl,onRest=()=>{},motionEnabled=()=>true}={}) {
+export function mountSingleActionCard({root=document,getModel=()=>({}),closeControl,onRest=()=>{},onFinishDay=()=>{},motionEnabled=()=>true}={}) {
   const win=root.defaultView,listeners=[];
   const make=(tag,className,text)=>{const node=root.createElement(tag);node.className=className;if(text!==undefined)node.textContent=text;return node;};
   const slot=make('div','single-action-slot'),card=make('aside','single-action-card'),icon=make('span','single-action-icon');
@@ -89,9 +94,9 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
   listen(rest,'click',event=>{
     const expected=restArmed===undefined?view?.key:restArmed;restArmed=undefined;
     const model=getModel(),current=singleActionCardView(model);
-    if(busy||event.detail>1||!available()||card.hidden||rest.hidden||rest.disabled||current?.action!=='rest'||expected!==current.key||model.canRest===false)return;
+    if(busy||event.detail>1||!available()||card.hidden||rest.hidden||rest.disabled||!['rest','finish-day'].includes(current?.action)||expected!==current.key||(current.action==='finish-day'?model.canFinishDay===false:model.canRest===false))return;
     busy=true;rest.disabled=true;
-    try {onRest({context:model.context,key:current.key});}
+    try {(current.action==='finish-day'?onFinishDay:onRest)({context:model.context,key:current.key});}
     finally {queueMicrotask(()=>{busy=false;refresh();});}
   });
   function refresh(){
@@ -119,7 +124,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
       if(icon.dataset.icon!==view.icon){icon.innerHTML=ICONS[view.icon];icon.dataset.icon=view.icon;}
       card.setAttribute('aria-label',view.kind==='rest'?STAMINA_SLEEP_LINE:'操作提醒');
       const previousFocus=root.activeElement;
-      close.hidden=view.action!=='close';rest.hidden=view.action!=='rest';rest.disabled=busy||model.canRest===false;
+      close.hidden=view.action!=='close';rest.hidden=!['rest','finish-day'].includes(view.action);text(rest,view.actionLabel);rest.disabled=busy||(view.action==='finish-day'?model.canFinishDay===false:model.canRest===false);
       if(previousFocus===close&&close.hidden){if(!rest.hidden&&!rest.disabled)rest.focus?.({preventScroll:true});else restoreFocus();}
       if(previousFocus===rest&&rest.hidden){if(!close.hidden&&!close.disabled)close.focus?.({preventScroll:true});else restoreFocus();}
     }

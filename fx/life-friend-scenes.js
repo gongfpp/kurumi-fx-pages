@@ -1,4 +1,4 @@
-import {LIFE_FRIEND_DIALOGUE_SCENES} from './life-friend-dialogues.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFE_FRIEND_DIALOGUE_SCENES} from './life-friend-dialogues.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 
 // Four independently reviewed sheets bound to the original receipt sources.
 // Rectangles follow the actual sheet gutters; text remains outside the image.

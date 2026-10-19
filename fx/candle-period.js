@@ -1,7 +1,7 @@
-import {isLiveMarket} from './live-market-state.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 export const CANDLE_PERIODS=Object.freeze([{minutes:1440,label:'日K',hz:1},{minutes:15,label:'15分钟',hz:1},{minutes:5,label:'5分钟',hz:1},{minutes:1,label:'1分钟',hz:1}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;

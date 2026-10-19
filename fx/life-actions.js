@@ -1,8 +1,8 @@
-import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay,validWorkPayDialogue} from './life-work.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {DINNER_OPTIONS} from './recap-choices.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
-import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkInventory,validWorkPay,validWorkPayDialogue} from './life-work.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {DINNER_OPTIONS} from './recap-choices.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {lifeActionDialogueForSource,validLifeActionDialogue} from './life-action-dialogues.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
 // Convenience-shift default; actual per-job contracts live in life-work.js.
 // One completed life action per story day; individual work terms live in life-work.js.
 export const LIFE_WORK_INCOME=LIFE_WORK_JOBS[0].income;
