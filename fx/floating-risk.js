@@ -1,6 +1,6 @@
-import {closeAllModalOpen} from './close-all-control.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {bindFloatingDismissal} from './floating-dismissal.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {bindFloatingDismissal} from './floating-dismissal.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 
 // Existing position risk displays stay in the document; close uses a shared action gate.
 // Block complete trading panels as well as controls, so click-through is only a

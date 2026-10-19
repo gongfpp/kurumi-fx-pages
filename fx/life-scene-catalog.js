@@ -1,5 +1,5 @@
-import {LIFE_RELAX_SCENES} from './life-relax-scenes.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {LIFE_FRIEND_SCENES} from './life-friend-scenes.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {LIFE_RELAX_SCENES} from './life-relax-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {LIFE_FRIEND_SCENES} from './life-friend-scenes.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 // Only independently reviewed full four-panel sheets are registered here.
 // Receipt sources retain their original IDs/text; adding artwork never rewrites saves.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};

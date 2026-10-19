@@ -1,5 +1,5 @@
-import {originalStoryLibraryEntries} from './original-story-library-model.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {mountComicDialogue} from './comic-dialogue-view.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {originalStoryLibraryEntries} from './original-story-library-model.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {mountComicDialogue} from './comic-dialogue-view.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 
 const mounts=new WeakMap();
 // Reuse the established four-panel reader without its optional seen observer.

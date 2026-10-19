@@ -1,4 +1,4 @@
-import {EXTRA_NEWS_CHAINS} from './story-content.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {EXTRA_NEWS_CHAINS} from './story-content.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 // Simulated market information and functional UI copy, separate from approved character dialogue.
 // Bias is retained only for frozen legacy generation. New simulations sample
 // market responses independently; visible copy describes published facts only.
@@ -44,4 +44,4 @@ export const MOODS = {
 };
 
 export const CANON_QUOTE = {id:'V2-HOPE-01',text:'两千万而已，我会轻松赚回来的！',source:'用户附译；日语原句见动画官方简介',url:'https://fxkurumi-info.com/'};
-export {PROPS} from './copy/items.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+export {PROPS} from './copy/items.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';

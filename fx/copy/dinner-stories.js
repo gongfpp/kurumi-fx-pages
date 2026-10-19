@@ -1,8 +1,8 @@
-import {DINNER_EXPANSION_22_30_STORIES} from '../dinner-expansion-22-30.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {DINNER_EXPANSION_21_STORIES} from '../dinner-expansion-21.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {DINNER_EXPANSION_20_STORIES} from '../dinner-expansion-20.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {DINNER_EXPANSION_19_STORIES} from '../dinner-expansion-19.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {DINNER_EXPANSION_22_30_STORIES} from '../dinner-expansion-22-30.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {DINNER_EXPANSION_21_STORIES} from '../dinner-expansion-21.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {DINNER_EXPANSION_20_STORIES} from '../dinner-expansion-20.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {DINNER_EXPANSION_19_STORIES} from '../dinner-expansion-19.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {DINNER_EXPANSION_16_18_STORIES} from '../dinner-expansion-16-18.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 // Original game dialogue authorized in the approved dinner-story style, not manga quotations.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const DINNER_STORIES=freeze({

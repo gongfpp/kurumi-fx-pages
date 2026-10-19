@@ -1,7 +1,7 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {isSevereSettledLoss} from './settled-comic-art.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 
 // Presentation reads the sealed day's result. Funding, wages and one winning
 // execution cannot change it, and a later win cannot clear retained trauma.

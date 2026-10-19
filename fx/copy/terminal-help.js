@@ -1,4 +1,4 @@
-import {COMPLETE_ORDER_HELP} from './complete-order-help.js?v=d646c2f56c57fd7702f80200246852039ee3cd77-23f2a20b7717';
+import {COMPLETE_ORDER_HELP} from './complete-order-help.js?v=cd9f9f7e3a56c2f7b69205678364be26447bb249-23f2a20b7717';
 // 玩家可见的扩展说明；交易主界面只保留操作与关键金额。
 export const TERMINAL_HELP = {
   account:{title:'账户里的钱',lines:['账户货币为日元（JPY），界面中的 ¥ 均表示日元；USD、AUD、GBP 分别标示美元、澳元、英镑的交易数量。','账户总资产 = 现金 + 生活费预留 + 持仓保证金 + 浮动盈亏。净资产 = 账户总资产 − 全部欠款。总资产不是杠杆名义仓位。','可用保证金是还能用于新订单的资金。持仓中的保证金先占用，平仓后释放。最大投入额会留出开仓手续费。']},
