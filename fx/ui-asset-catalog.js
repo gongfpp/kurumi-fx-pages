@@ -1,5 +1,5 @@
-import {UI_ICON_ASSET} from './ui-icon-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
-import {UI_EXTRA_ICON_ASSET} from './ui-extra-icon-assets.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {UI_ICON_ASSET} from './ui-icon-assets.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {UI_EXTRA_ICON_ASSET} from './ui-extra-icon-assets.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
 // UI assets keep their own identities, separate from story/trading-event pools.
 export const UI_ASSET_CATALOG=Object.freeze([Object.freeze({
  id:'pixel-interface-reference-atlas',path:'./pixel-assets/reference-atlas.png',

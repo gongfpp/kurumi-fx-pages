@@ -1,6 +1,6 @@
-import {accountingValues} from './accounting-journal.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
-import {orderPerformance} from './run-statistics.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
-import {readEndingLifeChoice} from './ending-life-choice.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {orderPerformance} from './run-statistics.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {readEndingLifeChoice} from './ending-life-choice.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
 
 export const ENDING_RULES_VERSION=1;
 export const BASE_ENDINGS=Object.freeze({

@@ -1,21 +1,21 @@
-import {closeAllModalOpen} from './close-all-control.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=591c20f8c91072a08d497d48fa9e2e68c7935364-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
 
 // Pure view selection. It does not close orders, spend stamina or advance time.
-export function singleActionCardView({mode,stamina,positions=[],risk,active=true,context='',portfolioToken=''}={}) {
+export function singleActionCardView({mode,stamina,sanity=50,positions=[],risk,active=true,context='',portfolioToken=''}={}) {
   if(!active)return null;
   const meter=liquidationMeter(risk);
   if(positions.length&&!meter.hidden&&meter.tone==='critical')return {
     kind:'risk',key:`${context}:risk:${portfolioToken}`,title:'接近强平',message:meter.label,
-    action:'close',actionLabel:'一键平仓',icon:'warning'
+    action:'close',actionLabel:'一键平仓',icon:'warning',dismissible:mode!=='story'
   };
   if(mode==='story')return {
-    kind:stamina?.low?'rest':'early-close',key:`${context}:finish-day:${stamina?.low?'sleep':'early'}:${portfolioToken}`,
-    title:stamina?.low?'爸在门外':'提前收盘',message:stamina?.low?'久留美，该睡觉了。':'今天就到这里，早点睡吧。',
-    action:'finish-day',actionLabel:'提前收盘睡觉',icon:'door'
+    kind:stamina?.low?'rest':'early-close',key:`${context}:finish-day:${sanity<=5?'mental':stamina?.low?'sleep':'early'}:${portfolioToken}`,
+    title:stamina?.low&&sanity>5?'爸在门外':'提前收盘',message:sanity<=5?'心理承受力过低，今天先休息吧':stamina?.low?'久留美，该睡觉了。':'今天就到这里，早点睡吧。',
+    action:'finish-day',actionLabel:'提前收盘睡觉',icon:'door',dismissible:false
   };
   if(!stamina?.low)return null;
   if(positions.length)return {
@@ -84,7 +84,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     if(blinkTimer===null&&blinkEnd===null)scheduleBlink(model.context,STAMINA_BLINK_TIMING.first);
   }
   const unbindClose=closeControl?.bind(close,{canInteract:()=>available()&&!card.hidden&&!close.hidden&&view?.action==='close'});
-  const dismissCurrent=()=>{if(card.hidden||!view)return;dismissedKey=view.key;hideCard();};
+  const dismissCurrent=()=>{if(card.hidden||!view||view.dismissible===false)return;dismissedKey=view.key;hideCard();};
   listen(dismiss,'click',dismissCurrent);
   listen(card,'keydown',event=>{if(event.key==='Escape'){event.preventDefault?.();event.stopPropagation?.();dismissCurrent();}});
   const currentRestKey=()=>singleActionCardView(getModel())?.key;
@@ -116,11 +116,12 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     text(number,`${Math.round(value)}/100`);text(stateLabel,model.stamina?.low?'困倦':'');stateLabel.hidden=!model.stamina?.low;
     meter.dataset.low=String(Boolean(model.stamina?.low));track.setAttribute('aria-valuenow',String(Math.round(value)));track.setAttribute('aria-valuetext',`${Math.round(value)}/100${model.stamina?.low?'，困倦':''}`);fill.style.width=`${value}%`;
     view=singleActionCardView(model);
+    if(view?.dismissible===false)dismissedKey=null;
     if(!view){dismissedKey=null;lastViewKey=null;}
     else if(view.key!==lastViewKey){if(dismissedKey!==view.key)dismissedKey=null;lastViewKey=view.key;}
     if(!available()||!view||view.key===dismissedKey){hideCard();}
     else {
-      card.hidden=false;card.dataset.kind=view.kind;text(heading,view.title);text(message,view.message);
+      card.hidden=false;dismiss.hidden=view.dismissible===false;card.dataset.kind=view.kind;text(heading,view.title);text(message,view.message);
       if(icon.dataset.icon!==view.icon){icon.innerHTML=ICONS[view.icon];icon.dataset.icon=view.icon;}
       card.setAttribute('aria-label',view.kind==='rest'?STAMINA_SLEEP_LINE:'操作提醒');
       const previousFocus=root.activeElement;
