@@ -1,17 +1,17 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {lifeActionDefinition} from './life-actions.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {readHallMetrics} from './hall-metrics.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {classifyEnding} from './ending-classifier.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {runPerformance} from './performance.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {orderPerformance,readRunStatistics} from './run-statistics.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {accountingValues} from './accounting-journal.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {lifeActionDefinition} from './life-actions.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {readHallMetrics} from './hall-metrics.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {classifyEnding} from './ending-classifier.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {runPerformance} from './performance.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {orderPerformance,readRunStatistics} from './run-statistics.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
 
 export const RESULTS_SCHEMA_VERSION='1.0.0';
 const number=v=>Number.isFinite(v)?v:null;
@@ -83,7 +83,7 @@ export function buildResultsReport(state={},options={}){
  if(developmentTaint)report.dataQuality.warnings.push('开发者测试局，不能用于真实排行榜比较。');
  return JSON.parse(JSON.stringify(report,(_k,value)=>typeof value==='number'&&!Number.isFinite(value)?null:value));
 }
-export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
 export function resultsFilename(report){return `kurumi-fx-${report?.mode==='endless'?'endless':'story'}-day-${Number.isSafeInteger(report?.day)&&report.day>0?report.day:1}-results-v1.json`;}
 export function serializeResults(report){return JSON.stringify(report,null,2)+'\n';}
 export function downloadResults(report,{document=globalThis.document,URL=globalThis.URL,Blob=globalThis.Blob,schedule=globalThis.setTimeout}={}){

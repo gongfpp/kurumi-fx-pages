@@ -1,4 +1,4 @@
-import {activeMarket,marketPrice,positionMarket} from './market-book.js?v=e60ab366b51c60891ec0c2bf4cd9abb2d6da1dad-23f2a20b7717';
+import {activeMarket,marketPrice,positionMarket} from './market-book.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
 // Only sourced Kurumi dialogue. Traditional Chinese is normalized to simplified;
 // punctuation and line breaks are normalized, with no new dialogue composed.
 export const PRESSURE_QUOTES=Object.freeze([
