@@ -14,10 +14,15 @@
     .pixel-boot-chart i::before { content:""; position:absolute; width:2px; background:#c4c8ce; left:calc(50% - 1px); top:-.8rem; bottom:-.8rem; }
     .pixel-boot-chart i:nth-child(2n) { height:2rem; margin-top:2rem; }
     .pixel-boot-chart i:nth-child(3n) { height:4.5rem; margin-top:-1.5rem; }
+    html[data-pixel-state="loading"] .pixel-boot-chart i { animation:pixel-boot-float 1.8s ease-in-out infinite alternate; }
+    .pixel-boot-chart i:nth-child(2n) { animation-delay:-.6s; }
+    .pixel-boot-chart i:nth-child(3n) { animation-delay:-1.2s; }
+    .pixel-boot-chart i:nth-child(5n) { animation-delay:-.3s; }
+    @keyframes pixel-boot-float { from { transform:translateY(-.3rem); } to { transform:translateY(.3rem); } }
     .pixel-boot-actions { display:flex; gap:1rem; margin-top:1rem; }
     .pixel-boot-actions span { display:block; flex:1; height:2.6rem; border:1px solid #c4c8ce; border-radius:.4rem; background:#e0e3e7; }
     html[data-pixel-state="ready"] #pixel-boot { opacity:0; pointer-events:none; position:absolute; top:20vh; left:0; right:0; margin:0 auto; }
-    @media (prefers-reduced-motion:reduce) { #pixel-boot { transition:none; } }
+    @media (prefers-reduced-motion:reduce) { #pixel-boot { transition:none; } html[data-pixel-state="loading"] .pixel-boot-chart i { animation:none; } }
     #pixel-boot-error { max-width:34rem; padding:0; }
     #pixel-boot-error #pixel-boot { margin:0; }
   </style>
@@ -70,7 +75,7 @@
   <meta name="description" content="持仓穿过连续蜡烛图，读突发消息、管理多笔订单，和久留美一起经历外汇交易日。原创同人风模拟小游戏。">
   <title>FX韭留美 · 今天也要回本</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f16f9f'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-size='25' font-weight='bold' fill='%23231f2d'%3E¥%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./fx/startup.css?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/startup.css?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
   
   
 
@@ -110,100 +115,108 @@
 
 
 
-  <link rel="modulepreload" href="./fx/pixel-bootstrap.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/app.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/engine.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/pixel-frontend.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/pixel-renderer.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-viewport.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-risk-heartbeat.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-quote-view.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-selector.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/position-risk-view.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-package-view.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/amount-controls.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-indicator.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-warning.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-source-label.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/accounting-journal.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/accounting-retention.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/approved-mobile-layout.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/assets.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/candle-period.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/comic-autoplay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/consumption-ledger.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/contextual-manga-restraint-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/approved-four-skits.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/father-theft-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/items.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/living-choices.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/original-lines.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/script-lines.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/credit-policy.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-narrative-facts.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-performance.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-supplies.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-volatility.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dialogue-bank.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dialogue.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dom-portals.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/economy-plan-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/emotion-pressure.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/ending-classifier.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/ending-life-choice.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/energy-stage.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/father-discovery.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/father-theft-discovery.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/focus-safety.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/hall-metrics.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-day-clock.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-evidence.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-opening.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-replay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/item-events.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-action-dialogues.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-actions.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-friend-dialogues.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-friend-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-recovery.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-relax-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-catalog.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-dialogue-selector.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-dialogue-sources.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-schema.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-work.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/live-market-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/living-services.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/living-settlement.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/lottery-core.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/lottery-rules.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-context-panels.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-panels.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-book.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/moving-average.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/multi-history-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/original-dialogue.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-grid.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-packages.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/recap-choices.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/research-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/run-statistics.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-codec.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/settled-comic-art.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/shared-replay-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/skit-dialogue.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/skit-outcome.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/stamina.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/story-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/story.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/trading-trauma.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/vendor/lz-string.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-bootstrap.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/app.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/engine.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-frontend.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-renderer.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-viewport.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-risk-heartbeat.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-quote-view.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-selector.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/position-risk-view.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-package-view.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/amount-controls.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-indicator.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-warning.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-source-label.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/accounting-journal.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/accounting-retention.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/approved-mobile-layout.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/candle-period.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/comic-autoplay.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/consumption-ledger.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/contextual-manga-restraint-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/approved-four-skits.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/father-theft-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/items.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/living-choices.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/original-lines.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/script-lines.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/credit-policy.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-narrative-facts.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-performance.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-supplies.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-volatility.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dialogue-bank.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dialogue.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dom-portals.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/economy-plan-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/emotion-pressure.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/ending-classifier.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/ending-life-choice.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/energy-stage.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/father-discovery.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/father-theft-discovery.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/focus-safety.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/hall-metrics.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-day-clock.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-evidence.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-aggregate.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-engine-adapter.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-from-ticks.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-path.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-replay.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-source.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-opening.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-replay.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/item-events.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-action-dialogues.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-actions.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-friend-dialogues.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-friend-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-recovery.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-relax-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-catalog.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-dialogue-selector.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-dialogue-sources.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-schema.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-work.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/live-market-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/living-services.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/living-settlement.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/lottery-core.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/lottery-rules.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-context-panels.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-context.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-panels.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-book.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-rules.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/moving-average.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/multi-history-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/original-dialogue.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-grid.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-packages.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/recap-choices.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/research-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/run-statistics.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-codec.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/settled-comic-art.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/shared-replay-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/skit-dialogue.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/skit-outcome.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/stamina-usage.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/stamina.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/story-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/story.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/trading-time.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/trading-trauma.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/vendor/lz-string.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717">
 </head>
 <body data-frontend="pixel">
 <section id="pixel-boot" role="status" aria-live="polite"><div class="pixel-boot-skeleton" aria-hidden="true"><div class="pixel-boot-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pixel-boot-actions"><span></span><span></span></div></div><p id="pixel-boot-status">正在载入…</p><button id="pixel-boot-retry" type="button" hidden>重试</button></section>
@@ -320,6 +333,6 @@
   <nav id="opening-nav" class="opening-nav" aria-label="序章翻页"><button id="opening-back" type="button" disabled>← 上一页</button><button id="opening-next" type="button" class="primary"><small id="opening-next-hint">下一页</small><span id="opening-next-label">那时的愿望 →</span></button><div class="opening-reader-meta"><small id="opening-save" role="status"></small></div></nav>
 </dialog>
 <section id="history-choice-step" class="history-choice-step" aria-label="历史行情设置" hidden><p id="history-choice-status" class="small-print" role="status" aria-live="polite"></p><input id="history-local-file" type="file" accept=".fxhistory,.fxresearch" hidden><button id="history-file-open" type="button" class="secondary">选择本机文件</button><button id="history-choice-retry" type="button" class="secondary" hidden>重试载入</button></section>
-<script type="module" src="./fx/pixel-bootstrap.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717"></script>
+<script type="module" src="./fx/pixel-bootstrap.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717"></script>
 </body>
 </html>

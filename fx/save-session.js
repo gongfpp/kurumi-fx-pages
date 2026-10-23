@@ -1,7 +1,7 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {storageFailure} from './storage.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {storageFailure} from './storage.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -59,6 +59,16 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
     get raw(){return raw;},get localRaw(){return localRaw;},
     get status(){return status==='saved'&&savedText!==localRaw?'pending':status;},get reason(){return reason;},get failure(){return failure?{...failure}:null;},get blocked(){return blocked();},
     check,
+    // Read-only barrier for presentation that needs durable confirmation after
+    // its own queued snapshot was superseded. Existing save() results stay exact.
+    async whenSettled() {
+      const generation=epoch;let pending;
+      do{pending=queue;await pending;if(generation!==epoch)return false;}while(pending!==queue);
+      if(status!=='saved'||savedText!==localRaw||blocked()||!check())return false;
+      // check() may permit in-memory play after a failed durable read. Only its
+      // post-read state can prove that the settled bytes are still confirmed.
+      return generation===epoch&&status==='saved'&&failure===null&&savedText===localRaw;
+    },
     save(state,options={}) {
       if(importPending&&!options.replacement)return Promise.resolve(false);
       const text=JSON.stringify(state),run=String(state.runId??`seed:${state.seed}:${state.mode}`);

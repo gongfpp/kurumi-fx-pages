@@ -1,8 +1,8 @@
-import {LIBRARY_COPY} from './copy/library-ui.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {MARKET_COMMENTS} from './market-comments.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;

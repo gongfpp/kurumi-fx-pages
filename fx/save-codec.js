@@ -1,8 +1,10 @@
-import LZString from './vendor/lz-string.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import LZString from './vendor/lz-string.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 export const SAVE_FORMAT='kurumi-save-lz-v1';
 export const SAVE_ENVELOPE_VERSION=14;
 export const HISTORY_CONTINUATION_SAVE_VERSION=18;
+export const APPROVED_MARKET_SAVE_VERSION=19;
 const HISTORY_FORMAT='kurumi-save-history-continuation-v1';
+const APPROVED_MARKET_FORMAT='kurumi-save-market-rules-v1';
 export const SAVE_COMPRESSION_THRESHOLD=256*1024;
 export const MAX_SAVE_CHARACTERS=16*1024*1024;
 export const MAX_ENVELOPE_CHARACTERS=4*1024*1024;
@@ -23,9 +25,9 @@ const decodedCache=new Map();
 export function inspectSave(raw){
  checkRaw(raw);if(decodedCache.has(raw))return {...decodedCache.get(raw),importRaws:[...decodedCache.get(raw).importRaws]};
  const parsed=JSON.parse(raw);
- const wrapped=[SAVE_ENVELOPE_VERSION,HISTORY_CONTINUATION_SAVE_VERSION].includes(parsed?.version)||typeof parsed?.format==='string'&&parsed.format.startsWith('kurumi-save-');
+ const wrapped=[SAVE_ENVELOPE_VERSION,HISTORY_CONTINUATION_SAVE_VERSION,APPROVED_MARKET_SAVE_VERSION].includes(parsed?.version)||typeof parsed?.format==='string'&&parsed.format.startsWith('kurumi-save-');
  if(!wrapped)return {currentRaw:raw,recoveryRaw:null,importRaws:[],compressed:false};
- if(raw.length>MAX_ENVELOPE_CHARACTERS||!(parsed.version===SAVE_ENVELOPE_VERSION&&parsed.format===SAVE_FORMAT||parsed.version===HISTORY_CONTINUATION_SAVE_VERSION&&parsed.format===HISTORY_FORMAT))throw new TypeError('Unsupported save envelope');
+ if(raw.length>MAX_ENVELOPE_CHARACTERS||!(parsed.version===SAVE_ENVELOPE_VERSION&&parsed.format===SAVE_FORMAT||parsed.version===HISTORY_CONTINUATION_SAVE_VERSION&&parsed.format===HISTORY_FORMAT||parsed.version===APPROVED_MARKET_SAVE_VERSION&&parsed.format===APPROVED_MARKET_FORMAT))throw new TypeError('Unsupported save envelope');
  const imports=parsed.imports??[];
  if(!Array.isArray(imports)||imports.length>32)throw new RangeError('Save import archive limit');
  const parts=[parsed.current,...(parsed.recovery===null?[]:[parsed.recovery]),...imports];
@@ -40,15 +42,16 @@ let cachedRecoveryRaw=null,cachedRecovery=null;
 export function encodeSaveRaw(currentRaw,previousRaw=null,{replacement=false}={}){
  checkRaw(currentRaw);
  const previous=previousRaw===null?null:inspectSave(previousRaw);
+ const approved=JSON.parse(currentRaw)?.marketRules!==undefined;
  const continuation=JSON.parse(currentRaw)?.historyContinuation?.version===1||previous?.compressed&&JSON.parse(previousRaw)?.version===HISTORY_CONTINUATION_SAVE_VERSION;
- if(!continuation&&![15,16,17].includes(JSON.parse(currentRaw)?.version)&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!previous?.compressed&&!replacement)return currentRaw;
+ if(!approved&&!continuation&&![15,16,17].includes(JSON.parse(currentRaw)?.version)&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!previous?.compressed&&!replacement)return currentRaw;
  // The first durable original is retained forever; never nest old envelopes.
  const recoveryRaw=previous?.compressed?previous.recoveryRaw:previousRaw;
  if(recoveryRaw!==cachedRecoveryRaw){cachedRecoveryRaw=recoveryRaw;cachedRecovery=recoveryRaw===null?null:compress(recoveryRaw);}
  const importRaws=[...(previous?.importRaws||[])];
  if(replacement&&previous&&!importRaws.includes(previous.currentRaw))importRaws.push(previous.currentRaw);
  if(importRaws.length>32||currentRaw.length+(recoveryRaw?.length||0)+importRaws.reduce((n,r)=>n+r.length,0)>MAX_TOTAL_CHARACTERS)throw new RangeError('Save total length limit');
- const result=JSON.stringify({version:continuation?HISTORY_CONTINUATION_SAVE_VERSION:SAVE_ENVELOPE_VERSION,format:continuation?HISTORY_FORMAT:SAVE_FORMAT,current:compress(currentRaw),recovery:cachedRecovery,imports:importRaws.map(compress)});
+ const result=JSON.stringify({version:approved?APPROVED_MARKET_SAVE_VERSION:continuation?HISTORY_CONTINUATION_SAVE_VERSION:SAVE_ENVELOPE_VERSION,format:approved?APPROVED_MARKET_FORMAT:continuation?HISTORY_FORMAT:SAVE_FORMAT,current:compress(currentRaw),recovery:cachedRecovery,imports:importRaws.map(compress)});
  if(result.length>MAX_ENVELOPE_CHARACTERS)throw new RangeError('Encoded save length limit');
  // Reject before touching disk if our bounded decoder cannot recover every byte.
  const checked=inspectSave(result);

@@ -23,7 +23,7 @@ const archiveTopics=new Map(Object.entries({
 }).flatMap(([topic,aliases])=>aliases.map(alias=>[alias,topic])));
 
 export function revealedNewsTopics(state,event,{flash=false}={}){
- if([1,2,3].includes(state.historical?.version))return [];
+ if([1,2,3,4].includes(state.historical?.version))return [];
  const beat=Number.isInteger(state.beat)?state.beat:0;
  // Prefer the already delivered record. Old saves may retain only flashShown;
  // then the caller's current visible event supplies id/chain, never its outcome.

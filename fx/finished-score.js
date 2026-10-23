@@ -1,9 +1,9 @@
-import {lotteryScoreFields} from './lottery-ranking.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {lotteryScoreFields} from './lottery-ranking.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}
@@ -15,7 +15,7 @@ const cents=n=>Math.round((n+Number.EPSILON)*100)/100;
 function projectLeaderboardScore(state,report,{storage,live=false,includeVolatility=false}={}){
  if(isSharedReplay(state))throw Object.assign(Error('Shared replay is excluded from ranking'),{code:'shared-replay'});
  if(hasHistoricalSimulation(state))throw Object.assign(Error('含模拟补接的历史局不提交真实成绩'),{code:'mixed-historical'});
- const eligible=live?{eligible:![2,3].includes(state?.historical?.version)&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
+ const eligible=live?{eligible:![2,3,4].includes(state?.historical?.version)&&state?.phase!=='ending'&&report?.gameFinished===false&&!hasDevelopmentTaint(state,storage)&&report?.eligibility?.developmentTaint===false,reason:'ineligible'}:terminalRankingEligibility(state,report,storage);
  if(!eligible.eligible)throw Object.assign(Error(eligible.reason==='developer'?'开发测试局不能自动上榜':'本局尚不可自动上榜'),{code:eligible.reason});
  if(report.schemaVersion!=='1.0.0'||!['story','endless'].includes(report.mode)||report.mode!==state.mode)throw Error('终局成绩版本或模式不正确');
  if(!live&&((state.positions?.length||state.position)||report.account?.openPositions?.length))throw Error('尚有未平仓订单，不能提交终局成绩');

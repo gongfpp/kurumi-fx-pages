@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "e334df457a8010281b76b74406fa77069f96d880",
-  "assetVersion": "e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717",
+  "sourceCommit": "7a839b5792d6dcf1fed62b676f05ec286e587c37",
+  "assetVersion": "7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -12,9 +12,9 @@
   "retainedHistory": null,
   "privatePrototypeExcluded": true,
   "startup": {
-    "appStaticModules": 339,
-    "appStaticBytes": 2587780,
-    "preloadCount": 94,
+    "appStaticModules": 351,
+    "appStaticBytes": 2652508,
+    "preloadCount": 102,
     "preloadPaths": [
       "pixel-bootstrap.js",
       "app.js",
@@ -66,6 +66,12 @@
       "hall-metrics.js",
       "historical-day-clock.js",
       "historical-evidence.js",
+      "historical-m15-aggregate.js",
+      "historical-m15-engine-adapter.js",
+      "historical-m15-from-ticks.js",
+      "historical-m15-path.js",
+      "historical-m15-replay.js",
+      "historical-m15-source.js",
       "historical-opening.js",
       "historical-replay.js",
       "history-continuation.js",
@@ -90,6 +96,7 @@
       "manga-context.js",
       "manga-panels.js",
       "market-book.js",
+      "market-rules.js",
       "market.js",
       "moving-average.js",
       "multi-history-state.js",
@@ -104,6 +111,7 @@
       "shared-replay-state.js",
       "skit-dialogue.js",
       "skit-outcome.js",
+      "stamina-usage.js",
       "stamina.js",
       "story-content.js",
       "story.js",
@@ -154,7 +162,7 @@
       "./fx/lottery.css",
       "./fx/approved-mobile-layout.css"
     ],
-    "stylesheetBytes": 410204
+    "stylesheetBytes": 410469
   },
   "manga": {
     "scope": "approved-panels-chapter-disabled",

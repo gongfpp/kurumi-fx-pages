@@ -1,5 +1,5 @@
-import {EVENTS,COMMON_KEYS,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {experienceSource} from './experience-policy.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {EVENTS,COMMON_KEYS,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {experienceSource} from './experience-policy.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 export {experienceSource as analyticsSource};
 export const A_KEYS=Object.freeze({consent:'fx-api-v1-analytics-a-consent',visitor:'fx-api-v1-analytics-a-visitor',session:'fx-api-v1-analytics-a-session',queue:'fx-api-v1-analytics-a-queue',budget:'fx-api-v1-analytics-a-budget'});
 const object=x=>!!x&&typeof x==='object'&&!Array.isArray(x);

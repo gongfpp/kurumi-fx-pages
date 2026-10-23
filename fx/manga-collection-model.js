@@ -1,20 +1,20 @@
-import {LIFE_SCENE_ART_ENTRIES} from './life-scene-art-assets.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {ASSET_USAGE_CATALOG} from './asset-usage-catalog.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {ACHIEVEMENTS,normalizeAchievementProfile} from './achievements.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {achievementManga} from './manga-achievements.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {MANGA_PANELS} from './manga-panels.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {OPENING_PAGES} from './opening-story.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {CHARACTER_STORY_NODES} from './character-story-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {FIRSTDAY_BACKSTORY_NODES} from './contextual-manga-firstday-backstory.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {LINK_DAILY_NODES} from './contextual-manga-links-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {VERIFIED_DAILY_NODES} from './contextual-manga-verified-daily.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {LIFE_SCENE_ART_ENTRIES} from './life-scene-art-assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {ASSET_USAGE_CATALOG} from './asset-usage-catalog.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {ACHIEVEMENTS,normalizeAchievementProfile} from './achievements.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {achievementManga} from './manga-achievements.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {OPENING_PAGES} from './opening-story.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {CHARACTER_STORY_NODES} from './character-story-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {CONTEXTUAL_MANGA_NODES} from './contextual-manga-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES} from './contextual-manga-firstday-backstory.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {LINK_DAILY_NODES} from './contextual-manga-links-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {VERIFIED_DAILY_NODES} from './contextual-manga-verified-daily.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
-import {mangaLibrarySceneContext} from './manga-library-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {mangaLibrarySceneContext} from './manga-library-context.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const nodes=[...FIRSTDAY_BACKSTORY_NODES,...BORROWING_CONTINUATION_NODES,...LINK_DAILY_NODES,...REVERSAL_DAILY_NODES,...CHARACTER_STORY_NODES,...CONTEXTUAL_MANGA_NODES,...DAILY_EXTENSION_NODES,...VERIFIED_DAILY_NODES];

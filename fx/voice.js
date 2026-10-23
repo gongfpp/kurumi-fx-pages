@@ -1,8 +1,8 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {VoiceTimingGate} from './voice-timing.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {assetURL} from './assets.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {VoiceTimingGate} from './voice-timing.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {assetURL} from './assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
@@ -26,14 +26,14 @@ export const VOICE_LINES=Object.freeze([
  clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
  clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
 // Gameplay voice is strictly manual. sync observes validity; it never starts audio.
 export class VoicePlayer{
- constructor({makeAudio=()=>new Audio(),onUpdate=()=>{},onPlay=()=>{},onReject=()=>{},lines=VOICE_LINES,now=()=>Date.now(),maxLoadMs=3000}={}){
-  this.lines=lines;this.makeAudio=makeAudio;this.envelope=new AudioEnvelope({now});this.fading=new Set();
-  this.onUpdate=onUpdate;this.onPlay=onPlay;this.onReject=onReject;this.now=now;this.maxLoadMs=maxLoadMs;
+ constructor({makeAudio=()=>new Audio(),onUpdate=()=>{},onPlay=()=>{},onReject=()=>{},lines=VOICE_LINES,now=()=>Date.now(),maxLoadMs=3000,schedule=(fn,ms)=>{const timer=setTimeout(fn,ms);timer.unref?.();return timer;},cancel=id=>clearTimeout(id)}={}){
+  this.lines=lines;this.makeAudio=makeAudio;this.envelope=new AudioEnvelope({now});this.fading=new Set();this.abandoned=new WeakSet();
+  this.onUpdate=onUpdate;this.onPlay=onPlay;this.onReject=onReject;this.now=now;this.maxLoadMs=maxLoadMs;this.schedule=schedule;this.cancel=cancel;this.pending=null;
   this.presentation=null;this.playing=false;this.loading=false;this.lastError=null;this.generation=0;this.sequence={};this.lastMood=null;this.lastRun=null;
   this.unlocked=false;this.failed=new Set();this.timing=new VoiceTimingGate();this.hasContext=false;this.activeToken=null;
   this.audio=this.configureAudio(makeAudio());
@@ -49,6 +49,10 @@ export class VoicePlayer{
  unlock(){this.unlocked=true;this.lastError=null;return true;}
  stop({fadeMs=VOICE_STOP_FADE_MS}={}){
   const audio=this.audio,wasPlaying=this.playing;++this.generation;
+  this.pending?.cancel();
+  // A page suspension cannot rely on fade timers running. It also owns tails
+  // from earlier replacements, which may no longer be the current element.
+  if(fadeMs<=0)for(const outgoing of [...this.fading])if(outgoing!==audio){this.envelope.stop(outgoing);outgoing.volume=0;outgoing.pause();this.fading.delete(outgoing);this.envelope.dispose(outgoing);}
   this.playing=false;this.loading=false;this.lastError=null;this.presentation=null;this.activeToken=null;
   const finish=()=>{this.envelope.stop(audio);audio.volume=0;audio.pause();this.fading.delete(audio);if(audio!==this.audio)this.envelope.dispose(audio);this.onUpdate();};
   if(wasPlaying&&audio.paused!==true&&fadeMs>0){this.fading.add(audio);this.envelope.fadeOut(audio,{duration:fadeMs,onComplete:finish});}
@@ -57,7 +61,7 @@ export class VoicePlayer{
  accepts(line,token){return !token||this.timing.valid(token)&&voiceSceneMatches(line,this.timing.manualToken(this.now()),{stage:'manual'});}
  async start(line,speechId,emotion,token=null){
   if(!this.unlocked||!line||this.failed.has(line.id)||!this.accepts(line,token))return false;
-  const previous=this.audio,replacing=!!this.presentation||this.loading||this.playing||this.fading.has(previous);this.stop();
+  const previous=this.audio,replacing=!!this.presentation||this.loading||this.playing||this.fading.has(previous)||this.abandoned.has(previous);this.stop();
   if(replacing){
    const next=this.makeAudio();
    // Real playback gets a fresh element so a new explicit request can keep its
@@ -68,17 +72,32 @@ export class VoicePlayer{
   }
   const audio=this.audio,gen=this.generation,requestedAt=this.now();audio.src=line.file;audio.currentTime=0;
   const envelope=this.envelope.prepare(audio,{target:.5,...recordedVoiceEnvelope(line)});
+  // pause() need not settle a browser's pending play() promise. Own its deadline
+  // and cancellation so abandoned loads cannot leave callers or controls stuck.
+  let timer=null,settled=false,resolvePlayback;
+  const playback=new Promise(resolve=>resolvePlayback=resolve);
+  const finish=result=>{if(settled)return;settled=true;if(timer!==null)this.cancel(timer);if(this.pending===request)this.pending=null;resolvePlayback(result);};
+  const request={cancel:()=>{if(!settled)this.abandoned.add(audio);finish(false);}};this.pending=request;
   this.activeToken=token;this.presentation={...line,mood:emotion,speechId};this.loading=true;this.onUpdate();
-  try{
-   if(gen!==this.generation||!this.accepts(line,token))return false;
-   await audio.play();
-   if(gen!==this.generation){if(audio!==this.audio||!this.presentation){audio.pause();audio.volume=0;}return false;}
-   if(!this.accepts(line,token)||this.now()-requestedAt>this.maxLoadMs){this.stop({fadeMs:0});this.lastError='stale';this.onUpdate();return false;}
-   this.envelope.start(audio,envelope);this.loading=false;this.playing=true;this.onPlay(line);this.onUpdate();return true;
-  }catch(error){
+  const stale=()=>{if(settled)return;this.stop({fadeMs:0});this.lastError='stale';this.onUpdate();};
+  const reject=error=>{
    if(gen===this.generation){this.stop();this.lastError=error?.name==='NotAllowedError'?'blocked':'unavailable';if(error?.name==='NotAllowedError')this.unlocked=false;this.onReject(line);this.onUpdate();}
-   return false;
-  }
+   finish(false);
+  };
+  try{
+   if(gen!==this.generation||!this.accepts(line,token)){request.cancel();return false;}
+   timer=this.schedule(stale,this.maxLoadMs);
+   // Keep play() synchronous with the explicit gesture. Its eventual outcome is
+   // still observed after cancellation, without pausing a newer reused element.
+   Promise.resolve(audio.play()).then(()=>{
+    try{
+     if(gen!==this.generation){if(audio!==this.audio||!this.presentation){audio.pause();audio.volume=0;}finish(false);return;}
+     if(!this.accepts(line,token)||this.now()-requestedAt>this.maxLoadMs){stale();return;}
+     this.envelope.start(audio,envelope);this.loading=false;this.playing=true;this.onPlay(line);this.onUpdate();finish(true);
+    }catch(error){reject(error);}
+   },reject);
+  }catch(error){reject(error);}
+  return playback;
  }
  available(emotion=this.lastMood){
   const lines=this.lines.filter(line=>!this.failed.has(line.id));

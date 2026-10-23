@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "artifact": {
+    "path": "dist/fx/history-data/2014-02/m15-mid-derived-v1.json.gz",
+    "bytes": 101544,
+    "sha256": "4be072428ae410a1f56d3a1b2f59d9036303eb8f88db457c10aeda5129468aa8",
+    "plainBytes": 647494,
+    "plainSha256": "6963b37f80e96bbbf5e03bbf6f748800c0118ff7682865495fd83d461f03cc8e",
+    "sourceBinding": "06ceee93480ce351"
+  },
+  "input": {
+    "path": "dist/fx/history-data/2014-02/package.fxhistory.gz",
+    "bytes": 4916015,
+    "sha256": "bc75bc22cc39bc4226d2391d581edd19b6e14fefa4f09eacd7e0dfc608ff0b2a",
+    "plainBytes": 30003926,
+    "plainSha256": "be0c299bf10fe20ad23963fe2c39580e33a44fba9db6821fd279b18a6f5782a8",
+    "vendorSourceSha256": "ce78872e7bbdf883c99b32d6d9854dc9f6f564b78d1d4d095a57bf5c8a3caf35",
+    "vendorSourceHashStatus": "Inherited from the fixed existing package manifest; the original vendor CSV is not reread.",
+    "allDayBytesAndSha256Validated": true
+  },
+  "coverage": {
+    "jstDates": 24,
+    "firstJstDate": "2014-02-03",
+    "lastJstDate": "2014-03-01",
+    "observations": 949455,
+    "firstObservedAt": 1391378403273,
+    "lastObservedAt": 1393624799880,
+    "nominalM15Bars": 1920,
+    "nominalFrom": 1391378400000,
+    "nominalTo": 1393624800000,
+    "observationGaps": 83,
+    "gapClassifications": {
+      "unexplained_observation_gap": 80,
+      "weekend_closure_candidate": 3
+    },
+    "emptyM15Intervals": 576,
+    "verifiedClosures": 0
+  },
+  "metadata": {
+    "pair": "USD/JPY",
+    "canonicalTimeUnit": "milliseconds",
+    "canonicalDisplayTimeZone": "Asia/Tokyo",
+    "originalSourceTimeZone": "UTC-05:00",
+    "originalTimestampNote": "Fixed EST, no daylight-saving adjustment",
+    "priceUnit": "JPY per USD",
+    "sourceQuoteType": "bid-ask",
+    "referenceQuoteBasis": "midpoint accumulated independently from each canonical bid/ask tick",
+    "sourceSides": "Per-bar Bid and Ask OHLC, first/last actual timestamp and observation count retained in sourceBars.",
+    "gapPolicy": "No fabricated empty M15 bars. Every original >90-second gap retained; weekend candidates remain unverified, never upgraded to verified closure. Observed OHLC is not a claim of complete tick coverage.",
+    "pathModel": "fixed-24-linear-v1",
+    "pathSemantics": "Opening plus 24 deterministic 37.5-second anchors. Reference path is simulated, not genuine Bid/Ask ticks or a claim of professional lookahead-free backtesting. M1/M5 use exact boundary interpolation and interior anchor extrema; only reached portions are exposed.",
+    "boundaryOrder": "At a shared timestamp process the old M15 close first, then the next M15 open. Never merge the next open into the preceding bar."
+  },
+  "rights": {
+    "redistribution": "unverified",
+    "localOnly": true
+  },
+  "approvedUse": {
+    "decisionDate": "2026-10-23",
+    "scope": "Existing Kurumi anonymous game and existing audience only; deterministic USDJPY M15 derivation and simulated intrabar reference path.",
+    "sourceRightsUnchanged": true,
+    "newAudienceOrUnrestrictedRedistributionApproved": false
+  }
+}

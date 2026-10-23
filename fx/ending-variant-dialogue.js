@@ -1,6 +1,6 @@
-import {ENDING_VARIANT_DIALOGUES} from './copy/ending-variant-dialogues.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {selectEndingVariantArt} from './ending-variant-art.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {createSkitLine} from './skit-dialogue.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {ENDING_VARIANT_DIALOGUES} from './copy/ending-variant-dialogues.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {selectEndingVariantArt} from './ending-variant-art.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 export {ENDING_VARIANT_DIALOGUES};
 
 // Only the existing sealed report selects a variant. Dialogue never classifies

@@ -1,13 +1,14 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
 function validExecutionTimeSource(state,trade){
  if(trade.timePrecision==='game-clock')return !trade.historicalQuote&&!trade.marketSegment;
- if(![1,2,3].includes(state.historical?.version))return false;
+ if(![1,2,3,4].includes(state.historical?.version))return false;
  const segment=safeHistoricalSegmentEvidence(trade.marketSegment);
  if(trade.marketSegment&&(!segment||segment.timestamp!==trade.timestamp||!hasHistoricalSimulation(state)))return false;
  if(trade.timePrecision==='historical-quote')return safeHistoricalTradeEvidence(trade)?.sourceTimestamp===trade.timestamp&&(!segment||segment.source==='historical');
+ if(trade.timePrecision==='m15-simulated-path')return state.historical?.version===4&&safeHistoricalTradeEvidence(trade)?.sourceTimestamp===trade.timestamp&&(!segment||segment.source==='historical');
  return trade.timePrecision==='simulated-continuation'&&segment?.source==='simulated'&&segment.timestamp===trade.timestamp;
 }
 

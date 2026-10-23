@@ -1,15 +1,15 @@
-import {isLiveMarket} from './live-market-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {activeMarket} from './market-book.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {displayCandles,candlePeriodNotice} from './candle-period.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {readRunStatistics} from './run-statistics.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {consumptionStatement} from './consumption-ledger.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {movingAverageSeries} from './moving-average.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {runPerformance} from './performance.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {displayCandles,candlePeriodNotice} from './candle-period.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {readRunStatistics} from './run-statistics.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {consumptionStatement} from './consumption-ledger.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {movingAverageSeries} from './moving-average.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {runPerformance} from './performance.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {accountingValues,dayOpeningPoint} from './accounting-journal.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {accountingDaySampled,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {timedCandles,reportTradingTimestamp,currentTradingTimestamp,tradingTimestamp,tradingTimeNotice} from './trading-time.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const amount=n=>Math.round(n*100)/100;
 const ratio=(n,d)=>Number.isFinite(n)&&Number.isFinite(d)&&d>0?n/d:null;
@@ -68,7 +68,7 @@ export function buildRecapSnapshot(state={},options={}){
   cumulative:{realizedProfit:totalProfit,returnRate:totalReturn,returnDenominator:cumulativeDenominator,returnBasis:'累计收益率 = 累计已实现净盈亏 ÷ 初始本金'},
   account:{nominalAssets:closing,netAssets:currentValues.netAssets,debt:currentValues.debt,unrealized:currentValues.unrealized},
   consumption:consumptionStatement(state,report),
-  curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial,todaySampled,todayMissing:!!todayMissing,cumulativePartial:!!journal?.legacyPartial||!journal||hasEarlierGap||missingTradingDays>0,missingDailyCount,missingTradingDays,unit:'日元 / ¥',timeUnit:isLiveMarket(state)?'报价时间 · JST':hasHistoricalSimulation(state)?'混合行情时间 · JST':[1,2,3].includes(state.historical?.version)?'历史行情时间 · JST':'游戏交易时间 · JST'},
+  curves:{basis:'trading',today:tradingToday,cumulative:tradingCumulative,todayPartial,todaySampled,todayMissing:!!todayMissing,cumulativePartial:!!journal?.legacyPartial||!journal||hasEarlierGap||missingTradingDays>0,missingDailyCount,missingTradingDays,unit:'日元 / ¥',timeUnit:isLiveMarket(state)?'报价时间 · JST':hasHistoricalSimulation(state)?'混合行情时间 · JST':[1,2,3,4].includes(state.historical?.version)?'历史行情时间 · JST':'游戏交易时间 · JST'},
   replay:{observations,partial:points.some(x=>!Number.isFinite(x.unrealized)||!Number.isFinite(x.tradingAssets))||todayPartial,sampled:todaySampled,missing:!!todayMissing},
   trades:readRunStatistics(state).trades.filter(t=>t.day===state.day).map(t=>({...t})),
   chartSymbol:activeMarket(state),candles:allCandles.filter(c=>c.day===state.day),candleMovingAverages,timeNotice:candlePeriodNotice(state),
@@ -85,4 +85,4 @@ export function recapIntensity(snapshot){
  const magnitude=Math.abs(snapshot.primary.profit),relative=Math.abs(snapshot.primary.returnRate||0);
  return Math.min(1,Math.max(Math.log10(1+magnitude)/7,Math.min(1,relative/2)));
 }
-export {recapChoices} from './recap-choices.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+export {recapChoices} from './recap-choices.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';

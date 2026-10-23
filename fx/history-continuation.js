@@ -1,4 +1,4 @@
-import {simulationCalibration} from './quote-grid.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {simulationCalibration} from './quote-grid.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 const MINUTE=60000,SYMBOLS=['USD/JPY','AUD/JPY','GBP/JPY'];
 const active=s=>s.marketBook?.active||'USD/JPY';
 const price=(s,symbol)=>symbol===active(s)?s.price:s.marketBook?.markets?.[symbol]?.price;
@@ -9,6 +9,12 @@ export const historicalEffectiveTime=s=>historicalSimulationActive(s)?s.historyC
 export const historicalMarkIsSimulated=(s,symbol=active(s))=>s?.historyContinuation?.origins?.[symbol]==='simulated';
 export function historicalSourcePresentation(s){
  if(!s?.historical||s.liveMarket)return null;
+ if(s.historical.version===4){
+  if(historicalSimulationActive(s))return s.historyContinuation.reason==='exhausted'
+   ?{label:'模拟续盘',description:'历史数据已结束，现从最后参考价格模拟续盘；此前使用历史15分钟线和段内模拟。'}
+   :{label:'历史 M15 · 含模拟补接',description:'采用历史15分钟线和固定种子的段内模拟；部分缺口另用模拟补接。'};
+  return {label:'历史 M15 · 段内模拟',description:'15分钟线来自历史报价；段内为固定种子模拟，1／5分钟线由同一路径模拟合成，并非真实逐笔行情或专业回测。'};
+ }
  if(historicalSimulationActive(s))return s.historyContinuation.reason==='exhausted'
   ?{label:'模拟续盘',description:'历史数据已结束，现从最后真实价格模拟续盘。'}
   :{label:'历史 · 模拟补接',description:'部分行情使用模拟补接；恢复历史报价后，本局仍标记含模拟。'};
@@ -22,6 +28,8 @@ export function historicalSourceNotice(s){
 }
 export function startHistoricalContinuation(s,reason='loading'){
  if(!s.historical||s.liveMarket)return false;
+ // A story sleep waits for an actual opening. Loading is not watched time.
+ if(s.historical.sleepTransition)return false;
  const raw=s.historical.lastQuote;if(!Array.isArray(raw)||!Number.isSafeInteger(raw[0])||raw[0]<=0||!Number.isFinite(raw[1])||raw[1]<=0||s.historical.version===1&&(!Number.isFinite(raw[2])||raw[2]<raw[1]))return false;
  let c=s.historyContinuation;
  if(!c){const at=s.historical.lastQuote?.[0];if(!Number.isSafeInteger(at))return false;

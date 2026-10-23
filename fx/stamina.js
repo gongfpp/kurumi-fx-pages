@@ -1,6 +1,7 @@
-import {historicalBillingDay} from './historical-replay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
 // 16 x 15 minutes: calm watching spends 40 points. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;
@@ -45,7 +46,7 @@ export function tradingDayDurationMinutes(state={}){
   const opening=state.liveMarket.openingAt;
   return Number.isFinite(opening)?(Math.floor(opening/60000)*60000+beats*4*60000-opening)/60000:beats*4;
  }
- if([1,2,3].includes(state.historical?.version)){
+ if([1,2,3,4].includes(state.historical?.version)){
   const clock=historicalBillingDay(state);
   return clock?(clock.to-clock.from)/60000:null;
  }
@@ -61,6 +62,7 @@ export function consumeTradingStamina(state,{minutes,emotion='calm',sampleId,act
  const stamina=ensureStamina(state);
  if(staminaFatigueActive(state))return{applied:false,spent:0,...staminaStatus(state)};
  if(stamina.lastSample===sampleId)return{applied:false,alreadyApplied:true,spent:0,...staminaStatus(state)};
+ const usageBefore=staminaUsageCounters(stamina);
  const progress=tradingDayProgress(state),duration=Math.min(1-progress,minutes*staminaWatchCostPerMinute(state,dayDurationMinutes)/WATCH_POLICY.calmDayCost);
  const energyCost=energyCostForDuration(state,duration);
  stamina.progressDay=state.day;stamina.dayProgress=Math.min(1,progress+duration);
@@ -71,6 +73,7 @@ export function consumeTradingStamina(state,{minutes,emotion='calm',sampleId,act
  // Carry only rounding error, never an unaffordable charge through exhaustion.
  stamina.watchRoundingCarry=stamina.value===0||rawWanted>before||roundedWanted>before?0:withCarry-roundedWanted;
  if(before>0&&stamina.value===0)queueStaminaFatigue(state);
+ recordStaminaUsage(state,usageBefore,'watch');
  return{applied:true,spent:before-stamina.value,...staminaStatus(state)};
 }
 function changeStamina(state,{amount,id,source},direction){
@@ -78,11 +81,12 @@ function changeStamina(state,{amount,id,source},direction){
  const stamina=ensureStamina(state),prior=stamina.recoveryReceipts.find(row=>row.id===id);
  if(prior)return{...prior,applied:false,alreadyApplied:true};
  if(direction<0&&stamina.value<amount)return{applied:false,alreadyApplied:false,reason:'insufficient-stamina',before:stamina.value,after:stamina.value,amount:0};
+ const usageBefore=staminaUsageCounters(stamina);
  const before=stamina.value,after=round(Math.max(0,Math.min(STAMINA_RULES.max,before+direction*amount))),delta=round(after-before);
  const receipt={id,source,amount,before,after,delta};stamina.value=after;
  if(after===0&&stamina.watchRoundingCarry!==undefined)stamina.watchRoundingCarry=0;
  if(direction>0)stamina.recovered=round(stamina.recovered+delta);else stamina.spent=round(stamina.spent-delta);
- stamina.recoveryReceipts.push(receipt);return{...receipt,applied:true,alreadyApplied:false};
+ stamina.recoveryReceipts.push(receipt);recordStaminaUsage(state,usageBefore,source);return{...receipt,applied:true,alreadyApplied:false};
 }
 export function recoverStamina(state,options={}){return changeStamina(state,options,1);}
 export function consumeStamina(state,options={}){return changeStamina(state,options,-1);}
@@ -121,7 +125,8 @@ export function recoverStaminaFatigue(state){
  const stamina=ensureStamina(state),event=stamina.fatigue;
  if(!event||event.phase!=='closing'||event.recovered)return false;
  // Preserve an explicit recovery (food/rest) made during this episode.
- const before=stamina.value;stamina.value=Math.max(before,STAMINA_FATIGUE.recovery);stamina.recovered=round(stamina.recovered+stamina.value-before);
+ const usageBefore=staminaUsageCounters(stamina);
+ const before=stamina.value;stamina.value=Math.max(before,STAMINA_FATIGUE.recovery);stamina.recovered=round(stamina.recovered+stamina.value-before);recordStaminaUsage(state,usageBefore,'fatigue');
  event.recovered=true;event.phase='advancing';return true;
 }
 export function completeStaminaFatigue(state,{reason='target',at}={}){

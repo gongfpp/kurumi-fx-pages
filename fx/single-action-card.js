@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
@@ -31,7 +31,7 @@ const ICONS={
   door:'<svg viewBox="0 0 48 52" aria-hidden="true"><path d="M6 49V6l28-4v47Z" fill="#deacb0" stroke="#91466e" stroke-width="2.5"/><path d="M34 3h5v46H6" fill="none" stroke="#c67a9a" stroke-width="2.5"/><circle cx="28" cy="28" r="2" fill="#fff0d7"/><path d="m40 11 4-3m-3 10h5m-6 6 4 3" fill="none" stroke="#f24898" stroke-width="2.5" stroke-linecap="round"/></svg>'
 };
 
-export function mountSingleActionCard({root=document,getModel=()=>({}),closeControl,onRest=()=>{},onFinishDay=()=>{},motionEnabled=()=>true}={}) {
+export function mountSingleActionCard({root=document,getModel=()=>({}),closeControl,onRest=()=>{},onFinishDay=()=>{},onStaminaDetails=()=>{},motionEnabled=()=>true}={}) {
   const win=root.defaultView,listeners=[];
   const make=(tag,className,text)=>{const node=root.createElement(tag);node.className=className;if(text!==undefined)node.textContent=text;return node;};
   const slot=make('div','single-action-slot'),card=make('aside','single-action-card'),icon=make('span','single-action-icon');
@@ -43,13 +43,15 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
   close.setAttribute('aria-label','按当前报价平掉全部持仓');dismiss.setAttribute('aria-label','关闭本轮操作提醒');
   const meter=make('div','pixel-stamina'),label=make('div','pixel-stamina-label'),number=make('b','pixel-stamina-value'),stateLabel=make('span','pixel-stamina-state');
   const track=make('div','pixel-stamina-track'),fill=make('span','pixel-stamina-fill');
-  label.append(make('span','pixel-stamina-caption','体力'),number,stateLabel);track.append(fill);meter.append(label,track);
+  const staminaDetails=make('button','pixel-stamina-caption','体力明细');staminaDetails.type='button';staminaDetails.setAttribute('aria-label','查看今日体力消耗与恢复明细');
+  label.append(staminaDetails,number,stateLabel);track.append(fill);meter.append(label,track);
   const energyHint=make('small','energy-stage-hint');energyHint.setAttribute('role','status');meter.append(energyHint);
   track.setAttribute('role','progressbar');track.setAttribute('aria-label','体力');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
   const eyelids=make('div','stamina-eyelids');eyelids.setAttribute('aria-hidden','true');eyelids.hidden=true;
   eyelids.append(make('div','stamina-eyelid stamina-eyelid-top'),make('div','stamina-eyelid stamina-eyelid-bottom'));
   let disposed=false,view=null,dismissedKey=null,lastViewKey=null,busy=false,restArmed,blinkTimer=null,blinkEnd=null,blinkContext=null,pointerActive=false;
   const listen=(node,type,fn,options)=>{node?.addEventListener?.(type,fn,options);listeners.push(()=>node?.removeEventListener?.(type,fn,options));};
+  listen(staminaDetails,'click',()=>{if(!root.hidden&&!closeAllModalOpen(root))onStaminaDetails();});
   const pixel=()=>root.body.dataset.frontend==='pixel';
   const available=()=>!disposed&&pixel()&&!root.hidden&&!closeAllModalOpen(root);
   const text=(node,value)=>{if(node.textContent!==value)node.textContent=value;};

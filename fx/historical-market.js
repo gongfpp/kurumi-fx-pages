@@ -1,15 +1,15 @@
-import {MultiHistoryProvider} from './multi-history-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {acquireGameHistory} from './history-game.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {selectHistoricalOpening} from './historical-opening.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-const publicGameHistory=h=>h.version===1&&h.datasetId==='histdata-usdjpy-201402'&&h.date.startsWith('2014-02-');
+import {MultiHistoryProvider} from './multi-history-provider.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {acquireGameHistory} from './history-game.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {selectHistoricalOpening} from './historical-opening.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+const publicGameHistory=h=>[1,4].includes(h.version)&&h.datasetId==='histdata-usdjpy-201402'&&h.date.startsWith('2014-02-');
 const sameSavedSource=(m,h)=>m?.id===h.datasetId&&String(m.version)===h.sourceVersion&&m.source?.sha256===h.sourceHash&&m.days?.some(day=>day.date===h.date&&day.sha256===h.dayHash);
 export class HistoricalMarketLibrary{
  constructor({baseURL=new URL('./',import.meta.url),fetch=globalThis.fetch,acquireHistory=acquireGameHistory,listHistoricalPackages=listImportedHistoricalPackages}={}){this.baseURL=baseURL;this.fetch=(...args)=>fetch(...args);this.acquireHistory=acquireHistory;this.listHistoricalPackages=listHistoricalPackages;this.datasets=[];this.providers=new Map();this.recovery=null;}
@@ -35,7 +35,7 @@ export class HistoricalMarketLibrary{
    // Imported packages may be restored under a different local storage URL.
    // Reuse only an identical source, version and source-day hash; binding below
    // still validates the saved cursor and its exact last observed quote.
-   if(h.version!==1||!d.local||d.research)return false;
+   if(![1,4].includes(h.version)||!d.local||d.research)return false;
    const m=this.providers.get(d.manifestURL)?.manifest;
    return sameSavedSource(m,h);
   });
@@ -65,7 +65,11 @@ export class HistoricalMarketLibrary{
    // Simulated continuation can finish a game day during a slow load. Never
    // bind the previous source day to a state that has already moved forward.
    if(h.date!==date||h.dayHash!==dayHash)continue;
-   bindHistoricalDay(state,p.manifest,data);delete h.error;return;
+   bindHistoricalDay(state,p.manifest,data);delete h.error;
+   // A restored sleep may first bind its closing source, then request the next
+   // source day. Resolve both without exposing a partial opening to trading.
+   if(h.sleepTransition&&h.status==='loading')continue;
+   return;
   }
  }
 }

@@ -1,12 +1,12 @@
-import {validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {inspectLifeSceneCatalog,lifeSceneMatches} from './life-scene-schema.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {validLifeActions,lifeActionReceipt,lifeFriendKnown,lifeActionRunId,lifeActionDefinition} from './life-actions.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {dailyRoutineSceneAllowed} from './daily-narrative-facts.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 export function currentLifeSceneReceipt(state){
  if(state?.mode!=='story'||state.position||state.positions!==undefined&&!Array.isArray(state.positions)||!sealedDailyMangaOutcome(state)||!validLifeActions(state))return null;
  const receipt=lifeActionReceipt(state);

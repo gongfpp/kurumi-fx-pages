@@ -1,5 +1,5 @@
-import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {historicalEffectiveTime} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isLiveMarket,liveTimestamp} from './live-market-state.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {historicalEffectiveTime} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 // A deterministic fictional market clock. Playback milliseconds never enter it.
 const MINUTE=60000,DAY=86400000;
 export const TRADING_CLOCK_VERSION=1;
@@ -20,7 +20,7 @@ export function tradingTimestamp(state,{day=state.day||1,beat=0,candle=0,tick=0}
  if(isLiveMarket(state))return day===state.day?state.liveMarket.openingAt??liveTimestamp(state):state.accountingJournal?.days?.find(row=>row.day===day)?.timestamp??null;
  // Historical sessions have source timestamps, never the fictional session grid.
  // During a next-day load, lastQuote still belongs to the preceding source day.
- if([1,2,3].includes(state.historical?.version)){
+ if([1,2,3,4].includes(state.historical?.version)){
   const h=state.historical;
   if(state.historyContinuation?.progressDay===day&&Number.isFinite(state.historyContinuation.dayOpeningAt))return state.historyContinuation.dayOpeningAt;
   if(day===state.day&&h.cursor>0&&Number.isFinite(h.dayOpeningAt))return h.dayOpeningAt;
@@ -43,7 +43,7 @@ function lastObservedTimestamp(state,day=state.day,cursor=state.pending||state.e
 export function currentTradingTimestamp(state){
  if(isLiveMarket(state))return state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase)&&Number.isFinite(state.dayReport.closedAt)?state.dayReport.closedAt:liveTimestamp(state);
  if(Number.isFinite(historicalEffectiveTime(state)))return state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase)&&Number.isFinite(state.dayReport.closedAt)?state.dayReport.closedAt:historicalEffectiveTime(state);
- if([1,2,3].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
+ if([1,2,3,4].includes(state.historical?.version)&&Number.isFinite(state.historical.lastQuote?.[0]))return state.historical.lastQuote[0];
  if(state.dayReport?.day===state.day&&['day_end','resting','ending'].includes(state.phase))return reportTradingTimestamp(state,state.dayReport);
  if(state.earlyClose?.day===state.day&&state.phase==='closing')return Number.isFinite(state.earlyClose.timestamp)?state.earlyClose.timestamp:tradingTimestamp(state,state.earlyClose);
  if(state.tradingClock&&state.tradingClock.lastQuoteDay===state.day&&Number.isFinite(state.tradingClock.lastQuoteAt))return state.tradingClock.lastQuoteAt;
@@ -56,7 +56,7 @@ export function currentTradingTimestamp(state){
 export function reportTradingTimestamp(state,report=state.dayReport){
  if(isLiveMarket(state))return Number.isFinite(report?.closedAt)?report.closedAt:liveTimestamp(state);
  if(Number.isFinite(report?.closedAt))return report.closedAt;
- if([1,2,3].includes(state.historical?.version))return report?.day===state.day||!report?historicalEffectiveTime(state)??state.historical.lastQuote?.[0]??null:state.accountingJournal?.days?.find(row=>row.day===report.day)?.timestamp??null;
+ if([1,2,3,4].includes(state.historical?.version))return report?.day===state.day||!report?historicalEffectiveTime(state)??state.historical.lastQuote?.[0]??null:state.accountingJournal?.days?.find(row=>row.day===report.day)?.timestamp??null;
  if(report?.earlyClose)return Number.isFinite(report.earlyClose.timestamp)?report.earlyClose.timestamp:lastObservedTimestamp(state,report.day,report.earlyClose)??tradingTimestamp(state,report.earlyClose);
  return tradingTimestamp(state,{day:report?.day||state.day||1,beat:Math.max(0,(report?.beat||4)-1),candle:3,tick:6});
 }
@@ -95,4 +95,4 @@ export function timeAxisTicks(points,{maxTicks=5,showDate=false}={}){
 }
 export const TRADING_TIME_NOTICE='JST · 15分钟 K线';
 
-export const tradingTimeNotice=state=>isLiveMarket(state)?'报价时间 · JST · 已接收的一分钟观察线':[2,3].includes(state.historical?.version)?'JST · 1分钟已完成线':TRADING_TIME_NOTICE;
+export const tradingTimeNotice=state=>isLiveMarket(state)?'报价时间 · JST · 已接收的一分钟观察线':state.historical?.version===4?'JST · 历史15分钟线 · 段内模拟':[2,3].includes(state.historical?.version)?'JST · 1分钟已完成线':TRADING_TIME_NOTICE;

@@ -1,10 +1,10 @@
-import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {encodeSaveRaw,inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 let worker=null,nextId=0;const pending=new Map();
 function failWorker(){for(const task of pending.values()){clearTimeout(task.timer);task.reject(new Error('Save encoder unavailable'));}pending.clear();worker?.terminate();worker=null;}
 export function encodeProgress(currentRaw,previousRaw=null,{replacement=false}={}){
  // Plain small saves preserve existing scheduling and compatibility.
  const state=JSON.parse(currentRaw);
- if(!state?.historyContinuation&&![15,16,17].includes(state?.version)&&!replacement&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!(previousRaw!==null&&inspectSave(previousRaw).compressed))return currentRaw;
+ if(!state?.marketRules&&!state?.historyContinuation&&![15,16,17].includes(state?.version)&&!replacement&&currentRaw.length<SAVE_COMPRESSION_THRESHOLD&&!(previousRaw!==null&&inspectSave(previousRaw).compressed))return currentRaw;
  if(typeof globalThis.Worker!=='function')return encodeSaveRaw(currentRaw,previousRaw,{replacement});
  if(!worker){
   const url=new URL('./save-codec-worker.js',import.meta.url);url.search=new URL(import.meta.url).search;

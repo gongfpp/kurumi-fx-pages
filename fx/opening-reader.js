@@ -1,7 +1,21 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {setImage} from './assets.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {openingCompanionArt} from './opening-anime-stills.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {setImage} from './assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {openingCompanionArt} from './opening-anime-stills.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+
+// A render can supersede the opening snapshot in the save queue. Confirm the
+// exact page in this run's durable bytes, without turning a failed write into
+// success or changing the queue's per-ticket boolean contract.
+export function createOpeningProgressSave({getContext,save,restore}){
+  return async()=>{
+    const context=getContext(),{state,session,generation}=context,progress=JSON.stringify(state.openingProgress),run=state.runId;
+    if(await save())return true;
+    if(!['pending','saved'].includes(session.status)||!await session.whenSettled()||session.status!=='saved'||session.failure!==null)return false;
+    const current=getContext();if(current.state!==state||current.session!==session||current.generation!==generation)return false;
+    const durable=restore(session.raw);
+    return !!durable&&durable.mode===state.mode&&durable.runId===run&&JSON.stringify(durable.openingProgress)===progress;
+  };
+}
 
 export function mountOpeningReader({root=document,frame,getState,guard,save,onFinish,openSource,startingCapital=100000,targetProfit=20000000}){
   const $=id=>root.getElementById(id),dialog=$('opening-dialog'),footer=$('opening-nav');

@@ -1,5 +1,5 @@
-import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {historicalMarkIsSimulated,historicalEffectiveTime,historicalSimulationActive,startHistoricalContinuation} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {historicalMarkIsSimulated,historicalEffectiveTime,historicalSimulationActive,startHistoricalContinuation} from './history-continuation.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 const SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']),HASH=/^[a-f0-9]{64}$/;
 const fields=['price','script','candles','displayMinutes','displayMinutesPartial','lastEvent','swanSeen','dayOpeningPrice'];
 const feeds=new WeakMap();
@@ -7,6 +7,14 @@ const researchKeys=['timestampMeaning','quoteSide','availabilityModel','executio
 const sameResearch=(a,b)=>a&&b&&Object.keys(a).length===researchKeys.length&&Object.keys(b).length===researchKeys.length&&researchKeys.every(k=>a[k]===b[k]);
 export const isMultiHistory=s=>s?.historical?.version===3;
 export const hasMultiHistoryFeed=s=>feeds.has(s);
+// Kept outside saves; sleep uses the same verified source without executing it.
+export const multiHistoryFeed=s=>feeds.get(s);
+export const releaseMultiHistoryFeed=s=>feeds.delete(s);
+export function consumeMultiHistorySleepRow(s,row,day){
+ const gameDay=s.day;s.day=day;
+ try{const candle=consumeMultiHistoryEvent(s,row);for(const symbol of Object.keys(row.bars)){const c=s.marketBook.markets[symbol].candles.at(-1);if(c)c.sleepHistory=true;}return candle;}
+ finally{s.day=gameDay;}
+}
 const active=s=>s.marketBook?.active||'USD/JPY';
 export const multiHistoryTimestamp=(s,symbol=active(s))=>s.historical?.quotes?.[symbol]?.at??null;
 export const multiHistoryQuoteCurrent=(s,symbol=active(s))=>!isMultiHistory(s)||historicalMarkIsSimulated(s,symbol)&&historicalEffectiveTime(s)!==null||multiHistoryTimestamp(s,symbol)===(historicalEffectiveTime(s)??s.historical.lastQuote?.[0]);

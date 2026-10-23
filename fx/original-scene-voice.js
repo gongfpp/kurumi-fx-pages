@@ -1,8 +1,8 @@
-import {VOICE_LINES} from './voice.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {mountVoiceLibrary} from './voice-library.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {ORIGINAL_SCENE_VOICE_BINDINGS} from './original-scene-voice-bindings.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {VOICE_LINES} from './voice.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {mountVoiceLibrary} from './voice-library.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {ORIGINAL_SCENE_VOICE_BINDINGS} from './original-scene-voice-bindings.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
 
 const assetFor=record=>CONTEXTUAL_MANGA_ASSETS[record]||CHARACTER_STORY_ASSETS[record];
 const exactPath=(path,expected)=>path===expected||String(path).split(/[?#]/)[0].endsWith('/fx/'+expected.slice(2));
