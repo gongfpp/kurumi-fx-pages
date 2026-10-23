@@ -1,8 +1,8 @@
-import {LIBRARY_COPY} from './copy/library-ui.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {MARKET_COMMENTS} from './market-comments.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {eligibleOriginalComments} from './original-comment-scenes.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {MARKET_COMMENTS} from './market-comments.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {ORIGINAL_MARKET_COMMENTS} from './original-market-comments.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {eligibleOriginalComments} from './original-comment-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 export const COMMENT_REPEAT_GAP=30000;
 export const ORIGINAL_THEME_REPEAT_GAP=90000;
@@ -127,7 +127,16 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
  const catalogue=eligibleMarketComments(comments),seen=new Map(),seenThemes=new Map(),shownPlayerIds=new Set(),lanes=Array(4).fill(null);let playerPool=[],marketSincePlayer=0,marketSinceOriginal=1,cursor=0,originalCursor=0,laneCursor=0,clock=0,wall=null,paused=true,nextAt=0,key=null,reduced=null,active=[],datedPool=new Set();
  return{
   // Replace the public snapshot, rather than append on every poll or resume.
-  setPlayerComments(rows){playerPool=eligiblePlayerComments(rows);},
+  setPlayerComments(rows){
+   const previous=playerPool;playerPool=eligiblePlayerComments(rows);const current=new Map(playerPool.map(row=>[row.id,row]));
+   // Only a confirmed public snapshot reaches this method. Withdraw stale
+   // visible text too, retaining lane reservations so followers cannot collide.
+   const withdrawn=previous.filter(row=>{
+    const next=current.get(row.id);
+    return !next||next.playerText!==row.playerText||next.alias!==row.alias;
+   }).map(row=>row.id),ids=new Set(withdrawn);
+   active=active.filter(row=>!row.player||!ids.has(row.id));return withdrawn;
+  },
   update(state,{now=0,pause=false,reduce=false,width=400}={}){
    if(wall!==null&&!paused&&!pause)clock+=Math.max(0,Math.min(2000,now-wall)); // no replay after a sleeping tab
    wall=now;paused=pause;
@@ -177,7 +186,7 @@ export function createCommentSchedule({comments=MARKET_COMMENTS,originalComments
    if(row.source==='player'){shownPlayerIds.add(row.id);marketSincePlayer=0;}else marketSincePlayer=Math.min(3,marketSincePlayer+1);
    if(row.source==='fictional'){seenThemes.set(row.theme_id,clock);marketSinceOriginal=0;}else if(row.source!=='player')marketSinceOriginal=1;
    seen.set(commentRepeatKey(row),clock);lanes[lane]={origin:width,startedAt:clock,textWidth,expires:clock+duration,speed};
-   active.push({expires:clock+duration,id:row.id,dated:row.reuse_scope==='dated_personal_event'&&row.source!=='player'});
+   active.push({expires:clock+duration,id:row.id,dated:row.reuse_scope==='dated_personal_event'&&row.source!=='player',player:row.source==='player'});
    laneCursor=(lane+1)%activity.lanes;nextAt=clock+Math.max(activity.interval,reduce?30000:0);
    result.row={...row,lane,duration,textWidth,speed,origin:width,expires:clock+duration};return result;
   }
@@ -190,7 +199,10 @@ export function createInvestorDanmaku(root,{document=root.ownerDocument,now=()=>
  const removeLine=line=>{lines.get(line)?.cleanup();lines.delete(line);line.remove();};
  const clearLines=retained=>{for(const line of [...root.children])if(line!==retained)removeLine(line);};
  return{
-  setPlayerComments(rows){if(!disposed)schedule.setPlayerComments(rows);},
+  setPlayerComments(rows){
+   if(disposed)return;const withdrawn=new Set(schedule.setPlayerComments(rows));
+   for(const line of [...root.children])if(line.dataset.source==='player'&&withdrawn.has(line.dataset.commentId))removeLine(line);
+  },
   update(state,{paused=false,reducedMotion=false}={}){
    if(disposed)return;
    const effectivePaused=paused||root.contains?.(document.activeElement)===true;

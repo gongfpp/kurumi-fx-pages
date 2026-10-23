@@ -1,5 +1,5 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {mobileLifeViewport,renderMobileLifeChoices,renderMobileLifeCharacter} from './mobile-life-choices.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {mobileLifeViewport,renderMobileLifeChoices,renderMobileLifeCharacter} from './mobile-life-choices.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 /** Approved life menu. Presentation only: the owning app supplies live engine data
  * and guards every final choice. This module never owns game state or a clock. */
 export const LIFE_ACTION_CONSEQUENCE = '选定具体行动后结束今日交易，持仓自动平仓';
@@ -87,7 +87,7 @@ export function mountLifeActionPicker({document:doc=globalThis.document,getModel
    if(category==='relax'&&Number.isFinite(option.staminaRecovery))card.append(make('p','life-picker-work-details',`体力 +${option.staminaRecovery} · 压力 ${option.stressDelta>0?'+':''}${option.stressDelta||0}`));
    if(category==='work'&&Number.isFinite(option.income))card.append(make('p','life-picker-income',`本次预计收入 ¥${number(option.income)}`));
    if(category==='work'&&option.partialWork&&Number.isFinite(option.baseIncome))card.append(make('p','life-picker-work-details',`整份工作 ¥${number(option.baseIncome)} · 需${option.requiredStamina}体力`));
-   if(category==='work'&&Number.isFinite(option.staminaCost)){card.append(make('p','life-picker-work-details',`体力 −${option.staminaCost} · ${option.stressDelta>0?'压力 +'+option.stressDelta:'压力 '+option.stressDelta}`));card.append(make('p','life-picker-work-reward',`初次完成获得：${option.rewardLabel}`));}
+   if(category==='work'&&Number.isFinite(option.staminaCost)){card.append(make('p','life-picker-work-details',`体力 −${number(option.staminaCost)} · 压力 ${option.stressDelta>0?'+':''}${number(option.stressDelta)}`));card.append(make('p','life-picker-work-reward',`初次完成整份工作获得：${option.rewardLabel}`));}
    const disabled=busy||!statusOf(m).enabled||!option.enabled||stale(m),reason=option.reason||statusOf(m).reason;
    if(option.enabled)enabledCount++;
    if(!option.enabled&&reason)card.append(make('p','life-picker-option-reason',reason));

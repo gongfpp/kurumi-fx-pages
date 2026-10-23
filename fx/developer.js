@@ -1,6 +1,6 @@
-import {activeMarket,marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {tradingTimestamp} from './trading-time.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {activeMarket,marketSeed,captureMarket,renewMarketScripts} from './market-book.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {tradingTimestamp} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {equity,tradingProfit,planDay,mentalState,settleDay,beginRest,restoreGame,initialCapital,CANDLES_PER_BEAT,BEATS_PER_DAY} from './engine.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 const range=(value,min,max,label,integer=false)=>{
   if(!Number.isFinite(value)||value<min||value>max||integer&&!Number.isInteger(value))throw Error(`${label}需要在 ${min}～${max} 之间${integer?'，且为整数':''}`);

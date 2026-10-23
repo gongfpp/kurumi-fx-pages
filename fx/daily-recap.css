@@ -254,3 +254,8 @@ html:has(.daily-recap[data-animate=true]){overflow-x:clip}
 
 /* The percentage and its help travel together into the pixel account drawer. */
 .day-return-group{display:inline-flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:4px;min-width:0;max-width:100%}.day-return-group .return-formula{margin-left:0}.day-return-group .return-formula-trigger{min-width:28px!important;min-height:28px!important}.day-return-group .day-return{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+
+/* Approved C money columns; original amount slot and settlement layout stay. */
+.daily-recap[data-amount-animation="c"] .recap-counter .c-money-column{position:relative;display:inline-block;overflow:hidden;width:.61em;height:1.15em;vertical-align:top;line-height:1.15em;font-variant-numeric:tabular-nums}
+.daily-recap[data-amount-animation="c"] .recap-counter .c-money-track{display:block;position:absolute;inset:0 auto auto 0;width:100%;will-change:transform;line-height:1.15em}
+.daily-recap[data-amount-animation="c"] .recap-counter .c-money-cell{display:block;height:1.15em;line-height:1.15em;width:100%;text-align:center}

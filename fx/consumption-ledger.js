@@ -1,5 +1,5 @@
-import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {LIVING_CHOICE_COPY} from './copy/living-choices.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Consumption is a separate, itemized cash ledger. Legacy totals are retained;
 // missing old item names are never reconstructed from guesses.
 export const LIFESTYLES=Object.freeze([

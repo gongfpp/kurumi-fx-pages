@@ -1,7 +1,7 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {dailyReturnMetrics} from './daily-performance.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isSevereSettledLoss,settledMoodNeedsRecovery} from './settled-comic-art.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {dailyReturnMetrics} from './daily-performance.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 // Presentation reads the sealed day's result. Funding, wages and one winning
 // execution cannot change it, and a later win cannot clear retained trauma.
@@ -14,7 +14,8 @@ export function dailyNarrativeFacts(state){
  const severeLoss=isSevereSettledLoss(state,state.dayReport)||outcome.net<0&&Number.isFinite(basis)&&(basis<=0||outcome.net/basis<=-.2);
  const trades=Array.isArray(state.dayReport.trades)?state.dayReport.trades:[];
  const liquidation=trades.some(trade=>trade?.day===outcome.day&&trade.type==='liquidation'&&Number.isFinite(trade.pnl)&&trade.pnl<0);
- return {outcome,trauma,severeLoss,liquidation,needsConsequence:severeLoss||liquidation||trauma.active};
+ const emotionalDistress=settledMoodNeedsRecovery(state.dayReport.mood);
+ return {outcome,trauma,severeLoss,liquidation,emotionalDistress,needsConsequence:severeLoss||liquidation||trauma.active||emotionalDistress};
 }
 
 const lossStories=new Set(['holding-loss-companion','holding-loss','profit-fades','averaging-down-prayer']);
@@ -32,7 +33,7 @@ export function dailySceneFilterReason(state,scene){
  if(!facts.needsConsequence)return null;
  if(scene.consequenceTransition||scene.id==='daily-result'&&facts.outcome.kind==='loss')return null;
  if(facts.outcome.kind==='loss'&&lossStories.has(scene.id))return null;
- return facts.trauma.active?'trading-trauma-continuity':facts.liquidation?'liquidation-consequence-first':'severe-loss-consequence-first';
+ return facts.trauma.active?'trading-trauma-continuity':facts.liquidation?'liquidation-consequence-first':facts.severeLoss?'severe-loss-consequence-first':'settled-emotion-continuity';
 }
 
 export const dailyRoutineSceneAllowed=state=>dailyNarrativeFacts(state)?.needsConsequence===false;

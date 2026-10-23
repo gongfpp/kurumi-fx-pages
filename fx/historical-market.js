@@ -1,14 +1,14 @@
-import {MultiHistoryProvider} from './multi-history-provider.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {ResearchProvider} from './research-provider.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {HistoricalProvider} from './historical-provider.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {acquireGameHistory} from './history-game.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {selectHistoricalOpening} from './historical-opening.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {MultiHistoryProvider} from './multi-history-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {listImportedResearchPackages,inspectResearchPackage} from './research-import.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {ResearchProvider} from './research-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {listImportedHistoricalPackages,inspectHistoricalPackage} from './historical-import.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {HistoricalProvider} from './historical-provider.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {acquireGameHistory} from './history-game.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {bindHistoricalDay,isHistorical} from './historical-replay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {selectHistoricalOpening} from './historical-opening.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 const publicGameHistory=h=>h.version===1&&h.datasetId==='histdata-usdjpy-201402'&&h.date.startsWith('2014-02-');
 const sameSavedSource=(m,h)=>m?.id===h.datasetId&&String(m.version)===h.sourceVersion&&m.source?.sha256===h.sourceHash&&m.days?.some(day=>day.date===h.date&&day.sha256===h.dayHash);
 export class HistoricalMarketLibrary{

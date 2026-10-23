@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Per-shift game contracts informed by 2014 Japanese part-time wage references.
 // Income uses the gross hourly reference; this game does not simulate wage tax.
 export const LEGACY_WORK_INCOMES=Object.freeze({"convenience":2200,"cafe":2500,"bookstore":1800,"flyer":1600,"warehouse":3400,"dishwashing":2800,"campusArchive":1300,"tutoring":3600,"proofreading":2100,"eventSetup":4200,"petCare":2300,"translation":4600,"remoteData":2600,"buildingCaretaker":3000,"radioMonitor":1900});
@@ -77,26 +77,37 @@ export function calculateWorkPay(startStamina,requiredStamina,baseWage){
  if(!Number.isFinite(startStamina)||startStamina<0||startStamina>100||!Number.isFinite(requiredStamina)||requiredStamina<0||!Number.isSafeInteger(baseWage)||baseWage<0)throw Error('Invalid work pay inputs');
  return Math.floor(baseWage*(requiredStamina===0?1:Math.min(1,startStamina/requiredStamina)));
 }
+// Partial labor keeps proportional wages and stress effects. Job equipment
+// requires a completed shift. Older receipts retain their original contracts.
+export const WORK_SHIFT_POLICY_VERSION=2;
+export function workShiftProgress(startStamina,requiredStamina){
+ if(!Number.isFinite(startStamina)||startStamina<0||startStamina>100||!Number.isFinite(requiredStamina)||requiredStamina<0)throw Error('Invalid work shift inputs');
+ return requiredStamina===0?1:Math.min(1,startStamina/requiredStamina);
+}
 // Browsing uses the same earned item terms and wage rule as settlement. Keep
 // the full-shift contract alongside this action's actual income and debit.
 export function quoteWorkAction(s,job,startStamina){
  const terms=effectiveWorkTerms(s,job),baseIncome=terms.income,requiredStamina=terms.staminaCost;
- return {...terms,income:calculateWorkPay(startStamina,requiredStamina,baseIncome),staminaCost:Math.min(startStamina,requiredStamina),baseIncome,requiredStamina,partialWork:startStamina<requiredStamina};
+ const progress=workShiftProgress(startStamina,requiredStamina);
+ return {...terms,income:calculateWorkPay(startStamina,requiredStamina,baseIncome),staminaCost:Math.min(startStamina,requiredStamina),stressDelta:terms.stressDelta*progress,baseIncome,requiredStamina,partialWork:progress<1};
 }
-export function workPayDialogue(baseDialogue,{baseWage,income,startStamina,requiredStamina}){
+export const isPartialWorkReceipt=receipt=>receipt?.category==='work'&&receipt.work?.shiftPolicyVersion===WORK_SHIFT_POLICY_VERSION&&receipt.work.payRatio?.startStamina<receipt.work.payRatio?.requiredStamina;
+export function workPayDialogue(baseDialogue,{baseWage,income,startStamina,requiredStamina,shiftPolicyVersion}){
  if(!baseDialogue)return null;
  const text=income<baseWage?`今天体力只够做完一部分。工资拿到 ¥${income.toLocaleString('en-US')}，比整份少了 ¥${(baseWage-income).toLocaleString('en-US')}。`:`收工，工资 ¥${income.toLocaleString('en-US')} 到手了。`;
- return {...structuredClone(baseDialogue),sourceId:`${baseDialogue.sourceId}:pay-v1`,origin:'original-game-adaptation',lines:[...structuredClone(baseDialogue.lines),{from:'久留美',text}]};
+ const partial=shiftPolicyVersion===WORK_SHIFT_POLICY_VERSION&&startStamina<requiredStamina;
+ return {...structuredClone(baseDialogue),sourceId:`${baseDialogue.sourceId}:${partial?'partial-pay-v2':'pay-v1'}`,origin:'original-game-adaptation',lines:[...(partial?[]:structuredClone(baseDialogue.lines)),{from:'久留美',text}]};
 }
 export function validWorkPayDialogue(job,receipt){
  const ratio=receipt?.work?.payRatio;
  if(!ratio)return false;
- return JSON.stringify(receipt.dialogue)===JSON.stringify(workPayDialogue(job.dialogue,{...ratio,income:receipt.income}));
+ return JSON.stringify(receipt.dialogue)===JSON.stringify(workPayDialogue(job.dialogue,{...ratio,income:receipt.income,shiftPolicyVersion:receipt.work.shiftPolicyVersion}));
 }
 export function validWorkPay(receipt,job){
  if(!receipt||!job)return false;
  if(!Object.hasOwn(receipt,'work'))return validLegacyBareWorkReceipt(receipt,job);
  if(!receipt.work)return false;
+ if(receipt.work.shiftPolicyVersion!==undefined&&(receipt.work.shiftPolicyVersion!==WORK_SHIFT_POLICY_VERSION||!receipt.work.payRatio||!receipt.work.terms||receipt.work.payRatio.startStamina<=0))return false;
  const terms=receipt.work.terms;
  if(terms!==undefined&&(!terms||typeof terms!=='object'||Array.isArray(terms)||Object.keys(terms).length!==2||terms.version!==2||!Object.hasOwn(terms,'effectId')||terms.effectId!==null&&WORK_ITEM_EFFECTS[terms.effectId]?.jobId!==job.id))return false;
  if(!Object.hasOwn(receipt.work,'pay'))return terms===undefined&&Object.hasOwn(LEGACY_WORK_INCOMES,job.id)&&receipt.income===LEGACY_WORK_INCOMES[job.id];
@@ -151,7 +162,8 @@ export function workUnlockReason(s,job,{knowsFriend=()=>false,netAssets=0}={}){
  default:return null;
  }
 }
-export function awardWorkItem(s,job,receiptId){
+export function awardWorkItem(s,job,receiptId,{completedShift=true}={}){
+ if(!completedShift)return null;
  s.workInventory ||= {};
  if(s.workInventory[job.rewardId])return null;
  const reward={id:job.rewardId,label:job.rewardLabel,jobId:job.id,day:s.day,receiptId};
@@ -178,8 +190,9 @@ export function validWorkInventory(s){
   const effective=current?termsFor(job,acquired):job;
   if(current&&JSON.stringify(receipt.work.terms)!==JSON.stringify(effective.terms))return false;
   if(job.id==='eventAssist'&&(!current||!acquired.has('eventPass')))return false;
-  if(receipt.work.staminaCost!==effective.staminaCost||receipt.work.stressDelta!==effective.stressDelta)return false;
-  if(!Number.isFinite(receipt.work.stressBefore)||!Number.isFinite(receipt.work.stressAfter)||receipt.work.stressBefore<0||receipt.work.stressAfter!==Math.max(0,receipt.work.stressBefore+job.stressDelta))return false;
+  const shiftProgress=receipt.work.shiftPolicyVersion===WORK_SHIFT_POLICY_VERSION?workShiftProgress(receipt.work.payRatio.startStamina,effective.staminaCost):1;
+  if(receipt.work.staminaCost!==effective.staminaCost||receipt.work.stressDelta!==effective.stressDelta*shiftProgress)return false;
+  if(!Number.isFinite(receipt.work.stressBefore)||!Number.isFinite(receipt.work.stressAfter)||receipt.work.stressBefore<0||receipt.work.stressAfter!==Math.max(0,receipt.work.stressBefore+receipt.work.stressDelta))return false;
   if(receipt.work.payRatio){
    const ratio=receipt.work.payRatio,rows=s.stamina?.recoveryReceipts?.filter(row=>row.id===`stamina:work:${receipt.day}`);
    if(!rows||rows.length!==1)return false;
@@ -187,6 +200,7 @@ export function validWorkInventory(s){
    if(row.source!=='work'||row.before!==ratio.startStamina||row.amount!==amount||row.after!==after||row.delta!==Math.round((after-ratio.startStamina)*1e9)/1e9)return false;
   }
   const reward=receipt.work.reward;
+  if(shiftProgress<1){if(reward!==null)return false;continue;}
   if(acquired.has(job.rewardId)){if(reward!==null)return false;continue;}
   const expected={id:job.rewardId,label:job.id==='convenience'&&!current?'便签本':job.rewardLabel,jobId:job.id,day:receipt.day,receiptId:receipt.id};
   if(JSON.stringify(reward)!==JSON.stringify(expected)||JSON.stringify(inventory[job.rewardId])!==JSON.stringify(expected))return false;

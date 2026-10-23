@@ -1,4 +1,4 @@
-import {LIVE_RETURN_HELP} from './copy/live-return-help.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {LIVE_RETURN_HELP} from './copy/live-return-help.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Display-only explanation of the immutable return inputs; never changes accounting.
 const money=value=>Number.isFinite(value)?`${value<0?'−':''}¥${Math.abs(value).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2})}`:'未知';
 export const formatReturnRate=value=>Number.isFinite(value)?`${value>0?'+':''}${(value*100).toFixed(2)}%`:'—';

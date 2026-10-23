@@ -1,8 +1,8 @@
-import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Actual provider observations. No interpolation, random fallback or synthetic time.
 export const LIVE_MARKET_VERSION=16;
 export const LIVE_SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']);
-import {isSharedReplay,sharedReplayQuoteReady,validSharedReplay,safeSharedReplayEvidence} from './shared-replay-state.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {isSharedReplay,sharedReplayQuoteReady,validSharedReplay,safeSharedReplayEvidence} from './shared-replay-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 export const isOrdinaryLive=s=>s?.liveMarket?.version===1;
 export const isLiveMarket=s=>isOrdinaryLive(s)||isSharedReplay(s);
 // Storage routing is stable for a run; source composition is reported separately.

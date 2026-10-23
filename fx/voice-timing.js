@@ -1,4 +1,4 @@
-import {tradingTrauma} from './trading-trauma.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Commentary follows observed/settled P&L. This gate never changes the market.
 export const VOICE_STABLE_MS=2500;
 export const VOICE_REVERSAL_MS=3500;

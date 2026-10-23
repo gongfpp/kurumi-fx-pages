@@ -1,4 +1,12 @@
-import {RESEARCH_BUILD} from './research-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+// Flip only after the backend's exact origins, channels and schema are ready.
+// Current batch and next-batch development never enable unready mirror writes.
+export const KURUMI_EXPERIENCE_MIRRORS_READY = false;
+// No scoped experience events leave any site before production migration and
+// receiver verification. Keep the independent ranking consent/identity intact.
+export const KURUMI_EXPERIENCE_READY = false;
+// Independent detailed A profile; enable only after its receiver verification.
+export const KURUMI_ANALYTICS_A_SCHEMA_VERSION = 0;
 // The sole public service-origin value. Production is intentionally unconfigured.
 // tools/build-fx.mjs writes the explicitly supplied KURUMI_SERVICE_ORIGIN into
 // the exported bundle only; tests can inject serviceOrigin without editing it.
@@ -42,7 +50,8 @@ export function toyLocationMatches(location, origin, path) {
     /^[a-zA-Z0-9_-]+\/index\.html$/.test(location.pathname.slice(root.length));
 }
 export function serviceConfiguration({serviceOrigin = KURUMI_SERVICE_ORIGIN,
-  toyOrigin = KURUMI_TOY_ORIGIN, toyPath = KURUMI_TOY_PATH, location = globalThis.location} = {}) {
+  toyOrigin = KURUMI_TOY_ORIGIN, toyPath = KURUMI_TOY_PATH, location = globalThis.location, forTelemetry = false,
+  experienceMirrorsReady = KURUMI_EXPERIENCE_MIRRORS_READY, experienceOnly = false, experienceSource = null} = {}) {
   // Only a loopback browser may use same-origin without a registered service.
   // Invalid explicit configuration must never silently select another backend.
   const origin = serviceOrigin === '' && isLoopbackOrigin(location?.origin) ? location.origin : serviceOrigin;
@@ -55,14 +64,19 @@ export function serviceConfiguration({serviceOrigin = KURUMI_SERVICE_ORIGIN,
   // Preserve legacy Pages/local/Sites behavior. Only an explicitly Toy-bound
   // candidate fails closed on a mismatched container instead of mislabeling it.
   const legacy = pages || local || hosted;
+  const experience = typeof experienceSource==='function'?experienceSource(location):null;
+  const mirror = experienceMirrorsReady===true&&experience;
   const mismatchedToy = toyRequested && !legacy && !toy;
-  const configured = !RESEARCH_BUILD && validServiceOrigin(origin) && !mismatchedToy;
+  // Anonymous API availability and event attribution are separate. New mirrors
+  // can use exact-origin leaderboard/comments CORS without impersonating Sites.
+  const unattributedTelemetry = forTelemetry && ((!legacy && !toy && !mirror)||experienceOnly&&!experience);
+  const configured = !RESEARCH_BUILD && validServiceOrigin(origin) && !mismatchedToy && !unattributedTelemetry;
   return Object.freeze({
     configured, origin: configured ? origin : '',
     status: configured ? 'configured' : 'service-unconfigured',
     leaderboardEndpoint: configured ? origin + '/api/fx/leaderboard' : null,
     eventsEndpoint: configured ? origin + '/api/fx/events' : null,
-    channel: pages ? 'github-pages' : local ? 'local' : toy ? 'bilibili-toy' : mismatchedToy ? 'unknown' : 'gpt-site',
-    path: pages ? KURUMI_PAGES_PATH : toy ? toyPath : mismatchedToy ? '' : KURUMI_CLIENT_PATH,
+    channel: pages ? 'github-pages' : local ? 'local' : toy ? 'bilibili-toy' : mirror ? mirror.channel : mismatchedToy || unattributedTelemetry ? 'unknown' : 'gpt-site',
+    path: pages ? KURUMI_PAGES_PATH : toy ? toyPath : mirror ? mirror.path : mismatchedToy || unattributedTelemetry ? '' : KURUMI_CLIENT_PATH,
   });
 }

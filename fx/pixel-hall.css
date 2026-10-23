@@ -7,7 +7,7 @@ body[data-frontend="pixel"] #leaderboard-dialog {
   --hall-pink: #f7279b;
   --hall-line: #c394d3;
   --hall-muted: #575c86;
-  --hall-atlas: url('./pixel-assets/reference-atlas.png?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717');
+  --hall-atlas: url('./pixel-assets/reference-atlas.png?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717');
   width: min(1028px, calc(100vw - 28px));
   max-width: calc(100vw - 28px);
   max-height: min(940px, calc(100dvh - 28px));

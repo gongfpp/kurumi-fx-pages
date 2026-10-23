@@ -3,6 +3,8 @@
 .investor-comments-heading{display:flex;gap:8px;align-items:center;margin-bottom:4px;color:#786474}
 .investor-comments-heading h2{font-size:12px;margin:0;font-weight:750}.investor-comments-heading span{font-size:10px;color:#947b8b}
 #investor-danmaku{position:relative;display:block;list-style:none;padding:0;margin:0;height:104px;overflow:hidden;contain:layout paint;pointer-events:none}
+#investor-danmaku .investor-danmaku-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;max-width:100%;margin:0;padding:4px;pointer-events:auto;font-size:12px;line-height:1.5}
+#investor-danmaku .investor-danmaku-status button{margin-left:6px;font-size:12px;padding:5px 8px}
 #investor-danmaku .investor-danmaku-line{position:absolute;left:100%;top:calc(var(--comment-lane) * 25px);width:var(--comment-width);max-width:none;margin:0;padding:2px 0;font:600 13px/21px sans-serif;white-space:nowrap;color:#59465a;text-shadow:0 1px 0 #fff;will-change:transform;animation:investor-comment-right-to-left var(--comment-duration) linear forwards}
 #investor-danmaku[data-paused="true"] .investor-danmaku-line{animation-play-state:paused}
 @keyframes investor-comment-right-to-left{from{transform:translateX(0)}to{transform:translateX(calc(-100% - var(--comment-travel)))}}

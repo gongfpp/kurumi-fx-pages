@@ -1,8 +1,8 @@
-import {randomUUID} from './uuid.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {safeFailure,ERROR_REPORT_LIMITS} from './error-reporting.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {serviceConfiguration,KURUMI_EXPERIENCE_READY} from './service-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {FX_TELEMETRY_HOOKS} from './telemetry-hooks.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {safeFailure,ERROR_REPORT_LIMITS} from './error-reporting.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Anonymous FX telemetry: fixed metadata only; never send chat, input, URLs or error text.
 export const FX_EVENT_NAMES = Object.freeze(['visit','screen_view','screen_exit','transition','heartbeat','day_start','day_end','trade_attempt','trade_open','trade_close','trade_rejected','story_seen','story_choice','item_unlocked','item_used','debuff_applied','news_seen','black_swan','mood_change','dialogue_turn','voice_play','voice_rejected','market_end','settlement_confirm','rest_start','rest_end','ending_seen','message_receive','session_end','error']);
 const names = new Set(FX_EVENT_NAMES), tokens = new Set(['from','to','reason','build','direction','risk','pnlBucket','capitalBucket','toleranceBucket','mood','previousMood','story','choice','item','debuff','news','kind','code','returnGap','device','orientation','newsId','storyId','choiceId','itemId','debuffId','equityBucket','riskBucket','sanityBucket','channel','dialogueId']);
@@ -64,13 +64,18 @@ export class FXTelemetry {
     this.suspended = this.manualTestMode; this.preferencesUnavailable = false;this.testModeUnavailable=false;
     this.serverPrivacy = false; this.destroyed = false;
     this.requestTimeoutMs = Number.isFinite(options.requestTimeoutMs) ? Math.max(100,Math.min(30000,options.requestTimeoutMs)) : 10000;
-    this.configuration = serviceConfiguration({serviceOrigin:options.serviceOrigin,location:this.location});
+    // The active game injects its optional profile. Archived clients retain
+    // their original dependency graph and cannot silently opt into it.
+    this.experiencePolicy = options.experiencePolicy&&['experienceSource','experienceEvent','restoreExperienceEvent'].every(key=>typeof options.experiencePolicy[key]==='function')?options.experiencePolicy:null;
+    this.configuration = serviceConfiguration({serviceOrigin:options.serviceOrigin,location:this.location,forTelemetry:true,experienceOnly:options.experienceOnly===true,experienceMirrorsReady:options.experienceMirrorsReady,experienceSource:this.experiencePolicy?.experienceSource});
     this.requireExplicitConsent = options.requireExplicitConsent === true;
     this.explicitConsent = false;
     this.chapterConsent = null; this.globalPreferenceOff = false;
     this.mainOffLatched = false; this.mainChoiceUnsaved = false;
     this.chapterOffLatched = false; this.chapterChoiceUnsaved = false; this.chapterStorageVerified = false; this.chapterTrackingFailed = false;
     this.getMetrics = typeof options.getMetrics==='function' ? options.getMetrics : null;
+    this.experienceOnly = options.experienceOnly === true;
+    this.experienceReady = (options.experienceReady ?? KURUMI_EXPERIENCE_READY) === true;
     this.wallAnchor=this.now();this.monoAnchor=this.monotonic();
     this.sequence=0;this.foregroundDelta=0;this.engagedDelta=0;this.lastInteraction=-Infinity;this.checkpointAt=this.monotonic();
     this.surface = options.initialContext?.screen === 'chapter-01' ? 'chapter-01' : '';
@@ -203,7 +208,7 @@ export class FXTelemetry {
   // A copy of fixed configuration and counters, never queue rows or identifiers.
   // Counters live only in this client instance; failed counts failed attempts.
   snapshot() {
-    return Object.freeze({configured:this.configuration.configured,endpoint:this.endpoint,build:this.build,
+    return Object.freeze({configured:this.configuration.configured,endpoint:this.endpoint,build:this.build,experienceReady:this.experienceOnly?this.experienceReady:null,
       enabled:this.enabled,testMode:this.suspended,queued:this.queue.length,sent:this.diagnostics.sent,
       failed:this.diagnostics.failed,filteredCount:this.diagnostics.filteredCount,
       lastFilterReason:this.diagnostics.lastFilterReason,lastStatus:this.diagnostics.lastStatus,
@@ -232,6 +237,7 @@ export class FXTelemetry {
     }
     try { this.seen = new Set(JSON.parse(get(this.sessionStorage, this.trackingKey('telemetry-seen')) || '[]').filter(k => typeof k === 'string').slice(-1200)); } catch { this.seen = new Set(); }
     try { const own=JSON.parse(get(this.outboxStorage,this.trackingKey('telemetry-outbox'))||'[]'),legacy=this.playerAnalytics?JSON.parse(get(this.storage,this.trackingKey('telemetry-outbox'))||'[]'):[];const saved=[...new Map([...legacy,...own].map(e=>[e.id,e])).values()]; this.queue = saved.filter(e => this.now() - e.queuedAt < 86400000 && e.queuedAt<=this.now()+300000 && names.has(e.name) && e.visitor === this.visitor && /^[a-zA-Z0-9_-]{8,80}$/.test(e.id) && /^[a-zA-Z0-9_-]{8,80}$/.test(e.session) && token(e.run) && token(e.screen) && token(e.target)).slice(-240).map(e => ({id:e.id,visitor:e.visitor,session:e.session,game:'fx',site:'fx',channel:this.channel,path:this.path,run:e.run,screen:e.screen,name:e.name,target:e.target,stage:0,day:Math.max(0,Math.min(10000,Math.floor(e.day||0))),activeMs:Math.max(0,Math.min(3600000,Math.round(e.activeMs||0))),detail:sanitizeDetail(e.detail),...(e.v===2?{v:2,at:e.at,seq:e.seq,foregroundMs:e.foregroundMs,engagedMs:e.engagedMs,loss:e.loss,clockUncertain:e.clockUncertain===true}:{}),queuedAt:e.queuedAt,...(e.name==='error'&&Number.isInteger(e.errorAttempts)?{errorAttempts:Math.max(0,Math.min(ERROR_REPORT_LIMITS.attempts,e.errorAttempts))}:{})})); } catch { this.queue = []; }
+    if(this.experienceOnly){this.queue=this.experienceReady?this.queue.map(this.experiencePolicy.restoreExperienceEvent).filter(Boolean):[];this.persist();}
     const previous = Number(get(this.storage, this.trackingKey('last-visit')) || 0), gap = this.now() - previous;
     put(this.storage, this.trackingKey('last-visit'), String(this.now()));
     const mobile = (this.window?.innerWidth || 1024) < 640;
@@ -331,15 +337,18 @@ export class FXTelemetry {
   emit(name, target = '', extra = {}) {
     const blocked=this.syncPrivacy();
     if (blocked) return this.filtered(blocked);
+    if(this.experienceOnly&&!this.experienceReady)return this.filtered('experience-pending');
     if(this.taintedRuns.has(this.context.run))return this.filtered('developer-test');
     if (!names.has(name)) return this.filtered('invalid-event');
+    if(this.experienceOnly){const event=this.experiencePolicy.experienceEvent(name,target,extra,{...this.context,session:this.session});if(!event)return this.filtered('experience-scope');({name,target,extra}=event);}
     if(!this.visitor || !this.session)this.start();
     if(this.blockReason() || !this.visitor || !this.session)return this.filtered(this.blockReason() || 'privacy-storage-unavailable');
     if (!token(target)) return this.filtered('invalid-target');
     if (extra.dedupeKey) { const key = `${name}:${extra.dedupeKey}`; if (this.seen.has(key)) return this.filtered('duplicate-event'); this.seen.add(key); if (this.seen.size > 1200) this.seen.delete(this.seen.values().next().value); put(this.sessionStorage, this.trackingKey('telemetry-seen'), JSON.stringify([...this.seen])); }
     if(this.playerAnalytics&&!this.budget(name))return false;
-    let metrics={};try{if(this.context.run&&this.getMetrics)metrics=sanitizeDetail(this.getMetrics(this.context.run));}catch{}
+    let metrics={};try{if(!this.experienceOnly&&this.context.run&&this.getMetrics)metrics=sanitizeDetail(this.getMetrics(this.context.run));}catch{}
     this.queue.push({id: uid(), visitor: this.visitor, session: this.session, game: 'fx', site: 'fx', channel: this.channel, path: this.path, ...this.context, name, target, stage: 0, activeMs: Math.round(Math.max(0, Math.min(3600000, extra.activeMs || 0))), detail: {...sanitizeDetail(extra.detail),...metrics, build: this.build}, ...(this.playerAnalytics?{v:2,at:this.now(),seq:++this.sequence,foregroundMs:Math.round(Math.min(3600000,this.foregroundDelta)),engagedMs:Math.round(Math.min(3600000,this.engagedDelta)),loss:this.diagnostics.dropped,clockUncertain:Math.abs((this.now()-this.wallAnchor)-(this.monotonic()-this.monoAnchor))>5000}:{}),queuedAt: this.now()});
+    if(this.experienceOnly)this.queue[this.queue.length-1]=this.experiencePolicy.restoreExperienceEvent(this.queue.at(-1));
     this.foregroundDelta=this.engagedDelta=0;
     if (this.queue.length > 240) {const count=this.queue.splice(0,this.queue.length-240).length;this.diagnostics.dropped+=count;this.filtered('buffer-limit',count);}
     this.persist(); return true;
@@ -348,6 +357,7 @@ export class FXTelemetry {
   view(context = {}) {
     this.clock(); const next = {screen: this.surface ? (token(context.screen) && context.screen.length <= 40 && (context.screen===this.surface || context.screen.startsWith(this.surface+':')) ? context.screen : this.surface) : (token(context.screen) && context.screen.length <= 40 ? context.screen : this.context.screen), run: token(context.run) ? context.run : this.context.run, day: Math.max(0, Math.min(10000, Math.floor(Number.isFinite(context.day) ? context.day : this.context.day)))};
     if (next.screen !== this.lastScreen || next.run !== this.context.run) {
+      if(this.experienceOnly&&this.context.run&&next.run!==this.context.run)this.emit('session_end','',{detail:{reason:'run-replaced'}});
       if (this.lastScreen) { this.emit('screen_exit', '', {activeMs: this.pageTime}); this.emit('transition', '', {detail: {from: this.lastScreen, to: next.screen}}); }
       // Rejected/capped old-context events must not migrate their dwell into a new screen or run.
       if(this.foregroundDelta>0){this.diagnostics.droppedTimeMs+=this.foregroundDelta;this.foregroundDelta=this.engagedDelta=0;}
@@ -382,7 +392,7 @@ export class FXTelemetry {
   }
   action(name, target = '', detail = {}) { this.clock(); const result = this.emit(name, target, {activeMs: this.decision, detail}); if (['trade_open','trade_close','story_choice','item_used'].includes(name)) this.decision = 0; return result; }
   async flush(lifecycle = false) {
-    if (this.syncPrivacy() || !this.queue.length || this.pending) return false;
+    if (this.syncPrivacy() || this.experienceOnly&&!this.experienceReady || !this.queue.length || this.pending) return false;
     const before=this.queue.length;
     this.queue=this.queue.filter(e=>this.now()-e.queuedAt<(e.name==='error'?ERROR_REPORT_LIMITS.maxAgeMs:86400000)&&e.queuedAt<=this.now()+300000&&(e.name!=='error'||(e.errorAttempts||0)<ERROR_REPORT_LIMITS.attempts));
     const expired=before-this.queue.length;
@@ -393,7 +403,7 @@ export class FXTelemetry {
     this.pending=true;
     const generation=this.generation,controller=new AbortController();this.controller=controller;
     // Old offline sessions are sent separately; the backend enforces a single session per batch.
-    const session=this.queue[0].session,rows=this.queue.filter(e=>e.session===session).slice(0,40);
+    const session=this.queue[0].session,run=this.queue[0].run,rows=this.queue.filter(e=>e.session===session&&(!this.experienceOnly||e.run===run)).slice(0,40);
     let data=JSON.stringify({events:rows.map(({queuedAt,errorAttempts,...e})=>e)});
     while(new TextEncoder().encode(data).byteLength>47000 && rows.length>1){rows.pop();data=JSON.stringify({events:rows.map(({queuedAt,errorAttempts,...e})=>e)});}
     const ids=new Set(rows.map(e=>e.id));this.inflightIDs=ids;
@@ -426,6 +436,13 @@ export class FXTelemetry {
       }
       if(result.ok && result.body?.ok===true && result.body.ignored==='privacy' && result.body.count===0){
         this.serverPrivacy=true;this.enabled=false;this.clearTracking('server-privacy');this.report('server-privacy');return false;
+      }
+      if(this.experienceOnly&&result.ok&&result.body?.ok===true&&result.body.ignored==='development'&&result.body.count===0&&Object.keys(result.body).length===3&&/^[a-zA-Z0-9_-]{8,80}$/.test(run)&&rows.every(e=>e.run===run)){
+        // The scoped backend rejects an entire known development run. Keep
+        // unrelated visits/runs; a mixed run batch must never discard them.
+        this.taintedRuns.add(run);put(this.storage,'fx-api-v1-developer-taint-'+run,'1');
+        const before=this.queue.length;this.queue=this.queue.filter(e=>e.run!==run);this.filtered('developer-test',before-this.queue.length);
+        this.attempts=0;this.retryAt=0;this.persist();this.report('developer-test');return true;
       }
       if(!result.ok){failure='http-error';throw new Error('retry');}
       const ack=result.body;

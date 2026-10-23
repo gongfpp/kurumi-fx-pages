@@ -1,7 +1,8 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {historicalSimulationActive,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource} from './multi-history-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
@@ -13,6 +14,7 @@ export const historicalReady=s=>!isHistorical(s)||historicalSimulationActive(s)|
 // Display reference only: freeze the known mark at the game-day boundary.
 export function markHistoricalOpening(s){
  s.dayOpeningPrice=s.price;s.dayOpeningPriceDay=s.day;
+ if(s.historical){s.historical.dayOpeningAt=historicalEffectiveTime(s)??s.historical.lastQuote?.[0];s.historical.dayOpeningGameDay=s.day;}
  for(const book of Object.values(s.marketBook?.markets||{}))book.dayOpeningPrice=book.price;
 }
 const mid=q=>(q[1]+q[2])/2;
@@ -47,14 +49,21 @@ export function bindHistoricalDay(s,manifest,dayData){
  if(['loading','error','ready'].includes(h.status))h.status='ready';
  return s;
 }
-export function historicalDayInfo(s){return isMultiHistory(s)?multiHistoryDayInfo(s):feeds.get(s)?.manifest.days.find(d=>d.date===s.historical.date)||null;}
+export function historicalDayInfo(s){
+ if(isMultiHistory(s))return multiHistoryDayInfo(s);
+ const feed=feeds.get(s);if(!feed)return null;
+ const rows=isResearch(s)?feed.dayData.bars:feed.dayData.ticks,at=row=>isResearch(s)?row?.availableAt:row?.[0];
+ return {...feed.manifest.days.find(d=>d.date===s.historical.date),first:at(rows[0]),last:at(rows.at(-1))};
+}
+export const historicalBillingDay=s=>historicalDayClock(s,historicalDayInfo(s));
+export const lockHistoricalBillingDay=s=>lockHistoricalDayClock(s,historicalDayInfo(s));
 export function nextHistoricalDate(s){if(isMultiHistory(s))return nextMultiHistoryDate(s);const days=feeds.get(s)?.manifest.days;if(!days)return null;return days[days.findIndex(d=>d.date===s.historical.date)+1]?.date||null;}
 export function prepareNextHistoricalDay(s){
  if(isMultiHistory(s))return prepareNextMultiHistoryDay(s);
  const feed=feeds.get(s);if(!feed){startHistoricalContinuation(s,'loading');return false;}
  // A simulated game-day boundary inside a source hole must not skip the
  // still-unconsumed original remainder of this historical source day.
- if(historicalSimulationActive(s)&&s.historical.status==='ready'&&s.historical.cursor<(isResearch(s)?feed.dayData.bars:feed.dayData.ticks).length){s.marketPaused=false;return true;}
+ if((historicalSimulationActive(s)||s.historical.billingDay?.kind==='continuation')&&s.historical.status==='ready'&&s.historical.cursor<(isResearch(s)?feed.dayData.bars:feed.dayData.ticks).length){s.marketPaused=false;return true;}
  const days=feed.manifest.days,index=days.findIndex(d=>d.date===s.historical.date),entry=days[index+1];
  if(!entry){s.historical.status='exhausted';startHistoricalContinuation(s,'exhausted');return false;}
  if(isResearch(s))s.historical.skippedRemainder=feed.dayData.bars.length>s.historical.cursor;
@@ -76,13 +85,13 @@ export function skipElapsedHistoricalSource(s,until){
  const feed=feeds.get(s),h=s.historical;if(!feed)return 0;
  const rows=isResearch(s)?feed.dayData.bars:feed.dayData.ticks,time=row=>isResearch(s)?row.availableAt:row[0];
  let lo=h.cursor,hi=rows.length;while(lo<hi){const mid=(lo+hi)>>>1;if(time(rows[mid])<=until)lo=mid+1;else hi=mid;}
- const skipped=lo-h.cursor;if(skipped){const row=rows[lo-1],q=isResearch(s)?[row.availableAt,row.close]:row;if(h.cursor===0)h.dayOpeningAt=time(rows[0]);h.cursor=lo-1;commitHistoricalQuote(s,q);s.historyContinuation.skippedRealQuotes+=skipped;}
+ const skipped=lo-h.cursor;if(skipped){const row=rows[lo-1],q=isResearch(s)?[row.availableAt,row.close]:row;if(h.cursor===0)h.dayOpeningAt=h.billingDay?.day===s.day?h.billingDay.from:time(rows[0]);h.cursor=lo-1;commitHistoricalQuote(s,q);s.historyContinuation.skippedRealQuotes+=skipped;}
  return skipped;
 }
 export function continueHistoricalGap(s){if(!isHistorical(s)||s.historical.status!=='gap')return false;s.historical.acceptedGapCursor=s.historical.cursor;s.historical.status='ready';s.marketPaused=false;return true;}
-export function commitHistoricalQuote(s,q){const h=s.historical;if(h.cursor===0)h.dayOpeningAt=q[0];h.cursor++;h.lastQuote=[...q];h.acceptedGapCursor=null;delete h.gap;delete h.skippedRemainder;s.tradingClock.lastQuoteAt=q[0];s.tradingClock.lastQuoteDay=s.day;}
+export function commitHistoricalQuote(s,q){const h=s.historical;if(h.cursor===0)h.dayOpeningAt=h.billingDay?.day===s.day?h.billingDay.from:q[0];h.cursor++;h.lastQuote=[...q];h.acceptedGapCursor=null;delete h.gap;delete h.skippedRemainder;s.tradingClock.lastQuoteAt=q[0];s.tradingClock.lastQuoteDay=s.day;}
 export function validHistoricalSave(s){
- const h=s.historical;if(!h)return true;if(isMultiHistory(s))return validMultiHistorySave(s);
+ const h=s.historical;if(!h)return true;if(!validHistoricalDayClock(s))return false;if(isMultiHistory(s))return validMultiHistorySave(s);
  if(isResearch(s))return validResearchSave(s);
  return [10,12,13].includes(s.version)&&h.version===1&&typeof h.datasetId==='string'&&h.datasetId.length>0&&typeof h.sourceVersion==='string'&&h.sourceVersion.length>0&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&/^[a-f0-9]{64}$/.test(h.dayHash)&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='bid-ask-mid'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===3&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&h.lastQuote[2]>=h.lastQuote[1]&&(historicalMarkIsSimulated(s)||s.price===mid(h.lastQuote))&&s.script?.historical===true&&Array.isArray(s.script.tracks)&&s.script.tracks.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];
 }

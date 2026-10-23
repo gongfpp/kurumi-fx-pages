@@ -1,8 +1,8 @@
-import {createPressureQuotePicker,pressureLimitTooltip,pressureQuoteFacts} from './pressure-quotes.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {systemReducedMotion} from './motion-preference.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {createPressurePresentation} from './pressure-presentation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {createPressureQuotePicker,pressureLimitTooltip,pressureQuoteFacts} from './pressure-quotes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {createPressurePresentation} from './pressure-presentation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {emotionControlState,pressEmotion,pressureStatus,pressureFeedback} from './emotion-pressure.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {PRESSURE_CRACKS,pressureVisual} from './pressure-visuals.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 export function createEmotionControls({root=document,getState,getLimits,getContext,canInteract,onChange,audio,motion,motionEnabled=()=>false}) {
   const buttons=[...root.querySelectorAll('[data-stake],[data-leverage]')];

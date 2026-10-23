@@ -1,5 +1,5 @@
-// Only add actual, locally packaged recordings after checking the author's license
-// and the file's SHA-256. This validates metadata; it does not verify a license.
+// Only add actual, locally packaged recordings with their source, usage status
+// and SHA-256 recorded. Metadata validation does not establish rights permission.
 export const BGM_SCENE_TAGS=Object.freeze(['neutral','focus','tension','gain','loss','crisis','numb','relief']);
 export const BGM_CATALOG=Object.freeze([
   {
@@ -283,6 +283,26 @@ export const BGM_CATALOG=Object.freeze([
     "duration": 75.702857,
     "sha256": "b2aeeccef2ea514111aa98386d6b02be3013dc58bb7b8c90e60b738791420d2c",
     "modifications": "Transcoded to stereo 44.1kHz/128kbps MP3; loudness normalized to target -20 LUFS / -3 dBTP; 0.8s fade-in and 1.5s fade-out."
+  },
+  {
+    "id": "qing-chun-zhi-huo",
+    "title": "青春之火",
+    "artist": "演唱者未核实",
+    "src": "./bgm/qing-chun-zhi-huo.m4a",
+    "license": {
+      "name": "权利未核实（研究测试素材）",
+      "url": "https://gongfpp.github.io/kurumi-fx-pages/fx/bgm/SOURCES.json"
+    },
+    "sourceUrl": "https://gongfpp.github.io/kurumi-fx-pages/fx/bgm/SOURCES.json",
+    "credit": "《青春之火》（《火力少年王》主题曲）· 演唱者未核实。用户提供短版；研究测试素材，权利未核实。来源记录：https://gongfpp.github.io/kurumi-fx-pages/fx/bgm/SOURCES.json",
+    "sceneTags": [
+      "neutral"
+    ],
+    "duration": 86.262132,
+    "sha256": "7fb1fb68f5eaacfbd377884442bc7ab67907ba1a50e7b79054680c9b337f493f",
+    "modifications": "按收到的 AAC/M4A 原字节接入；未重编码、未拉伸、未裁剪或补齐时长。",
+    "sourceKind": "user-provided-short-recording",
+    "rightsStatus": "unverified-prototype-use"
   }
 ]);
 

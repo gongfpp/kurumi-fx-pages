@@ -1,8 +1,8 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 // Retain the compact legacy receipt for older tabs, but compare every public

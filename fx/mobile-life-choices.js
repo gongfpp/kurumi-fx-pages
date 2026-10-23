@@ -49,9 +49,9 @@ export function renderMobileLifeChoices({document:doc,body,actionDock,category,m
  const summary=make('div','life-mobile-selection');summary.setAttribute('aria-live','polite');summary.setAttribute('aria-atomic','true');summary.append(make('strong','life-mobile-selected-label',selected?`已选：${selected.label}`:'尚未选择'));
  if(category==='work'&&Number.isFinite(selected?.income)){
   const income=make('p','life-mobile-income');income.append(sprite('coins'),make('span','','本次预计收入'),make('strong','',`¥${number(selected.income)}`));summary.append(income);
-  if(Number.isFinite(selected.staminaCost))summary.append(make('p','life-mobile-work-details',`体力 −${selected.staminaCost} · 压力 ${selected.stressDelta>0?'+':''}${selected.stressDelta||0}`));
+  if(Number.isFinite(selected.staminaCost))summary.append(make('p','life-mobile-work-details',`体力 −${number(selected.staminaCost)} · 压力 ${selected.stressDelta>0?'+':''}${number(selected.stressDelta||0)}`));
   if(selected.partialWork&&Number.isFinite(selected.baseIncome))summary.append(make('p','life-mobile-work-details',`整份工作 ¥${number(selected.baseIncome)} · 需${selected.requiredStamina}体力`));
-  if(selected.rewardLabel)summary.append(make('p','life-mobile-work-reward',`初次完成获得：${selected.rewardLabel}`));
+  if(selected.rewardLabel)summary.append(make('p','life-mobile-work-reward',`初次完成整份工作获得：${selected.rewardLabel}`));
  }
  if((category==='relax'||category==='dinner')&&selected){
   if(Number.isFinite(selected.cost))summary.append(make('p','life-mobile-income',`费用 ¥${number(selected.cost)}`));

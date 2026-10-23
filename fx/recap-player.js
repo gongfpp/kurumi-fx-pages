@@ -1,9 +1,9 @@
-import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap,receiptRecapFrame} from './recap-receipts.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {receiptCueData} from './receipt-audio.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {recapImpact,boundedRecapCues} from './recap-impact.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {recapSegments} from './daily-recap.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap,receiptRecapFrame} from './recap-receipts.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {receiptCueData} from './receipt-audio.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {recapImpact,boundedRecapCues} from './recap-impact.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {recapSegments} from './daily-recap.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {recapPresentation,recapBeatCue,recapProgress} from './recap-presentation.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Cancellable, repeatable presentation. No game state, save or economic callbacks.
 export function createRecapPlayer(snapshot,{render,onCue=()=>{},onTimeline,variant='classic',enabled=true,reducedMotion=false,playbackRate=1,requestFrame=globalThis.requestAnimationFrame,cancelFrame=globalThis.cancelAnimationFrame,now=()=>performance.now()}={}){
  const candidate=variant===RECEIPT_RECAP_CANDIDATE?buildReceiptRecap(snapshot):null;

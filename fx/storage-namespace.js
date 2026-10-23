@@ -1,5 +1,5 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {RESEARCH_BUILD} from './research-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // GitHub project Pages share one origin. Kurumi writes only its own namespace.
 // Legacy FX values are read-only recovery sources; A-share keys are never read.
 export const STORAGE_PREFIX=RESEARCH_BUILD?'kurumi-fx:research-v1:':'kurumi-fx:';
@@ -7,6 +7,8 @@ const replayKeys=['fx-girl-shared-replay-story-v1','fx-girl-shared-replay-endles
 const migrationSaveSlots=[...MAIN_GAME_SAVE_SLOTS,...replayKeys];
 const historicalKeys=[...replayKeys,'fx-girl-live-story-v1','fx-girl-live-endless-v1','fx-girl-historical-story-v1','fx-girl-historical-endless-v1','fx-girl-market-source'];
 const allowed=new Set(['fx-api-v1-comment-visitor','fx-api-v1-live-ranking-receipts','fx-daily-art-memory-v1',...historicalKeys,'fx-api-v1-telemetry-budget','fx-api-v1-chapter-01-telemetry-budget','fx-bgm-preferences-v1','fx-api-v1-chapter-01-storage-check','fx-api-v1-chapter-01-consent','fx-api-v1-telemetry-consent','fx-api-v1-chapter-01-anon-session','fx-api-v1-chapter-01-last-visit','fx-api-v1-chapter-01-telemetry-outbox','fx-api-v1-chapter-01-telemetry-seen','fx-moving-averages','fx-girl-campaign-v2','fx-girl-campaign-v3','fx-girl-endless-v1','fx-girl-mode','fx-girl-settings','fx-girl-voice','fx-girl-motion','fx-girl-analytics','fx-girl-developer-backup-v3','fx-endless-developer-backup-v1','fx-jiuliumei-achievements-v1','fx-leaderboard-submit-session','fx-anon-visitor','fx-anon-session','fx-last-visit','fx-telemetry-enabled','fx-telemetry-outbox','fx-telemetry-seen','fx-api-v1-leaderboard-submit-session','fx-api-v1-anon-visitor','fx-api-v1-anon-session','fx-api-v1-last-visit','fx-api-v1-telemetry-outbox','fx-api-v1-telemetry-seen']);
+// A has separate opt-in and transport state, never migrated from older consent.
+for(const key of ['consent','visitor','session','queue','budget'])allowed.add('fx-api-v1-analytics-a-'+key);
 // Migration backups are exact recovery bytes for explicitly listed save slots.
 // They never fall back to another project's unscoped storage.
 const migrationBackups=new Set([...migrationSaveSlots.map(key=>key+':pre-stamina-fatigue-v2'),...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-life-scenes-v1'),...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-life-actions-v1'),'fx-girl-campaign-v3:pre-v9','fx-girl-endless-v1:pre-v9',...['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].map(key=>key+':pre-father-theft-v1'),...migrationSaveSlots.map(key=>key+':pre-living-v2')]);

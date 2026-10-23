@@ -1,10 +1,10 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {livingMoveEvidence} from './living-services.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {selectEventContextualManga} from './contextual-manga-scenes.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {isSevereSettledLoss} from './settled-comic-art.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {livingMoveEvidence} from './living-services.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {selectEventContextualManga} from './contextual-manga-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isSevereSettledLoss,settledMoodNeedsRecovery} from './settled-comic-art.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 // Read-only presentation adapter. It never executes an action or reconstructs
 // missing financial history. Call after success + durable save, not on click.
@@ -84,7 +84,7 @@ function evidence(s,event){
    const outcome=sealedDailyMangaOutcome(s);if(!outcome)return null;
    const trauma=tradingTrauma(s),report=s.dayReport;
    let id=null;
-   if(outcome.net>0&&!trauma.active)id='settled-gain';
+   if(outcome.net>0&&!trauma.active&&!settledMoodNeedsRecovery(report.mood))id='settled-gain';
    if(outcome.net<0)id=isSevereSettledLoss(s,report)?'settled-severe-loss':'settled-small-loss';
    if(outcome.net===0&&Array.isArray(report.trades)&&report.trades.length===0)id='settled-no-trade';
    return id?proof(id,{day:outcome.day,tradingNet:outcome.net},`day-close:${outcome.day}`):null;

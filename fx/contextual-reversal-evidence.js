@@ -1,4 +1,4 @@
-import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {sealedDailyTradeEvidence,retainedTimeline} from './contextual-trade-evidence.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 // Closing a losing long and only then opening a short proves the change in
 // direction, not a motive, position size, market bottom or the short's outcome.

@@ -1,6 +1,6 @@
-import {historicalDayInfo} from './historical-replay.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
 // 16 x 15 minutes: calm watching spends 40 points. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;
@@ -46,10 +46,8 @@ export function tradingDayDurationMinutes(state={}){
   return Number.isFinite(opening)?(Math.floor(opening/60000)*60000+beats*4*60000-opening)/60000:beats*4;
  }
  if([1,2,3].includes(state.historical?.version)){
-  if(state.historyContinuation?.active&&['exhausted','loading'].includes(state.historyContinuation.reason))return 240;
-  if(state.stamina?.progressDay===state.day&&Number.isFinite(state.stamina.dayDurationMinutes))return state.stamina.dayDurationMinutes;
-  const end=historicalDayInfo(state)?.last,start=state.historical.dayOpeningAt;
-  return Number.isFinite(end)&&Number.isFinite(start)&&end>start?(end-start)/60000:null;
+  const clock=historicalBillingDay(state);
+  return clock?(clock.to-clock.from)/60000:null;
  }
  return beats*60;
 }

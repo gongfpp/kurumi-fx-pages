@@ -1,10 +1,10 @@
-import {createSkitLine} from './skit-dialogue.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {LIFE_WORK_JOBS,validWorkPayDialogue} from './life-work.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
-import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=56d6bec24fd11a7578768d36d112a0cef37982c5-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
+import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=e334df457a8010281b76b74406fa77069f96d880-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.
@@ -13,7 +13,7 @@ export function lifeActionStory(state){
  if(!receipt?.dialogue?.lines?.length&&!isConsequenceLifeReceipt(receipt))return null;
  const job=receipt.category==='work'?LIFE_WORK_JOBS.find(row=>row.id===receipt.optionId):null;
  // Show the published vignette title only for its exact current pay receipt.
- const title=job&&validWorkPayDialogue(job,receipt)?job.title:receipt.label;
+ const title=job&&!isPartialWorkReceipt(receipt)&&validWorkPayDialogue(job,receipt)?job.title:receipt.label;
  const scene={id:`life-dialogue:${receipt.id}`,identity:`life-dialogue:${receipt.id}`,title,
   ready:true,dialogueOnly:true,receiptDialogue:true,lifeScene:true,...(isConsequenceLifeReceipt(receipt)?{consequenceReceipt:true}:{}),
   workReward:receipt.category==='work'&&receipt.work?.reward?structuredClone(receipt.work.reward):null,
