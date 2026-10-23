@@ -1,10 +1,10 @@
-import {mangaLibraryEntries} from './manga-collection-model.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {assetURL,setImage} from './assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {collectionHdEdition} from './manga-collection-hd.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {LIBRARY_COPY} from './copy/library-ui.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {createSkitLine} from './skit-dialogue.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {mangaLibraryEntries} from './manga-collection-model.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {assetURL,setImage} from './assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {collectionHdEdition} from './manga-collection-hd.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
 
 const mounts=new WeakMap();
 const put=(node,text)=>{if(node.textContent!==text)node.textContent=text;};

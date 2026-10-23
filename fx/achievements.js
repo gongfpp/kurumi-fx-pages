@@ -1,9 +1,9 @@
-import {normalLotteryFacts} from './lottery-ranking.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {marketPrice,positionMarket} from './market-book.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {setImage} from './assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {normalLotteryFacts} from './lottery-ranking.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {marketPrice,positionMarket} from './market-book.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {achievementManga,achievementMangaThumbnail} from './manga-achievements.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {setImage} from './assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
 // Names are game adaptations of verified scenes, not quotations or official achievements.
 const define = (id, name, description, badge, sourceNote, goal = 1) =>
   Object.freeze({id, name, description, badge, sourceNote, goal});

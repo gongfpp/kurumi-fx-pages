@@ -1,4 +1,4 @@
-import {setImage,retryImage} from './assets.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {setImage,retryImage} from './assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
 const notices=new WeakMap();
 export function showGeneratedPortrait(image,portrait){
  image.parentElement?.classList.add('portrait-current');

@@ -1,4 +1,4 @@
-import {WATCH_POLICY,HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {WATCH_POLICY,HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
 
 // Optional observations only. No balance, effect, migration, timer or RNG writes.
 // A legacy engine can ignore this field; counter mismatches then mark it partial.

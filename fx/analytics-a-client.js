@@ -1,8 +1,8 @@
-import {PROFILE,LIMITS,isSampledEvent,isNoncritical,sampledSession} from './analytics-a-contract.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {A_KEYS,analyticsSource,validData,validEvent} from './analytics-a-policy.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {KURUMI_ANALYTICS_A_SCHEMA_VERSION,KURUMI_SERVICE_ORIGIN} from './service-config.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
-import {randomUUID} from './uuid.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717';
+import {PROFILE,LIMITS,isSampledEvent,isNoncritical,sampledSession} from './analytics-a-contract.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {A_KEYS,analyticsSource,validData,validEvent} from './analytics-a-policy.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {KURUMI_ANALYTICS_A_SCHEMA_VERSION,KURUMI_SERVICE_ORIGIN} from './service-config.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
 const blank=()=>({criticalEligible:0,sampledEligible:0,sampledSelected:0,sent:0,queueDropped:0,expiredDropped:0,quotaDropped:0,sendFailed:0});
 const parse=s=>{try{return JSON.parse(s);}catch{return null;}};
 const safeStorage=kind=>{try{return kurumiStorage(kind);}catch{return null;}};

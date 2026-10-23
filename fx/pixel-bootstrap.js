@@ -1,6 +1,8 @@
 // Catch application/dependency load failures without exposing a second UI.
-try{await import('./app.js?v=7a839b5792d6dcf1fed62b676f05ec286e587c37-23f2a20b7717');}
+// Program retries reload the document; renderer retries retain this same import.
+const program=globalThis.kurumiPixelBoot?.programTicket?.();
+try{await import('./app.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717');}
 catch(error){
- globalThis.kurumiPixelBoot?.fail();
+ if(program)program.fail();else globalThis.kurumiPixelBoot?.fail('program');
  console.error('Game startup failed',error);
 }
