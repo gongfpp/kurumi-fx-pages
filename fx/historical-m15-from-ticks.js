@@ -1,4 +1,4 @@
-import {M15_DURATION_MS,M15_SOURCE_SCHEMA,validateHistoricalM15Source} from './historical-m15-source.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {M15_DURATION_MS,M15_SOURCE_SCHEMA,validateHistoricalM15Source} from './historical-m15-source.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 const HASH=/^[a-f0-9]{64}$/;
 const fail=message=>{throw Error('Historical M15 derivation: '+message);};
 const ohlc=price=>({open:price,high:price,low:price,close:price});

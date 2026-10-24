@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98",
-  "assetVersion": "a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717",
+  "sourceCommit": "c2206d06d03022b81c2f2452b19871fb40d4a8b9",
+  "assetVersion": "c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -12,8 +12,8 @@
   "retainedHistory": null,
   "privatePrototypeExcluded": true,
   "startup": {
-    "appStaticModules": 351,
-    "appStaticBytes": 2653213,
+    "appStaticModules": 352,
+    "appStaticBytes": 2657599,
     "preloadCount": 102,
     "preloadPaths": [
       "pixel-bootstrap.js",
@@ -119,7 +119,7 @@
       "trading-trauma.js",
       "vendor/lz-string.js"
     ],
-    "stylesheetLinksBefore": 39,
+    "stylesheetLinksBefore": 40,
     "stylesheetLinksAfter": 1,
     "stylesheetSources": [
       "./fx/style.css",
@@ -148,6 +148,7 @@
       "fx/market-selector.css",
       "./fx/pixel-renderer.css",
       "./fx/pixel-settlement.css",
+      "./fx/game-feel.css",
       "./fx/approved-skit-layout.css",
       "./fx/pixel-hall.css",
       "./fx/pixel-reader.css",
@@ -162,7 +163,7 @@
       "./fx/lottery.css",
       "./fx/approved-mobile-layout.css"
     ],
-    "stylesheetBytes": 410469
+    "stylesheetBytes": 414324
   },
   "manga": {
     "scope": "approved-panels-chapter-disabled",

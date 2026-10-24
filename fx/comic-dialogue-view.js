@@ -1,8 +1,9 @@
-import {createSkitLine} from './skit-dialogue.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {mountComicOriginalVoices} from './original-scene-voice.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {mountSkitMotion} from './skit-motion.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {mountComicOriginalVoices} from './original-scene-voice.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 const mountedDialogues=new WeakMap();
-import {setImage} from './assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {setImage} from './assets.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.
@@ -25,7 +26,8 @@ export function mountComicDialogue(host,scene,{root=host.ownerDocument||document
   voiceStops.push(mountComicOriginalVoices(item,{scene,panelIndex:index,root,owner:host}));
  }
  const stopObservers=()=>{for(const stop of stops)stop();stops=[];};
- const dispose=()=>{stopObservers();for(const stop of voiceStops)stop();voiceStops.length=0;if(mountedDialogues.get(host)===dispose)mountedDialogues.delete(host);};mountedDialogues.set(host,dispose);
+ const skitMotion=mountSkitMotion(host,{root});
+ const dispose=()=>{skitMotion.dispose();stopObservers();for(const stop of voiceStops)stop();voiceStops.length=0;if(mountedDialogues.get(host)===dispose)mountedDialogues.delete(host);};mountedDialogues.set(host,dispose);
  return {count:panels.length,images,dispose,observe({memory=dailyArtMemory,identities=[artIdentity(scene.art)]}={}){
   stopObservers();const seen=new Set();stops=images.map(({image,crop,caption,hasCaption},index)=>observeSeenArtwork(image,{memory:{seen(){}},identities:[],visibilityTargets:hasCaption?[crop,caption]:[crop],minVisibleRatio:.9,accumulateVisibility:true,onSeen:()=>{seen.add(index);if(seen.size===4)memory.seen(identities.filter(Boolean));}}));return dispose;
  }};

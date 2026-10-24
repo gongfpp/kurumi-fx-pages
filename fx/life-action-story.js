@@ -1,10 +1,11 @@
-import {createSkitLine} from './skit-dialogue.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {LIFE_WORK_JOBS,validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {mountSkitMotion} from './skit-motion.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.
@@ -63,9 +64,10 @@ export function mountLifeActionStory(host,scene,{memory}={}){
  const doc=host.ownerDocument,win=doc.defaultView,lines=[];let stopped=false,completed=false,observer=null;
  host.classList?.add('life-action-story');
  for(const [from,text] of scene.lines){const line=createSkitLine(doc,from,text);host.append(line);lines.push(line);}
+ const skitMotion=mountSkitMotion(host,{root:doc});
  const seen=new Set(),finish=()=>{if(!stopped&&!completed&&!doc.hidden&&seen.size===lines.length){completed=true;memory?.seen([scene.identity]);observer?.disconnect();}};
  if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{if(stopped||doc.hidden)return;for(const entry of entries)if(entry.isIntersecting&&entry.intersectionRatio>=.9)seen.add(entry.target);finish();},{threshold:[.9]});lines.forEach(line=>observer.observe(line));}
  const check=()=>{if(stopped||completed||doc.hidden)return;for(const line of lines)if(fallbackLineVisible(line,win))seen.add(line);finish();};
  if(!observer){win?.addEventListener?.('scroll',check,true);win?.addEventListener?.('resize',check);check();}
- return {dispose(){stopped=true;observer?.disconnect();win?.removeEventListener?.('scroll',check,true);win?.removeEventListener?.('resize',check);}};
+ return {dispose(){stopped=true;skitMotion.dispose();observer?.disconnect();win?.removeEventListener?.('scroll',check,true);win?.removeEventListener?.('resize',check);}};
 }

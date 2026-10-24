@@ -1,7 +1,7 @@
-import {positionBand,leverageBand,holdingBand,levelBand,capitalBand,profitBand,riskBand} from './analytics-a-policy.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {safeLiveTradeEvidence} from './live-market-state.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {positionBand,leverageBand,holdingBand,levelBand,capitalBand,profitBand,riskBand} from './analytics-a-policy.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 // Read-only observations. All labels are closed contract enums; game IDs are
 // used only for local deduplication, never copied into data.
 export function createAnalyticsAGame({client,getState,equity,stamina,moodPercent=()=>null,riskPercent=()=>null,storyEpisodes=[]}){

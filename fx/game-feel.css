@@ -1,0 +1,38 @@
+/* Three bounded feedback tiers. All money labels remain the real render output. */
+.game-feel-button-face{display:inline-block;pointer-events:none}
+body #pixel-frontend :is(#long,#short,#half,#close,[data-position-action]):active,
+body :is(#long,#short,#half,#close,[data-position-action]):active{transform:none}
+.game-feel-cue{position:fixed;z-index:10;pointer-events:none;max-width:min(240px,calc(100vw - 24px));padding:4px 8px;border:1px solid currentColor;border-radius:5px;background:#fffafc;color:#745b70;font-size:12px;line-height:1.5;font-weight:700;overflow-wrap:anywhere;box-sizing:border-box}
+.game-feel-cue[data-tone=gain]{color:#177259}.game-feel-cue[data-tone=loss]{color:#a03b72}
+body .sanity-meter span,body .pixel-stamina-fill,body .pressure-meter-fill{transition:width 180ms ease-out}
+#emotion-pressure-meter::-webkit-progress-value{transition:width 180ms ease-out}
+#emotion-pressure-meter::-moz-progress-bar{transition:width 180ms ease-out}
+/* Native close stays synchronous: no timer can hold a modal/focus/financial action.
+   Discrete-transition browsers can draw a noninteractive 120ms exit. */
+dialog.dialog-shell:not(#pixel-boot-error){opacity:0;transition:opacity 120ms ease-out,display 120ms allow-discrete,overlay 120ms allow-discrete}
+dialog.dialog-shell[open]:not(#pixel-boot-error){opacity:1;transition-duration:160ms;animation:none}
+dialog.dialog-shell:not([open]),dialog.dialog-shell:not([open])::backdrop{pointer-events:none}
+dialog.dialog-shell[open]>.dialog-scroll{animation:feel-panel-in 160ms ease-out}
+@starting-style{dialog.dialog-shell[open]:not(#pixel-boot-error){opacity:0}}
+@keyframes feel-panel-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+/* details is the existing menu state; no extra toggle or focus manager. */
+details[open]>.pixel-drawer-content>:nth-child(-n+4),details[open]>.mobile-chart-menu>:nth-child(-n+4){animation:feel-menu-in 160ms ease-out backwards}
+details[open]>.pixel-drawer-content>:nth-child(2){animation-delay:20ms}details[open]>.pixel-drawer-content>:nth-child(3){animation-delay:40ms}
+@keyframes feel-menu-in{from{opacity:.4;transform:translateY(2px)}to{opacity:1;transform:none}}
+/* Keep the existing scan/numeric replay; the receipt and landing are local. */
+.daily-recap .recap-heading{animation:feel-panel-in 400ms ease-out}
+.daily-recap .recap-stats,.pixel-settlement-paid{animation:feel-panel-in 500ms ease-out 100ms backwards}
+.recap-burst>.recap-spark:nth-child(n+7){display:none}
+.recap-screen{display:none!important}
+.daily-recap .recap-playback[data-stage=landing]{animation:none;transition:border-color 500ms ease-out}
+.daily-recap[data-direction=profit] .recap-playback[data-stage=landing]{border-color:#177259}
+.daily-recap[data-direction=loss] .recap-playback[data-stage=landing]{border-color:#a03b72}
+.daily-recap[data-animate=false] .recap-heading,.daily-recap[data-animate=false] .recap-stats{animation:none}
+#day-dialog:has(.daily-recap[data-animate=false]) .pixel-settlement-paid{animation:none}
+.daily-recap[data-motion-reduced=true] *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){
+ body.motion-full,body:not(.motion-full){scroll-behavior:auto}
+ body .game-feel-button-face,body .game-feel-cue,body dialog.dialog-shell,body dialog.dialog-shell>.dialog-scroll,body details[open]>.pixel-drawer-content>*,body details[open]>.mobile-chart-menu>*,body .daily-recap .recap-heading,body .daily-recap .recap-stats,body .pixel-settlement-paid{animation:none!important;transition:none!important;transform:none!important}
+ body .sanity-meter span,body .pixel-stamina-fill,body .pressure-meter-fill{transition:none!important}
+ #emotion-pressure-meter::-webkit-progress-value{transition:none!important}#emotion-pressure-meter::-moz-progress-bar{transition:none!important}
+}

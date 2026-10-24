@@ -1,19 +1,19 @@
-import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap} from './recap-receipts.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {createReceiptRecapChart} from './recap-receipt-chart.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {marketInfo,positionMarket} from './market-book.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {orderedRecapTrades} from './recap-timeline.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {systemReducedMotion} from './motion-preference.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {recapImpact} from './recap-impact.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {createRecapStageChart} from './recap-stage-chart.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {setImage} from './assets.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {buildCurveScale} from './share-card.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {recapChoices} from './daily-recap.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {createRecapPlayer} from './recap-player.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {formatTradingTime} from './trading-time.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
-import {amountRollWindow,createRecapMoneyRoller} from './recap-amount-roll.js?v=a881d911fe9c02f2ce01a0e3366a9d03d2fb1b98-23f2a20b7717';
+import {RECEIPT_RECAP_CANDIDATE,buildReceiptRecap} from './recap-receipts.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {createReceiptRecapChart} from './recap-receipt-chart.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {marketInfo,positionMarket} from './market-book.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {orderedRecapTrades} from './recap-timeline.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {recapImpact} from './recap-impact.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {createReturnFormulaHelp,createFormulaHelp} from './return-formula.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {createRecapStageChart} from './recap-stage-chart.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {setImage} from './assets.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {candlePlot,createChartViewport,spacedTimeTicks} from './chart-viewport.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {buildCurveScale} from './share-card.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {recapChoices} from './daily-recap.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {createRecapPlayer} from './recap-player.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {formatTradingTime} from './trading-time.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {amountRollWindow,createRecapMoneyRoller} from './recap-amount-roll.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
 const money=n=>(n<0?'−':'')+'¥'+Math.abs(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
 const signed=n=>(n>0?'+':'')+money(n);
 const displayedBeatDelta=beat=>Number.isFinite(beat.displayValue)&&Number.isFinite(beat.displayDelta)?(Math.round(beat.displayValue*100)-Math.round((beat.displayValue-beat.displayDelta)*100))/100:Number.isFinite(beat.displayDelta)?Math.round(beat.displayDelta*100)/100:beat.delta;
@@ -74,15 +74,18 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
  let playbackRate=[1,1.5,2].includes(playerOptions.playbackRate)?playerOptions.playbackRate:1;
  const speeds=el(doc,'div','recap-speeds');speeds.setAttribute('role','group');speeds.setAttribute('aria-label','回放速度');
  const speedButtons=[1,1.5,2].map(rate=>{const button=el(doc,'button','recap-speed',rate+'×');button.type='button';button.dataset.rate=String(rate);button.setAttribute('aria-pressed',String(rate===playbackRate));button.onclick=()=>{if(disposed)return;playbackRate=rate;player?.setPlaybackRate(rate);syncAnimationRate();for(const item of speedButtons)item.setAttribute('aria-pressed',String(Number(item.dataset.rate)===rate));};speeds.append(button);return button;});controls.append(speeds);
- let player=null,disposed=false,lastEvent=-1,lastBeat=-1,lastAssetBeat=-1,lastStage='',collapseUntil=0,effectElapsed=0,animations=[],screenOpen=false,popoverUsable=typeof screen.showPopover==='function';
+ let player=null,disposed=false,presentationRun=0,lastEvent=-1,lastBeat=-1,lastAssetBeat=-1,lastStage='',collapseUntil=0,effectElapsed=0,animations=[],screenOpen=false,popoverUsable=typeof screen.showPopover==='function';
+ const motionPreference=doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)');
+ const motionReduced=()=>!!(typeof reducedMotion==='function'?reducedMotion():reducedMotion)||(motionPreference?motionPreference.matches:systemReducedMotion(doc));
  // Each effect includes entry, peak, rebound and fade inside the landing.
  for(const target of [screen,playback]){target.dataset.recapBudget='true';target.style.setProperty('--recap-landing-duration',presentation.landingDuration+'ms');}
- const clearEffects=()=>{for(const animation of animations)animation.cancel();animations=[];if(screenOpen){try{screen.hidePopover?.();}catch{}screenOpen=false;}screen.dataset.active='false';screen.dataset.stage='complete';container.dataset.animate='false';playback.dataset.stage='complete';};
+ const cancelDecorations=()=>{for(const animation of animations)animation.cancel();animations=[];};
+ const clearEffects=()=>{cancelDecorations();if(screenOpen){try{screen.hidePopover?.();}catch{}screenOpen=false;}screen.dataset.active='false';screen.dataset.stage='complete';container.dataset.animate='false';playback.dataset.stage='complete';};
  const showScreen=()=>{if(screenOpen)return;if(!popoverUsable){screen.removeAttribute?.('popover');return;}try{screen.showPopover();screenOpen=true;}catch{popoverUsable=false;screen.removeAttribute?.('popover');}};
  const setAnimationRate=animation=>{if(animation.updatePlaybackRate)animation.updatePlaybackRate(playbackRate);else animation.playbackRate=playbackRate;};
  const syncAnimationRate=()=>{for(const animation of new Set([...animations,...(screen.getAnimations?.({subtree:true})||[]),...(container.getAnimations?.({subtree:true})||[])]))setAnimationRate(animation);container.style.setProperty('--recap-playback-rate',playbackRate);playback.dataset.playbackRate=String(playbackRate);};
  const targetAnimations=new WeakMap();
- const animate=(target,frames,options)=>{const remaining=Math.max(0,presentation.duration-effectElapsed-(options.delay||0));if(!remaining)return;targetAnimations.get(target)?.cancel();const animation=target?.animate?.(frames,{...options,duration:Math.min(options.duration,remaining)});if(animation)targetAnimations.set(target,animation);if(animation){setAnimationRate(animation);animations.push(animation);animation.onfinish=()=>{animations=animations.filter(a=>a!==animation);};}};
+ const animate=(target,frames,options)=>{if(disposed||motionReduced())return;const remaining=Math.max(0,presentation.duration-effectElapsed-(options.delay||0));if(!remaining)return;const prior=targetAnimations.get(target);if(prior){prior.cancel();animations=animations.filter(a=>a!==prior);}while(animations.length>=12)animations.shift().cancel();const animation=target?.animate?.(frames,{...options,duration:Math.min(options.duration,remaining)});if(animation)targetAnimations.set(target,animation);if(animation){setAnimationRate(animation);animations.push(animation);animation.onfinish=()=>{animations=animations.filter(a=>a!==animation);};}};
  let digitNodes=[],lastAmount='',lastAmountValue=NaN,cRollingEnabled=false;
  const moneyRoller=cAmount?createRecapMoneyRoller(running):null;
  const rollAmount=(value,frame)=>{
@@ -106,15 +109,17 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
     if(target&&viewport){const top=Math.max(0,scroller.scrollTop+target.top-viewport.top-(scroller.clientTop||0));if(scroller.scrollTo)scroller.scrollTo({top,behavior:'instant'});else scroller.scrollTop=top;}
    }
   }
-  const activeMotion=initial?motion:typeof replayMotion==='function'?replayMotion():replayMotion,systemReduced=reducedMotion||systemReducedMotion(doc);
-  cRollingEnabled=!!activeMotion&&!systemReduced;moneyRoller?.reset(signed(0));
+  const run=++presentationRun,activeMotion=initial?motion:typeof replayMotion==='function'?replayMotion():replayMotion,initialReduced=motionReduced();
+  cRollingEnabled=!!activeMotion&&!initialReduced;moneyRoller?.reset(signed(0));
   player?.cancel();clearEffects();lastBeat=-1;lastAssetBeat=-1;lastEvent=-1;lastStage='';collapseUntil=0;assetDelta.textContent='';impactLabel.textContent='';eventDelta.textContent='';eventCard.textContent='';eventCard.replaceChildren(eventDelta);eventCard.hidden=true;marketReceipts.hidden=true;marketReceipts.textContent='';delete eventCard.dataset.reconciled;for(const key of ['eventId','eventAtMs','eventBefore','eventAfter','eventPosition'])delete playback.dataset[key];
-  player=createRecapPlayer(snapshot,{...playerOptions,variant:receiptCandidate?RECEIPT_RECAP_CANDIDATE:'classic',playbackRate,onTimeline,enabled:activeMotion,reducedMotion:systemReduced,render:f=>{
+  player=createRecapPlayer(snapshot,{...playerOptions,variant:receiptCandidate?RECEIPT_RECAP_CANDIDATE:'classic',playbackRate,onTimeline,enabled:activeMotion,reducedMotion:initialReduced,render:f=>{
+   if(disposed||run!==presentationRun)return;
+   const systemReduced=motionReduced();cRollingEnabled=!!activeMotion&&!systemReduced;container.dataset.motionReduced=String(systemReduced);
    effectElapsed=f.elapsed;
    if(f.stage==='landing'&&lastStage!=='landing'){const remaining=Math.max(0,presentation.duration-f.elapsed);for(const target of [screen,playback]){target.style.setProperty('--recap-landing-duration',remaining+'ms');target.style.setProperty('--recap-impact-duration',Math.min(420,remaining)+'ms');target.style.setProperty('--recap-delay-factor',remaining/presentation.landingDuration);}}
    const primaryValue=snapshot.primary.scope==='cumulative'?snapshot.primary.profit-snapshot.daily.tradingNet+f.realized:f.realized;
-   const previousReplayProfit=lastAmountValue,replayProfit=Math.round((f.settlementAssets-snapshot.daily.openingNominal)*100)/100;playback.dataset.tradingProfit=String(replayProfit);playback.dataset.realized=String(Math.round(f.realized*100)/100);playback.dataset.nominalAssets=String(snapshot.account.nominalAssets);playback.dataset.elapsed=String(Math.round(f.elapsed));playback.dataset.scanTimestamp=String(f.scanTime??f.timestamp);running.dataset.amount=playback.dataset.tradingProfit;profitCounter.textContent=signed(Math.round(primaryValue*100)/100);rollAmount(replayProfit,f);step.textContent=profitLabel;running.dataset.direction=replayProfit<-.005?'loss':replayProfit>.005?'profit':'flat';realizedScore.dataset.direction=snapshot.account.nominalAssets<0?'loss':'flat';const dailyDenominator=snapshot.daily.returnDenominator,dayRate=snapshot.daily.returnRate??(snapshot.primary.scope!=='cumulative'?snapshot.primary.returnRate:null);stageRate.textContent=pct(f.complete?dayRate:dayRate===null?null:dailyDenominator>0?replayProfit/dailyDenominator:snapshot.daily.tradingNet?replayProfit/snapshot.daily.tradingNet*dayRate:0);
-   const denominator=snapshot.primary.scope==='cumulative'?snapshot.cumulative.returnDenominator:snapshot.daily.returnDenominator;rateCounter.textContent=pct(f.complete?snapshot.primary.returnRate:snapshot.primary.returnRate===null?null:denominator>0?primaryValue/denominator:snapshot.primary.profit?primaryValue/snapshot.primary.profit*snapshot.primary.returnRate:0);
+   const previousReplayProfit=lastAmountValue,replayProfit=Math.round((f.settlementAssets-snapshot.daily.openingNominal)*100)/100;playback.dataset.tradingProfit=String(replayProfit);playback.dataset.realized=String(Math.round(f.realized*100)/100);playback.dataset.nominalAssets=String(snapshot.account.nominalAssets);playback.dataset.elapsed=String(Math.round(f.elapsed));playback.dataset.scanTimestamp=String(f.scanTime??f.timestamp);running.dataset.amount=playback.dataset.tradingProfit;profitCounter.textContent=signed(snapshot.primary.profit);rollAmount(replayProfit,f);step.textContent=profitLabel;running.dataset.direction=replayProfit<-.005?'loss':replayProfit>.005?'profit':'flat';realizedScore.dataset.direction=snapshot.account.nominalAssets<0?'loss':'flat';const dailyDenominator=snapshot.daily.returnDenominator,dayRate=snapshot.daily.returnRate??(snapshot.primary.scope!=='cumulative'?snapshot.primary.returnRate:null);stageRate.textContent=pct(f.complete?dayRate:dayRate===null?null:dailyDenominator>0?replayProfit/dailyDenominator:snapshot.daily.tradingNet?replayProfit/snapshot.daily.tradingNet*dayRate:0);
+   const denominator=snapshot.primary.scope==='cumulative'?snapshot.cumulative.returnDenominator:snapshot.daily.returnDenominator;rateCounter.textContent=pct(snapshot.primary.returnRate);
    const shownAssets=receiptCandidate&&!f.complete?f.settlementAssets:snapshot.account.nominalAssets;
    realizedLabel.textContent=receiptCandidate?(f.complete?'期末总资产':'交易资产'):'总资产';realizedValue.textContent=money(shownAssets);realizedScore.dataset.direction=shownAssets<0?'loss':'flat';playback.dataset.nominalAssets=String(shownAssets);playback.dataset.assetBasis=receiptCandidate?(f.complete?'account-close':'trading-replay'):'account-close';realizedScore.style.setProperty('--recap-score-width',typeWidth(realizedValue.textContent)*(recapImpact(presentation,{strength:1,landing:true}).scale+.08));assetLine.textContent=!receiptCandidate&&Math.abs(f.unrealized)>.005?'持仓浮动 '+signed(Math.round(f.unrealized*100)/100):'';assetLine.hidden=!assetLine.textContent;clock.textContent=formatTradingTime(f.timestamp)+' JST';playback.dataset.slowing=String(!!f.slowing);phaseLabel.textContent=f.complete?'收盘':f.stage==='anticipation'?'收盘前一拍':f.stage==='landing'?(presentation.direction==='loss'?'亏损落账':presentation.direction==='profit'?'收益落账':'今日收盘'):'当天回放';
    const eventChange=receiptCandidate?(f.receiptGroup?.delta??f.event?.delta):f.event?.delta;
@@ -127,7 +132,8 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
     const group=simultaneousReceipts.get(f.event.timestamp);marketReceipts.hidden=receiptCandidate||f.event.type==='summary'||!group||group.size<2;marketReceipts.textContent=marketReceipts.hidden?'':Array.from(group,([symbol,entry])=>`${symbol} ${entry.closed?signed(Math.round(entry.pnl*100)/100):'开仓'}`).join(' · ');
     if(activeMotion&&!systemReduced&&!f.complete){const loss=eventChange<0;animate(eventCard,[{opacity:.2,transform:receiptCandidate&&loss?'translateY(-34px) rotate(3deg) scale(.85)':'translateY(34px) rotate(-3deg) scale(.85)'},{opacity:1,transform:receiptCandidate&&loss?'translateY(6px) rotate(-1deg) scale(1.06)':'translateY(-6px) rotate(1deg) scale(1.06)',offset:.55},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,.8,.2,1)'});const collapse=presentation.catastrophic&&eventHasLiquidation;if(collapse)collapseUntil=f.elapsed+1250;if(collapse)animate(running,[{transform:'translateY(-10px) scale(1.1)'},{transform:'translateY(42px) scale(.88)',offset:.35},{transform:'translateY(42px) scale(.88)',offset:.65},{transform:'none'}],{duration:1250,easing:'cubic-bezier(.2,.8,.2,1)'});}
    }if(f.event&&f.event.type!=='open')eventDelta.textContent=signed(Math.round((receiptCandidate?(f.receiptGroup?.delta??f.event.delta):(f.complete?f.event.delta:f.realized-f.event.before))*100)/100);skip.hidden=f.complete;playback.dataset.complete=String(f.complete);playback.dataset.stage=f.stage;container.dataset.animate=String(activeMotion&&!systemReduced&&!f.complete);
-   const screenActive=presentation.rank>=2&&activeMotion&&!systemReduced&&!f.complete&&['anticipation','landing'].includes(f.stage);screen.dataset.active=String(screenActive);screen.dataset.stage=f.stage;if(screenActive)showScreen();
+   // The replay keeps its scan and sound score, but no viewport wash/popover.
+   screen.dataset.active='false';screen.dataset.stage=f.stage;
    if(f.reconciled&&Math.abs(f.reconciliation)>.005&&!eventCard.dataset.reconciled){eventCard.dataset.reconciled='true';eventCard.hidden=false;marketReceipts.hidden=true;const groupedSummary=receiptCandidate&&f.receiptGroup?.count>0&&f.receiptGroup.types.includes('summary');if(!groupedSummary){eventCard.replaceChildren(el(doc,'span','recap-event-label','收盘汇总 · 部分逐笔记录未留存'),eventDelta);eventDelta.textContent=signed(f.reconciliation);}}
    if(f.complete){assetDelta.textContent='';clearEffects();}
    if(!f.assetBeat||f.elapsed-f.assetBeat.atMs>800)assetDelta.textContent='';
@@ -150,15 +156,19 @@ export function mountDailyRecap(container,snapshot,{motion=true,replayMotion=mot
    if(f.stage==='landing'&&lastStage!=='landing'&&activeMotion&&!systemReduced){
     const loss=presentation.direction==='loss',kick=presentation.rank>=1?presentation.shake:0,profile=recapImpact(presentation,{delta:snapshot.primary.profit,strength:1,landing:true});impactLabel.textContent=loss?'亏损落账':presentation.direction==='profit'?'收益落账':'今日收盘';impactLabel.dataset.direction=presentation.direction;assetDelta.textContent='';
     if(presentation.catastrophic&&Math.abs(replayProfit-previousReplayProfit)>.005)animate(running,[{transform:'translateY(-12px) scale(1.08)'},{transform:'translateY(30px) scale(.9)',offset:.3},{transform:'translateY(30px) scale(.9)',offset:.65},{transform:'none'}],{duration:presentation.landingDuration,easing:'cubic-bezier(.2,.7,.2,1)'});
-    const modal=container.closest?.('dialog');for(const target of new Set(kick?[doc.body||container,...(modal?.open?[modal]:[])]:[]))animate(target,[{transform:'translate(0,0)'},{transform:`translate(${-kick}px,${loss?kick*.55:-kick*.6}px)`,offset:.14},{transform:`translate(${kick*.7}px,${-kick*.25}px)`,offset:.32},{transform:`translate(${-kick*.38}px,${kick*.12}px)`,offset:.55},{transform:'translate(0,0)'}],{duration:Math.min(presentation.landingDuration,presentation.catastrophic?1100:loss?820:650),easing:'ease-out'});
+    animate(primary,[{opacity:.65,transform:'translateY(3px)'},{opacity:1,transform:'none'}],{duration:500,easing:'ease-out'});
     if(!presentation.catastrophic&&presentation.rank&&Math.abs(replayProfit-previousReplayProfit)>.005){punch(running,{...profile,duration:Math.min(780,presentation.landingDuration)});punchDigits({...profile,duration:Math.min(780,presentation.landingDuration)});}
     animate(profitCounter,[{transform:'scale(.96)'},{transform:`scale(${1+presentation.intensity*.3})`,offset:.18},{transform:'scale(1)',offset:1}],{duration:presentation.landingDuration,easing:'cubic-bezier(.16,1,.3,1)'});
    }
    if(lastStage!==f.stage)syncAnimationRate();lastStage=f.stage;candles.update(f);
-  },onCue:({kind,...options})=>onSound(kind,options)});
+  },onCue:({kind,...options})=>{if(!disposed&&run===presentationRun)onSound(kind,options);}});
  };
  container.insertBefore?.(playback,heading);
  const suspend=()=>{player?.finish();clearEffects();},visibility=()=>{if(doc.hidden)suspend();};doc.addEventListener?.('visibilitychange',visibility);doc.defaultView?.addEventListener?.('pagehide',suspend);
+ // Stop decoration immediately, without finishing/seeking the receipt player or
+ // touching its audio schedule. Every later frame also reads the live preference.
+ const preferenceChanged=()=>{if(disposed)return;const reduced=motionReduced();container.dataset.motionReduced=String(reduced);if(reduced){cancelDecorations();cRollingEnabled=false;moneyRoller?.reset(lastAmount||signed(0));digitNodes=moneyRoller?.nodes||digitNodes;container.dataset.animate='false';assetDelta.textContent='';impactLabel.textContent='';}};
+ if(motionPreference?.addEventListener)motionPreference.addEventListener('change',preferenceChanged);else motionPreference?.addListener?.(preferenceChanged);
  skip.onclick=()=>{player?.finish();clearEffects();};replay.onclick=()=>start();start({initial:true});
- return{snapshot,replay:start,finish:()=>{player?.finish();clearEffects();},dispose:()=>{disposed=true;moneyRoller?.dispose();player?.cancel();clearEffects();doc.removeEventListener?.('visibilitychange',visibility);doc.defaultView?.removeEventListener?.('pagehide',suspend);screen.remove?.();}};
+ return{snapshot,replay:start,finish:()=>{player?.finish();clearEffects();},dispose:()=>{disposed=true;presentationRun++;moneyRoller?.dispose();player?.cancel();clearEffects();doc.removeEventListener?.('visibilitychange',visibility);doc.defaultView?.removeEventListener?.('pagehide',suspend);if(motionPreference?.removeEventListener)motionPreference.removeEventListener('change',preferenceChanged);else motionPreference?.removeListener?.(preferenceChanged);screen.remove?.();}};
 }
