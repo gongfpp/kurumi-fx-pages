@@ -1,4 +1,4 @@
-import {sealedDailyTradeEvidence} from './contextual-trade-evidence.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {sealedDailyTradeEvidence} from './contextual-trade-evidence.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 
 const positive=n=>Number.isFinite(n)&&n>0;
 const nonnegative=n=>Number.isFinite(n)&&n>=0;

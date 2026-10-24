@@ -1,8 +1,8 @@
-import {isResearch} from './historical-replay.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {isResearch} from './historical-replay.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.

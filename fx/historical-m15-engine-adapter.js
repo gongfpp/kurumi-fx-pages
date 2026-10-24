@@ -1,7 +1,7 @@
-import {deriveM15SourceFromTicks} from './historical-m15-from-ticks.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {HistoricalM15Replay} from './historical-m15-replay.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {M15_PATH_MODEL} from './historical-m15-path.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {aggregateCandles} from './candle-period.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {deriveM15SourceFromTicks} from './historical-m15-from-ticks.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {HistoricalM15Replay} from './historical-m15-replay.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {M15_PATH_MODEL} from './historical-m15-path.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {aggregateCandles} from './candle-period.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 const feeds=new WeakMap(),HASH=/^[a-f0-9]{64}$/;
 const SOURCE_HASH='ce78872e7bbdf883c99b32d6d9854dc9f6f564b78d1d4d095a57bf5c8a3caf35';
 const BASIS='m15-mid-reference-simulated-path';

@@ -1,7 +1,7 @@
-import {createDeferredModule} from './deferred-module.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {mountOptionalContentStatus} from './optional-content-status.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {createDeferredModule} from './deferred-module.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {mountOptionalContentStatus} from './optional-content-status.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 
-export function createDeferredInvestorComments(root,{load=()=>import('./investor-danmaku.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717'),...options}={}){
+export function createDeferredInvestorComments(root,{load=()=>import('./investor-danmaku.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717'),...options}={}){
  const source=createDeferredModule(load),document=options.document??root.ownerDocument;
  let view=null,latest=null,rows=[],disposed=false,failure=null;
  function clearFailure(){failure?.status.dispose();failure?.row.remove();failure=null;}

@@ -1,12 +1,12 @@
-import {ownsTradingNotes} from './life-work.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {ownsTradingNotes} from './life-work.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 // Discovery happens in play. Undiscovered items show only anonymous, unusable silhouettes.
 // Keep the original introduction's durable completion marker for story replay.
 // There is no mochiko product, usable action or liquidation benefit.
 export const ITEM_EVENTS={fatherDiscover:['father'],friendStudy:['mochiko'],roommate:['energy']};
 // Kept as an empty compatibility export; unlock conditions are never player copy.
 export const UNLOCK_HINTS={};
-export {ITEM_SCENES} from './copy/scenes.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+export {ITEM_SCENES} from './copy/scenes.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 export function itemDiscovered(s,id){return id==='tradingNotes'?ownsTradingNotes(s):!!s.itemDiscoveries?.[id]||itemUnlocked(s,id);}
 const PLAY_ITEMS=['takeaway','noodles','energy','father'];
 export function itemUnlocked(s,id){return id==='tradingNotes'?ownsTradingNotes(s):['dailyDrink','chocolate','eyeMask'].includes(id)?false:id==='father'?s.mode==='endless'||!!s.family?.unlocked:s.mode==='endless'&&PLAY_ITEMS.includes(id)||!!s.itemUnlocks?.[id];}

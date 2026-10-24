@@ -1,4 +1,4 @@
-import {systemReducedMotion} from './motion-preference.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {systemReducedMotion} from './motion-preference.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 // A line actually entering view or selected by the reader. No text/audio/game
 // progression is controlled here, and unseen lines are not acknowledged.
 export function mountSkitMotion(host,{root=host.ownerDocument}={}){

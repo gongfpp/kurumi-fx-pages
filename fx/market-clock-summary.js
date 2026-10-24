@@ -1,7 +1,7 @@
-import {currentTradingTimestamp,tradingTimestamp,formatTradingTime} from './trading-time.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {historicalBillingDay} from './historical-replay.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {tradingDayDurationMinutes} from './stamina.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
-import {isLiveMarket} from './live-market-state.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {currentTradingTimestamp,tradingTimestamp,formatTradingTime} from './trading-time.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {tradingDayDurationMinutes} from './stamina.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {isLiveMarket,isOrdinaryLive,liveTimestamp} from './live-market-state.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 // Display existing session boundaries. This never creates a trading session,
 // infers an FX exchange opening time, or advances an unknown sleeping cursor.
 export function marketClosingTimestamp(state={}){
@@ -11,6 +11,6 @@ export function marketClosingTimestamp(state={}){
  return tradingTimestamp(state,{day:state.day,beat:3+(state.mode==='endless'?0:Math.max(0,state.bonusBeats||0)),candle:3,tick:6});
 }
 export function marketClockSummary(state,{speed=1,paused=false,periodNotice=''}={}){
- const current=formatTradingTime(currentTradingTimestamp(state),{full:true}),close=marketClosingTimestamp(state),rate=isLiveMarket(state)?'实时行情':`${[1,2,4].includes(speed)?speed:1}×`;
- return [current,periodNotice,rate,...(paused||state.marketPaused?['已暂停']:[]),...(Number.isFinite(close)?[`收盘 ${formatTradingTime(close,{date:true})}`]:[])].filter(Boolean).join(' · ');
+ const ordinaryLive=isOrdinaryLive(state),current=formatTradingTime(ordinaryLive?liveTimestamp(state):currentTradingTimestamp(state),{full:true}),close=marketClosingTimestamp(state),rate=isLiveMarket(state)?'实时行情':`${[1,2,4].includes(speed)?speed:1}×`;
+ return [ordinaryLive?'最后报价时间 '+current:current,periodNotice,rate,...(paused||state.marketPaused?['已暂停']:[]),...(Number.isFinite(close)?[`${ordinaryLive?'本局收盘':'收盘'} ${formatTradingTime(close,{date:true})}`]:[])].filter(Boolean).join(' · ');
 }

@@ -1,4 +1,4 @@
-import {BIQUOTE_SYMBOLS, createBiquoteSource} from './biquote-source.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {BIQUOTE_SYMBOLS, createBiquoteSource} from './biquote-source.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 export const BIQUOTE_HUB = 'https://biquote.io/hubs/tick';
 export const SIGNALR_BROWSER_CLIENT = 'https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js';
 // These are recommended defaults, injectable pending product parameter approval.

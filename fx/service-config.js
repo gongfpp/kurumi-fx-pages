@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=c2206d06d03022b81c2f2452b19871fb40d4a8b9-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
 // Flip only after the backend's exact origins, channels and schema are ready.
 // Current batch and next-batch development never enable unready mirror writes.
 export const KURUMI_EXPERIENCE_MIRRORS_READY = false;
