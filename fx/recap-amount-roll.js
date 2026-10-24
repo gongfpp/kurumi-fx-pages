@@ -1,7 +1,7 @@
 // C's delivered money roller, using the existing recap clock. The 250ms
 // deceleration now ends at the receipt's shared amount/scan/audio anchor.
 // Financial targets and labels remain the sealed frame; columns are decorative.
-import {receiptRecapFrame} from './recap-receipts.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {receiptRecapFrame} from './recap-receipts.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 const DURATION=250,HEIGHT=1.15;
 
 export function rollingSample(column,time){

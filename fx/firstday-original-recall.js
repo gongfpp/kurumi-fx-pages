@@ -1,5 +1,5 @@
-import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {retainedTimeline,sealedDailyTradeEvidence} from './contextual-trade-evidence.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {retainedTimeline,sealedDailyTradeEvidence} from './contextual-trade-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 // Only the new first-day seal can create this proof. Later days may validate
 // it against retained real ledgers; they never reconstruct an old missing seal.
 const orderKeys=['sequence','type','positionId','day','beat','timestamp','timePrecision'];

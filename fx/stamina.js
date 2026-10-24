@@ -1,7 +1,7 @@
-import {historicalBillingDay} from './historical-replay.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
 // 16 x 15 minutes: calm watching spends 40 points. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;

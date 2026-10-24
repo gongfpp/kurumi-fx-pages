@@ -1,6 +1,6 @@
 // Separate research contract. M1 observations are never coerced into bid/ask ticks.
-import {describeHistoricalCoverage} from './history-coverage.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {validateM1DayLabels,validateM1ObservedCoverage} from './m1-source-contract.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {describeHistoricalCoverage} from './history-coverage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {validateM1DayLabels,validateM1ObservedCoverage} from './m1-source-contract.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 const MAX=16*1024*1024;
 export const RESEARCH_SYMBOLS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);
 const HASH=/^[a-f0-9]{64}$/;const JST=32400000,DAY=86400000;

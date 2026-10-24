@@ -1,6 +1,11 @@
-import {EVENTS,COMMON_KEYS,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {experienceSource} from './experience-policy.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-export {experienceSource as analyticsSource};
+import {EVENTS,COMMON_KEYS,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {experienceSource} from './experience-policy.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+// The formal EdgeOne host is A-only. Do not broaden legacy experience-v1
+// attribution or accept arbitrary application paths on this origin.
+const formalEdgeOne=Object.freeze({origin:'https://fx.gongfpp.icu',host:'fx.gongfpp.icu',channel:'edgeone-pages',path:'/fx/',entries:Object.freeze(['/','/fx.html'])});
+export function analyticsSource(location){
+ return experienceSource(location)||(location?.origin===formalEdgeOne.origin&&formalEdgeOne.entries.includes(location?.pathname)?formalEdgeOne:null);
+}
 export const A_KEYS=Object.freeze({consent:'fx-api-v1-analytics-a-consent',visitor:'fx-api-v1-analytics-a-visitor',session:'fx-api-v1-analytics-a-session',queue:'fx-api-v1-analytics-a-queue',budget:'fx-api-v1-analytics-a-budget'});
 const object=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
 const id=x=>typeof x==='string'&&/^[A-Za-z0-9_-]{16,80}$/.test(x);

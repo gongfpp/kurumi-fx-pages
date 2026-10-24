@@ -1,9 +1,9 @@
-import {staminaUsageLines} from './stamina-usage.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {staminaDrainMultiplier,staminaWatchCostPerMinute,tradingDayProgress} from './stamina.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {energyStageStatus} from './energy-stage.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {sleepStaminaRecovery,PROP_STAMINA_RECOVERY} from './life-recovery.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {LIFE_WORK_JOBS,effectiveWorkTerms} from './life-work.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {PROPS} from './content.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {staminaUsageLines} from './stamina-usage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {staminaDrainMultiplier,staminaWatchCostPerMinute,tradingDayProgress} from './stamina.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {energyStageStatus} from './energy-stage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {sleepStaminaRecovery,PROP_STAMINA_RECOVERY} from './life-recovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {LIFE_WORK_JOBS,effectiveWorkTerms} from './life-work.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {PROPS} from './content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 const number=n=>Number(n.toFixed(4)).toString();
 // Help is read-only. Actual counters own the totals; current contracts own the
 // explanatory rates. Neither viewing nor re-opening this panel applies effects.

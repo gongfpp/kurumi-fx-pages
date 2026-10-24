@@ -1,4 +1,4 @@
-import {M15_STEP_MS,validateM15Bar,validateM15Pair,validateM15Seed,m15BindingToken} from './historical-m15-source.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {M15_STEP_MS,validateM15Bar,validateM15Pair,validateM15Seed,m15BindingToken} from './historical-m15-source.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 export const M15_PATH_MODEL='fixed-24-linear-v1';
 
 // Local PRNG only: never reads/advances the game's trading or story RNG.

@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 // Flip only after the backend's exact origins, channels and schema are ready.
 // Current batch and next-batch development never enable unready mirror writes.
 export const KURUMI_EXPERIENCE_MIRRORS_READY = false;
@@ -6,7 +6,7 @@ export const KURUMI_EXPERIENCE_MIRRORS_READY = false;
 // receiver verification. Keep the independent ranking consent/identity intact.
 export const KURUMI_EXPERIENCE_READY = false;
 // Independent detailed A profile; enable only after its receiver verification.
-export const KURUMI_ANALYTICS_A_SCHEMA_VERSION = 0;
+export const KURUMI_ANALYTICS_A_SCHEMA_VERSION = 1;
 // The sole public service-origin value. Production is intentionally unconfigured.
 // tools/build-fx.mjs writes the explicitly supplied KURUMI_SERVICE_ORIGIN into
 // the exported bundle only; tests can inject serviceOrigin without editing it.

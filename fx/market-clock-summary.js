@@ -1,7 +1,7 @@
-import {currentTradingTimestamp,tradingTimestamp,formatTradingTime} from './trading-time.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {historicalBillingDay} from './historical-replay.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {tradingDayDurationMinutes} from './stamina.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
-import {isLiveMarket,isOrdinaryLive,liveTimestamp} from './live-market-state.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {currentTradingTimestamp,tradingTimestamp,formatTradingTime} from './trading-time.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {tradingDayDurationMinutes} from './stamina.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {isLiveMarket,isOrdinaryLive,liveTimestamp} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 // Display existing session boundaries. This never creates a trading session,
 // infers an FX exchange opening time, or advances an unknown sleeping cursor.
 export function marketClosingTimestamp(state={}){

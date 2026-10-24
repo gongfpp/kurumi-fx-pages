@@ -1,4 +1,4 @@
-import {isOrdinaryLive,liveQuote,liveSymbol,liveStatusLabel} from './live-market-state.js?v=14a5ec6b633c2c522d81c9a484536de59c4ee715-23f2a20b7717';
+import {isOrdinaryLive,liveQuote,liveSymbol,liveStatusLabel} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
 const tokyo=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Tokyo',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
 export function tokyoWallClock(at=Date.now()){
  if(!Number.isFinite(at))return '当前东京时间不可用';
