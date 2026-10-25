@@ -1,6 +1,6 @@
-import {marketInfo} from './market-book.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {movingAveragePath} from './moving-average.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {marketInfo} from './market-book.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {movingAveragePath} from './moving-average.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {formatTradingTime,timeAxisTicks} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const price=v=>Number(v).toFixed(3);
 // Presentation only: source OHLC, timestamps and moving averages are never edited.
@@ -46,7 +46,7 @@ export function candlePlot(candles,averages=[],{count=12,offset=0,zoom=1,height=
  const hidden=window.hiddenBefore+window.hiddenAfter,notice=[`${window.total?window.start+1:0}–${window.end} / ${window.total} 根`,hidden?`窗外 ${hidden} 根，选“全部”查看`:'全部已记录行情',scale.zoom>1?`纵轴 ${scale.zoom}×`:'完整纵轴'];
  if(scale.clippedCandles)notice.push(`▲▼ ${scale.clippedCandles} 根超出纵轴，尖针未删除`);
  if(scale.clippedAverages)notice.push(`${scale.clippedAverages} 条均线部分超出纵轴`);
- return{html:parts.join(''),notice:notice.join(' · '),window,scale};
+ return{html:parts.join(''),notice:notice.join(' · '),window,scale,plot:{left,right:w-right,top,bottom:plotBottom,viewWidth:w,viewHeight:h,candleWidth:dx,yAtPrice:y,priceAt:Y=>scale.high-(Y-top)/(plotBottom-top)*(scale.high-scale.low)}};
 }
 export function createChartViewport(doc,{count=12,onChange=()=>{}}={}){
  const baseHeight=doc.defaultView?.matchMedia?.('(max-width:690px)').matches?196:280;
@@ -73,7 +73,10 @@ export function createChartViewport(doc,{count=12,onChange=()=>{}}={}){
   all.setAttribute('aria-pressed',String(Boolean(overview)));
   horizontalPlus.disabled=visibleSize()<=1;horizontalMinus.disabled=visibleSize()>=total;
  }
- sync();return{root,state,update(length,nextContext=context){
+ sync();return{root,state,panByCandles(delta){
+  const next=clamp(state.offset+Math.trunc(Number(delta)||0),0,state.count>0?Math.max(0,total-state.count):0);if(next===state.offset)return false;
+  overview=null;state.offset=next;sync();onChange(state);return true;
+ },update(length,nextContext=context){
   if(context!==undefined&&nextContext!==context){overview=null;state.count=count;state.offset=0;}
   context=nextContext;total=Math.max(0,Math.trunc(Number(length))||0);sync();
  }};

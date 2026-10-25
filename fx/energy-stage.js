@@ -1,6 +1,6 @@
 // Durations are fractions of a trading day, never animation frames or device ticks.
 // Formal parameters are centralized so saved episodes retain their exact policy.
-import {ENERGY_POLICY} from './economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {ENERGY_POLICY} from './economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const validProgress=value=>Number.isFinite(value)&&value>=0&&value<=1;
 function validatePolicy(policy){
  if(!policy||!['boostDuration','fatigueDuration'].every(key=>Number.isFinite(policy[key])&&policy[key]>=0&&policy[key]<=1)||!['boostMultiplier','fatigueMultiplier'].every(key=>Number.isFinite(policy[key])&&policy[key]>0))throw new TypeError('Invalid energy policy');

@@ -1,5 +1,5 @@
-import {notifyFailure} from './error-reporting.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {notifyFailure} from './error-reporting.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {markDevelopmentTaint,hasDevelopmentTaint} from './development-taint.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/,TOKEN=/^[a-f0-9]{64}$/,REQUEST=/^[a-f0-9-]{36}$/;
 // Passwords are never entered or handled by the Pages app. The owner completes
 // verification in a top-level first-party Site window; polling uses the same

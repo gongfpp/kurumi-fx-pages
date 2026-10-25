@@ -1,8 +1,8 @@
-import {setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const el=(doc,tag,cls,text)=>{const n=doc.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function renderFatherIllustration(container,description){
  container.replaceChildren();container.hidden=!description;if(!description)return;
- const doc=container.ownerDocument,figure=el(doc,'figure','father-item-figure'),view=el(doc,'div','father-art-view'),image=el(doc,'img','');image.alt=description.caption||description.text||description.art.alt||description.art.note||'';setImage(image,description.art.path);view.append(image);
+ const doc=container.ownerDocument,figure=el(doc,'figure','father-item-figure'),view=el(doc,'div','father-art-view'),image=el(doc,'img','');image.alt=description.caption||description.text||description.art.alt||description.art.note||'';setImage(image,description.art.path,{identity:description.art,usage:'scene-character',visibilityNode:view});view.append(image);
  if(description.art.grid){const [x,y,columns,rows]=description.art.grid;view.classList.add('father-art-crop');image.style.width=columns*100+'%';image.style.left=-x*100+'%';image.style.top=-y*100+'%';
   // A cell inherits the sheet's actual aspect ratio, not an assumed square.
   // Otherwise a portrait sheet exposes part of the row above the chosen cell.

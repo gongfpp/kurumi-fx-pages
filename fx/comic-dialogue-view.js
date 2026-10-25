@@ -1,9 +1,10 @@
-import {createSkitLine} from './skit-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountSkitMotion} from './skit-motion.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountComicOriginalVoices} from './original-scene-voice.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountSkitMotion} from './skit-motion.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountComicOriginalVoices} from './original-scene-voice.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const mountedDialogues=new WeakMap();
-import {setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {applyAiSceneVisibility} from './ai-scene-visibility.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 export const usesPanelArtwork=scene=>!!(scene?.ready&&scene.art&&scene.dialoguePanels?.length===4);
 // Shared read-only panel cards. Explicit crop rectangles preserve asymmetric
 // four-panel sheets on phones; older 2x2 assets keep their original geometry.
@@ -15,8 +16,8 @@ export function mountComicDialogue(host,scene,{root=host.ownerDocument||document
   if(usesPanelArtwork(scene)){
    const crop=root.createElement('div'),image=root.createElement('img'),missing=root.createElement('p');crop.className='comic-panel-art';const rect=scene.art.panelRects?.[index],valid=Array.isArray(rect)&&rect.length===4&&rect.every(Number.isFinite)&&rect[0]>=0&&rect[1]>=0&&rect[2]>0&&rect[3]>0&&rect[0]+rect[2]<=scene.art.width&&rect[1]+rect[3]<=scene.art.height;crop.setAttribute('style',`aspect-ratio:${valid?rect[2]:scene.art.width} / ${valid?rect[3]:scene.art.height}`);image.className='comic-panel-crop';image.alt=`${scene.title}，第${index+1}格。${panel.action||''}`;image.width=scene.art.width;image.height=scene.art.height;image.loading='eager';image.decoding='async';image.dataset.comicPanel=String(index+1);
    image.setAttribute('style',valid?`position:absolute;width:${scene.art.width/rect[2]*100}%;height:${scene.art.height/rect[3]*100}%;max-width:none;max-height:none;left:${-rect[0]/rect[2]*100}%;top:${-rect[1]/rect[3]*100}%;object-fit:fill`:`position:absolute;width:200%;height:200%;max-width:none;max-height:none;left:${index%2?-100:0}%;top:${index>1?-100:0}%;object-fit:fill`);
-   missing.className='comic-panel-missing';missing.textContent='这一格暂时没载入';missing.hidden=true;missing.setAttribute('role','status');setImage(image,scene.art.path,{onStatus:status=>{missing.hidden=status!=='unavailable';image.hidden=status==='unavailable';}});crop.append(image);
-   if(valid&&rect[2]/rect[3]>2.4){const viewport=root.createElement('div');viewport.className='comic-panel-viewport';viewport.tabIndex=0;viewport.setAttribute('role','group');viewport.setAttribute('aria-label',`${scene.title}，第${index+1}格，可左右浏览`);crop.className+=' comic-panel-panorama';viewport.append(crop);item.append(viewport,missing);}else item.append(crop,missing);
+   missing.className='comic-panel-missing';missing.textContent='这一格暂时没载入';missing.hidden=true;missing.setAttribute('role','status');setImage(image,scene.art.path,{identity:scene.art,usage:'scene-character',visibilityNode:crop,onStatus:status=>{missing.hidden=status!=='unavailable';image.hidden=status==='unavailable';}});applyAiSceneVisibility(missing,{asset:scene.art,usage:'scene-character'});crop.append(image);
+   if(valid&&rect[2]/rect[3]>2.4){const viewport=root.createElement('div');viewport.className='comic-panel-viewport';viewport.tabIndex=0;viewport.setAttribute('role','group');viewport.setAttribute('aria-label',`${scene.title}，第${index+1}格，可左右浏览`);crop.className+=' comic-panel-panorama';applyAiSceneVisibility(viewport,{asset:scene.art,usage:'scene-character'});viewport.append(crop);item.append(viewport,missing);}else item.append(crop,missing);
    images.push({image,crop,caption,hasCaption:!!panel.action||panel.lines.length>0});
   }
   if(panel.action){const action=root.createElement('p');action.className='comic-panel-action';action.textContent=panel.action;caption.append(action);}

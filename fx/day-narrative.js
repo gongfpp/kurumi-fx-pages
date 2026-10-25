@@ -1,8 +1,8 @@
-import {pendingStory,chooseStory} from './story.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectMainStory,canCompleteMainStory,completeMainStory} from './main-story.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {captureFirstDayOriginalRecall} from './firstday-original-recall.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {pendingStory,chooseStory} from './story.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {automaticNarrativeChoice,keepNarrativeSnapshot} from './narrative-effects.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {fatherDiscoveryCandidate,fatherDiscoveryPresentation,fatherDiscoverySequence,applyFatherDiscovery} from './father-discovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectMainStory,canCompleteMainStory,completeMainStory} from './main-story.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {captureFirstDayOriginalRecall} from './firstday-original-recall.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 export function prepareDailyNarrative(state,{accountEquity}={}){
  if(state.mode==='endless'||state.phase!=='resting'||state.dayReport?.day!==state.day)return null;
  applyFatherDiscovery(state,{type:'migrate'});

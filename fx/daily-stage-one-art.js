@@ -1,31 +1,31 @@
-import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {lifeSceneCandidates} from './life-scene-consumer.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {orderedDailyStories} from './daily-story-order.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {dailyNarrativeFacts,dailySceneFilterReason} from './daily-narrative-facts.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {ACTION_SCENES} from './copy/action-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {SCENE_LINES} from './copy/scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {hasDailyIllustration,noteDailyImageFailure,preferDailyIllustration} from './daily-illustration.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {createSkitLine} from './skit-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {lifeActionStory,mountLifeActionStory} from './life-action-story.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {DAILY_FALLBACK_CATALOG} from './daily-fallback-catalog.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {LIFE_SCENE_CATALOG} from './life-scene-catalog.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {lifeSceneCandidates} from './life-scene-consumer.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {dailyFallbackCandidates} from './daily-fallback-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {DINNER_TIERS,dinnerStoryCandidates} from './dinner-story-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {approvedDailySkitCandidates} from './approved-skit-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectRealizedProfitArtwork} from './profit-tier-art.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {orderedDailyStories} from './daily-story-order.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectDailyFamilyArtwork,isDailyFamilyNarrative} from './daily-family-art.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectDailyContextualManga,selectLockedFriendContextualManga,selectDeferredFriendContextualManga,selectDeferredFirstDayContextualManga} from './contextual-manga-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {settledComicArt,isSevereSettledLoss} from './settled-comic-art.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {dailyNarrativeFacts,dailySceneFilterReason} from './daily-narrative-facts.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ACTION_SCENES} from './copy/action-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {SCENE_LINES} from './copy/scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {hasDailyIllustration,noteDailyImageFailure,preferDailyIllustration} from './daily-illustration.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const candidate=scene=>scene?.frames?{...scene,identity:'sequence:'+scene.frames.map(frame=>artIdentity(frame.art)).join('|')}:scene?.art?{...scene,identity:artIdentity(scene.art)}:null;
 // An exhausted illustration is not evidence that the activity really happened.
 // Validate its current receipt, offered price/outcome and paired positive debit
@@ -201,7 +201,7 @@ export function mountDailyArtwork(host,selection,{memory=dailyArtMemory,showHead
   });
  };
  host.addEventListener?.('error',onError,true);
- function paint(manual=false){if(body.childNodes.length)return;if(selection.dialogueOnly){const view=mountLifeActionStory(body,selection,{memory:selection.consequenceTransition?undefined:memory});dispose=view.dispose;return;}if(selection.contextLabel)body.append(make('p',selection.contextLabel));if(usesPanelArtwork(selection)){const dialogue=make('ol');dialogue.className='event-comic-lines comic-panel-cards';body.append(dialogue);const view=mountComicDialogue(dialogue,selection,{root:doc});dispose=view.observe({memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});return;}if(selection.selection){const view=mountContextualManga(body,selection.selection,{manual:false,unreadOnly:!manual,showHeading:false,memory});dispose=()=>view?.dispose();return;}if(selection.frames){dispose=mountDailySequence(body,selection,{memory});return;}const image=make('img');image.alt=selection.art.alt||selection.title;if(selection.art.width)image.width=selection.art.width;if(selection.art.height)image.height=selection.art.height;image.style.cssText='display:block;width:100%;height:auto;object-fit:contain';body.append(image);setImage(image,selection.art.path);dispose=observeSeenArtwork(image,{memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});
+ function paint(manual=false){if(body.childNodes.length)return;if(selection.dialogueOnly){const view=mountLifeActionStory(body,selection,{memory:selection.consequenceTransition?undefined:memory});dispose=view.dispose;return;}if(selection.contextLabel)body.append(make('p',selection.contextLabel));if(usesPanelArtwork(selection)){const dialogue=make('ol');dialogue.className='event-comic-lines comic-panel-cards';body.append(dialogue);const view=mountComicDialogue(dialogue,selection,{root:doc});dispose=view.observe({memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});return;}if(selection.selection){const view=mountContextualManga(body,selection.selection,{manual:false,unreadOnly:!manual,showHeading:false,memory});dispose=()=>view?.dispose();return;}if(selection.frames){dispose=mountDailySequence(body,selection,{memory});return;}const image=make('img');image.alt=selection.art.alt||selection.title;if(selection.art.width)image.width=selection.art.width;if(selection.art.height)image.height=selection.art.height;image.style.cssText='display:block;width:100%;height:auto;object-fit:contain';body.append(image);setImage(image,selection.art.path,{identity:selection.art,usage:'scene-character'});dispose=observeSeenArtwork(image,{memory,identities:[selection.identity,selection.arcIdentity].filter(Boolean)});
   if(selection.manga)body.append(make('p','原作片段 · 图中金额与经历属于原作人物。'));
   if(selection.lines?.length){const dialogue=make('ol');dialogue.className='event-comic-lines';const view=mountComicDialogue(dialogue,selection,{root:doc}),stopImage=dispose;dispose=()=>{view.dispose();stopImage();};body.append(dialogue);}
  }
@@ -218,7 +218,7 @@ export function mountDailySequence(host,selection,{memory=dailyArtMemory}={}){
   const figure=doc.createElement('figure'),image=doc.createElement('img'),caption=doc.createElement('figcaption');
   figure.dataset.stage=frame.id;image.alt=({pain:'久留美痛苦流泪',discover:'久留美发现柜中未动的信封',relief:'久留美望着信封，喜极而泣'})[frame.id];
   image.width=1086;image.height=1448;caption.textContent=frame.text;figure.append(image,caption);host.append(figure);
-  setImage(image,frame.art.path);stops.push(observeSeenArtwork(image,{memory,identities:[artIdentity(frame.art)],visibilityTargets:[image,caption],minVisibleRatio:.9,onSeen:complete}));
+  setImage(image,frame.art.path,{identity:frame.art,usage:'scene-character'});stops.push(observeSeenArtwork(image,{memory,identities:[artIdentity(frame.art)],visibilityTargets:[image,caption],minVisibleRatio:.9,onSeen:complete}));
  }
  return()=>stops.forEach(stop=>stop());
 }

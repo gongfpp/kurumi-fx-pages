@@ -1,4 +1,4 @@
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Per-shift game contracts informed by 2014 Japanese part-time wage references.
 // Income uses the gross hourly reference; this game does not simulate wage tax.
 export const LEGACY_WORK_INCOMES=Object.freeze({"convenience":2200,"cafe":2500,"bookstore":1800,"flyer":1600,"warehouse":3400,"dishwashing":2800,"campusArchive":1300,"tutoring":3600,"proofreading":2100,"eventSetup":4200,"petCare":2300,"translation":4600,"remoteData":2600,"buildingCaretaker":3000,"radioMonitor":1900});

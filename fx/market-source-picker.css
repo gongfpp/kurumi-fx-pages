@@ -3,3 +3,5 @@
 .history-choice-step[hidden]{display:none!important}
 
 .mode-start-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.mode-start-actions button{margin:0;min-height:44px;white-space:normal}@media(max-width:480px){.mode-start-actions{grid-template-columns:1fr}}
+
+.mode-rule-option{min-width:0}.mode-rule-option>button{width:100%;box-sizing:border-box}.mode-rule-lines{margin:9px 0 0;padding-left:1.35em;font-size:12px;line-height:1.65;overflow-wrap:anywhere;color:#6c5963}.mode-rule-lines li+li{margin-top:4px}.restart-rule-preview{margin:16px 0}.restart-rule-preview h3{font-size:14px;margin:0 0 8px}@media(max-width:480px){.mode-dialog .market-source-buttons{grid-template-columns:minmax(0,1fr)}.mode-rule-lines{font-size:13px}}

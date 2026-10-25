@@ -1,5 +1,5 @@
-import {closeAllModalOpen} from './close-all-control.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {liquidationMeter} from './liquidation-meter.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {liquidationMeter} from './liquidation-meter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 export const STAMINA_SLEEP_LINE='爸在门外：久留美，该睡觉了。';
 export const STAMINA_BLINK_TIMING=Object.freeze({first:4500,interval:22000,duration:1000});
@@ -17,7 +17,7 @@ export function singleActionCardView({mode,stamina,sanity=50,positions=[],risk,a
     title:stamina?.low&&sanity>5?'爸在门外':'提前收盘',message:sanity<=5?'心理承受力过低，今天先休息吧':stamina?.low?'久留美，该睡觉了。':'今天就到这里，早点睡吧。',
     action:'finish-day',actionLabel:'提前收盘睡觉',icon:'door',dismissible:false
   };
-  if(!stamina?.low)return null;
+  if(stamina?.enabled===false||!stamina?.low)return null;
   if(positions.length)return {
     kind:'close-before-rest',key:`${context}:close-before-rest:${portfolioToken}`,title:'先平仓，再休息',message:STAMINA_SLEEP_LINE,
     action:'close',actionLabel:'一键平仓',icon:'door'
@@ -68,7 +68,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     const focus=root.activeElement;
     return ['BUTTON','INPUT','SELECT','TEXTAREA','A','SUMMARY'].includes(focus?.tagName)||['button','slider','spinbutton','combobox'].includes(focus?.getAttribute?.('role'))||focus===root.getElementById('chart');
   }
-  function canBlink(model){return available()&&!pointerActive&&!interactionFocused()&&singleActionCardView(model)?.kind!=='risk'&&model.active!==false&&model.stamina?.low&&model.stamina?.value>0&&model.blinkAllowed!==false&&motionEnabled();}
+  function canBlink(model){return available()&&!pointerActive&&!interactionFocused()&&singleActionCardView(model)?.kind!=='risk'&&model.active!==false&&model.stamina?.enabled!==false&&model.stamina?.low&&model.stamina?.value>0&&model.blinkAllowed!==false&&motionEnabled();}
   function scheduleBlink(context,delay){
     blinkTimer=win.setTimeout(()=>{
       blinkTimer=null;const model=getModel();
@@ -114,6 +114,7 @@ export function mountSingleActionCard({root=document,getModel=()=>({}),closeCont
     const actionAnchor=quickTrade&&host.contains(quickTrade)?quickTrade:stage;
     if(slot.parentElement!==stage.parentElement||slot.previousSibling!==actionAnchor)actionAnchor.after(slot);
     const value=Math.max(0,Math.min(100,Number.isFinite(model.stamina?.value)?model.stamina.value:100));
+    meter.hidden=model.stamina?.enabled===false;
     const energy=model.energyStage;energyHint.hidden=!energy?.label;text(energyHint,energy?.label?`${energy.label} · ${energy.phase==='fatigue'?'盯盘耗体增加':'随后进入疲劳期'}`:'');
     text(number,`${Math.round(value)}/100`);text(stateLabel,model.stamina?.low?'困倦':'');stateLabel.hidden=!model.stamina?.low;
     meter.dataset.low=String(Boolean(model.stamina?.low));track.setAttribute('aria-valuenow',String(Math.round(value)));track.setAttribute('aria-valuetext',`${Math.round(value)}/100${model.stamina?.low?'，困倦':''}`);fill.style.width=`${value}%`;

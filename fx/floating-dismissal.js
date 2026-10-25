@@ -1,4 +1,4 @@
-import {closeAllModalOpen} from './close-all-control.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // Capture which presentation was actually clicked, then defer dismissal until
 // the full click/default action has run. In particular, closing a risk warning

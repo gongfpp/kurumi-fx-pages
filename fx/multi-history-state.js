@@ -1,5 +1,5 @@
-import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {historicalMarkIsSimulated,historicalEffectiveTime,historicalSimulationActive,startHistoricalContinuation} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalMarkIsSimulated,historicalEffectiveTime,historicalSimulationActive,startHistoricalContinuation} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']),HASH=/^[a-f0-9]{64}$/;
 const fields=['price','script','candles','displayMinutes','displayMinutesPartial','lastEvent','swanSeen','dayOpeningPrice'];
 const feeds=new WeakMap();

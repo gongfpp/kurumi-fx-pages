@@ -17,7 +17,7 @@
    never changes the chart height or shifts trading, news or comment controls. */
 #pixel-frontend .single-action-slot{order:5;flex:none;width:100%;height:94px;min-height:94px;padding:8px 0;box-sizing:border-box}
 #pixel-frontend .single-action-card{height:100%;box-sizing:border-box;display:grid;grid-template-columns:46px minmax(0,1fr) 116px 28px;align-items:center;gap:10px;margin:0;padding:7px 8px;border:1px solid #f3a4c8;border-radius:8px;background:linear-gradient(105deg,#fff5f8,#fff0f5);color:var(--px-ink)}
-#pixel-frontend .single-action-card[hidden],#pixel-frontend .single-action-card button[hidden],#pixel-frontend .pixel-stamina-state[hidden]{display:none!important}
+#pixel-frontend .single-action-card[hidden],#pixel-frontend .single-action-card button[hidden],#pixel-frontend .pixel-stamina[hidden],#pixel-frontend .pixel-stamina-state[hidden]{display:none!important}
 #pixel-frontend .single-action-icon{width:44px;height:49px;display:block}
 #pixel-frontend .single-action-icon svg{width:100%;height:100%;display:block}
 #pixel-frontend .single-action-copy{min-width:0}

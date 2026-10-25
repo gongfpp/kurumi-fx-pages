@@ -1,6 +1,6 @@
-import {assetURL} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {assetURL} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // Session-only failures of images actually displayed. No preflight requests,
 // account changes, read acknowledgements or persistent availability guesses.

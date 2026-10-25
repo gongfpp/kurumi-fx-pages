@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
@@ -23,6 +23,7 @@ export function createPixelRenderer({document:doc}) {
     if(!top||!right)return;
     const mode=native('mode-open');
     if(mode){mode.classList.add('pixel-mode-button');moveNode(mode,right);}
+    moveNode(native('ai-scene-toggle'),right);
     const source=make('span','pixel-source-status');source.setAttribute('aria-live','off');right.append(source);
     const exit=make('div','pixel-exit-region');exit.setAttribute('role','group');exit.setAttribute('aria-label','结束本局');right.append(exit);moveNode(native('retire'),exit);
     for(const id of ['leaderboard-open','achievements-open','share-open'])moveNode(native(id),right);
@@ -31,7 +32,7 @@ export function createPixelRenderer({document:doc}) {
     for(const id of ['sound','music-open'])moveNode(native(id),sound);
     for(const id of ['settings-reading','settings-progress'])moveNode(native(id),settings.content);
     const more=make('section','settings-section');more.setAttribute('aria-label','帮助与其他');more.append(make('h3','','帮助与其他'));settings.content.append(more);
-    for(const id of ['help','developer-open','privacy-toggle'])moveNode(native(id),more);
+    for(const id of ['help','developer-open'])moveNode(native(id),more);
     moveNode(q('.stock-game-link',top),more);
     moveNode(native('saved'),more);
   }

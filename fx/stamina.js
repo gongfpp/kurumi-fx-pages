@@ -1,9 +1,10 @@
-import {historicalBillingDay} from './historical-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
-// 16 x 15 minutes: calm watching spends 40 points. Historical/live source
+// 16 x 15 minutes: the saved rule owns the calm daily cost. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;
 // a one-second provider update is 1/60 minute, not a simulated quote step.
 export const STAMINA_RULES=Object.freeze({max:100,warning:20,entryMinimum:0,workCost:20,watchCostPerMinute:40/240,observedWatchCostPerMinute:.03,maxObservedGapMinutes:15});
@@ -29,8 +30,8 @@ export function validStamina(value){
 export function ensureStamina(state){if(state.stamina===undefined)state.stamina=newStamina();if(!validStamina(state.stamina))throw new TypeError('Invalid stamina state');return state.stamina;}
 // Read-only: merely opening a menu or switching UI never upgrades a save.
 export function staminaStatus(state={}){
- const value=state.stamina?.value??STAMINA_RULES.max;
- return{...(state.energyEffect?{energyStage:energyStageStatus(state,tradingDayProgress(state))}:{}),value,max:STAMINA_RULES.max,low:value<=STAMINA_RULES.warning,exhausted:value<=0,canOpen:value>STAMINA_RULES.entryMinimum,canWork:value>=STAMINA_RULES.workCost,canRest:true};
+ const value=state.stamina?.value??STAMINA_RULES.max,enabled=staminaPolicyForState(state).enabled;
+ return{...(state.energyEffect?{energyStage:energyStageStatus(state,tradingDayProgress(state))}:{}),enabled,value,max:STAMINA_RULES.max,low:enabled&&value<=STAMINA_RULES.warning,exhausted:enabled&&value<=0,canOpen:!enabled||value>STAMINA_RULES.entryMinimum,canWork:value>=STAMINA_RULES.workCost,canRest:enabled};
 }
 export function staminaDrainMultiplier(emotion,pressureIntensity=0){
  const pressure=Number.isFinite(pressureIntensity)?Math.max(0,Math.min(1,pressureIntensity)):0;
@@ -53,7 +54,8 @@ export function tradingDayDurationMinutes(state={}){
  return beats*60;
 }
 export function staminaWatchCostPerMinute(state={},dayDurationMinutes=tradingDayDurationMinutes(state)){
- return Number.isFinite(dayDurationMinutes)&&dayDurationMinutes>0?WATCH_POLICY.calmDayCost/dayDurationMinutes:STAMINA_RULES.observedWatchCostPerMinute;
+ const policy=staminaPolicyForState(state);
+ return Number.isFinite(dayDurationMinutes)&&dayDurationMinutes>0?policy.calmDayCost/dayDurationMinutes:policy.legacy?STAMINA_RULES.observedWatchCostPerMinute:policy.calmDayCost*STAMINA_RULES.observedWatchCostPerMinute/WATCH_POLICY.calmDayCost;
 }
 export function consumeTradingStamina(state,{minutes,emotion='calm',sampleId,active=true,pressureIntensity=Math.max(0,state.stress||0)/40,dayDurationMinutes=tradingDayDurationMinutes(state)}={}){
  if(dayDurationMinutes!==null&&(!Number.isFinite(dayDurationMinutes)||dayDurationMinutes<=0))throw new TypeError('Invalid trading-day duration');
@@ -63,11 +65,15 @@ export function consumeTradingStamina(state,{minutes,emotion='calm',sampleId,act
  if(staminaFatigueActive(state))return{applied:false,spent:0,...staminaStatus(state)};
  if(stamina.lastSample===sampleId)return{applied:false,alreadyApplied:true,spent:0,...staminaStatus(state)};
  const usageBefore=staminaUsageCounters(stamina);
- const progress=tradingDayProgress(state),duration=Math.min(1-progress,minutes*staminaWatchCostPerMinute(state,dayDurationMinutes)/WATCH_POLICY.calmDayCost);
+ const policy=staminaPolicyForState(state),progress=tradingDayProgress(state);
+ // Retain legacy arithmetic byte-for-byte. New rules measure time independently
+ // of the charge, including unknown-duration observation and free endless runs.
+ const elapsed=policy.legacy?minutes*staminaWatchCostPerMinute(state,dayDurationMinutes)/WATCH_POLICY.calmDayCost:dayDurationMinutes===null?minutes*STAMINA_RULES.observedWatchCostPerMinute/WATCH_POLICY.calmDayCost:minutes/dayDurationMinutes;
+ const duration=Math.min(1-progress,elapsed);
  const energyCost=energyCostForDuration(state,duration);
  stamina.progressDay=state.day;stamina.dayProgress=Math.min(1,progress+duration);
  if(dayDurationMinutes!==null)stamina.dayDurationMinutes=dayDurationMinutes;else delete stamina.dayDurationMinutes;
- const before=stamina.value,rawWanted=energyCost*WATCH_POLICY.calmDayCost*staminaDrainMultiplier(emotion,pressureIntensity),withCarry=rawWanted+(stamina.watchRoundingCarry??0);
+ const before=stamina.value,rawWanted=energyCost*policy.calmDayCost*staminaDrainMultiplier(emotion,pressureIntensity),withCarry=policy.enabled?rawWanted+(stamina.watchRoundingCarry??0):0;
  const roundedWanted=Math.max(0,round(withCarry)),spent=Math.min(before,roundedWanted);
  stamina.value=round(Math.max(0,before-spent));stamina.spent=round(stamina.spent+before-stamina.value);stamina.watchMinutes=round(stamina.watchMinutes+minutes);stamina.lastSample=sampleId;
  // Carry only rounding error, never an unaffordable charge through exhaustion.
@@ -101,8 +107,9 @@ function validFatigue(event){
   (event.phase==='pending'?event.mode===null&&event.startAt===null&&event.targetAt===null&&!event.recovered:event.mode!==null&&event.startAt!==null&&event.targetAt===event.startAt+(event.mode==='live'?0:event.minutes*60000))&&
   (!event.recovered||['advancing','done'].includes(event.phase));
 }
-export function staminaFatigueActive(state){return !!state.stamina?.fatigue&&state.stamina.fatigue.phase!=='done';}
+export function staminaFatigueActive(state){return staminaPolicyForState(state).enabled&&!!state.stamina?.fatigue&&state.stamina.fatigue.phase!=='done';}
 export function queueStaminaFatigue(state){
+ if(!staminaPolicyForState(state).enabled)return null;
  const stamina=ensureStamina(state);
  if(stamina.value>0||staminaFatigueActive(state))return stamina.fatigue||null;
  if(stamina.watchRoundingCarry!==undefined)stamina.watchRoundingCarry=0;
@@ -116,12 +123,14 @@ export function queueStaminaFatigue(state){
  return stamina.fatigue={version:1,sequence,id:`fatigue:${sequence}:${hash}`,phase:'pending',minutes:60*(1+hash%3),recovered:false,mode:null,startAt:null,targetAt:null,endAt:null,reason:'pending'};
 }
 export function beginStaminaFatigue(state,{mode,at}={}){
+ if(!staminaPolicyForState(state).enabled)return false;
  const event=state.stamina?.fatigue;
  if(!event||event.phase!=='pending')return false;
  if(!['simulation','historical','live'].includes(mode)||!Number.isFinite(at))throw new TypeError('Invalid fatigue timeline');
  Object.assign(event,{phase:'closing',mode,startAt:at,targetAt:at+(mode==='live'?0:event.minutes*60000),endAt:at});return true;
 }
 export function recoverStaminaFatigue(state){
+ if(!staminaPolicyForState(state).enabled)return false;
  const stamina=ensureStamina(state),event=stamina.fatigue;
  if(!event||event.phase!=='closing'||event.recovered)return false;
  // Preserve an explicit recovery (food/rest) made during this episode.

@@ -1,5 +1,5 @@
-import {M15_DURATION_MS,M15_STEP_MS} from './historical-m15-source.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {M15_PATH_MODEL} from './historical-m15-path.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {M15_DURATION_MS,M15_STEP_MS} from './historical-m15-source.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {M15_PATH_MODEL} from './historical-m15-path.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 export const M15_AGGREGATION_MODEL='linear-boundary-cut-v1';
 const fail=message=>{throw Error('Historical M15 aggregation: '+message);};
 

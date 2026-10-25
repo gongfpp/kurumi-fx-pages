@@ -1,5 +1,5 @@
-import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {recapPresentation} from './recap-presentation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {buildRecapTimeline,recapTimelineFrame,recapUpperBound} from './recap-timeline.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {recapPresentation} from './recap-presentation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // Explicit opt-in only. The app keeps its existing presentation until acceptance.
 export const RECEIPT_RECAP_CANDIDATE='trade-receipts-v1';

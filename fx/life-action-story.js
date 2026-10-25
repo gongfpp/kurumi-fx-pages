@@ -1,11 +1,11 @@
-import {createSkitLine} from './skit-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountSkitMotion} from './skit-motion.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {artIdentity} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {LIFE_WORK_JOBS,validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountSkitMotion} from './skit-motion.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {artIdentity} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {currentLifeSceneReceipt} from './life-scene-consumer.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {LIFE_WORK_JOBS,validWorkPayDialogue,isPartialWorkReceipt} from './life-work.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {APPROVED_FOUR_SKITS} from './copy/approved-four-skits.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {APPROVED_FOUR_SKIT_ASSETS} from './approved-four-skit-assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isConsequenceLifeReceipt} from './daily-narrative-facts.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // A committed exchange is already trusted by validLifeActions. Render those
 // exact bytes, never infer a missing story from its label or borrow other art.

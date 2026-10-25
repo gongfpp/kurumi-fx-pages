@@ -1,8 +1,8 @@
-import {safeLiveTradeEvidence} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {MARKETS,positionMarket} from './market-book.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {MARKETS,positionMarket} from './market-book.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // This ledger observes filled orders only. It never changes balances or gameplay.
 // Execution P/L stays in the engine's original performance ledger. These totals
@@ -14,7 +14,7 @@ const positions=s=>s.positions?.length?s.positions:s.position?[s.position]:[];
 const validId=id=>typeof id==='string'&&/^order-\d{1,15}$/.test(id);
 const fresh=()=>({version:1,complete:true,closedOrders:0,winningOrders:0,losingOrders:0,breakevenOrders:0,maxOrderProfit:0,maxOrderLoss:0,liquidatedOrders:0,stopLossOrders:0,partialCloseExecutions:0,maxLeverage:0,maxWinningStreak:0,maxLosingStreak:0,winningStreak:0,losingStreak:0,profitGivebackOrders:0,openOrders:{},trades:[],executions:0,timelinePartial:false,realizedCumulative:0,realizedPeak:0,realizedTrough:0,realizedPathComplete:true,maxLeverageComplete:true,profitGivebackComplete:true,drawdownRecorded:true});
 function safeTrade(t,s,{legacy=false}={}){
- const result={...(s.marketBook||t.symbol?{symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null}:{}),sequence:0,type:['open','half','close','rescue','stop','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
+ const result={...(s.marketBook||t.symbol?{symbol:MARKETS.some(m=>m.symbol===positionMarket(t))?positionMarket(t):null}:{}),sequence:0,type:['open','half','close','rescue','stop','take-profit','liquidation','closing'].includes(t.type)?t.type:'unknown',positionId:validId(t.positionId)?t.positionId:null,day:Number.isSafeInteger(t.day)?t.day:null,beat:Number.isSafeInteger(t.beat)?t.beat:null,timestamp:Number.isFinite(t.timestamp)?t.timestamp:legacy?null:currentTradingTimestamp(s),timePrecision:legacy&&!Number.isFinite(t.timestamp)?'day-and-beat-only':'game-clock'};
  for(const key of ['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'])result[key]=Number.isFinite(t[key])?t[key]:null;
  const evidence=safeLiveTradeEvidence(t.liveQuote);if(evidence){result.liveQuote=evidence;result.timePrecision=evidence.replay?'shared-replay-quote':'provider-quote';if(evidence.replay)result.sourceMode='shared-replay';}
  const historical=safeHistoricalTradeEvidence(t);if(historical){result.historicalQuote=historical;result.timePrecision='historical-quote';}

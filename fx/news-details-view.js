@@ -1,6 +1,6 @@
-import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {originalPublicationUrl,renderArchiveSource} from './news-source-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // The card shows the publication, time and a short body/observed-market recap. The existing detail dialog owns scrolling,
 // Escape, touch, focus return and the ordinary modal playback boundary.

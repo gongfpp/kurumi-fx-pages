@@ -1,6 +1,6 @@
 // Read-only display model. No orders, OHLC, clocks or persisted state are edited.
-import {activeMarket} from './market-book.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {activeMarket} from './market-book.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isLiveMarket,liveQuote,liveQuoteReady,liveStatusLabel} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const positive=n=>Number.isFinite(n)&&n>0;
 const signed=(n,d)=>`${n>=0?'+':''}${(Object.is(n,-0)?0:n).toFixed(d)}`;
 function historicalReference(state,symbol){

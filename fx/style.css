@@ -228,3 +228,14 @@ dialog{border:2px solid var(--ink);border-radius:7px;background:#fffcfe;color:va
 .item-silhouette-lock{position:absolute;right:0;bottom:0;display:block;width:15px;height:13px;border-radius:2px;background:currentColor;color:#675b66}
 .item-silhouette-lock::before{content:'';position:absolute;left:3px;top:-8px;width:9px;height:10px;border:2px solid currentColor;border-radius:7px 7px 0 0}
 @media(forced-colors:active){.item-silhouette,.item-silhouette-lock{background:CanvasText;forced-color-adjust:none}.item-silhouette-lock{color:CanvasText}}
+
+/* Quiet data notice and a direct opt-out remain in the original header. */
+.analytics-a-notice{font-size:11px;line-height:1.4;color:#715f76;max-width:240px;white-space:normal}
+.analytics-a-notice[hidden]{display:none}
+#analytics-a-quick-toggle{white-space:nowrap}
+/* The combined pixel toolbar wraps its existing controls before the notice
+   can collapse into a vertical column or extend across the brand. */
+#pixel-frontend .pixel-header-slot:has(#analytics-a-quick-toggle){height:auto;min-height:69px}
+#pixel-frontend .topbar:has(#analytics-a-quick-toggle){height:auto;min-height:67px}
+#pixel-frontend .top-right:has(#analytics-a-quick-toggle){flex-wrap:wrap}
+#pixel-frontend .top-right>.analytics-a-notice{flex:0 1 240px;min-width:180px}

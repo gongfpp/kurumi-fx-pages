@@ -1,7 +1,7 @@
-import {MANGA_PANELS} from './manga-panels.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {MANGA_PANELS} from './manga-panels.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS} from './contextual-manga-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS} from './character-story-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Kept independent of achievements/setMangaImage to avoid an import cycle.
 const byPath=new Map([...Object.values(MANGA_PANELS),...Object.values(CONTEXTUAL_MANGA_ASSETS),...Object.values(CHARACTER_STORY_ASSETS)].map(p=>[p.original||p.path,p.sha256]));
 const bindings=new WeakMap(),documents=new WeakMap();

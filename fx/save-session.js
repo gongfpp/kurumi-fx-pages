@@ -1,7 +1,7 @@
-import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {encodeProgress} from './save-encoder.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {storageFailure} from './storage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {MAIN_GAME_SAVE_SLOTS} from './save-slots.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {encodeProgress} from './save-encoder.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {inspectSave,SAVE_COMPRESSION_THRESHOLD} from './save-codec.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {storageFailure} from './storage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Progress is an optimistic, per-mode session. Compare the exact durable bytes,
 // not a timestamp (or this tab's failed-write overlay), before every write.
 // Web Locks make that comparison + write exclusive between current app pages.
@@ -11,6 +11,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   const hasLifeSceneSource=state=>lifeSceneMigration?.hasSource(state)===true;
   const sceneBackupKey=lifeSceneMigration?.enabled===true&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-scenes-v1':null;
   const staminaBackupKey=staminaFatigueMigration&&(MAIN_GAME_SAVE_SLOTS.includes(key)||['fx-girl-shared-replay-story-v1','fx-girl-shared-replay-endless-v1'].includes(key))?key+':pre-stamina-fatigue-v2':null;
+  const tradingBackupKey=(MAIN_GAME_SAVE_SLOTS.includes(key)||['fx-girl-shared-replay-story-v1','fx-girl-shared-replay-endless-v1'].includes(key))?key+':pre-trading-ui-v1':null;
   const economyBackupKey=staminaBackupKey?key+':pre-economy-v1':null;
   const lifeBackupKey=staminaBackupKey&&['fx-girl-campaign-v3','fx-girl-historical-story-v1','fx-girl-live-story-v1','fx-girl-shared-replay-story-v1'].includes(key)?key+':pre-life-actions-v1':null;
   const read=()=>{
@@ -24,7 +25,7 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
   let baselineMetadata=null,completedSnapshot=null;
   const invalidate=()=>{baselineMetadata=null;completedSnapshot=null;};
   // Retain only immutable migration decisions, never the caller's state object.
-  const metadata=state=>({preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state),fatigueV2:!!staminaBackupKey&&(state?.stamina?.version===2||state?.stamina?.version===3&&!!state.stamina.fatigue),economyV1:!!economyBackupKey&&state?.stamina?.version===3&&state?.housingEconomy?.version===1&&state?.workEconomy?.version===1});
+  const metadata=state=>({tradingUI:state?.tradingRules!==undefined||!!state?.chartOrderDrafts||(state?.positions||[]).some(p=>p.priceBracketVersion===1),preV9:Number.isInteger(state?.version)&&state.version<9,v9:state?.version>=9,livingV2:state?.lifestyle?.version===2,story:state?.mode==='story',theftV1:state?.family?.theftDiscovery?.version===1,hasTheft:!!state?.family?.theftDiscovery,lifeV1:state?.lifeActions?.version===1,hasLife:!!state?.lifeActions,sceneSource:!!sceneBackupKey&&hasLifeSceneSource(state),fatigueV2:!!staminaBackupKey&&(state?.stamina?.version===2||state?.stamina?.version===3&&!!state.stamina.fatigue),economyV1:!!economyBackupKey&&state?.stamina?.version===3&&state?.housingEconomy?.version===1&&state?.workEconomy?.version===1});
   const previousMetadata=()=>{
     if(baselineMetadata?.raw===baseline.raw)return baselineMetadata.value;
     let value={};
@@ -104,6 +105,12 @@ export function createSaveSession({storage,key,legacyKey=null,restore,locks=glob
               status='saved';reason='';failure=null;return true;
             }
             const nextMetadata=metadata(JSON.parse(text)),previous=previousMetadata();
+            // The first chart-order upgrade retains the exact durable bytes,
+            // including a prior compressed envelope and its recovery archives.
+            if(tradingBackupKey&&nextMetadata.tradingUI&&baseline.raw!==null&&!previous.tradingUI){
+              const backup=storage.readItem(tradingBackupKey);
+              if(!backup.available||backup.value===null&&!storage.setItem(tradingBackupKey,baseline.raw))return fail('memory','migration-backup',storage.failureFor?.(tradingBackupKey));
+            }
             // Keep the exact last pre-economy envelope in this registered slot.
             if(nextMetadata.economyV1&&baseline.raw!==null&&!previous.economyV1){
               const backup=storage.readItem(economyBackupKey);

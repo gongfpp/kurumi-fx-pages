@@ -1,6 +1,6 @@
-import {validateHistoricalM15Source,validateM15Seed,describeM15Coverage,M15_DURATION_MS} from './historical-m15-source.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {createM15Path,M15_PATH_MODEL} from './historical-m15-path.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {aggregateM15Samples} from './historical-m15-aggregate.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {validateHistoricalM15Source,validateM15Seed,describeM15Coverage,M15_DURATION_MS} from './historical-m15-source.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {createM15Path,M15_PATH_MODEL} from './historical-m15-path.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {aggregateM15Samples} from './historical-m15-aggregate.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const fail=message=>{throw Error('Historical M15 replay: '+message);};
 const clone=value=>value===null?null:JSON.parse(JSON.stringify(value));
 

@@ -2,9 +2,9 @@
 export const repeatedTradeClick=event=>event.defaultPrevented||event.detail>1;
 // Ratio/max amounts are live quotes of unchanged user intent. A price update
 // must not invalidate a held gesture; editing the intent or fixed amount must.
-export function tradeDraftToken({generation,mode,runId,day,symbol,amount,intent,leverage,stop,stopPips}){
+export function tradeDraftToken({generation,mode,runId,day,symbol,amount,intent,leverage,stop,stopPips,chartDraftRevision}){
  const draft=intent?.mode==='max'?['max']:intent?.mode==='ratio'?['ratio',intent.ratio]:['amount',amount];
- return JSON.stringify([generation,mode,runId,day,symbol,draft,leverage,stop,stopPips]);
+ return JSON.stringify([generation,mode,runId,day,symbol,draft,leverage,stop,stopPips,chartDraftRevision??0]);
 }
 export function suppressTradeKeyRepeat(event){
  if(event.repeat&&['Enter',' '].includes(event.key)){event.preventDefault();return true;}

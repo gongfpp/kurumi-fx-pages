@@ -1,0 +1,13 @@
+#chart{touch-action:pan-y pinch-zoom;-webkit-user-select:none;user-select:none}
+.chart-order-overlay{pointer-events:none;font-size:11px;font-variant-numeric:tabular-nums}
+.chart-order-line line{stroke:#78d6e4;stroke-width:1.5;stroke-dasharray:7 4}
+.chart-order-line text,.chart-order-preview text{fill:#b8f2fc;stroke:#242333;stroke-width:3px;paint-order:stroke;stroke-linejoin:round}
+.chart-order-line [data-chart-order-label]{pointer-events:all;cursor:default}
+.chart-order-line.is-crossed line{stroke:#bcacb5;stroke-dasharray:3 6;opacity:.75}
+.chart-order-line.is-crossed text{fill:#d5c2cc}
+.chart-order-preview line{stroke:#f1c577;stroke-width:2}
+.chart-order-preview text{fill:#ffe2ac}
+.chart-order-help{margin:4px 0;font-size:11px;line-height:1.5;color:inherit;opacity:.8}
+body[data-frontend="pixel"] .chart-order-line text,body[data-frontend="pixel"] .chart-order-preview text{stroke:#f6f4f3;fill:#175b70}
+body[data-frontend="pixel"] .chart-order-line.is-crossed text{fill:#7d6874}
+@media(max-width:390px){.chart-order-overlay{font-size:10px}.chart-order-help{font-size:10px}}

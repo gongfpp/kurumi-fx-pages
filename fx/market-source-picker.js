@@ -1,18 +1,19 @@
+import {historicalKindForManifest} from './mode-rule-summary.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // History is selected in the opening panel, without a second confirmation step.
-export function mountMarketSourcePicker({document,library,onSelect=()=>{},importFile,acquireHistory,cancelAcquire=()=>{},getMode=()=>null}){
+export function mountMarketSourcePicker({document,library,onSelect=()=>{},onFormatChange=()=>{},importFile,acquireHistory,cancelAcquire=()=>{},getMode=()=>null}){
  const $=id=>document.getElementById(id),panel=$('history-choice-step');
  let rows=[],loading=null,target='mode',ready=false,busy=false,failed=false,generation=0,request=null,requestMode=null,importController=null;
  const status=text=>{$('history-choice-status').textContent=text;};
  const rowFor=()=>rows.find(r=>r.date==='2014-02-14');
  function paint(){$('history-file-open').hidden=rows.length>0;$('history-file-open').disabled=busy;$('history-choice-retry').hidden=!failed||busy;panel.setAttribute?.('aria-busy',String(busy));}
- function show(prefix){target=prefix;const anchor=document.querySelector?.(`[data-market-prefix="${prefix}"][data-market="historical"]`)?.parentElement;anchor?.after(panel);panel.hidden=false;paint();}
+ function show(prefix){target=prefix;const button=document.querySelector?.(`[data-market-prefix="${prefix}"][data-market="historical"]`),anchor=button?.closest?.('.market-source-buttons')||button?.parentElement;anchor?.after(panel);panel.hidden=false;paint();}
  function cancel(){generation++;cancelAcquire();importController?.abort();request=null;busy=false;paint();}
  function choose(prefix,market){if(market!=='historical'){cancel();if(target===prefix)panel.hidden=true;}$(prefix+'-market').value=market;for(const b of document.querySelectorAll(`[data-market-prefix="${prefix}"]`)){const active=b.dataset.market===market;b.setAttribute('aria-pressed',String(active));b.classList.toggle('selected',active);}if(market==='historical')show(prefix);onSelect(prefix,market);}
  async function load(){
   if(loading)return loading;
   loading=(async()=>{try{
-   await library.catalog();const found=[];for(const dataset of library.datasets){const p=await library.provider(dataset);for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));
-   ready=true;
+   await library.catalog();const found=[];for(const dataset of library.datasets){const p=await library.provider(dataset);for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date,historicalKind:historicalKindForManifest(p.manifest)});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));
+   ready=true;onFormatChange();
    if(!panel.hidden)show(target);return rows;
   }finally{loading=null;paint();}})();return loading;
  }
@@ -34,7 +35,7 @@ export function mountMarketSourcePicker({document,library,onSelect=()=>{},import
  $('history-choice-retry').onclick=()=>{ready=false;return activate(target,requestMode||undefined);};
  $('history-file-open').onclick=()=>$('history-local-file').click();
  $('history-local-file').onchange=async e=>{const file=e.target.files?.[0];if(!file||busy)return;const token=generation;importController=new AbortController();busy=true;failed=false;status('正在读取历史文件…');paint();try{await importFile(file,{signal:importController.signal});if(token!==generation)return;ready=false;await load();if(token===generation)status('');}catch(error){if(token===generation){failed=true;status(error.message||'这个历史文件无法读取。');}}finally{e.target.value='';if(token===generation){busy=false;paint();}}};
- return {load,select:choose,async options(prefix,mode='endless'){
+ return {load,select:choose,historicalKind:()=>rowFor()?.historicalKind||'m15',async options(prefix,mode='endless'){
   if(!ready)await load();
   if(!rowFor(prefix,mode)&&acquireHistory&&(!request||requestMode!==mode)){if(request)cancel();void activate(prefix,mode);}
   const token=generation,pending=request;if(pending&&!rowFor(prefix,mode))await pending;

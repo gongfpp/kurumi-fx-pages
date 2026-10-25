@@ -1,4 +1,5 @@
-import {WATCH_POLICY,HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // Optional observations only. No balance, effect, migration, timer or RNG writes.
 // A legacy engine can ignore this field; counter mismatches then mark it partial.
@@ -40,6 +41,6 @@ export function staminaUsageLines(state={}){
   if(!row.complete)lines.push('继续前的明细未保留，以下只计本次继续后的变化。');
   lines.push(`盯盘消耗 −${amount(row.watch)}`,`工作消耗 −${amount(row.work)}`,`其他消耗 −${amount(row.otherSpent)}`,`道具恢复 +${amount(row.items)}`,`睡眠与休息恢复 +${amount(row.rest)}`,`其他恢复 +${amount(row.otherRecovered)}`);
  }else lines.push('这份进度还没有今日体力明细；从接下来的实际变化开始记录。');
- lines.push(`基础盯盘全天消耗 ${WATCH_POLICY.calmDayCost}，基础睡眠恢复 ${HOUSING_SLEEP_RECOVERY.basic}。`,`实际变化沿用当前压力、道具和睡眠效果；恢复已按体力上限计算。`);
+ lines.push(`基础盯盘全天消耗 ${staminaPolicyForState(state).calmDayCost}，基础睡眠恢复 ${HOUSING_SLEEP_RECOVERY.basic}。`,`实际变化沿用当前压力、道具和睡眠效果；恢复已按体力上限计算。`);
  return lines;
 }

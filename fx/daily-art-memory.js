@@ -1,5 +1,5 @@
-import {createGameStorage} from './storage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {createGameStorage} from './storage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 export const DAILY_ART_MEMORY_KEY='fx-daily-art-memory-v1';
 // A visual-only revision can retain its original read/locked-day identity.
 // The actual sha256 still verifies the image bytes; no saved records are migrated.
@@ -26,14 +26,28 @@ export function observeSeenArtwork(image,{identities=[],memory=dailyArtMemory,on
  if(!image.ownerDocument?.defaultView||!image.getBoundingClientRect)return()=>{};
  const targets=[...new Set(visibilityTargets)],visibility=new Map(targets.map(target=>[target,false]));
  const coverage=new Map();
- let loaded=image.complete&&image.naturalWidth>0,done=false,observer=null;
+ let loaded=image.complete&&image.naturalWidth>0,done=false,observer=null,visibilityObserver=null;
  const win=image.ownerDocument.defaultView;
- const finish=()=>{if(done||!loaded||!targets.every(target=>visibility.get(target))||image.isConnected===false||image.ownerDocument.hidden)return;done=true;memory.seen(identities);onSeen();observer?.disconnect();};
+ const measure=target=>{
+  const r=target.getBoundingClientRect(),area=r.width*r.height;let left=Math.max(r.left,0),right=Math.min(r.right,win.innerWidth||0),top=Math.max(r.top,0),bottom=Math.min(r.bottom,win.innerHeight||0),hidden=target.isConnected===false;
+  for(let node=target;node;node=node.parentElement){const style=win.getComputedStyle?.(node);if(node.hidden||style?.display==='none'||style?.visibility==='hidden'||style?.visibility==='collapse'||style?.opacity==='0'||style?.contentVisibility==='hidden'){hidden=true;break;}if(node===target||!style)continue;const box=node.getBoundingClientRect();if(/auto|scroll|hidden|clip/.test(style.overflowX)){left=Math.max(left,box.left+node.clientLeft);right=Math.min(right,box.left+node.clientLeft+node.clientWidth);}if(/auto|scroll|hidden|clip/.test(style.overflowY)){top=Math.max(top,box.top+node.clientTop);bottom=Math.min(bottom,box.top+node.clientTop+node.clientHeight);}}
+  const shown=Math.max(0,right-left)*Math.max(0,bottom-top);
+  return {r,area,left,right,top,bottom,hidden,shown};
+ };
+ const finish=()=>{
+  if(done||!loaded||!targets.every(target=>visibility.get(target))||image.isConnected===false||image.ownerDocument.hidden)return;
+  // IO entries can describe the pre-hide layout. A late load or stale entry
+  // must not acknowledge pixels hidden now, including a child of a crop target.
+  const picture=measure(image),current=targets.map(measure);
+  if(picture.hidden||picture.area<=0||current.some(box=>box.hidden||box.area<=0))return;
+  // Accumulated reading can span separate scroll positions; its existing pixel
+  // coverage remains valid, but every node must still be rendered when saved.
+  if(!accumulateVisibility&&(picture.shown<=0||current.some(box=>box.shown<=0||box.shown/box.area<minVisibleRatio)))return;
+  done=true;memory.seen(identities);onSeen();observer?.disconnect();visibilityObserver?.disconnect();
+ };
  // Older browsers must account for scroll containers too, not just the window.
  const check=()=>{if(done)return;for(const target of targets){
-  const r=target.getBoundingClientRect(),area=r.width*r.height;let left=Math.max(r.left,0),right=Math.min(r.right,win.innerWidth||0),top=Math.max(r.top,0),bottom=Math.min(r.bottom,win.innerHeight||0),hidden=false;
-  for(let node=target;node;node=node.parentElement){const style=win.getComputedStyle?.(node);if(node.hidden||style?.display==='none'||style?.visibility==='hidden'){hidden=true;break;}if(node===target||!style)continue;const box=node.getBoundingClientRect();if(/auto|scroll|hidden|clip/.test(style.overflowX)){left=Math.max(left,box.left+node.clientLeft);right=Math.min(right,box.left+node.clientLeft+node.clientWidth);}if(/auto|scroll|hidden|clip/.test(style.overflowY)){top=Math.max(top,box.top+node.clientTop);bottom=Math.min(bottom,box.top+node.clientTop+node.clientHeight);}}
-  const shown=Math.max(0,right-left)*Math.max(0,bottom-top);
+  const {r,area,left,right,top,bottom,hidden,shown}=measure(target);
   if(accumulateVisibility){
    // A short viewport can expose picture and caption at different scroll
    // positions. Accumulate actual decoded, visible pixels, never scroll intent.
@@ -51,6 +65,10 @@ export function observeSeenArtwork(image,{identities=[],memory=dailyArtMemory,on
   }else visibility.set(target,!hidden&&area>0&&shown>0&&shown/area>=minVisibleRatio);
  }finish();};
  const load=()=>{loaded=image.naturalWidth>0;if(observer&&!accumulateVisibility)finish();else check();};image.addEventListener('load',load);
- if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{if(accumulateVisibility){check();return;}for(const e of entries){const target=e.target||(targets.length===1?targets[0]:null);if(visibility.has(target))visibility.set(target,e.isIntersecting&&e.intersectionRatio>0&&e.intersectionRatio>=minVisibleRatio);}finish();},{threshold:[0,.01,...(minVisibleRatio?[minVisibleRatio]:[])]});targets.forEach(target=>observer.observe(target));}if(!observer||accumulateVisibility){win?.addEventListener('scroll',check,true);win?.addEventListener('resize',check);check();}
- return()=>{done=true;observer?.disconnect();image.removeEventListener('load',load);win?.removeEventListener('scroll',check,true);win?.removeEventListener('resize',check);};
+ if(win?.IntersectionObserver){observer=new win.IntersectionObserver(entries=>{if(accumulateVisibility){check();return;}for(const e of entries){const target=e.target||(targets.length===1?targets[0]:null);if(visibility.has(target))visibility.set(target,e.isIntersecting&&e.intersectionRatio>0&&e.intersectionRatio>=minVisibleRatio);}finish();},{threshold:[0,.01,...(minVisibleRatio?[minVisibleRatio]:[])]});targets.forEach(target=>observer.observe(target));}
+ // A hide/show pair can occur between IO samples. Recheck current rendering
+ // on the bound nodes/ancestors without discarding the existing IO evidence.
+ if(win?.MutationObserver){visibilityObserver=new win.MutationObserver(()=>{if(done)return;if(!observer||accumulateVisibility)check();else finish();});const watched=new Set();for(const target of [image,...targets])for(let node=target;node;node=node.parentElement)if(!watched.has(node)){watched.add(node);visibilityObserver.observe(node,{attributes:true,attributeFilter:['hidden','style','class','open','data-ai-scene-hidden']});}}
+ if(!observer||accumulateVisibility){win?.addEventListener('scroll',check,true);win?.addEventListener('resize',check);check();}
+ return()=>{done=true;observer?.disconnect();visibilityObserver?.disconnect();image.removeEventListener('load',load);win?.removeEventListener('scroll',check,true);win?.removeEventListener('resize',check);};
 }

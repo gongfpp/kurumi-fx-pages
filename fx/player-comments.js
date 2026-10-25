@@ -1,6 +1,6 @@
-import {randomUUID} from './uuid.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {serviceConfiguration} from './service-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {serviceConfiguration} from './service-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // Match the API's existing nickname rules without rewriting the player's input.
 const commentAliasError=value=>{
@@ -20,7 +20,7 @@ export function renderPlayerComments(list,rows,{document=list.ownerDocument}={})
  }
  list.replaceChildren(fragment);
 }
-export function mountPlayerComments(root,{document=root.ownerDocument,fetch=globalThis.fetch.bind(globalThis),configuration=serviceConfiguration(),getAlias=()=>document.getElementById('ranking-name')?.value||'',storage,crypto=globalThis.crypto,onPublicRows=()=>{},onFailure=()=>{}}={}){
+export function mountPlayerComments(root,{document=root.ownerDocument,fetch=globalThis.fetch.bind(globalThis),configuration=serviceConfiguration(),getAlias=()=>document.getElementById('ranking-name')?.value||'',storage,crypto=globalThis.crypto,onPublicRows=()=>{},onFailure=()=>{},onUserResult=()=>{},captureUserResult=()=>onUserResult}={}){
  const form=root.querySelector('form'),input=root.querySelector('textarea'),button=form.querySelector('button'),status=root.querySelector('[role=status]'),list=root.querySelector('ul'),identity=root.querySelector('[data-comment-author]');
  let pending=false,reading=false,disposed=false,composing=false,attempt=null,visitor=null,revision=0,publicRows=[],composerStatus=false;
  try{storage??=kurumiStorage();visitor=storage.getItem('fx-api-v1-comment-visitor');if(!/^[a-zA-Z0-9_-]{16,80}$/.test(visitor||'')){visitor=randomUUID(crypto);storage.setItem('fx-api-v1-comment-visitor',visitor);}}catch{visitor=randomUUID(crypto);}
@@ -29,6 +29,7 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
  const requestFailures=new WeakSet();
  const failure=(kind,status=0)=>{const error=Object.assign(new Error('Comment request failed'),{kind,status});requestFailures.add(error);return error;};
  const reportFailure=(scope,error)=>{try{onFailure(scope,error.kind,error.status)?.catch?.(()=>{});}catch{}};
+ const captureResult=()=>{let report;try{report=captureUserResult();}catch{}return(result,reason='none')=>{try{report?.(result,reason)?.catch?.(()=>{});}catch{}};};
  const sendFailureCopy=error=>{
   if(error.kind==='network-error')return '发送结果暂未确认，重试不会重复留言。';
   if(error.kind==='timeout')return '发送结果暂未确认，重试不会重复留言。';
@@ -66,14 +67,15 @@ export function mountPlayerComments(root,{document=root.ownerDocument,fetch=glob
  }
  form.addEventListener('submit',async event=>{
   event.preventDefault();if(pending||!configuration.configured)return;if(disposed||composing||event.isComposing)return;
+  const userResult=captureResult();
   composerStatus=true;revision++;
-  const text=input.value.trim(),alias=getAlias().trim();if(!text||[...text].length>200){status.textContent='请输入 1–200 字的留言。';return;}
-  const aliasError=commentAliasError(alias);if(aliasError){status.textContent=aliasError;return;}
+  const text=input.value.trim(),alias=getAlias().trim();if(!text||[...text].length>200){status.textContent='请输入 1–200 字的留言。';userResult('failure','invalid');return;}
+  const aliasError=commentAliasError(alias);if(aliasError){status.textContent=aliasError;userResult('failure','invalid');return;}
   if(!attempt||attempt.text!==text||attempt.alias!==alias)attempt={id:randomUUID(crypto),visitor,text,alias};
   pending=true;button.disabled=true;input.disabled=true;status.textContent='正在公开发送…';
   try{const result=await request({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(attempt)},attempt.id);if(disposed)return;
-   revision++;const row=result.row,item=document.createElement('li'),name=document.createElement('strong'),message=document.createElement('span');name.textContent=`${row.alias}：`;message.textContent=row.text;item.dataset.commentId=row.id;for(const old of [...list.children])if(old.dataset.commentId===row.id)old.remove();item.append(name,message);list.prepend(item);while(list.children.length>50)list.lastElementChild.remove();publicRows=[row,...publicRows.filter(old=>old.id!==row.id)].slice(0,50);onPublicRows(publicRows);input.value='';attempt=null;status.textContent='已公开发送。';
-  }catch(error){if(error.kind==='http-error'&&error.status===409)attempt=null;if(!disposed)status.textContent=sendFailureCopy(error);}
+   revision++;const row=result.row,item=document.createElement('li'),name=document.createElement('strong'),message=document.createElement('span');name.textContent=`${row.alias}：`;message.textContent=row.text;item.dataset.commentId=row.id;for(const old of [...list.children])if(old.dataset.commentId===row.id)old.remove();item.append(name,message);list.prepend(item);while(list.children.length>50)list.lastElementChild.remove();publicRows=[row,...publicRows.filter(old=>old.id!==row.id)].slice(0,50);onPublicRows(publicRows);input.value='';attempt=null;status.textContent='已公开发送。';userResult('success');
+  }catch(error){if(error.kind==='http-error'&&error.status===409)attempt=null;if(!disposed){status.textContent=sendFailureCopy(error);userResult('failure',error.kind==='timeout'?'timeout':error.kind==='network-error'?'network':error.kind==='invalid-response'?'invalid':'unavailable');}}
   finally{pending=false;if(!disposed){button.disabled=false;input.disabled=false;}}
  });
  // Selecting an IME candidate is not consent to publish the unfinished draft.

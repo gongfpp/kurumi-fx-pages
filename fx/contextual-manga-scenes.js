@@ -1,19 +1,19 @@
-import {isDailyFamilyNarrative} from './daily-family-art.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {firstDayOriginalRecallEvidence} from './firstday-original-recall.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {sealedDailyMangaOutcome} from './manga-context.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {isDailyFamilyNarrative} from './daily-family-art.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {FIRSTDAY_BACKSTORY_NODES,OPPOSITE_IMAGINATION_PANEL} from './contextual-manga-firstday-backstory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {firstDayBackstoryEvidence} from './contextual-firstday-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {firstDayOriginalRecallEvidence} from './firstday-original-recall.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {BORROWING_CONTINUATION_NODES} from './contextual-manga-borrowing-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {LINK_DAILY_NODES,LINK_DAILY_PANELS} from './contextual-manga-links-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {longLossThenShortEvidence} from './contextual-reversal-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {REVERSAL_DAILY_NODES} from './contextual-manga-reversal-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {VERIFIED_DAILY_NODES,VERIFIED_DAILY_PANELS} from './contextual-manga-verified-daily.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {DAILY_EXTENSION_NODES} from './contextual-manga-daily-extension.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {pauseAndReturnEvidence,averagingDownEvidence,friendsLedgersEvidence,floatingCautionEvidence,activityPresentationIdentity} from './contextual-restraint-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {sealedDailyTradeEvidence,longProfitEvidence,shortProfitEvidence,reversalLiquidationEvidence,oppositeDirectionsEvidence} from './contextual-trade-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CONTEXTUAL_MANGA_ASSETS,CONTEXTUAL_MANGA_NODES,CONTEXTUAL_MANGA_ARCS} from './contextual-manga-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {CHARACTER_STORY_ASSETS,CHARACTER_STORY_NODES} from './character-story-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {priorBorrowedShortLossEvidence} from './contextual-debt-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const arcs={
  ...CONTEXTUAL_MANGA_ARCS,
  'profit-fades':['aud-yen-delight','profit-fades','look-away','first-negative-estimate'],

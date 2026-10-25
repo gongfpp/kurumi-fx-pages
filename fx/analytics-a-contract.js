@@ -1,8 +1,9 @@
 // Approved A only. Independent from experience-v1; never relabel old consent or queues.
 export const PROFILE='experience-a-v1';
-export const CONTRACT_REVISION=3;
+export const CONTRACT_REVISION=4;
 export const LIMITS=Object.freeze({batchEvents:40,batchBytes:48000,queueEvents:240,queueAgeMs:86400000,visitorAgeMs:7776000000,sessionIdleMs:1800000,eventsPerVisitorHour:600,noncriticalPerVisitorHour:480,detailDays:30,aggregateDays:180});
 export const MODES=['none','story','endless'];
+export const MARKET_SOURCES=['none','simulated','historical','historical-mixed','live','shared-replay','unknown'];
 export const BANDS=Object.freeze({
  position:['zero','p01_10','p10_25','p25_50','p50_75','p75_100','over100'],
  leverage:['x1','x2_10','x10_25','x25_50','x50_100','over100'],
@@ -49,7 +50,10 @@ export const EVENTS=Object.freeze({
  'runtime.interruption':E({reason:['pagehide','hidden_timeout','explicit_exit','run_replaced','unknown'],durationBand:BANDS.duration}),
  'runtime.coverage':E({criticalEligible:integer(1000000),sampledEligible:integer(1000000),sampledSelected:integer(1000000),sent:integer(1000000),queueDropped:integer(1000000),expiredDropped:integer(1000000),quotaDropped:integer(1000000),sendFailed:integer(1000000)})
 });
+// R3 payloads remain valid. New producers emit the optional source explicitly;
+// missing legacy values normalize to unknown at reception, never in the queue.
 export const COMMON_KEYS=['id','visitor','visitorBornAt','session','run','game','site','channel','path','build','mode','at','seq','day','family','action','data','profile','v'];
+export const OPTIONAL_COMMON_KEYS=['marketSource'];
 export function sampledSession(channel,session){let h=2166136261;for(const c of channel+':'+session){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return(h>>>0)%10===0;}
 export const isSampledEvent=e=>e.family==='load'&&['vital','support'].includes(e.action)||e.family==='runtime'&&e.action==='menu';
 export const isNoncritical=e=>isSampledEvent(e)||e.family==='runtime'&&['active','coverage'].includes(e.action);

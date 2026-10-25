@@ -1,4 +1,4 @@
-import {setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {setImage,applyImageVisibility} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const bindings=new WeakMap();
 // The main game may observe actual reading; archived consumers remain isolated.
 let observeArtwork=null;
@@ -8,9 +8,9 @@ export function configureMangaImageObserver(observer){
 }
 // Lazy non-primary art and an explicit text fallback retain the ledger/context
 // even if both the original request and its one ordinary retry fail.
-export function setMangaImage(image,path,{loading='lazy'}={}){
+export function setMangaImage(image,path,{loading='lazy',identity={path},usage}={}){
  image.loading=loading;image.decoding='async';
- setImage(image,path);
+ setImage(image,path,{identity,usage});
  observeArtwork?.(image,path);
  const current=bindings.get(image),asset=image.dataset.asset;
  if(current?.asset===asset)return;
@@ -22,7 +22,7 @@ export function setMangaImage(image,path,{loading='lazy'}={}){
   if(bindings.get(image)!==state||!image.classList.contains('image-unavailable')||state.note)return;
   const note=image.ownerDocument.createElement('p');note.className='manga-image-fallback';note.setAttribute('role','status');
   note.textContent='漫画图片暂时无法载入；本局数值与文字说明仍可查看。';
-  image.parentElement?.append(note);state.note=note;
+  applyImageVisibility(note,{asset:identity,usage});image.parentElement?.append(note);state.note=note;
  };
  image.onload=event=>{loaded?.call(image,event);state.note?.remove();state.note=null;};
 }

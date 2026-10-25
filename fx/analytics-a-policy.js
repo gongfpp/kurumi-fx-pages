@@ -1,5 +1,5 @@
-import {EVENTS,COMMON_KEYS,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {experienceSource} from './experience-policy.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {EVENTS,COMMON_KEYS,OPTIONAL_COMMON_KEYS,MARKET_SOURCES,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {experienceSource} from './experience-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // The formal EdgeOne host is A-only. Do not broaden legacy experience-v1
 // attribution or accept arbitrary application paths on this origin.
 const formalEdgeOne=Object.freeze({origin:'https://fx.gongfpp.icu',host:'fx.gongfpp.icu',channel:'edgeone-pages',path:'/fx/',entries:Object.freeze(['/','/fx.html'])});
@@ -24,7 +24,7 @@ export function validData(name,data){
  return true;
 }
 export function validEvent(e,{source,build,now=Date.now()}={}){
- if(!object(e)||Object.keys(e).length!==COMMON_KEYS.length||COMMON_KEYS.some(k=>!Object.hasOwn(e,k)))return false;
+ if(!object(e)||COMMON_KEYS.some(k=>!Object.hasOwn(e,k))||Object.keys(e).some(k=>!COMMON_KEYS.includes(k)&&!OPTIONAL_COMMON_KEYS.includes(k))||Object.hasOwn(e,'marketSource')&&!MARKET_SOURCES.includes(e.marketSource))return false;
  if(e.profile!==PROFILE||e.v!==1||e.game!=='fx'||e.site!=='fx'||!id(e.id)||!id(e.visitor)||!id(e.session)||e.run!==''&&!id(e.run))return false;
  if(e.channel!==source?.channel||e.path!==source?.path||!MODES.includes(e.mode)||typeof e.build!=='string'||!/^[A-Za-z0-9_.-]{1,64}$/.test(e.build)||build&&e.build!==build)return false;
  if(!int(e.at,now-LIMITS.queueAgeMs,now+300000)||!int(e.visitorBornAt,Math.max(0,now-LIMITS.visitorAgeMs),now+300000)||e.visitorBornAt>e.at||!int(e.seq,1,1e9)||!int(e.day,0,10000))return false;

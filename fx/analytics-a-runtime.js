@@ -1,8 +1,8 @@
-import {durationBand} from './analytics-a-policy.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {durationBand} from './analytics-a-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Browser lifecycle only. No URL, input value, key, coordinates or error text
 // enter an event. Missing metrics remain missing, never zero-filled.
 export function mountAnalyticsARuntime({client,game,document=globalThis.document,window=globalThis.window,navigator=globalThis.navigator,performance=globalThis.performance,isActive=()=>false,isTradable=()=>false,autoTimer=true}){
- let last=performance.now(),interaction=-Infinity,active=0,total=0,lastActive=last,run='',visited=false,tradable=false,wasActive=false,observers=[],vitals={},clsSession={start:0,last:0,value:0,max:0},interactions=new Map(),loadEligible=false;
+ let last=performance.now(),interaction=-Infinity,active=0,total=0,lastActive=last,run='',visited=false,tradable=false,wasActive=false,observers=[],vitals={},clsSession={start:0,last:0,value:0,max:0},interactions=new Map(),loadEligible=false,policyActive=false;
  const cleanup=[];const listen=(target,event,fn,options)=>{target?.addEventListener(event,fn,options);cleanup.push(()=>target?.removeEventListener(event,fn,options));};
  const emit=(name,data,context)=>client.emit(name,data,context);
  const elapsed=()=>Math.min(600000,Math.max(0,Math.round(performance.now())));
@@ -23,9 +23,9 @@ export function mountAnalyticsARuntime({client,game,document=globalThis.document
   emit('load.support',support);
  }
  function sendVitals(){for(const [metric,value]of Object.entries(vitals))if(Number.isInteger(value)&&value>=0&&value<=(metric==='cls'?10000:600000))emit('load.vital',{metric,value,support:'supported'});vitals={};}
- function begin({existingConsent=false}={}){visit();loadEligible=existingConsent;if(!client.allowed())return;
-  if(existingConsent){emit('load.start',{elapsedMs:0});const marks=window.kurumiPixelBoot?.marks;for(const action of ['skeleton','ready'])if(Number.isFinite(marks?.[action]))emit('load.'+action,{elapsedMs:Math.min(600000,Math.round(marks[action]))});}
-  if(existingConsent)startPerformance({buffered:true});last=performance.now();interaction=-Infinity;wasActive=false;
+ function begin({captureStartup=false}={}){visit();loadEligible=captureStartup;if(!client.allowed())return;
+  if(captureStartup){emit('load.start',{elapsedMs:0});const marks=window.kurumiPixelBoot?.marks;for(const action of ['skeleton','ready'])if(Number.isFinite(marks?.[action]))emit('load.'+action,{elapsedMs:Math.min(600000,Math.round(marks[action]))});}
+  if(captureStartup)startPerformance({buffered:true});last=performance.now();interaction=-Infinity;wasActive=false;
  }
  function flushActive(context=game.context()){
   if(active>0&&client.allowed()&&context.run)emit('runtime.active',{activeMs:Math.min(60000,Math.floor(active))},context);
@@ -33,7 +33,8 @@ export function mountAnalyticsARuntime({client,game,document=globalThis.document
  }
  function sample({closing=false}={}){
   const t=performance.now(),delta=t-last;last=t;
-  if(!client.allowed()){active=total=0;wasActive=false;return;}
+  if(!client.allowed()){if(policyActive)resetObservation();policyActive=false;active=total=0;wasActive=false;return;}
+  if(!policyActive){resetObservation();policyActive=true;begin();}
   const current=game.context(),eligible=!document.hidden&&document.hasFocus?.()!==false&&isActive(),playing=eligible&&t-interaction<60000;
   if(run&&run!==current.run){flushActive(previous);if(total)emit('runtime.interruption',{reason:'run_replaced',durationBand:durationBand(total)},{...previous});active=total=0;wasActive=false;lastActive=t;}
   run=current.run;previous={...current};
@@ -42,7 +43,7 @@ export function mountAnalyticsARuntime({client,game,document=globalThis.document
   if(t-lastActive>=60000){flushActive(current);lastActive=t;client.coverage();void client.flush();}
   if(loadEligible&&!tradable&&isTradable()){tradable=true;emit('load.tradable',{elapsedMs:elapsed()});}
  }
- let previous={run:'',mode:'none',day:0};
+ let previous={run:'',mode:'none',day:0,marketSource:'none'};
  const interact=e=>{if(e.isTrusted===false)return;sample();interaction=performance.now();wasActive=!document.hidden&&document.hasFocus?.()!==false&&isActive();client.interaction();};
  for(const type of ['pointerdown','keydown','touchstart','wheel'])listen(document,type,interact,{passive:true});
  const interrupt=reason=>{sample({closing:true});flushActive();wasActive=false;lastActive=performance.now();if(client.allowed()&&run)emit('runtime.interruption',{reason,durationBand:durationBand(total)},game.context());sendVitals();client.coverage();void client.flush();};
@@ -55,12 +56,26 @@ export function mountAnalyticsARuntime({client,game,document=globalThis.document
  listen(window,'unhandledrejection',()=>emit('runtime.error',{scope:'runtime',code:'unhandled_rejection'},game.context()));
  listen(document,'kurumi-boot-observed',e=>{if(!loadEligible||!client.allowed()||!['ready','skeleton'].includes(e.detail))return;emit('load.'+e.detail,{elapsedMs:elapsed()});});
  const menus={'privacy-dialog':'stats','help-dialog':'help','leaderboard-dialog':'leaderboard','comment-credits-dialog':'comments','save-restore-dialog':'save','save-conflict-dialog':'save','bgm-dialog':'settings','voice-library-dialog':'settings','achievements-dialog':'stats'};
- for(const [id,menu]of Object.entries(menus)){const el=document.getElementById(id);if(!el)continue;listen(el,'toggle',e=>emit('runtime.menu',{menu,action:e.newState==='open'?'open':'close'},game.context()));}
- const button=document.getElementById('analytics-a-confirm'),status=document.getElementById('analytics-a-state');
- function renderConsent(){const s=client.snapshot();if(status)status.textContent=s.reason==='browser-privacy'?'浏览器隐私设置已关闭详细统计':s.consent?(s.reason==='receiver-closed'?'已同意，服务启用后才采集':'详细统计已开启'):'详细统计未开启';if(button){button.textContent=s.consent?'关闭详细统计':'同意开启详细统计';button.disabled=s.reason==='browser-privacy'||s.reason==='developer-test';}}
- listen(button,'click',()=>{const next=!client.snapshot().consent;client.setConsent(next);visited=false;for(const o of observers)o.disconnect();observers=[];vitals={};interactions.clear();clsSession={start:0,last:0,value:0,max:0};loadEligible=false;active=total=0;last=performance.now();wasActive=false;if(next)begin();renderConsent();});
- listen(window,'storage',renderConsent);listen(document.getElementById('privacy-dialog'),'toggle',renderConsent);
- renderConsent();begin({existingConsent:client.snapshot().consent});
+ const menuStates=new WeakMap();
+ const observeMenu=e=>{const target=e.target,menu=menus[target?.id]||(target?.matches?.('.pixel-settings')?'settings':null);if(!menu)return;const open=!!target.open;if(menuStates.get(target)===open)return;menuStates.set(target,open);emit('runtime.menu',{menu,action:open?'open':'close'},game.context());};
+ for(const id of Object.keys(menus)){const el=document.getElementById(id);if(el)listen(el,'toggle',observeMenu);}
+ // Capture also sees the settings drawer created by the lazy pixel renderer.
+ // The WeakMap prevents the same native toggle being counted by both listeners.
+ listen(document,'toggle',observeMenu,true);
+ const buttons=[document.getElementById('analytics-a-confirm'),document.getElementById('analytics-a-quick-toggle')].filter(Boolean),status=document.getElementById('analytics-a-state'),notice=document.getElementById('analytics-a-notice');
+ function resetObservation(){visited=false;for(const o of observers)o.disconnect();observers=[];vitals={};interactions.clear();clsSession={start:0,last:0,value:0,max:0};loadEligible=false;active=total=0;last=lastActive=performance.now();interaction=-Infinity;wasActive=false;run='';previous={run:'',mode:'none',day:0,marketSource:'none'};tradable=false;}
+ function renderConsent(){
+  const s=client.snapshot(),off=s.preference==='off';
+  const copy={'consent-off':'统计已关闭','browser-privacy':'浏览器隐私设置已关闭统计','storage':'无法读取统计设置，当前不发送统计','developer-test':'研究与开发测试局不统计','known-automation':'自动化访问不统计','receiver-closed':'统计接收暂未启用','source-unconfigured':'此入口未启用统计'};
+  if(status)status.textContent=s.preferenceError==='cleanup'?'统计已关闭，本机统计数据未能清理':s.preferenceError==='storage'?'本页统计已关闭，关闭设置未能保存':copy[s.reason]||(off?'统计已关闭':s.preference==='default'?'统计按默认设置开启':'统计已开启');
+  for(const button of buttons){button.textContent=s.preferenceError?'重试关闭统计':off?'恢复统计':'关闭统计';button.disabled=!s.preferenceError&&(s.preference==='unavailable'||off&&s.reason==='browser-privacy');}
+  if(notice){notice.hidden=off||s.preference==='unavailable';notice.textContent=s.preference==='default'?'默认记录同站匿名使用情况及行情来源':'同站匿名使用统计（含行情来源）';}
+ }
+ const changePreference=()=>{const prior=client.snapshot(),next=prior.preference==='off'&&!prior.preferenceError;client.setConsent(next);resetObservation();policyActive=client.allowed();if(policyActive)begin();renderConsent();};
+ for(const button of buttons)listen(button,'click',changePreference);
+ listen(window,'storage',()=>{const next=client.allowed();if(next!==policyActive){resetObservation();policyActive=next;if(next)begin();}renderConsent();});
+ listen(document.getElementById('privacy-dialog'),'toggle',renderConsent);
+ renderConsent();policyActive=client.allowed();begin({captureStartup:policyActive});
  const timer=autoTimer?setInterval(sample,1000):null;
  return {sample,interrupt,renderConsent,destroy(){if(timer)clearInterval(timer);for(const off of cleanup)off();for(const o of observers)o.disconnect();client.destroy();}};
 }

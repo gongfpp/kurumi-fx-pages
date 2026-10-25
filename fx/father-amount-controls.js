@@ -1,4 +1,4 @@
-import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {FATHER_DISCOVERY_POLICY} from './father-discovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // The cabinet's balance is independent of the player's trading cash. A partial
 // withdrawal consumes this chapter's single opportunity just like a full one.
 export function fatherWithdrawalLimit(state){

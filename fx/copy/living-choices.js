@@ -1,4 +1,4 @@
-import {SUPPLY_POLICY} from '../economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {SUPPLY_POLICY} from '../economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Housing balance and short UI copy approved for the 2026-10-17 economy update.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const homes=[['basic','父亲家·久留美的房间'],['comfortable','老旧木造公寓·1K'],['generous','团地·翻新2DK'],['premium','高级公寓·2LDK'],['penthouse','塔楼顶层·3LDK']];

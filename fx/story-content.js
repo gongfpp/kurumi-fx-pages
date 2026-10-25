@@ -1,8 +1,8 @@
-import {fatherTheftReceipt} from './father-theft-discovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {fatherTheftReceipt} from './father-theft-discovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {FATHER_THEFT_SCENES} from './copy/father-theft-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ITEM_SCENES,STORY_DEFINITIONS,SCENE_LINES} from './copy/scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Simulated market information is separate from user-approved character dialogue.
-import {approvedQuote,dialogueFacts} from './dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {approvedQuote,dialogueFacts} from './dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // USD/JPY is quoted in JPY per USD: positive = stronger USD / weaker JPY.
 // Bias/delta signs are legacy metadata. New responses sample their own direction.
 // Quote convention: https://www.boj.or.jp/about/education/oshiete/intl/g18.htm

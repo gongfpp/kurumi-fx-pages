@@ -1,13 +1,14 @@
-import {positionBand,leverageBand,holdingBand,levelBand,capitalBand,profitBand,riskBand} from './analytics-a-policy.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {safeLiveTradeEvidence} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {positionBand,leverageBand,holdingBand,levelBand,capitalBand,profitBand,riskBand} from './analytics-a-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {safeLiveTradeEvidence} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {safeHistoricalSegmentEvidence} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {analyticsMarketSource} from './analytics-a-observations.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Read-only observations. All labels are closed contract enums; game IDs are
 // used only for local deduplication, never copied into data.
 export function createAnalyticsAGame({client,getState,equity,stamina,moodPercent=()=>null,riskPercent=()=>null,storyEpisodes=[]}){
  const memories=new WeakMap();
  function memory(){const s=getState();let m=memories.get(s);if(!m){m={run:s.runId,seen:new Set(),trades:new WeakSet(),executions:new Set(),opens:new Map(),stories:new Map(),levels:null,risk:null};memories.set(s,m);}if(m.run!==s.runId){memories.delete(s);return memory();}return m;}
- const context=()=>{const s=getState();return{run:s.runId,mode:s.mode,day:s.day};};
+ const context=()=>{const s=getState();return{run:s.runId,mode:s.mode,day:s.day,marketSource:analyticsMarketSource(s)};};
  const emit=(name,data)=>client.emit(name,data,context());
  function once(key,name,data){if(!client.allowed())return false;const m=memory();if(m.seen.has(key))return false;const ok=emit(name,data);if(ok)m.seen.add(key);return ok;}
  const stage=(value,extra={})=>once('funnel:'+value,'funnel.stage',{stage:value,...extra});
@@ -47,7 +48,7 @@ export function createAnalyticsAGame({client,getState,equity,stamina,moodPercent
   attempt(percent,leverage){emit('trade.attempt',{positionBand:positionBand(percent),leverageBand:leverageBand(leverage)});},
   rejected(reason='other'){emit('trade.rejected',{reason});},
   trade(t,capitalBefore){
-   if(!t||typeof t!=='object'||!client.allowed()||!['open','half','close','closing','rescue','stop','liquidation'].includes(t.type))return;const m=memory();if(m.trades.has(t))return;m.trades.add(t);
+   if(!t||typeof t!=='object'||!client.allowed()||!['open','half','close','closing','rescue','stop','take-profit','liquidation'].includes(t.type))return;const m=memory();if(m.trades.has(t))return;m.trades.add(t);
    const stats=getState().runStatistics,matching=(stats?.trades||[]).filter(row=>Number.isSafeInteger(row.sequence)&&row.sequence>=1&&row.sequence<=stats.executions&&['type','positionId','timestamp','margin','leverage','pnl','entry','exit'].every(k=>(row[k]??null)===(t[k]??null)));
    const receipt=matching.length===1?matching[0]:getState().lastTrade===t?matching.at(-1):null;
    if(receipt&&m.executions.has(receipt.sequence)||matching.length>1&&!receipt&&matching.every(row=>m.executions.has(row.sequence)))return;
@@ -61,13 +62,15 @@ export function createAnalyticsAGame({client,getState,equity,stamina,moodPercent
    const observed=m.opens.get(t.positionId),retained=(stats?.trades||[]).filter(row=>row.type==='open'&&row.positionId===t.positionId),opening=observed??(retained.length===1?{at:retained[0].timestamp,clock:clock(retained[0])}:null),exitClock=clock(t);
    const holding=opening?.clock&&opening.clock===exitClock&&Number.isFinite(opening.at)?holdingBand(t.timestamp-opening.at):null;
    const action=t.type==='liquidation'?'liquidation':t.type==='stop'?'stop_loss':'close';
-   const reason=action==='liquidation'?'margin':action==='stop_loss'?'stop':['close','half','rescue'].includes(t.type)?'manual':getState().phase==='ending'?'ending':t.type==='closing'?'day_end':'other';
+   const reason=t.type==='take-profit'?'other':action==='liquidation'?'margin':action==='stop_loss'?'stop':['close','half','rescue'].includes(t.type)?'manual':getState().phase==='ending'?'ending':t.type==='closing'?'day_end':'other';
    emit('trade.'+action,{positionBand:observed?.positionBand??'unknown',leverageBand:leverageBand(t.leverage)??'unknown',holdingBand:holding??'unknown',reason});
    const first=stats?.trades?.find(row=>row.type!=='open');
    if(stats?.complete===true&&!stats.timelinePartial&&first?.positionId===t.positionId&&first.timestamp===t.timestamp&&first.type===t.type)stage('first_close');if(t.positionClosed)m.opens.delete(t.positionId);
   },
   action(category,before,{result='success',reason='none',cost}={}){const after=levels();if(!before?.mood||!after.mood||!before.stamina||!after.stamina)return false;emit('state.action',{category,result,reason,beforeStamina:before.stamina,afterStamina:after.stamina,beforeMood:before.mood,afterMood:after.mood,...(Number.isFinite(cost)?{costBand:capitalBand(cost)}:{})});},
-  feature(feature,result,reason='none'){const m=memory(),key='feature:'+feature,token=result+':'+reason;if(m[key]===token)return;if(emit('runtime.feature',{feature,result,reason}))m[key]=token;},
+  // Called only for real manual completion receipts. Repeated uses count again;
+  // automatic saves/polls report faults separately and never enter this stream.
+  feature(feature,result,reason='none',observedContext){return client.emit('runtime.feature',{feature,result,reason},observedContext??context());},
   settlement(){const s=getState(),r=s.dayReport;if(!r||r.day!==s.day)return;const trades=(s.history||[]).filter(t=>t.day===s.day&&t.type!=='open').length;
    once('settlement:'+s.day,'settlement.day',{trades,capitalBand:capitalBand(equity(s)),pnlBand:profitBand(r.net)});if(s.day===1)stage('first_settlement');},
   ending(){const s=getState();if(s.phase!=='ending'||!s.ending)return;once('ending','story.ending',{endingType:s.ending.id});stage('ending');if(s.mode==='story')once('ending-story','story.progress',{stage:'ending',choiceType:'none',result:'completed'});},

@@ -1,6 +1,6 @@
 // Inventory presentation only. Prices and effects are executed by the engine.
-import {supplyUnavailableReason,supplyUsedToday} from './daily-supplies.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {ownsTradingNotes} from './life-work.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {supplyUnavailableReason,supplyUsedToday} from './daily-supplies.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ownsTradingNotes} from './life-work.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 export const SUPPLY_CARDS=Object.freeze([
  {id:'energy',name:'魔爪能量饮料',cost:300,effect:'体力 +25',detail:'体力恢复25，情绪更亢奋，当日破限免连点。接下来四分之一交易日耗体八折，随后半个交易日耗体增加五成。每天一罐。',icon:'drink'},
  {id:'noodles',name:'泡面',cost:150,effect:'体力 +8',detail:'与外卖共用一餐位，抵扣餐费 ¥300',icon:'meal'},

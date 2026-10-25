@@ -49,7 +49,8 @@
     @media (prefers-reduced-motion:reduce) { #pixel-boot { transition:none; } html[data-pixel-state="loading"] .pixel-boot-chart i { animation:none; } .pixel-boot-meter span { animation:none; opacity:0; } html[data-pixel-state="ready"] .pixel-boot-meter span { opacity:1; } }
     #pixel-boot-error { max-width:34rem; padding:0; }
     #pixel-boot-error #pixel-boot { margin:0; }
-  </style>
+  [data-ai-scene-hidden="true"]{display:none!important}
+</style>
   <script id="pixel-boot-script">
   (() => {
     const root=document.documentElement,marks={};
@@ -107,7 +108,7 @@
   <meta name="description" content="持仓穿过连续蜡烛图，读突发消息、管理多笔订单，和久留美一起经历外汇交易日。原创同人风模拟小游戏。">
   <title>FX韭留美 · 今天也要回本</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23f16f9f'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-size='25' font-weight='bold' fill='%23231f2d'%3E¥%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./fx/startup.css?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
+  <link rel="stylesheet" href="./fx/startup.css?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
   
   
 
@@ -126,6 +127,7 @@
 
 
 
+
   
   
   
@@ -149,114 +151,117 @@
 
 
 
-  <link rel="modulepreload" href="./fx/pixel-bootstrap.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/app.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/engine.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/pixel-frontend.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/pixel-renderer.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-viewport.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-risk-heartbeat.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/chart-quote-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-selector.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/position-risk-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-package-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/amount-controls.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-indicator.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-warning.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-source-label.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/accounting-journal.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/accounting-retention.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/approved-mobile-layout.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/candle-period.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/comic-autoplay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/consumption-ledger.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/contextual-manga-restraint-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/approved-four-skits.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/father-theft-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/items.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/living-choices.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/original-lines.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/copy/script-lines.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/credit-policy.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-narrative-facts.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-performance.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-supplies.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/daily-volatility.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dialogue-bank.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/dom-portals.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/emotion-pressure.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/ending-classifier.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/ending-life-choice.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/energy-stage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/father-discovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/father-theft-discovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/focus-safety.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/hall-metrics.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-day-clock.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-evidence.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-aggregate.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-engine-adapter.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-from-ticks.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-path.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-m15-source.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-opening.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/historical-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/item-events.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-action-dialogues.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-actions.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-friend-dialogues.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-friend-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-recovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-relax-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-catalog.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-dialogue-selector.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-dialogue-sources.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-scene-schema.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/life-work.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/living-services.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/living-settlement.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/lottery-core.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/lottery-rules.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-context-panels.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-context.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/manga-panels.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-book.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market-rules.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/market.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/moving-average.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/multi-history-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/original-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-grid.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/quote-packages.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/recap-choices.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/research-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/run-statistics.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/save-codec.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/settled-comic-art.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/shared-replay-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/skit-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/skit-outcome.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/stamina-usage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/stamina.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/story-content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/story.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/trading-time.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/trading-trauma.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
-  <link rel="modulepreload" href="./fx/vendor/lz-string.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-bootstrap.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/app.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/engine.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-frontend.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/pixel-renderer.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-viewport.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-risk-heartbeat.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-quote-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-selector.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/position-risk-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-package-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/amount-controls.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-indicator.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-warning.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-source-label.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/accounting-journal.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/accounting-retention.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/approved-mobile-layout.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/chart-order-draft.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/comic-autoplay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/consumption-ledger.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/contextual-manga-restraint-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/approved-four-skits.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/father-theft-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/items.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/living-choices.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/original-lines.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/copy/script-lines.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/credit-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-narrative-facts.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-performance.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-supplies.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/daily-volatility.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dialogue-bank.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/dom-portals.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/emotion-pressure.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/ending-classifier.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/ending-life-choice.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/energy-stage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/father-discovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/father-theft-discovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/focus-safety.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/hall-metrics.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-day-clock.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-aggregate.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-engine-adapter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-from-ticks.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-path.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-m15-source.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-opening.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/historical-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/item-events.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-action-dialogues.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-actions.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-friend-dialogues.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-friend-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-recovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-relax-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-catalog.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-dialogue-selector.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-dialogue-sources.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-scene-schema.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/life-work.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/living-services.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/living-settlement.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/lottery-core.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/lottery-rules.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-context-panels.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/manga-panels.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-book.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market-rules.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/market.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/moving-average.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/multi-history-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/original-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/price-brackets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-grid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/quote-packages.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/recap-choices.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/research-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/run-statistics.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/save-codec.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/settled-comic-art.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/shared-replay-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/skit-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/skit-outcome.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/stamina-usage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/stamina.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/story-content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/story.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/trading-trauma.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
+  <link rel="modulepreload" href="./fx/vendor/lz-string.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717">
 </head>
 <body data-frontend="pixel">
 <section id="pixel-boot" role="status" aria-live="polite"><div class="pixel-boot-skeleton" aria-hidden="true"><div class="pixel-boot-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="pixel-boot-actions"><span></span><span></span></div></div><ol id="pixel-boot-stages" class="pixel-boot-stages" aria-label="载入阶段"><li data-boot-step="program" aria-current="step">加载程序</li><li data-boot-step="interface">初始化界面</li><li data-boot-step="ready">准备就绪</li></ol><div id="pixel-boot-meter" class="pixel-boot-meter" role="progressbar" aria-label="游戏准备进度" aria-valuetext="加载程序" aria-busy="true"><span></span></div><p id="pixel-boot-status">正在加载程序…</p><button id="pixel-boot-retry" type="button" hidden>重试</button><button id="pixel-boot-reload" type="button" hidden>重新载入</button></section>
 <header class="topbar">
   <a class="brand" href="./fx.html"><span class="brand-mark">¥</span><span>FX韭留美 <small>FX KURUMI / 漫画交易室</small></span></a>
-  <div class="top-right"><a class="stock-game-link" href="https://gongfpp.github.io/leek-spire-pages/" target="_blank" rel="noopener noreferrer">A 股游戏 ↗</a><span id="saved" role="status">✓</span><button id="mode-open">剧情模式 ▾</button><button id="sound" aria-pressed="false">♪ 音效关</button><button id="music-open">背景音乐</button><button id="life-open" type="button">生活</button><button id="help">玩法</button><button id="developer-open" disabled title="需在本人安全页输入密码验证">开发者模式 · 密码验证</button><button id="privacy-toggle">匿名统计</button><button id="leaderboard-open">名人堂</button><button id="achievements-open">成就 <b id="achievement-count">0</b></button><button id="share-open">分享战报</button></div>
+  <div class="top-right"><a class="stock-game-link" href="https://gongfpp.github.io/leek-spire-pages/" target="_blank" rel="noopener noreferrer">A 股游戏 ↗</a><span id="saved" role="status">✓</span><button id="ai-scene-toggle" type="button" aria-pressed="false">隐藏 AI 图片</button><button id="mode-open">剧情模式 ▾</button><button id="sound" aria-pressed="false">♪ 音效关</button><button id="music-open">背景音乐</button><button id="life-open" type="button">生活</button><button id="help">玩法</button><button id="developer-open" disabled title="需在本人安全页输入密码验证">开发者模式 · 密码验证</button><span id="analytics-a-notice" class="analytics-a-notice">默认记录同站匿名使用情况及行情来源</span><button id="analytics-a-quick-toggle" type="button">关闭统计</button><button id="privacy-toggle">数据说明</button><button id="leaderboard-open">名人堂</button><button id="achievements-open">成就 <b id="achievement-count">0</b></button><button id="share-open">分享战报</button></div>
 </header>
 
 <main id="game-controls" hidden inert>
@@ -282,6 +287,7 @@
         <div id="historical-status" class="historical-status" hidden><span id="historical-status-copy" role="status"></span><button id="historical-resume" hidden>继续下一条报价</button></div><div class="chart-controls" aria-label="行情速度与今日结算"><button id="quote-package-open" type="button" title="点击切换：日K → 15分钟 → 5分钟 → 1分钟" aria-label="切换K线周期，当前 15分钟">15分钟</button><div id="quote-refresh-options" class="quote-refresh-options" role="group" aria-label="盘面刷新套餐"></div><div class="speed-buttons" role="group" aria-label="行情倍速，点击可继续行情"><button data-speed="1" aria-pressed="true">1×</button><button data-speed="2" aria-pressed="false">2×</button><button data-speed="4" aria-pressed="false">4×</button></div><button type="button" id="finish-day" title="按当前报价全平并计入手续费和借款利息，复盘与剧情后结清今天生活费">提前收盘</button><button id="retire" title="完成必要结算后结束整局">销户离场</button></div>
         <div class="ma-legend" aria-label="已形成收盘价均线"><button type="button" id="ma-5" data-ma-toggle="5" aria-pressed="true" title="MA5：最近5根已形成K线的平均收盘价，点击开关"><span>MA5</span><b id="ma-value-5">—</b></button><button type="button" id="ma-10" data-ma-toggle="10" aria-pressed="true" title="MA10：最近10根已形成K线的平均收盘价，点击开关"><span>MA10</span><b id="ma-value-10">—</b></button><button type="button" id="ma-20" data-ma-toggle="20" aria-pressed="true" title="MA20：最近20根已形成K线的平均收盘价，点击开关"><span>MA20</span><b id="ma-value-20">—</b></button></div>
         <div class="chart-risk-stage"><div id="chart" class="chart" role="img" aria-label="USD/JPY 已发生行情，报价单位为日元/美元"></div><div id="risk-alerts" class="risk-alerts" aria-live="polite" hidden></div></div>
+        <p class="chart-order-help">长按画待用线，短拖回看行情；轻点图内空白清线。线保留供之后下单。</p>
         <p id="trading-clock-label" class="recap-clock"></p><div class="chart-foot"><span><i class="up-swatch"></i>报价涨 / 基础货币升 <i class="down-swatch"></i>报价跌 / 日元升</span></div>
 
 
@@ -333,7 +339,7 @@
 <dialog id="ending-dialog" class="day-dialog"><span class="eyebrow">ENDING / 本局结局</span><h2 id="ending-title"></h2><p id="ending-summary"></p><p id="ending-before"></p><div id="ending-manga"></div><img id="ending-comic" class="four-comic" alt="结局四格漫画"><div id="ending-captions" class="comic-captions"></div><button id="ending-results-open" class="primary">完整战绩与导出</button><section id="ending-results" aria-label="完整战绩与导出"></section><p id="automatic-score-status" role="status"></p><button id="ending-restart" class="primary">重开韭菜人生</button></dialog>
 <dialog id="save-restore-dialog" aria-labelledby="save-restore-title"><h2 id="save-restore-title">从进度备份恢复</h2><input id="save-restore-file" type="file" accept=".json,application/json" hidden><label id="save-restore-source-label" hidden>选择恢复进度 <select id="save-restore-source"><option value="local">文件中的本页进度</option><option value="pre-economy-v1">本次经济调整前自动备份</option><option value="pre-stamina-fatigue-v2">体力更新前自动备份</option><option value="pre-life-actions-v1">生活更新前自动备份</option><option value="pre-life-scenes-v1">生活剧情更新前自动备份</option></select></label><p id="save-restore-copy" role="status" aria-live="polite"></p><button id="save-restore-confirm" type="button" class="primary" disabled>确认恢复</button><button id="save-restore-cancel" type="button" class="secondary">取消</button></dialog>
 <dialog id="save-conflict-dialog" aria-labelledby="save-conflict-title"><h2 id="save-conflict-title">先保护你的进度</h2><p id="save-conflict-copy" role="alert"></p><button type="button" class="secondary" data-save-backup>下载本页与当前存档备份</button><button type="button" id="save-load-latest" class="primary">放下本页进度，载入最新存档</button></dialog>
-<dialog id="restart-dialog"><h2>真的要重新开局吗？</h2><p>所选模式的进度会被新章节替换。</p><input id="restart-market" type="hidden" value="simulated"><p id="restart-error" role="status" hidden></p><button id="confirm-restart" class="primary">重开韭菜人生</button><button class="secondary" data-close="restart-dialog">继续这一局</button></dialog>
+<dialog id="restart-dialog"><h2>真的要重新开局吗？</h2><p>所选模式的进度会被新章节替换。</p><input id="restart-market" type="hidden" value="simulated"><section class="restart-rule-preview" aria-labelledby="restart-rule-title"><h3 id="restart-rule-title"></h3><ul id="restart-mode-rules" class="mode-rule-lines"></ul><ul id="restart-market-rules" class="mode-rule-lines"></ul></section><p id="restart-error" role="status" hidden></p><button id="confirm-restart" class="primary">重开韭菜人生</button><button class="secondary" data-close="restart-dialog">继续这一局</button></dialog>
 <dialog id="character-story-dialog"><button id="character-story-close" class="x-close" type="button" aria-label="关闭人物篇章">×</button><p class="character-story-eyebrow">原作人物篇章</p><h2 id="character-story-title"></h2><p id="character-story-context"></p><p id="character-story-before"></p><div id="character-story-panels"></div><p id="character-story-aftermath"></p><nav id="character-story-controls" aria-label="人物篇章翻页"><button id="character-story-prev" type="button" class="secondary">上一页</button><span id="character-story-position" aria-live="polite"></span><button id="character-story-next" type="button" class="secondary">下一页</button><button id="character-story-return" type="button" class="primary">返回交易室</button></nav></dialog>
 <dialog id="story-dialog" class="story-dialog"><span class="eyebrow">LIFE BETWEEN CANDLES / 游戏人物事件</span><h2 id="story-title"></h2><div id="story-comic-frame" class="story-comic-frame" hidden><img id="story-comic" class="four-comic" alt="人物事件四格漫画"><span class="comic-cover cover-two" aria-hidden="true"></span><span class="comic-cover cover-three" aria-hidden="true"></span><span class="comic-cover cover-four" aria-hidden="true"></span></div><div id="story-captions" class="comic-captions"></div><div id="story-lines"></div><div id="story-choices"></div></dialog>
 <dialog id="father-take-dialog"><h2>取用父亲的柜中存款</h2><div id="father-confirm-art" hidden></div><p id="father-take-limit">最多300万，只能取一次</p><div class="loan-presets father-amount-presets" role="group" aria-label="选择取款金额（日元）"><button type="button" data-father-amount="100000">10万</button><button type="button" data-father-amount="500000">50万</button><button type="button" data-father-amount="1000000">100万</button><button type="button" data-father-amount="3000000">300万</button></div><label for="father-take-amount">取款金额（日元）</label><input id="father-take-amount" type="number" inputmode="decimal" min="0.01" max="3000000" step="0.01" value="3000000" aria-describedby="father-take-limit" required><button id="father-take-confirm" class="primary">确认取用此金额</button><button class="secondary" data-close="father-take-dialog">关上柜门</button></dialog>
@@ -355,18 +361,26 @@
 <dialog id="achievements-dialog" class="achievements-dialog"><button class="x-close" data-close="achievements-dialog" aria-label="关闭成就">×</button><span class="eyebrow">FX韭留美 / ACHIEVEMENTS</span><h2>成就档案</h2><p class="small-print">成就跨章节保存。</p><div id="achievement-book"></div></dialog>
 <dialog id="share-dialog" class="share-dialog"><button class="x-close" data-close="share-dialog" aria-label="关闭战报">×</button><span class="eyebrow">FX韭留美 / TRADING REPORT</span><div class="share-report-heading"><h2 id="share-title">这次的战报</h2><div class="share-style-switch" role="group" aria-label="战报样式"><button id="share-style-original" type="button" aria-pressed="true">原版</button><button id="share-style-pixel" type="button" aria-pressed="false">像素版</button></div></div><p id="share-status" role="status">正在制作…</p><img id="share-preview" alt="FX韭留美战报分享卡" hidden><div id="share-actions" class="share-actions" hidden><a id="share-download" class="primary" download>保存战报图片</a><a id="share-original" target="_blank" rel="noopener">打开原图</a><button id="share-native" hidden>系统分享</button></div><p id="share-hint" class="small-print"></p></dialog>
 <dialog id="voice-library-dialog"><button class="x-close" data-close="voice-library-dialog" aria-label="关闭原声目录">×</button><h2>动画原声 · 试听</h2><p class="small-print">官方公开 PV 短片段。点击 ▶ 试听，可暂停、拖动进度或调整音量。</p><div id="voice-list"></div><p id="voice-library-status" role="status" hidden></p><p id="voice-library-caption" role="status"></p><a href="https://fxkurumi-info.com/movie/" target="_blank" rel="noopener noreferrer">官方影片目录 ↗</a></dialog>
-<dialog id="privacy-dialog"><button class="x-close" data-close="privacy-dialog" aria-label="关闭统计说明">×</button><h2>匿名统计做什么？</h2><p id="privacy-copy"></p><p id="privacy-state" role="status"></p><details open><summary>我的匿名编号与统计状态</summary><pre id="privacy-diagnostics"></pre><p>匿名编号只代表这个浏览器，不是账号，也不能用于登录。统计关闭或浏览器隐私要求优先。</p></details><button id="privacy-confirm" class="primary">关闭匿名统计</button><hr><h3>详细体验统计（可选）</h3><p>记录访问、加载、操作阶段和活跃游玩时长。游戏资金、仓位仅记区间；体力、情绪冲击强度和亏损缓冲消耗仅记等级，不收具体金额、交易方向、剧情编号、存档或输入内容。各站分别统计，不跨站关联。明细保留30天，汇总180天；匿名编号90天到期。可随时关闭，浏览器隐私设置优先。</p><p id="analytics-a-state" role="status">详细统计未开启</p><button id="analytics-a-confirm" class="secondary">同意开启详细统计</button></dialog>
+<dialog id="privacy-dialog"><button class="x-close" data-close="privacy-dialog" aria-label="关闭数据说明">×</button><h2>使用情况与数据说明</h2><h3>匿名使用情况统计</h3><p>默认记录同站匿名访问、功能使用次数、实际使用顺序和回访情况，顶部可直接关闭；已有明确关闭选择继续有效。匿名编号只代表这个浏览器，不等于真实人数，各站分别统计，不跨站关联。</p><p>记录加载、操作阶段和前台活跃时长；游戏资金和仓位仅记区间，体力、情绪冲击强度和亏损缓冲消耗仅记等级，并区分模拟、历史等行情来源。普通历史玩法也会计入，研究与开发测试仍排除。不收姓名、输入内容、精确交易金额、交易方向、剧情编号或存档。</p><p>明细保留30天，汇总180天；同站匿名编号90天到期，会话闲置30分钟更新。浏览器DNT/GPC及适用的平台隐私限制优先，关闭后清除本机统计身份与待发队列。</p><p id="analytics-a-state" role="status">统计按默认设置开启</p><button id="analytics-a-confirm" class="secondary">关闭统计</button><hr><details><summary>旧精简统计与排行榜说明</summary><p id="privacy-copy"></p><p id="privacy-state" role="status"></p><details><summary>旧精简统计的编号与状态</summary><pre id="privacy-diagnostics"></pre><p>排行榜资格保持原规则。</p></details><button id="privacy-confirm" class="primary">关闭旧精简统计</button></details></dialog>
 <dialog id="margin-dialog"><button class="x-close" data-close="margin-dialog" aria-label="关闭追加保证金">×</button><h2>追加保证金</h2><p id="margin-description"></p><label>追加金额（¥）<input id="margin-amount" type="number" min="100" step="100" inputmode="decimal"></label><button id="margin-max" class="secondary">最大可追加</button><p id="margin-error" role="status"></p><button id="margin-confirm" class="primary">确认追加</button></dialog>
 <dialog id="loan-dialog"><button class="x-close" data-close="loan-dialog" aria-label="关闭贷款">×</button><h2>网络贷款</h2><p id="loan-summary"></p><p id="loan-assets" class="small-print"></p><p id="loan-rules" class="small-print"></p><div id="loan-controls"><div id="loan-quick-actions"><p>选择借款金额</p><div class="loan-presets"><button data-loan-action="borrow" data-loan-amount="10000">借入 ¥10,000</button><button data-loan-action="borrow" data-loan-amount="50000">借入 ¥50,000</button><button data-loan-action="borrow" data-loan-amount="100000">借入 ¥100,000</button><button data-loan-action="borrow" data-loan-amount="max">借入可借上限</button></div><p>快捷归还（立即执行）</p><div class="loan-presets"><button data-loan-action="repay" data-loan-amount="10000">归还 ¥10,000</button><button data-loan-action="repay" data-loan-amount="50000">归还 ¥50,000</button><button data-loan-action="repay" data-loan-amount="100000">归还 ¥100,000</button><button data-loan-action="repay" data-loan-amount="max">尽可能还清</button></div></div><label>自定义金额（¥）<input id="loan-amount" type="number" min="0.01" step="0.01" inputmode="decimal" value="10000"></label><button id="loan-borrow" class="primary">借入填写金额</button><button id="loan-repay" class="secondary">归还填写金额</button></div><p id="loan-error" role="status"></p></dialog>
 <dialog id="leaderboard-dialog" class="leaderboard-dialog"><button class="x-close" data-close="leaderboard-dialog" aria-label="关闭名人堂">×</button><h2>名人堂 <button class="help-dot" data-help="stats" aria-label="了解战绩指标">?</button></h2><p class="small-print">不用登录，来看看大家的战绩。这里只展示公开昵称与游戏成绩；旧局没记下的成绩显示“尚无记录”。最大金额按持仓占用本金统计，不含杠杆放大；时长只累计前台活跃时间。日收益波动按已结束游戏日的净交易收益率计算，以初始本金为分母，至少2日，不年化。</p><div class="segments ranking-modes"><button data-ranking-game="story" aria-pressed="true">剧情模式</button><button data-ranking-game="endless">操盘模式</button></div><section class="ranking-finish"><button id="ranking-walkaway" class="primary" aria-describedby="ranking-walkaway-note">收手并上榜</button><p id="ranking-walkaway-note" class="small-print"></p><button id="ranking-submit-retry" class="secondary" hidden>重试上榜</button></section><label class="ranking-sort-label">排序 <select id="ranking-sort"><option value="survival">存活天数</option><option value="returnRate">收益率</option><option value="dailyReturnRate">日均收益率</option><option value="totalProfit">总收益</option><option value="totalLoss">累计亏损最多</option><option value="maxProfit">最赚的一单</option><option value="winRate">赚钱胜率</option><option value="maxOrderLoss">最大单笔亏损</option><option value="maxDrawdown">最大回撤</option><option value="dailyVolatility">最大日收益波动</option></select></label><button id="ranking-share" class="secondary">保存我的战绩卡</button><p id="ranking-status" role="status"></p><button id="ranking-retry" class="secondary">重新读取</button><div id="ranking-table"></div><p id="ranking-auto-status" role="status"></p><form id="ranking-form"><label>公开昵称（可选）<input id="ranking-name" maxlength="16" placeholder="留空即匿名" autocomplete="off"></label><p class="small-print">默认匿名；公开昵称最多 16 字，可以随时更改。</p><p id="ranking-eligibility"></p><button id="ranking-publish" class="primary" type="submit">更新公开昵称</button></form></dialog>
 <dialog id="lottery-dialog" class="lottery-dialog" aria-labelledby="lottery-title"><h2 id="lottery-title">彩票开奖</h2><div id="lottery-reveal"></div></dialog>
 <dialog id="detail-dialog" class="detail-dialog"><button class="x-close" data-close="detail-dialog" aria-label="关闭扩展说明">×</button><h2 id="detail-title"></h2><div id="detail-copy"></div></dialog>
-<dialog id="mode-dialog" class="mode-dialog"><button class="x-close" data-close="mode-dialog" aria-label="关闭模式选择">×</button><span class="eyebrow">FX韭留美</span><h2>今天怎么交易？</h2><p class="mode-choice-label">游戏模式</p><div class="market-source-buttons" role="group" aria-label="游戏模式"><button type="button" data-play-mode="story" aria-pressed="true" class="selected">剧情</button><button type="button" data-play-mode="endless" aria-pressed="false">无限</button></div><p class="mode-choice-label">交易K线</p><input id="mode-market" type="hidden" value="simulated"><div class="market-source-buttons" role="group" aria-label="交易K线"><button type="button" data-market-prefix="mode" data-market="simulated" aria-pressed="true" class="selected">模拟盘</button><button type="button" data-market-prefix="mode" data-market="historical" aria-pressed="false">历史真实</button><button type="button" data-market-prefix="mode" data-market="live" aria-pressed="false">实时真实</button></div><p id="mode-resume-note" class="small-print" hidden>继续原进度</p><div class="mode-start-actions"><button id="mode-start" type="button" class="primary">开始游戏</button><button id="mode-restart" type="button" class="secondary">重开韭菜人生</button></div></dialog>
+<dialog id="mode-dialog" class="mode-dialog"><button class="x-close" data-close="mode-dialog" aria-label="关闭模式选择">×</button><span class="eyebrow">FX韭留美</span><h2>今天怎么交易？</h2>
+<p class="mode-choice-label">游戏模式</p><div class="market-source-buttons" role="group" aria-label="游戏模式">
+<div class="mode-rule-option"><button type="button" data-play-mode="story" aria-pressed="true" class="selected" aria-describedby="mode-story-rules">剧情</button><ul id="mode-story-rules" class="mode-rule-lines"><li>每日收盘结算，可安排生活。</li><li>每日小剧场和剧情选择。</li><li>新局基础日耗体65，心理状态会影响交易。</li></ul></div>
+<div class="mode-rule-option"><button type="button" data-play-mode="endless" aria-pressed="false" aria-describedby="mode-endless-rules">操盘</button><ul id="mode-endless-rules" class="mode-rule-lines"><li>无每日结算打断。</li><li>无每日小剧场。</li><li>新局无体力、心理开仓限制。</li></ul></div>
+</div><p class="mode-choice-label">交易K线</p><input id="mode-market" type="hidden" value="simulated"><div class="market-source-buttons" role="group" aria-label="交易K线">
+<div class="mode-rule-option"><button type="button" data-market-prefix="mode" data-market="simulated" aria-pressed="true" class="selected" aria-describedby="mode-simulated-rules">模拟盘</button><ul id="mode-simulated-rules" class="mode-rule-lines"><li>价格由游戏模型生成。</li><li>可按游戏速度播放。</li><li>不是真实市场报价。</li></ul></div>
+<div class="mode-rule-option"><button type="button" data-market-prefix="mode" data-market="historical" aria-pressed="false" aria-describedby="mode-historical-rules">历史真实</button><ul id="mode-historical-rules" class="mode-rule-lines"><li>K线采用历史15分钟数据。</li><li>段内及1/5分钟线含模拟。</li><li>缺口或数据结束可能模拟续盘。</li></ul></div>
+<div class="mode-rule-option"><button type="button" data-market-prefix="mode" data-market="live" aria-pressed="false" aria-describedby="mode-live-rules">实时真实</button><ul id="mode-live-rules" class="mode-rule-lines"><li>当前真实指示汇率。</li><li>报价可能延迟。</li><li>休市时不能交易。</li></ul></div>
+</div><p id="mode-resume-note" class="small-print" hidden>继续原进度</p><div class="mode-start-actions"><button id="mode-start" type="button" class="primary">开始游戏</button><button id="mode-restart" type="button" class="secondary">重开韭菜人生</button></div></dialog>
 <dialog id="opening-dialog" class="opening-dialog" aria-labelledby="opening-title"><button id="opening-skip" type="button" class="x-close" aria-label="跳过序章，进入交易室">跳过序章</button>
   <span class="eyebrow" id="opening-count" aria-live="polite">序章 · 01 / 05</span><h2 id="opening-title"></h2><p id="opening-copy"></p><div id="opening-manga"></div>
   <nav id="opening-nav" class="opening-nav" aria-label="序章翻页"><button id="opening-back" type="button" disabled>← 上一页</button><button id="opening-next" type="button" class="primary"><small id="opening-next-hint">下一页</small><span id="opening-next-label">那时的愿望 →</span></button><div class="opening-reader-meta"><small id="opening-save" role="status"></small></div></nav>
 </dialog>
 <section id="history-choice-step" class="history-choice-step" aria-label="历史行情设置" hidden><p id="history-choice-status" class="small-print" role="status" aria-live="polite"></p><input id="history-local-file" type="file" accept=".fxhistory,.fxresearch" hidden><button id="history-file-open" type="button" class="secondary">选择本机文件</button><button id="history-choice-retry" type="button" class="secondary" hidden>重试载入</button></section>
-<script type="module" src="./fx/pixel-bootstrap.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717" id="pixel-boot-entry"></script>
+<script type="module" src="./fx/pixel-bootstrap.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717" id="pixel-boot-entry"></script>
 </body>
 </html>

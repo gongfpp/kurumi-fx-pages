@@ -1,8 +1,9 @@
-import {STAMINA_FATIGUE,queueStaminaFatigue,beginStaminaFatigue,recoverStaminaFatigue,completeStaminaFatigue,staminaFatigueActive} from './stamina.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {isHistorical,peekHistoricalQuote} from './historical-replay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {isLiveMarket} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {STAMINA_FATIGUE,queueStaminaFatigue,beginStaminaFatigue,recoverStaminaFatigue,completeStaminaFatigue,staminaFatigueActive} from './stamina.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {currentTradingTimestamp,tradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isHistorical,peekHistoricalQuote} from './historical-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {hasCanonicalGrid,QUOTE_SUBSTEPS} from './quote-grid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // A new session cursor can point beyond the last quote actually consumed.
 // In particular, endless settlement opens the next day in the same engine call.
@@ -18,6 +19,7 @@ function nextQuoteAt(state){
 // Skip presentation only. Every intermediate source quote still enters the
 // canonical engine, including all stops, margins, fees and day boundaries.
 export function advanceStaminaFatigue(state,{advance,canAdvance,maxTicks=64,budgetMs=4,now=()=>performance.now()}={}){
+ if(!staminaPolicyForState(state).enabled)return null;
  const event=state.stamina?.fatigue,exits=[];let result=null,count=0,candleClosed=false,flash=null;
  if(!event||event.phase!=='advancing')return null;
  const finish=reason=>completeStaminaFatigue(state,{reason,at:consumedQuoteAt(state)});
@@ -77,7 +79,7 @@ export function mountStaminaFatigue({root=document,getState,canPresent=()=>true,
  const setLow=active=>{const value=String(active);if(root.body.dataset.staminaLow!==value)root.body.dataset.staminaLow=value;};
  const hideVision=()=>{vision.update(0);setLow(false);};
  const clear=()=>{if(timer!==null)win.clearTimeout(timer);timer=null;overlay.hidden=true;closing=false;hideVision();};
- const eligible=state=>!disposed&&pageActive&&pageFocused&&!root.hidden&&!root.querySelector('dialog[open]')&&canPresent(state)&&!state.marketPaused&&['decision','playing'].includes(state.phase);
+ const eligible=state=>staminaPolicyForState(state).enabled&&!disposed&&pageActive&&pageFocused&&!root.hidden&&!root.querySelector('dialog[open]')&&canPresent(state)&&!state.marketPaused&&['decision','playing'].includes(state.phase);
  const syncVision=state=>{const value=state.stamina?.value,active=eligible(state)&&motionEnabled()&&value>0&&value<20;setLow(active);vision.update(active?Math.min(20,Math.ceil(20-value)):0);};
  const busy=()=>staminaFatigueActive(getState());
  const changed=()=>{lastCheckpoint=now();onChange();};

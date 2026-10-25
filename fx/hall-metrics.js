@@ -1,4 +1,4 @@
-import {VOLATILITY_FIELDS} from './daily-volatility.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {VOLATILITY_FIELDS} from './daily-volatility.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Public game aggregates only. Never infer a lifetime peak from a trimmed history.
 const money = value => Number.isFinite(value) && value >= 0 && value <= 1e10;
 export const HALL_FIELDS = Object.freeze(['maxPositionMargin','maxOrderMargin','playSeconds']);

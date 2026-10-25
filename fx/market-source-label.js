@@ -1,5 +1,5 @@
-import {historicalSourcePresentation} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {marketSourceOf} from './live-market-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {historicalSourcePresentation} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {marketSourceOf} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Running copy shares the source identity used by the existing top label.
 export function marketRunningLabel(state){
  const label=historicalSourcePresentation(state)?.label||({live:'真实行情','shared-replay':'延迟共享回放'}[marketSourceOf(state)]??'模拟行情');

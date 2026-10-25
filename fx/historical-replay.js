@@ -1,10 +1,10 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {usesApprovedMarketRules} from './market-rules.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {usesApprovedMarketRules} from './market-rules.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;

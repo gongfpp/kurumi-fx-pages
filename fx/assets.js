@@ -1,4 +1,13 @@
-import {RESEARCH_BUILD} from './research-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+// Shared with the archived chapter: presentation policies belong to the host.
+// Without explicit configuration, image loading has no visibility side effect.
+let visibilityHook=null;
+export function configureImageVisibility(handler){
+ if(handler!==null&&typeof handler!=='function')throw new TypeError('Image visibility hook must be a function or null');
+ const previous=visibilityHook;visibilityHook=handler;
+ return()=>{if(visibilityHook===handler)visibilityHook=previous;};
+}
+export function applyImageVisibility(node,identity){visibilityHook?.(node,identity);}
 // Resolve against the module, so /fx.html, /fx and Pages subdirectories agree.
 export function assetURL(path,base=import.meta.url){
   const source=new URL(base);let url=new URL(path,source);
@@ -18,7 +27,8 @@ function startImage(image,request,manual=false){
  };
  image.onload=()=>{if(requests.get(image)!==request)return;image.classList.remove('image-unavailable');request.onStatus?.('ready');};assign();
 }
-export function setImage(image,path,{onStatus}={}){
+export function setImage(image,path,{onStatus,identity={path},usage,visibilityNode=image}={}){
+ applyImageVisibility(visibilityNode,{asset:identity,usage});
  const url=assetURL(path),existing=requests.get(image);
  if(existing?.url===url){if(onStatus)existing.onStatus=onStatus;return;}
  const request={url,onStatus,attempt:0};requests.set(image,request);image.dataset.asset=url;startImage(image,request);

@@ -1,4 +1,4 @@
-import {WATCH_POLICY} from './economy-plan-config.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 // A game-day interval, not a source-file date or a promise to skip overnight.
 // The same interval owns closing and stamina normalization across transitions.

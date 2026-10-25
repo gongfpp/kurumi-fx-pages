@@ -1,13 +1,15 @@
-import {staminaUsageLines} from './stamina-usage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {staminaDrainMultiplier,staminaWatchCostPerMinute,tradingDayProgress} from './stamina.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {energyStageStatus} from './energy-stage.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {sleepStaminaRecovery,PROP_STAMINA_RECOVERY} from './life-recovery.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {LIFE_WORK_JOBS,effectiveWorkTerms} from './life-work.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {PROPS} from './content.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {staminaUsageLines} from './stamina-usage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaDrainMultiplier,staminaWatchCostPerMinute,tradingDayProgress} from './stamina.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {energyStageStatus} from './energy-stage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {sleepStaminaRecovery,PROP_STAMINA_RECOVERY} from './life-recovery.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {LIFE_WORK_JOBS,effectiveWorkTerms} from './life-work.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {PROPS} from './content.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const number=n=>Number(n.toFixed(4)).toString();
 // Help is read-only. Actual counters own the totals; current contracts own the
 // explanatory rates. Neither viewing nor re-opening this panel applies effects.
 export function staminaDetailsLines(state={}){
+ if(!staminaPolicyForState(state).enabled)return[];
  const progress=tradingDayProgress(state),pressure=staminaDrainMultiplier('calm',Math.max(0,state.stress||0)/40),energy=energyStageStatus(state,progress);
  const rate=staminaWatchCostPerMinute(state)*pressure*energy.multiplier;
  const lines=staminaUsageLines(state);

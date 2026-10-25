@@ -1,19 +1,19 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectDinnerAwareComicScene} from './dinner-story-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {comicContinuity} from './comic-continuity.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {preserveScroll} from './preserve-scroll.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {mountContextualManga} from './contextual-manga-view.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {tradingTrauma} from './trading-trauma.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {selectComicScene} from './comic-scenes.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {createEventComicQueue} from './event-comic-queue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {applyApprovedContextDialogue} from './context-rewrite-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectDinnerAwareComicScene} from './dinner-story-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountComicDialogue,usesPanelArtwork} from './comic-dialogue-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {artIdentity,dailyArtMemory,observeSeenArtwork} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {comicContinuity} from './comic-continuity.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {mountContextualManga} from './contextual-manga-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {realizedProfitComicPresentation} from './profit-comic-presentation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {tradingTrauma} from './trading-trauma.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ensureComicAutoplay,chooseAutomaticComic,markAutomaticComicShown} from './comic-autoplay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {selectComicScene} from './comic-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {recordedComicScenes,createComicReceiptGate} from './event-comic-events.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {createEventComicQueue} from './event-comic-queue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {COMIC_PRESENTATION_ASSETS} from './comic-scene-assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 const yen=value=>`¥${Math.abs(value).toLocaleString('zh-CN',{maximumFractionDigits:2})}`;
 const BORROWING=new Set(['father-borrow','loan-funded']);
@@ -62,7 +62,7 @@ export function createEventComicPresenter({root=document,artMemory=dailyArtMemor
   showing=signature;eyebrow.textContent=scene.automatic&&!manualReplay.has(scene.receiptKey)?'小剧场':Number.isFinite(scene.receipt?.day)?`第${scene.receipt.day}天 · 往事重看`:'往事重看';title.textContent=scene.title;dialog.dataset.scene=scene.id;dialog.dataset.receiptKey=scene.receiptKey;dialog.dataset.artReady=String(scene.ready);
   stopArtObservation();
   const panelArtwork=usesPanelArtwork(scene);image.hidden=!scene.ready||panelArtwork;missing.hidden=scene.ready;
-  if(scene.ready&&!panelArtwork){setImage(image,scene.art.path);image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;
+  if(scene.ready&&!panelArtwork){setImage(image,scene.art.path,{identity:scene.art,usage:'scene-character'});image.alt=scene.art.alt||scene.title;image.width=scene.art.width;image.height=scene.art.height;
    const key=signature,failed=image.onerror;image.onerror=()=>{if(showing!==key)return;failed?.();if(image.classList.contains('image-unavailable')){image.hidden=true;missing.hidden=false;missing.textContent='画面暂时没载入';dialog.dataset.artReady='false';}};
   }else{image.removeAttribute('src');image.alt='';missing.textContent='画面待补';}
   lines.className=panelArtwork?'event-comic-lines comic-panel-cards':'event-comic-lines';const panelView=mountComicDialogue(lines,scene,{root});

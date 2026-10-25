@@ -9,6 +9,12 @@ export function liquidationLossAmount(preview){
 
 export function orderLossView(stopPips,longPreview,shortPreview,formatMoney){
   const money=value=>Number.isFinite(value)?formatMoney(value):'—';
+  if(longPreview?.priceBracketVersion===1||shortPreview?.priceBracketVersion===1){
+    const quote=value=>Number.isFinite(value)?value.toFixed(3):'不预设';
+    const bracket=(label,preview)=>`${label}：止损 ${quote(preview?.stopPrice)} / 止盈 ${quote(preview?.takeProfitPrice)}`;
+    const ignored=longPreview?.ignoredDrawnStop||shortPreview?.ignoredDrawnStop;
+    return {label:'本单止损 / 止盈',amount:`做多 ${money(longPreview?.valid?longPreview.stopLossAmount:null)} / 做空 ${money(shortPreview?.valid?shortPreview.stopLossAmount:null)}`,note:[bracket('多单',longPreview),bracket('空单',shortPreview),ignored?'当前情绪不能设止损，画线止损不随本单提交。':''].filter(Boolean).join('；')};
+  }
   if(stopPips!==null)return {
     label:'预计止损亏损',
     amount:money(longPreview?.valid?longPreview.stopLossAmount:null),

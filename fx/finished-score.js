@@ -1,9 +1,9 @@
-import {lotteryScoreFields} from './lottery-ranking.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {terminalRankingEligibility} from './auto-leaderboard.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {dailyVolatilityMetrics} from './daily-volatility.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {lotteryScoreFields} from './lottery-ranking.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {terminalRankingEligibility} from './auto-leaderboard.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {dailyVolatilityMetrics} from './daily-volatility.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','profitGivebackOrders'];
 const knownRequired=['closedOrders','winningOrders','losingOrders','breakevenOrders','maxOrderLoss','maxOrderProfit'];
 function finite(value,label,min=-1e10,max=1e10){if(!Number.isFinite(value)||value<min||value>max)throw Error('终局成绩字段无效：'+label);return value;}

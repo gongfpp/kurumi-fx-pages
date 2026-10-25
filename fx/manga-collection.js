@@ -1,10 +1,10 @@
-import {mangaLibraryEntries} from './manga-collection-model.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {dailyArtMemory} from './daily-art-memory.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {assetURL,setImage} from './assets.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {collectionHdEdition} from './manga-collection-hd.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {LIBRARY_COPY} from './copy/library-ui.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
-import {createSkitLine} from './skit-dialogue.js?v=82affdc0b9de0f9673fae6eecd09c7e943ae7874-23f2a20b7717';
+import {mangaLibraryEntries} from './manga-collection-model.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {dailyArtMemory} from './daily-art-memory.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {assetURL,setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {collectionHdEdition} from './manga-collection-hd.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {LIBRARY_COPY} from './copy/library-ui.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {createSkitLine} from './skit-dialogue.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
 
 const mounts=new WeakMap();
 const put=(node,text)=>{if(node.textContent!==text)node.textContent=text;};
@@ -83,7 +83,7 @@ export function mountMangaCollection({root=globalThis.document,getProfile=()=>({
   if(thumbnail)img.setAttribute('aria-hidden','true');
   const [width,height]=entry.dimensions||[];if(width&&height){img.width=width;img.height=height;}
   const hd=thumbnail||entry.category!=='original'?null:collectionHdEdition(entry,{readOnlyPreview:true});
-  if(!hd){frame.append(img);setMangaImage(img,entry.path,{loading:thumbnail?'lazy':'eager'});return;}
+  if(!hd){frame.append(img);setMangaImage(img,entry.path,{loading:thumbnail?'lazy':'eager',identity:entry,usage:entry.usage||'original'});return;}
   const editions=make('div','manga-collection-editions'),jp=button('','高清日文原页'),legacy=button('','原有中文片段');
   editions.setAttribute('role','group');editions.setAttribute('aria-label','漫画版本');editions.append(jp,legacy);frame.append(editions,img);
   let edition=null;
