@@ -1,5 +1,5 @@
-import {preserveScroll} from './preserve-scroll.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {isTextEntry,prepareModalFocus} from './focus-safety.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {preserveScroll} from './preserve-scroll.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isTextEntry,prepareModalFocus} from './focus-safety.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Every modal owns one fixed control strip and one scrollable content region.
 // Closing a narrative window dismisses its presentation, never chooses a story.
 export function enhanceDialogs({root=document,onDismiss=()=>{},onClose=()=>{}}={}) {

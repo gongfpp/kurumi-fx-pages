@@ -1,1 +1,11 @@
-{"schemaVersion":1,"datasets":[]}
+{
+  "schemaVersion": 1,
+  "datasets": [
+    {
+      "id": "kurumi-2014-reference-v1",
+      "label": "2014 · M15 参考行情",
+      "manifestURL": "history-data/2014-reference/manifest.json",
+      "publicM15": true
+    }
+  ]
+}

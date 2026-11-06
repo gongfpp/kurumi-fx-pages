@@ -1,7 +1,7 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;
@@ -30,7 +30,7 @@ export function terminalRankingEligibility(state,report,storage){
  if(hasLotteryCheat(state))return {eligible:false,reason:'lottery-cheat'};
  if(isSharedReplay(state))return {eligible:false,reason:'shared-replay'};
  if(hasHistoricalSimulation(state))return {eligible:false,reason:'mixed-historical'};
- if([2,3,4].includes(state?.historical?.version))return {eligible:false,reason:'private-research'};
+ if([2,3,4,5].includes(state?.historical?.version))return {eligible:false,reason:'private-research'};
  if(!ID.test(state?.runId||''))return {eligible:false,reason:'missing-run'};
  if(state.phase!=='ending'||!ENDINGS.has(state.ending?.id)||report?.gameFinished!==true||report?.completionReason!==state.ending.id||report?.eligibility?.gameFinished!==true)return {eligible:false,reason:'unfinished'};
  try{if(hasDevelopmentTaint(state,storage)||report.eligibility.developmentTaint!==false)return {eligible:false,reason:'developer'};}catch{return {eligible:false,reason:'storage-unavailable'};}

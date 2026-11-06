@@ -1,17 +1,19 @@
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {usesApprovedMarketRules} from './market-rules.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isMultiM15,multiM15Feed,initializeMultiM15,bindMultiM15,peekMultiM15,commitMultiM15,flushMultiM15,multiM15DayInfo,nextMultiM15Date,prepareNextMultiM15Day,validMultiM15Save} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {usesApprovedMarketRules} from './market-rules.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;
 export const historicalDate=ms=>new Date(ms+JST).toISOString().slice(0,10);
 export const isResearch=s=>[2,3].includes(s?.historical?.version);
-export const isHistorical=s=>[1,2,3,4].includes(s?.historical?.version);
-export const hasHistoricalFeed=s=>isHistoricalM15(s)?hasHistoricalM15Feed(s):isMultiHistory(s)?hasMultiHistoryFeed(s):feeds.has(s);
+export const isHistorical=s=>[1,2,3,4,5].includes(s?.historical?.version);
+export const hasHistoricalFeed=s=>isMultiM15(s)?!!multiM15Feed(s):isHistoricalM15(s)?hasHistoricalM15Feed(s):isMultiHistory(s)?hasMultiHistoryFeed(s):feeds.has(s);
 export const historicalReady=s=>!isHistorical(s)||!s.historical.sleepTransition&&(historicalSimulationActive(s)||(s.historical.status==='ready'&&hasHistoricalFeed(s)));
 // Display reference only: freeze the known mark at the game-day boundary.
 export function markHistoricalOpening(s){
@@ -22,6 +24,7 @@ export function markHistoricalOpening(s){
 const mid=q=>(q[1]+q[2])/2;
 export function historicalScript(){return{historical:true,tracks:[],events:Array.from({length:5},()=>({id:'historical',chain:'历史行情',title:'USD/JPY 历史回放',copy:'按当时的报价继续交易。',source:'历史外汇行情',time:'',flash:'USD/JPY 历史回放',flashCopy:'按当时的报价继续交易。'}))};}
 export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL,opening}){
+ if(usesApprovedMarketRules(s)&&manifest.schemaVersion===MULTI_M15_SCHEMA)return initializeMultiM15(s,{manifest,dayData,startDate,manifestURL,opening,script:historicalScript()});
  if(usesApprovedMarketRules(s)&&eligibleHistoricalM15(manifest,dayData))return initializeHistoricalM15(s,{manifest,dayData,startDate,manifestURL,opening,script:historicalScript()});
  if(manifest.schemaVersion==='research-multi-m1-close-v1')return initializeMultiHistory(s,{manifest,dayData,startDate,manifestURL},historicalScript);
  if(manifest.schemaVersion==='research-m1-close-v1')return initializeResearch(s,{manifest,dayData,startDate,manifestURL,opening});
@@ -41,6 +44,7 @@ export function initializeHistorical(s,{manifest,dayData,startDate,manifestURL,o
  return s;
 }
 export function bindHistoricalDay(s,manifest,dayData){
+ if(isMultiM15(s)){bindMultiM15(s,manifest,dayData);finishHistoricalSleepLoad(s,manifest,dayData);return s;}
  if(isHistoricalM15(s)){bindHistoricalM15(s,manifest,dayData);finishHistoricalSleepLoad(s,manifest,dayData);return s;}
  if(isMultiHistory(s)){bindMultiHistoryDay(s,manifest,dayData);finishHistoricalSleepLoad(s,manifest,dayData);return s;}
  if(isResearch(s)){bindResearchDay(s,manifest,dayData);finishHistoricalSleepLoad(s,manifest,dayData);return s;}
@@ -55,6 +59,7 @@ export function bindHistoricalDay(s,manifest,dayData){
  return s;
 }
 export function historicalDayInfo(s){
+ if(isMultiM15(s))return multiM15DayInfo(s);
  if(isHistoricalM15(s))return historicalM15DayInfo(s);
  if(isMultiHistory(s))return multiHistoryDayInfo(s);
  const feed=feeds.get(s);if(!feed)return null;
@@ -63,8 +68,9 @@ export function historicalDayInfo(s){
 }
 export const historicalBillingDay=s=>historicalDayClock(s,historicalDayInfo(s));
 export const lockHistoricalBillingDay=s=>lockHistoricalDayClock(s,historicalDayInfo(s));
-export function nextHistoricalDate(s){if(isHistoricalM15(s))return nextHistoricalM15Date(s);if(isMultiHistory(s))return nextMultiHistoryDate(s);const days=feeds.get(s)?.manifest.days;if(!days)return null;return days[days.findIndex(d=>d.date===s.historical.date)+1]?.date||null;}
+export function nextHistoricalDate(s){if(isMultiM15(s))return nextMultiM15Date(s);if(isHistoricalM15(s))return nextHistoricalM15Date(s);if(isMultiHistory(s))return nextMultiHistoryDate(s);const days=feeds.get(s)?.manifest.days;if(!days)return null;return days[days.findIndex(d=>d.date===s.historical.date)+1]?.date||null;}
 export function prepareNextHistoricalDay(s){
+ if(isMultiM15(s))return prepareNextMultiM15Day(s);
  if(isHistoricalM15(s))return prepareNextHistoricalM15Day(s);
  if(isMultiHistory(s))return prepareNextMultiHistoryDay(s);
  const feed=feeds.get(s);if(!feed){startHistoricalContinuation(s,'loading');return false;}
@@ -112,10 +118,17 @@ function appendSleepRow(s,row,{opening=false}={}){
  recordHistoricalSource(s,at,isMultiHistory(s)?Object.keys(row.bars):undefined);
 }
 function resolveHistoricalSleepSource(s){
- const h=s.historical,feed=isHistoricalM15(s)?historicalM15Feed(s):isMultiHistory(s)?multiHistoryFeed(s):feeds.get(s);
+ const h=s.historical,feed=isMultiM15(s)?multiM15Feed(s):isHistoricalM15(s)?historicalM15Feed(s):isMultiHistory(s)?multiHistoryFeed(s):feeds.get(s);
  if(!feed)return true;
  const transition=h.sleepTransition,effective=historicalEffectiveTime(s)??h.lastQuote[0];
  // Known source quotes after closing extend the chart, without executing them.
+ if(isMultiM15(s)){
+  h.status='ready';let next;while(!(next=peekMultiM15(s,{historyOnly:true})).done){if(next.blocked)break;commitMultiM15(s,next,{historyOnly:true,day:Math.max(1,s.day-1),sleepHistory:true,deferDisplay:true});}
+  flushMultiM15(s,{day:Math.max(1,s.day-1),sleepHistory:true});
+  const transition=h.sleepTransition;
+  if(!prepareNextMultiM15Day(s,{sleep:true})){delete h.sleepTransition;startHistoricalContinuation(s,'exhausted');return false;}
+  h.sleepTransition={...transition,stage:'opening'};s.marketPaused=false;return true;
+ }
  if(isHistoricalM15(s)){
   h.status='ready';
   let next;while(!(next=peekHistoricalM15(s)).done){
@@ -141,6 +154,12 @@ function resolveHistoricalSleepSource(s){
 function finishHistoricalSleepLoad(s,manifest,data){
  const h=s.historical,transition=h.sleepTransition;if(!transition)return;
  if(transition.stage==='source'){resolveHistoricalSleepSource(s);return;}
+ if(isMultiM15(s)){
+  const first=peekMultiM15(s,{historyOnly:true});if(first.done||first.blocked)throw Error('历史行情没有开盘报价');
+  commitMultiM15(s,first,{historyOnly:true,opening:true});delete h.sleepTransition;delete h.billingDay;h.status='ready';h.dayOpeningAt=first.quote[0];h.dayOpeningGameDay=s.day;
+  if(s.historyContinuation){s.historyContinuation.progressDay=s.day;s.historyContinuation.dayOpeningAt=first.quote[0];s.historyContinuation.daySamples=0;}
+  markHistoricalOpening(s);s.marketPaused=false;return;
+ }
  if(isHistoricalM15(s)){
   const first=peekHistoricalM15(s);if(first.done||first.blocked)throw Error('历史行情没有开盘报价');
   commitHistoricalM15(s,first.quote);delete h.sleepTransition;delete h.billingDay;delete h.skippedRemainder;
@@ -163,6 +182,7 @@ export function validHistoricalSleep(s){
  return x===undefined||usesApprovedMarketRules(s)&&s.mode==='story'&&x?.version===1&&x.day===s.day&&Number.isSafeInteger(x.fromAt)&&x.fromAt>=0&&/^\d{4}-\d\d-\d\d$/.test(x.fromDate)&&['source','opening'].includes(x.stage)&&Object.keys(x).length===5&&(x.stage==='source'?s.historical.date===x.fromDate:s.historical.cursor===0)&&['loading','error'].includes(s.historical.status);
 }
 export function peekHistoricalQuote(s){
+ if(isMultiM15(s))return peekMultiM15(s);
  if(isHistoricalM15(s))return peekHistoricalM15(s);
  if(isMultiHistory(s))return peekMultiHistory(s);
  const h=s.historical,feed=feeds.get(s);if(!feed)throw Error('历史行情尚未载入');
@@ -185,7 +205,7 @@ export function skipElapsedHistoricalSource(s,until){
 export function continueHistoricalGap(s){if(!isHistorical(s)||s.historical.status!=='gap')return false;s.historical.acceptedGapCursor=s.historical.cursor;s.historical.status='ready';s.marketPaused=false;return true;}
 export function commitHistoricalQuote(s,q){const h=s.historical;if(h.cursor===0)h.dayOpeningAt=h.billingDay?.day===s.day?h.billingDay.from:q[0];h.cursor++;h.lastQuote=[...q];h.acceptedGapCursor=null;delete h.gap;delete h.skippedRemainder;s.tradingClock.lastQuoteAt=q[0];s.tradingClock.lastQuoteDay=s.day;}
 export function validHistoricalSave(s){
- const h=s.historical;if(!h)return true;if(!validHistoricalSleep(s)||!validHistoricalDayClock(s))return false;if(isHistoricalM15(s))return usesApprovedMarketRules(s)&&validHistoricalM15Save(s);if(isMultiHistory(s))return validMultiHistorySave(s);
+ const h=s.historical;if(!h)return true;if(!validHistoricalSleep(s)||!validHistoricalDayClock(s))return false;if(isMultiM15(s))return usesApprovedMarketRules(s)&&validMultiM15Save(s);if(isHistoricalM15(s))return usesApprovedMarketRules(s)&&validHistoricalM15Save(s);if(isMultiHistory(s))return validMultiHistorySave(s);
  if(isResearch(s))return validResearchSave(s);
  return [10,12,13].includes(s.version)&&h.version===1&&typeof h.datasetId==='string'&&h.datasetId.length>0&&typeof h.sourceVersion==='string'&&h.sourceVersion.length>0&&/^[a-f0-9]{64}$/.test(h.sourceHash)&&/^[a-f0-9]{64}$/.test(h.dayHash)&&/^\d{4}-\d\d-\d\d$/.test(h.date)&&/^\d{4}-\d\d-\d\d$/.test(h.startDate)&&Number.isSafeInteger(h.cursor)&&h.cursor>=0&&h.priceBasis==='bid-ask-mid'&&['ready','loading','error','gap','day-end','exhausted'].includes(h.status)&&Array.isArray(h.lastQuote)&&h.lastQuote.length===3&&h.lastQuote.every(Number.isFinite)&&h.lastQuote[1]>0&&h.lastQuote[2]>=h.lastQuote[1]&&(historicalMarkIsSimulated(s)||s.price===mid(h.lastQuote))&&s.script?.historical===true&&Array.isArray(s.script.tracks)&&s.script.tracks.length===0&&s.tradingClock?.lastQuoteAt===h.lastQuote[0];
 }

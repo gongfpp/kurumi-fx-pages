@@ -1,5 +1,5 @@
-import {AI_SCENE_SOURCES} from './ai-scene-source-identities.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {storageKey} from './storage-namespace.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {AI_SCENE_SOURCES} from './ai-scene-source-identities.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {storageKey} from './storage-namespace.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 export {AI_SCENE_SOURCES};
 export const AI_SCENE_PREFERENCE_KEY='fx-ai-scene-characters-v1';
 const byPath=new Map(AI_SCENE_SOURCES.map(source=>[source.path,source]));

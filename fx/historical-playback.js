@@ -1,25 +1,29 @@
-import {isResearch} from './historical-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isMultiM15,multiM15Feed,peekMultiM15} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+const isM15=s=>isHistoricalM15(s)||isMultiM15(s);
+const hasM15=s=>isMultiM15(s)?!!multiM15Feed(s):hasHistoricalM15Feed(s);
+const peekM15=s=>isMultiM15(s)?peekMultiM15(s):peekHistoricalM15(s);
+import {isResearch} from './historical-replay.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.
 export function historicalStepMilliseconds(state,speed=1){
- if(isHistoricalM15(state)&&!historicalSimulationActive(state)&&hasHistoricalM15Feed(state)&&state.historical.status==='ready'){
-  const at=peekHistoricalM15(state).quote?.[0],delta=Number.isFinite(at)?Math.min(60000,Math.max(0,at-currentTradingTimestamp(state))):60000;
+ if(isM15(state)&&(isMultiM15(state)||!historicalSimulationActive(state))&&hasM15(state)&&state.historical.status==='ready'){
+  const at=peekM15(state).quote?.[0],delta=Number.isFinite(at)?Math.min(60000,Math.max(0,at-currentTradingTimestamp(state))):60000;
   return delta/60000*400/multiplier(speed);
  }
- return isHistoricalM15(state)||isResearch(state)||historicalSimulationActive(state)?400/multiplier(speed):50;
+ return isM15(state)||isResearch(state)||historicalSimulationActive(state)?400/multiplier(speed):50;
 }
 export function advanceHistoricalPlayback(state,step,{speed=1,...options}={}){
- if(isHistoricalM15(state)){
+ if(isM15(state)){
   if(state.marketPaused)return null;
   let result=step(state);const exits=[...(result?.exits||[])];let candleClosed=!!result?.candleClosed;
   // Adjacent bar close then open share a source timestamp. Execute both risk
   // passes in that order without charging another wall-time interval.
-  while(!result?.dayEnded&&!result?.sourceBoundary&&['decision','playing'].includes(state.phase)&&!state.marketPaused&&hasHistoricalM15Feed(state)&&state.historical.status==='ready'&&peekHistoricalM15(state).quote?.[0]<=currentTradingTimestamp(state)){
+  while(!result?.dayEnded&&!result?.sourceBoundary&&['decision','playing'].includes(state.phase)&&!state.marketPaused&&hasM15(state)&&state.historical.status==='ready'&&peekM15(state).quote?.[0]<=currentTradingTimestamp(state)){
    result=step(state);exits.push(...(result?.exits||[]));candleClosed ||= !!result?.candleClosed;
   }
   return result?{...result,exits,exit:exits[0]||null,candleClosed}:null;

@@ -1,9 +1,10 @@
-import {isMultiHistory,switchMultiHistoryMarket,validMultiHistoryBook} from './multi-history-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {isLiveMarket,LIVE_MARKET_VERSION,liveScript,liveTimestamp} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isMultiM15,switchMultiM15,validMultiM15Book} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isMultiHistory,switchMultiHistoryMarket,validMultiHistoryBook} from './multi-history-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isLiveMarket,LIVE_MARKET_VERSION,liveScript,liveTimestamp} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Simulated JPY-quoted instruments. No historical or live data is implied.
-import {quoteSubstep,QUOTE_SUBSTEPS,hasCanonicalGrid,validQuoteGrid} from './quote-grid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {recordDisplayQuote,validCandleDisplay} from './candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {quoteSubstep,QUOTE_SUBSTEPS,hasCanonicalGrid,validQuoteGrid} from './quote-grid.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {recordDisplayQuote,validCandleDisplay} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 export const MULTI_MARKET_VERSION=15;
 export const MARKETS=Object.freeze([
  Object.freeze({symbol:'USD/JPY',base:'USD',name:'美元',label:'美元兑日元',startPrice:150,seed:0}),
@@ -39,6 +40,7 @@ export function createMarketBook(s,planDay){
  for(const p of s.positions||[])p.symbol??='USD/JPY';s.version=MULTI_MARKET_VERSION;
 }
 export function switchMarket(s,symbol,planDay){
+ if(isMultiM15(s))return switchMultiM15(s,symbol);
  if(isMultiHistory(s))return switchMultiHistoryMarket(s,symbol);
  if(!MARKETS.some(m=>m.symbol===symbol))throw Error('未知货币对');
  if(s.historical&&symbol!=='USD/JPY')throw Error('历史行情暂时仅提供美元兑日元');
@@ -46,7 +48,7 @@ export function switchMarket(s,symbol,planDay){
  createMarketBook(s,planDay);captureMarket(s);if(s.pending){s.pending.marketStartPrices ||= {};s.pending.marketStartPrices[activeMarket(s)] ??= s.pending.startPrice;}s.marketBook.active=symbol;
  const m=s.marketBook.markets[symbol];for(const k of fields){if(m[k]===undefined)delete s[k];else s[k]=m[k];}if(s.pending){s.pending.startPrice=s.pending.marketStartPrices?.[symbol]??s.candles.find(c=>c.day===s.day&&c.beat===s.pending.beat)?.open??s.price;s.pending.flashShown=s.lastEvent?.beat===s.pending.beat;}return true;
 }
-export function renewMarketScripts(s,planDay){if(!s.marketBook)return;if(isMultiHistory(s)){s.dayOpeningPrice=s.price;captureMarket(s);for(const m of Object.values(s.marketBook.markets)){m.dayOpeningPrice=m.price;m.lastEvent=null;m.swanSeen=false;}return;}if(isLiveMarket(s)){s.script=liveScript(s.price);s.dayOpeningPrice=s.price;captureMarket(s);for(const book of Object.values(s.marketBook.markets)){book.script=liveScript(book.price);book.dayOpeningPrice=book.price;}return;}s.dayOpeningPrice=s.price;captureMarket(s);for(const m of MARKETS){if(m.symbol===activeMarket(s))continue;const book=s.marketBook.markets[m.symbol];book.lastEvent=null;book.swanSeen=false;book.dayOpeningPrice=book.price;book.script=planDay(marketSeed(s,m.symbol),s.day,book.price,4+(s.mode==='endless'?0:s.bonusBeats||0),{symbol:m.symbol});}}
+export function renewMarketScripts(s,planDay){if(!s.marketBook)return;if(isMultiHistory(s)||isMultiM15(s)){s.dayOpeningPrice=s.price;captureMarket(s);for(const m of Object.values(s.marketBook.markets)){m.dayOpeningPrice=m.price;m.lastEvent=null;m.swanSeen=false;}return;}if(isLiveMarket(s)){s.script=liveScript(s.price);s.dayOpeningPrice=s.price;captureMarket(s);for(const book of Object.values(s.marketBook.markets)){book.script=liveScript(book.price);book.dayOpeningPrice=book.price;}return;}s.dayOpeningPrice=s.price;captureMarket(s);for(const m of MARKETS){if(m.symbol===activeMarket(s))continue;const book=s.marketBook.markets[m.symbol];book.lastEvent=null;book.swanSeen=false;book.dayOpeningPrice=book.price;book.script=planDay(marketSeed(s,m.symbol),s.day,book.price,4+(s.mode==='endless'?0:s.bonusBeats||0),{symbol:m.symbol});}}
 export function advanceHiddenMarkets(s,cursor){
  if(isLiveMarket(s))throw Error('真实行情不可模拟推进');
  if(!s.marketBook)return;
@@ -67,6 +69,7 @@ export function advanceHiddenMarkets(s,cursor){
  captureMarket(s);
 }
 export function validMarketBook(s){
+ if(isMultiM15(s))return validMultiM15Book(s);
  if(isMultiHistory(s))return validMultiHistoryBook(s);
  const b=s.marketBook;if(!b)return s.version!==MULTI_MARKET_VERSION&&(s.positions||[]).every(p=>positionMarket(p)==='USD/JPY');
  if(s.version!==(isLiveMarket(s)?LIVE_MARKET_VERSION:MULTI_MARKET_VERSION)||s.historical||b.version!==1||b.source!==(isLiveMarket(s)?'live':'simulated')||!MARKETS.some(m=>m.symbol===b.active)||!b.markets||Object.keys(b.markets).length!==MARKETS.length)return false;

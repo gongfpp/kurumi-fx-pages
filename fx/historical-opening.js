@@ -1,3 +1,4 @@
+import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // New-run selection only. Providers retain the full validated source outside
 // save state; a chart preview never executes a quote or changes an account.
 // Sixteen complete 15-minute bars give the default chart useful context.
@@ -6,6 +7,11 @@ const MINUTE=60000,PERIOD=15*MINUTE,WARMUP=16*PERIOD,PLAYABLE=60*MINUTE;
 const rowsOf=data=>data.ticks||data.bars||[];
 const timeOf=row=>Array.isArray(row)?row[0]:row.availableAt;
 export function selectHistoricalOpening(manifest,data){
+ if(data.schemaVersion===MULTI_M15_SCHEMA){
+  // Choose the old opening policy from observed M15 opens, not close labels.
+  const sets=Object.values(data.sources).map(source=>new Set(source.bars.map(b=>b.at))),common=sets.length?[...sets[0]].filter(at=>sets.every(set=>set.has(at))).sort((a,b)=>a-b):[];
+  return common.length?selectHistoricalOpening({...manifest,gapThresholdMs:PERIOD},{validated:data.validated,ticks:common.map(at=>[at])}):null;
+ }
  if(data.validated!==true)throw Error('历史行情尚未验证');
  const rows=rowsOf(data);if(!rows.length)return null;
  const threshold=manifest.gapThresholdMs;let from=0,best=null;

@@ -1,10 +1,10 @@
-import {historicalKindForManifest} from './mode-rule-summary.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalKindForManifest} from './mode-rule-summary.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // History is selected in the opening panel, without a second confirmation step.
 export function mountMarketSourcePicker({document,library,onSelect=()=>{},onFormatChange=()=>{},importFile,acquireHistory,cancelAcquire=()=>{},getMode=()=>null}){
  const $=id=>document.getElementById(id),panel=$('history-choice-step');
  let rows=[],loading=null,target='mode',ready=false,busy=false,failed=false,generation=0,request=null,requestMode=null,importController=null;
  const status=text=>{$('history-choice-status').textContent=text;};
- const rowFor=()=>rows.find(r=>r.date==='2014-02-14');
+ const rowFor=()=>rows.find(r=>r.date==='2014-02-14'&&r.multiM15)||rows.find(r=>r.date==='2014-02-14');
  function paint(){$('history-file-open').hidden=rows.length>0;$('history-file-open').disabled=busy;$('history-choice-retry').hidden=!failed||busy;panel.setAttribute?.('aria-busy',String(busy));}
  function show(prefix){target=prefix;const button=document.querySelector?.(`[data-market-prefix="${prefix}"][data-market="historical"]`),anchor=button?.closest?.('.market-source-buttons')||button?.parentElement;anchor?.after(panel);panel.hidden=false;paint();}
  function cancel(){generation++;cancelAcquire();importController?.abort();request=null;busy=false;paint();}
@@ -12,7 +12,7 @@ export function mountMarketSourcePicker({document,library,onSelect=()=>{},onForm
  async function load(){
   if(loading)return loading;
   loading=(async()=>{try{
-   await library.catalog();const found=[];for(const dataset of library.datasets){const p=await library.provider(dataset);for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date,historicalKind:historicalKindForManifest(p.manifest)});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));
+   await library.catalog();const found=[];for(const dataset of library.datasets){const p=await library.provider(dataset);for(const d of p.manifest.days)found.push({datasetId:dataset.id,date:d.date,historicalKind:historicalKindForManifest(p.manifest),multiM15:p.manifest.schemaVersion==='historical-multi-m15-reference-v1'});}rows=found.sort((a,b)=>a.date.localeCompare(b.date));
    ready=true;onFormatChange();
    if(!panel.hidden)show(target);return rows;
   }finally{loading=null;paint();}})();return loading;

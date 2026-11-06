@@ -1,6 +1,6 @@
-import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {newsSourceDetails} from './news-source-view.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {closeAllModalOpen} from './close-all-control.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {prepareModalFocus,restoreFocus} from './focus-safety.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {newsSourceDetails} from './news-source-view.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {closeAllModalOpen} from './close-all-control.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 export function mountMobileNewsList({document:doc=globalThis.document,onClose=()=>{}}={}){
  const native=doc.getElementById('news');if(!native)return null;

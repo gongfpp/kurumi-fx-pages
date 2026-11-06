@@ -1,11 +1,11 @@
-import {activeMarket,marketPrice,positionMarket} from './market-book.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {activeMarket,marketPrice,positionMarket} from './market-book.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Only sourced Kurumi dialogue. Traditional Chinese is normalized to simplified;
 // punctuation and line breaks are normalized, with no new dialogue composed.
 export const PRESSURE_QUOTES=Object.freeze([
  Object.freeze({id:'user-buy-profit',text:'现在买入一定爆赚',speaker:'久留美',source:'用户本轮明确提供；原作页码待核'}),
  Object.freeze({id:'user-small-money',text:'这点不上不下的钱我才看不上',speaker:'久留美',source:'用户本轮明确提供；原作页码待核'}),
  Object.freeze({id:'manga-refuse-stop',text:'果然还是不能就此收手…!!',speaker:'久留美',source:'原作第3话p6，record39；dist/fx/manga/characters-v1/39.jpg',sha256:'c9e1a761b594d4e6dd5248f345a4f90dc97a8e0e30028d91a178d115d95a8cac'}),
- Object.freeze({id:'pv-cannot-lose',text:'不可能输的',speaker:'久留美',source:'dist/fx/voice/SOURCES.json#pv-cannot-lose；官方主PV 72.48–73.86秒',original:'負けようがない',url:'https://www.youtube.com/watch?v=7rxIZ3z0S4s&t=72'}),
+ Object.freeze({id:'pv-cannot-lose',text:'不可能输的',speaker:'久留美',source:'dist/fx/voice/SOURCES.json#pv-cannot-lose；官方主PV 72.48–73.86秒',original:'負けようがない',url:'https://www.youtube.com/watchIZ3z0S4s&t=72'}),
  Object.freeze({"id":"manga-recover-money","text":"我绝对!!会把钱拿回来的！","original":"我絕對!!會把錢拿回來的！","speaker":"久留美","source":"第1话p46；record21；dist/fx/manga/contextual-ijk/21.jpg","sha256":"237e33e1e2f642dca8961bdead9c2698cb5ccdf5bed1f36a5efe264ff9ee4ed5","gate":"always","review":"本轮实际查看本地原图；仅简繁及行间标点规范化"}),
  Object.freeze({"id":"manga-only-way","text":"只能这么做了…！","original":"只能這麼做了…！","speaker":"久留美","source":"第3话p23；门边内心独白，下一格为筹款；record47；dist/fx/manga/contextual-links/47.jpg","sha256":"6ec63b0d13e5d2e7f10e3f7f8537c21b52061f68f577bfad47b0ec048897b374","gate":"always","review":"本轮实际查看本地原图；仅简繁及行间标点规范化"}),
  Object.freeze({"id":"manga-knowledge","text":"知识的多寡决定胜负，我是这么觉得的…","original":"知識的多寡決定勝負 我是這麼覺得的…","speaker":"久留美","source":"第7话托付场景p10–15；久留美读书示意图内心独白；record89；dist/fx/manga/characters-v1/89.jpg","sha256":"1ed11cca29b5f7ddcafc0817673b128958aaee097c33b6c8bcd7870e449fbf12","gate":"always","review":"本轮实际查看本地原图；仅简繁及行间标点规范化"}),

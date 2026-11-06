@@ -1,14 +1,14 @@
-import {isLiveMarket} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Display aggregation only. Never reads a script, feed, or unseen source candle.
-import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {timedCandles,currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {QUOTE_PACKAGES,quotePackageState,quotePackageOffer,quotePackageName} from './quote-packages.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 export const CANDLE_PERIODS=Object.freeze([{minutes:1440,label:'日K',hz:1},{minutes:15,label:'15分钟',hz:1},{minutes:5,label:'5分钟',hz:1},{minutes:1,label:'1分钟',hz:1}]);
 const MINUTE=60000,JST=9*3600000,LIMIT=8192;
 export const requestedCandlePeriod=s=>CANDLE_PERIODS.some(p=>p.minutes===s.candlePeriod)?s.candlePeriod:15;
 export const candlePeriod=s=>requestedCandlePeriod(s);
 export const nextCandlePeriod=s=>CANDLE_PERIODS[(CANDLE_PERIODS.findIndex(p=>p.minutes===candlePeriod(s))+1)%CANDLE_PERIODS.length].minutes;
 export const candlePeriodLabel=s=>CANDLE_PERIODS.find(p=>p.minutes===candlePeriod(s)).label;
-export const candlePeriodNotice=(s,{includeTimeZone=true}={})=>`${includeTimeZone?'JST · ':''}${candlePeriodLabel(s)}${candlePeriod(s)===1440?'':' K线'}${s.historical?.version===4&&candlePeriod(s)<15?' · 模拟合成':''}`;
+export const candlePeriodNotice=(s,{includeTimeZone=true}={})=>`${includeTimeZone?'JST · ':''}${candlePeriodLabel(s)}${candlePeriod(s)===1440?'':' K线'}${[4,5].includes(s.historical?.version)&&candlePeriod(s)<15?' · 模拟合成':''}`;
 export function recordDisplayQuote(s,timestamp,price){
  if(!Number.isFinite(timestamp)||!Number.isFinite(price)||price<=0)return;
  s.displayMinutes ||= [];const bars=s.displayMinutes,bucket=Math.floor(timestamp/MINUTE)*MINUTE,last=bars.at(-1);
@@ -39,11 +39,11 @@ export function aggregateCandles(source,minutes,now,{mergeSources=false}={}){
  return result;
 }
 export function displayCandles(s){
- const minutes=candlePeriod(s),now=currentTradingTimestamp(s),research=[2,3,4].includes(s.historical?.version);
+ const minutes=candlePeriod(s),now=currentTradingTimestamp(s),research=[2,3,4,5].includes(s.historical?.version);
  const source=research?(s.displayMinutes?.length?s.displayMinutes:timedCandles(s)):minutes<15?(s.displayMinutes||[]):timedCandles(s);
  // Simulated source bars start on the actual session grid (09:10 etc.).
  if(minutes===15&&!research&&!isLiveMarket(s)&&!s.historical)return source.map(c=>({...c,periodMinutes:15}));
- return aggregateCandles(source,minutes,now,{mergeSources:s.historical?.version===4});
+ return aggregateCandles(source,minutes,now,{mergeSources:[4,5].includes(s.historical?.version)});
 }
 export function candlePeriodMarkup(s){
  const selected=candlePeriod(s);

@@ -34,7 +34,7 @@ export function m15BindingToken(value){
  return [a,b].map(n=>(n>>>0).toString(16).padStart(8,'0')).join('');
 }
 export function validateHistoricalM15Source(input){
- if(!input||input.schemaVersion!==M15_SOURCE_SCHEMA||!text(input.datasetId)||!text(input.version)||!validTimeZone(input.timeZone)||input.timeUnit!=='milliseconds'||input.timestampMeaning!=='bar-open'||input.priceBasis!=='game-reference-price'||!text(input.priceUnit)||!['synthetic-fixture','historical-ohlc'].includes(input.provenance?.kind)||!text(input.provenance?.sourceId)||!Array.isArray(input.bars)||!input.bars.length||input.bars.length>1000000)fail('invalid source metadata');
+ if(!input||input.schemaVersion!==M15_SOURCE_SCHEMA||!text(input.datasetId)||!text(input.version)||!validTimeZone(input.timeZone)||input.timeUnit!=='milliseconds'||input.timestampMeaning!=='bar-open'||input.priceBasis!=='game-reference-price'||!text(input.priceUnit)||!['synthetic-fixture','historical-ohlc','historical-reference-ohlc'].includes(input.provenance?.kind)||!text(input.provenance?.sourceId)||!Array.isArray(input.bars)||!input.bars.length||input.bars.length>1000000)fail('invalid source metadata');
  const pair=validateM15Pair(input.pair),bars=input.bars.map(validateM15Bar);
  for(let i=1;i<bars.length;i++)if(bars[i].at<bars[i-1].at+M15_DURATION_MS)fail('bars overlap or are unordered');
  if(input.closures!==undefined&&!Array.isArray(input.closures))fail('invalid verified closures');
@@ -49,6 +49,9 @@ export function validateHistoricalM15Source(input){
   if(barIndex<bars.length&&bars[barIndex].at<c.to)fail('verified closure overlaps an observed bar');
  }
  const provenance=clone(input.provenance);
+ // An unlabelled OHLC reference is not verified bid, ask or a manufactured mid.
+ // This separate, local research meaning must never broaden upstream rights.
+ if(provenance.kind==='historical-reference-ohlc'&&(provenance.quoteBasis!=='unverified-reference-ohlc'||!text(provenance.sourceTimeZone)||! /^[a-f0-9]{64}$/.test(provenance.sourceSha256)||provenance.rights?.localOnly!==true||provenance.rights?.researchPackageOnly!==true||typeof provenance.rights.redistribution!=='string'||input.sourceBars!==undefined))fail('reference provenance must retain unknown quote side and local research rights');
  if(provenance.kind==='historical-ohlc'&&(!['bid','ask','bid-ask-mid'].includes(provenance.quoteBasis)||!text(provenance.sourceTimeZone)||! /^[a-f0-9]{64}$/.test(provenance.sourceSha256)||!provenance.rights||typeof provenance.rights.redistribution!=='string'||typeof provenance.rights.localOnly!=='boolean'))fail('historical provenance must retain quote basis, timezone, hash and rights');
  if(input.observationGaps!==undefined&&!Array.isArray(input.observationGaps))fail('invalid observed gaps');
  const observationGaps=(input.observationGaps||[]).map(g=>{

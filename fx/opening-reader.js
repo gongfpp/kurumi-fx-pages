@@ -1,7 +1,7 @@
-import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {setMangaImage} from './manga-images.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {setImage} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {openingCompanionArt} from './opening-anime-stills.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {OPENING_PAGES,openingPanel,createOpeningSession} from './opening-story.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {setMangaImage} from './manga-images.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {setImage} from './assets.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {openingCompanionArt} from './opening-anime-stills.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 // A render can supersede the opening snapshot in the save queue. Confirm the
 // exact page in this run's durable bytes, without turning a failed write into

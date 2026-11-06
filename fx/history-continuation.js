@@ -1,4 +1,4 @@
-import {simulationCalibration} from './quote-grid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {simulationCalibration} from './quote-grid.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 const MINUTE=60000,SYMBOLS=['USD/JPY','AUD/JPY','GBP/JPY'];
 const active=s=>s.marketBook?.active||'USD/JPY';
 const price=(s,symbol)=>symbol===active(s)?s.price:s.marketBook?.markets?.[symbol]?.price;
@@ -9,7 +9,7 @@ export const historicalEffectiveTime=s=>historicalSimulationActive(s)?s.historyC
 export const historicalMarkIsSimulated=(s,symbol=active(s))=>s?.historyContinuation?.origins?.[symbol]==='simulated';
 export function historicalSourcePresentation(s){
  if(!s?.historical||s.liveMarket)return null;
- if(s.historical.version===4){
+ if([4,5].includes(s.historical.version)){
   if(historicalSimulationActive(s))return s.historyContinuation.reason==='exhausted'
    ?{label:'模拟续盘',description:'历史数据已结束，现从最后参考价格模拟续盘；此前使用历史15分钟线和段内模拟。'}
    :{label:'历史 M15 · 含模拟补接',description:'采用历史15分钟线和固定种子的段内模拟；部分缺口另用模拟补接。'};
@@ -33,7 +33,7 @@ export function startHistoricalContinuation(s,reason='loading'){
  const raw=s.historical.lastQuote;if(!Array.isArray(raw)||!Number.isSafeInteger(raw[0])||raw[0]<=0||!Number.isFinite(raw[1])||raw[1]<=0||s.historical.version===1&&(!Number.isFinite(raw[2])||raw[2]<raw[1]))return false;
  let c=s.historyContinuation;
  if(!c){const at=s.historical.lastQuote?.[0];if(!Number.isSafeInteger(at))return false;
-  const symbols=s.historical.version===3?SYMBOLS:['USD/JPY'];
+  const symbols=[3,5].includes(s.historical.version)?SYMBOLS:['USD/JPY'];
   const opening=s.accountingJournal?.points?.find(row=>row.day===s.day&&row.kind==='opening')?.timestamp??at;
   c=s.historyContinuation={version:1,active:true,reason,at,random:(s.seed^0x619a74d3)>>>0,simulatedSamples:0,skippedRealQuotes:0,segment:0,segments:[{id:0,source:'historical',from:s.historical.dayOpeningAt??at,to:at}],segmentsOmitted:0,prices:Object.fromEntries(symbols.map(symbol=>[symbol,price(s,symbol)])),origins:Object.fromEntries(symbols.map(symbol=>[symbol,'historical'])),progressDay:s.day,dayOpeningAt:opening,daySamples:0};
  }
@@ -53,7 +53,7 @@ export function simulateHistoricalMarks(s,{at,reason='gap',symbols}={}){
  if(!Number.isSafeInteger(nextAt)||nextAt<c.at)throw Error('模拟续盘时间无效');
  const marks={};
  for(const symbol of selected){
-  const before=price(s,symbol),priorAt=c.origins[symbol]==='simulated'?c.at:s.historical.version===3?s.historical.quotes?.[symbol]?.at:s.historical.lastQuote?.[0],profile=simulationCalibration(symbol,Math.max(1,nextAt-priorAt)/MINUTE);
+  const before=price(s,symbol),priorAt=s.historical.version===5?s.historical.markets[symbol].simulationAt??s.historical.markets[symbol].lastQuote?.[0]:c.origins[symbol]==='simulated'?c.at:s.historical.version===3?s.historical.quotes?.[symbol]?.at:s.historical.lastQuote?.[0],profile=simulationCalibration(symbol,Math.max(1,nextAt-priorAt)/MINUTE);
   c.random=(Math.imul(c.random,1664525)+1013904223)>>>0;const a=c.random/4294967296;
   c.random=(Math.imul(c.random,1664525)+1013904223)>>>0;const b=c.random/4294967296;
   marks[symbol]=Number(Math.max(.001,before*(1+(a+b-1)*profile.noise)).toFixed(9));
@@ -71,15 +71,16 @@ export function recordHistoricalSource(s,at,symbols){
 }
 export function historicalSimulationEvidence(s,symbol=active(s)){
  const c=s.historyContinuation;if(!hasHistoricalSimulation(s))return null;
- return {source:historicalMarkIsSimulated(s,symbol)?'simulated':'historical',segment:c.segment,timestamp:historicalMarkIsSimulated(s,symbol)?c.at:s.historical.version===3?s.historical.quotes?.[symbol]?.at:s.historical.lastQuote?.[0],reason:c.reason,mixedRun:true};
+ if(s.historical.version===5)return {source:historicalMarkIsSimulated(s,symbol)?'simulated':'historical',segment:c.segment,timestamp:s.historical.lastQuote[0],sourceTimestamp:s.historical.markets[symbol].markAt??s.historical.markets[symbol].lastReference?.at??s.historical.markets[symbol].lastQuote?.[0],reason:c.reason,mixedRun:true};
+ return {source:historicalMarkIsSimulated(s,symbol)?'simulated':'historical',segment:c.segment,timestamp:s.historical.version===5?s.historical.markets[symbol].simulationAt??s.historical.markets[symbol].lastQuote?.[0]:historicalMarkIsSimulated(s,symbol)?c.at:s.historical.version===3?s.historical.quotes?.[symbol]?.at:s.historical.lastQuote?.[0],reason:c.reason,mixedRun:true};
 }
 export function safeHistoricalSegmentEvidence(e){
- if(!e||!['historical','simulated'].includes(e.source)||!Number.isSafeInteger(e.segment)||e.segment<0||!Number.isSafeInteger(e.timestamp)||e.timestamp<=0||!['gap','exhausted','loading','missing-market'].includes(e.reason)||e.mixedRun!==true)return null;
- return {source:e.source,segment:e.segment,timestamp:e.timestamp,reason:e.reason,mixedRun:true};
+ if(!e||!['historical','simulated'].includes(e.source)||!Number.isSafeInteger(e.segment)||e.segment<0||!Number.isSafeInteger(e.timestamp)||e.timestamp<=0||!['gap','exhausted','loading','missing-market'].includes(e.reason)||e.mixedRun!==true||e.sourceTimestamp!==undefined&&(!Number.isSafeInteger(e.sourceTimestamp)||e.sourceTimestamp<=0||e.sourceTimestamp>e.timestamp))return null;
+ return {source:e.source,segment:e.segment,timestamp:e.timestamp,reason:e.reason,mixedRun:true,...(e.sourceTimestamp!==undefined?{sourceTimestamp:e.sourceTimestamp}:{})};
 }
 export function validHistoricalContinuation(s){
  const c=s.historyContinuation;if(c===undefined)return !retainedSimulation(s);
  if(!s.historical||s.liveMarket||c.version!==1||typeof c.active!=='boolean'||!['gap','exhausted','loading','missing-market'].includes(c.reason)||!Number.isSafeInteger(c.at)||c.at<0||!Number.isInteger(c.random)||c.random<0||c.random>0xffffffff||!Number.isSafeInteger(c.simulatedSamples)||c.simulatedSamples<0||!Number.isSafeInteger(c.skippedRealQuotes)||c.skippedRealQuotes<0||!Number.isSafeInteger(c.segment)||c.segment<0||!Array.isArray(c.segments)||!c.segments.length||c.segments.length>128||!Number.isSafeInteger(c.segmentsOmitted)||c.segmentsOmitted<0||!Number.isSafeInteger(c.progressDay)||c.progressDay<1||c.progressDay>s.day||!Number.isSafeInteger(c.daySamples)||c.daySamples<0)return false;
- const symbols=s.historical.version===3?SYMBOLS:['USD/JPY'];
+ const symbols=[3,5].includes(s.historical.version)?SYMBOLS:['USD/JPY'];
  return Number.isSafeInteger(c.dayOpeningAt)&&c.dayOpeningAt<=c.at&&c.at>=s.historical.lastQuote?.[0]&&(!retainedSimulation(s)||c.simulatedSamples>0)&&Object.keys(c.prices||{}).length===symbols.length&&Object.keys(c.origins||{}).length===symbols.length&&symbols.every(symbol=>Number.isFinite(c.prices[symbol])&&c.prices[symbol]>0&&['historical','simulated'].includes(c.origins[symbol])&&(c.origins[symbol]!=='simulated'||price(s,symbol)===c.prices[symbol]))&&c.segments.every((row,i)=>Number.isSafeInteger(row.id)&&row.id>=0&&(!i||row.id===c.segments[i-1].id+1)&&['historical','simulated','mixed'].includes(row.source)&&Number.isSafeInteger(row.from)&&Number.isSafeInteger(row.to)&&row.from<=row.to&&(!i||row.from>=c.segments[i-1].to))&&c.segments.at(-1).id===c.segment&&c.segments.at(-1).to===c.at;
 }

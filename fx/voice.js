@@ -1,32 +1,32 @@
-import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {VoiceTimingGate} from './voice-timing.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {AudioEnvelope} from './audio-envelope.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {assetURL} from './assets.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {VOICE_SCENE_RULES,voiceSceneMatches,sceneVoiceCandidates} from './voice-scenes.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {VoiceTimingGate} from './voice-timing.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {AudioEnvelope} from './audio-envelope.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {recordedVoiceEnvelope,VOICE_STOP_FADE_MS} from './voice-playback.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {assetURL} from './assets.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 // Actual short recordings from the official public main PV, never generated speech.
 // Captions stay with their recording, including the PV's amounts, not game balances.
-export const VOICE_SOURCE='https://www.youtube.com/watch?v=7rxIZ3z0S4s';
+export const VOICE_SOURCE='https://www.youtube.com/watchIZ3z0S4s';
 const clip=(id,file,ja,zh,moods,start,end,speaker='福賀くるみ',source=VOICE_SOURCE)=>Object.freeze({id,file:assetURL(`./voice/${file}`),ja,zh,moods:Object.freeze(moods),start,end,speaker,source,leadInSeconds:.4,synthetic:false});
 export const VOICE_LINES=Object.freeze([
- clip("pv-profit-ten","kurumi-profit-ten.mp3","含み益10万は出てるけど、やっぱ20万以上で利確したい","虽然已经有十万浮盈了，还是想赚到二十万以上再止盈",["confident","excited"],53.9,59.5,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-profit-twenty","kurumi-profit-twenty.mp3","やっぱ20万以上で利確したい","果然还是想赚到二十万以上再止盈",["greedy","exhilarated","ecstatic"],56.45,59.5,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-cannot-lose","kurumi-cannot-lose.mp3","負けようがない","不可能输的",["reckless","determined"],72.48,73.86,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-gone","kurumi-gone.mp3","どこ行った!?","去哪儿了！？",["regretful","profit-to-loss","shocked","stunned"],61.3,62.92,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-human","kurumi-human.mp3","こんなの、人間が扱っていいものじゃない！","这种东西，根本不是人该碰的！",[],62.84,66.02,"高根やす子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-stop","kurumi-stop.mp3","やめて！","停下来啊！",["nervous"],79.58,80.91,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-profit-vanished","kurumi-profit-vanished.mp3","利益…","利润……",["profit-to-loss"],60.4,61.35,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-gasp","kurumi-gasp.mp3","あっ！","啊！",["loss-to-profit","relieved"],59.54,60.23,"福賀くるみ","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-mebuki-rich","mebuki-rich.mp3","よし、お金持ち目指して頑張ります","好，朝着变有钱的目标努力",[],31.55,34.65,"山師芽吹","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("pv-yasuko-start","yasuko-start.mp3","私もFXやってやるよ","我也来做FX给你看",[],34.7,37.35,"高根やす子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
- clip("character-came","kurumi-came.mp3","きたー！","来了！",["excited","loss-to-profit"],0.7,2.78,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
- clip("character-check","kurumi-check.mp3","相場チェックした〜い！","想看看行情！",["calm","hopeful"],2.84,4.98,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
- clip("character-family-money","kurumi-family-money.mp3","家のお金入れたから余裕だよ〜！","家里的钱放进去了，绰绰有余！",[],5.0,7.44,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
- clip("character-greedy","kurumi-greedy.mp3","完全に欲張った！","完全是我太贪了！",["regretful"],7.44,8.98,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
- clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watch?v=v-cxfCJlrss"),
- clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watch?v=7rxIZ3z0S4s"),
+ clip("pv-profit-ten","kurumi-profit-ten.mp3","含み益10万は出てるけど、やっぱ20万以上で利確したい","虽然已经有十万浮盈了，还是想赚到二十万以上再止盈",["confident","excited"],53.9,59.5,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-profit-twenty","kurumi-profit-twenty.mp3","やっぱ20万以上で利確したい","果然还是想赚到二十万以上再止盈",["greedy","exhilarated","ecstatic"],56.45,59.5,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-cannot-lose","kurumi-cannot-lose.mp3","負けようがない","不可能输的",["reckless","determined"],72.48,73.86,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-gone","kurumi-gone.mp3","どこ行った!?","去哪儿了！？",["regretful","profit-to-loss","shocked","stunned"],61.3,62.92,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-human","kurumi-human.mp3","こんなの、人間が扱っていいものじゃない！","这种东西，根本不是人该碰的！",[],62.84,66.02,"高根やす子","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-stop","kurumi-stop.mp3","やめて！","停下来啊！",["nervous"],79.58,80.91,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-profit-vanished","kurumi-profit-vanished.mp3","利益…","利润……",["profit-to-loss"],60.4,61.35,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-gasp","kurumi-gasp.mp3","あっ！","啊！",["loss-to-profit","relieved"],59.54,60.23,"福賀くるみ","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-mebuki-rich","mebuki-rich.mp3","よし、お金持ち目指して頑張ります","好，朝着变有钱的目标努力",[],31.55,34.65,"山師芽吹","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("pv-yasuko-start","yasuko-start.mp3","私もFXやってやるよ","我也来做FX给你看",[],34.7,37.35,"高根やす子","https://www.youtube.com/watchIZ3z0S4s"),
+ clip("character-came","kurumi-came.mp3","きたー！","来了！",["excited","loss-to-profit"],0.7,2.78,"福賀くるみ","https://www.youtube.com/watchCJlrss"),
+ clip("character-check","kurumi-check.mp3","相場チェックした〜い！","想看看行情！",["calm","hopeful"],2.84,4.98,"福賀くるみ","https://www.youtube.com/watchCJlrss"),
+ clip("character-family-money","kurumi-family-money.mp3","家のお金入れたから余裕だよ〜！","家里的钱放进去了，绰绰有余！",[],5.0,7.44,"福賀くるみ","https://www.youtube.com/watchCJlrss"),
+ clip("character-greedy","kurumi-greedy.mp3","完全に欲張った！","完全是我太贪了！",["regretful"],7.44,8.98,"福賀くるみ","https://www.youtube.com/watchCJlrss"),
+ clip("character-laugh","kurumi-laugh.mp3","あははははっ！","啊哈哈哈哈！",["ecstatic","exhilarated"],8.99,10.39,"福賀くるみ","https://www.youtube.com/watchCJlrss"),
+ clip("pv-mochiko-waste","mochiko-waste.mp3","もったいないよ","太可惜了",[],27.78,28.9,"小金萌智子","https://www.youtube.com/watchIZ3z0S4s"),
 ]);
-export {VOICE_SCENE_RULES} from './voice-scenes.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+export {VOICE_SCENE_RULES} from './voice-scenes.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 export function availableVoices(emotion){return VOICE_LINES.filter(line=>line.moods.includes(emotion));}
 
 // Gameplay voice is strictly manual. sync observes validity; it never starts audio.

@@ -1,4 +1,4 @@
-import {ownsTradingNotes} from './life-work.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ownsTradingNotes} from './life-work.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Approved game-only daily supplies. Receipts own payment and meal credit;
 // these helpers never touch quotes, orders, borrowing or permanent attributes.
 export const DAILY_SUPPLY_IDS=Object.freeze(['dailyDrink','energy','noodles','takeaway','chocolate','eyeMask']);

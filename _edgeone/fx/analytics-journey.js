@@ -1,6 +1,6 @@
-import {validEvent} from './analytics-a-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {kurumiStorage} from './storage-namespace.js?v=4e1bb4fd62a377ce983db7672852ed86d1f9ab5b-23f2a20b7717';
-import {randomUUID} from './uuid.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {validEvent} from './analytics-a-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {kurumiStorage} from './storage-namespace.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {randomUUID} from './uuid.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 const KEY='fx-api-v1-journey-outbox';
 const MAX_EVENTS=240,MAX_AGE=86400000,HEARTBEAT=30000;

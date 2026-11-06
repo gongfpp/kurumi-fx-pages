@@ -1,7 +1,7 @@
-import {newsContext,newsDate} from './news-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {rememberDisplayedNews} from './displayed-news-session.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {newsContext,newsDate} from './news-context.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {formatTradingTime,tradingTimestamp,timedCandles} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {NEWS_MARKET_COPY as COPY} from './copy/news-market.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {rememberDisplayedNews} from './displayed-news-session.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 const positive=value=>Number.isFinite(value)&&value>0;
 const fill=(text,values)=>text.replace(/\{(\w+)\}/g,(_,key)=>String(values[key]??''));

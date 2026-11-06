@@ -1,4 +1,4 @@
-import {newsContext,newsDate,availableNews} from './news-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {newsContext,newsDate,availableNews} from './news-context.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 // View-only memory of messages actually returned for display in this page.
 // Never reconstruct missed publications from a saved script or quote history.

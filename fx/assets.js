@@ -1,4 +1,4 @@
-import {RESEARCH_BUILD} from './research-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {RESEARCH_BUILD} from './research-config.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Shared with the archived chapter: presentation policies belong to the host.
 // Without explicit configuration, image loading has no visibility side effect.
 let visibilityHook=null;

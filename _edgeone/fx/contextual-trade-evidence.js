@@ -1,14 +1,18 @@
-import {sealedDailyMangaOutcome} from './manga-context.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {sealedDailyMangaOutcome} from './manga-context.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {safeHistoricalTradeEvidence} from './historical-evidence.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 function validExecutionTimeSource(state,trade){
- if(trade.timePrecision==='game-clock')return !trade.historicalQuote&&!trade.marketSegment;
- if(![1,2,3,4].includes(state.historical?.version))return false;
+ if(trade.timePrecision==='game-clock')return state.historical?.version!==5&&!trade.historicalQuote&&!trade.marketSegment;
+ if(![1,2,3,4,5].includes(state.historical?.version))return false;
  const segment=safeHistoricalSegmentEvidence(trade.marketSegment);
  if(trade.marketSegment&&(!segment||segment.timestamp!==trade.timestamp||!hasHistoricalSimulation(state)))return false;
- if(trade.timePrecision==='historical-quote')return safeHistoricalTradeEvidence(trade)?.sourceTimestamp===trade.timestamp&&(!segment||segment.source==='historical');
- if(trade.timePrecision==='m15-simulated-path')return state.historical?.version===4&&safeHistoricalTradeEvidence(trade)?.sourceTimestamp===trade.timestamp&&(!segment||segment.source==='historical');
+ const quote=safeHistoricalTradeEvidence(trade);
+ const reference=state.historical?.version===5&&quote?.priceBasis==='m15-reference-simulated-path';
+ if(reference){const source=state.historical.markets?.[trade.symbol];if(!source||quote.sourceHash!==source.sourceHash||quote.sourceVersion!==source.sourceVersion)return false;}
+ const timed=reference?quote.executionTimestamp===trade.timestamp&&quote.sourceTimestamp<=trade.timestamp&&(!segment||segment.sourceTimestamp===quote.sourceTimestamp):quote?.sourceTimestamp===trade.timestamp;
+ if(trade.timePrecision==='historical-quote')return timed&&(!segment||segment.source==='historical');
+ if(trade.timePrecision==='m15-simulated-path')return [4,5].includes(state.historical?.version)&&timed&&(!segment||segment.source==='historical');
  return trade.timePrecision==='simulated-continuation'&&segment?.source==='simulated'&&segment.timestamp===trade.timestamp;
 }
 
@@ -88,7 +92,7 @@ export function sealedDailyTradeEvidence(state){
  // cannot hide a known opposite-direction execution from these selectors.
  const stats=state.runStatistics;
  if(stats?.version===1&&stats.complete===true&&stats.timelinePartial===false){
-  if(!Array.isArray(stats.trades)||stats.trades.some(t=>!t)||Object.hasOwn(stats,'runId')&&stats.runId!==state.runId||!sameMultiset(stats.trades.filter(t=>t.day===state.day&&t.type!=='open'),trades,sameExecution))return null;
+  if(!Array.isArray(stats.trades)||stats.trades.some(t=>!t)||Object.hasOwn(stats,'runId')&&stats.runId!==state.runId||!sameMultiset(stats.trades.filter(t=>t.day===state.day&&t.type!=='open'),trades,state.historical?.version===5?sameReferenceExecution:sameExecution))return null;
  }
  const orders=closedOrders(history);if(!orders)return null;
  return {day:state.day,net:outcome.net,positions:[...new Set(trades.map(t=>t.positionId))],trades:structuredClone(trades),orders:structuredClone(orders)};
@@ -112,6 +116,7 @@ export function longProfitEvidence(state){
 // exit to a certified modern receipt instead of manufacturing those fields.
 const timelineNumbers=['direction','margin','leverage','entry','exit','quantity','grossPnl','openFee','closeFee','fee','pnl','maxUnrealized','lossReduction','balanceProtection'];
 const sameExecution=(execution,receipt)=>['type','positionId','day','beat','timestamp','positionClosed'].every(k=>execution[k]===receipt[k])&&timelineNumbers.every(k=>execution[k]===(Number.isFinite(receipt[k])?receipt[k]:null));
+const sameReferenceExecution=(execution,receipt)=>sameExecution(execution,receipt)&&execution.symbol===receipt.symbol&&sameValue(safeHistoricalTradeEvidence(execution),safeHistoricalTradeEvidence(receipt))&&sameValue(safeHistoricalSegmentEvidence(execution.marketSegment),safeHistoricalSegmentEvidence(receipt.marketSegment));
 export function validStatisticsShape(stats){
  const counts=['closedOrders','winningOrders','losingOrders','breakevenOrders','liquidatedOrders','stopLossOrders','partialCloseExecutions','maxWinningStreak','maxLosingStreak','winningStreak','losingStreak','profitGivebackOrders','executions'];
  return counts.every(k=>integer(stats[k]))&&nonnegative(stats.maxLeverage)&&nonnegative(stats.maxOrderProfit)&&Number.isFinite(stats.maxOrderLoss)&&stats.maxOrderLoss<=0&&['realizedCumulative','realizedPeak','realizedTrough'].every(k=>Number.isFinite(stats[k]))&&['realizedPathComplete','maxLeverageComplete','profitGivebackComplete','drawdownRecorded'].every(k=>stats[k]===true)&&stats.winningOrders+stats.losingOrders+stats.breakevenOrders===stats.closedOrders&&stats.openOrders&&typeof stats.openOrders==='object'&&!Array.isArray(stats.openOrders)&&Object.keys(stats.openOrders).length===0;
@@ -139,6 +144,7 @@ function completeExecutionOrders(trades,stats){
  return wins===stats.winningOrders&&losses===stats.losingOrders&&closed.length-wins-losses===stats.breakevenOrders&&near(Math.max(0,...closed.map(o=>o.net)),stats.maxOrderProfit)&&near(Math.min(0,...closed.map(o=>o.net)),stats.maxOrderLoss)&&closed.filter(o=>o.exits.at(-1).type==='liquidation').length===stats.liquidatedOrders&&closed.filter(o=>o.exits.at(-1).type==='stop').length===stats.stopLossOrders;
 }
 export function retainedTimeline(state,evidence){
+ const compare=state.historical?.version===5?sameReferenceExecution:sameExecution;
  const stats=state?.runStatistics;
  if(!stats||stats.version!==1||stats.complete!==true||stats.timelinePartial!==false||!Array.isArray(stats.trades)||stats.trades.length>2048||!validStatisticsShape(stats)||stats.executions!==stats.trades.length)return null;
  if(Object.hasOwn(stats,'runId')&&stats.runId!==state.runId)return null;
@@ -152,7 +158,7 @@ export function retainedTimeline(state,evidence){
  }
  if(!completeExecutionOrders(trades,stats))return null;
  const exits=trades.filter(t=>t.day===state.day&&t.type!=='open');
- if(!uniqueReceipts(exits)||!sameMultiset(exits,evidence.trades,sameExecution))return null;
+ if(!uniqueReceipts(exits)||!sameMultiset(exits,evidence.trades,compare))return null;
  // One retained open must cover every exit of every current-day order. This
  // also rejects a deleted partial even if someone changes the report's net.
  const orders=[];
@@ -160,11 +166,11 @@ export function retainedTimeline(state,evidence){
   const rows=trades.filter(t=>t.positionId===order.positionId),opens=rows.filter(t=>t.type==='open'),closes=rows.filter(t=>t.type!=='open');
   if(opens.length!==1||closes.length!==order.trades.length)return null;
   const open=opens[0],final=closes.at(-1);
-  if(open.day!==state.day||!sameMultiset(closes,order.trades,sameExecution)||closes.some((t,i)=>t.sequence<=open.sequence||t.timestamp<open.timestamp||t.beat<open.beat||t.direction!==open.direction||t.entry!==open.entry||t.leverage!==open.leverage||(i<closes.length-1&&(t.type!=='half'||t.positionClosed!==false)))||final.positionClosed!==true)return null;
+  if(open.day!==state.day||!sameMultiset(closes,order.trades,compare)||closes.some((t,i)=>t.sequence<=open.sequence||t.timestamp<open.timestamp||t.beat<open.beat||t.direction!==open.direction||t.entry!==open.entry||t.leverage!==open.leverage||(i<closes.length-1&&(t.type!=='half'||t.positionClosed!==false)))||final.positionClosed!==true)return null;
   if(!quantityNear(sum(closes,'quantity'),open.quantity)||!quantityNear(sum(closes,'margin'),open.margin)||!near(sum(closes,'openFee'),open.openFee))return null;
   // Report order may be rearranged for display; the retained execution order
   // must still agree with saved history for every partial and final exit.
-  if(!closes.every((t,i)=>sameExecution(t,order.trades[i])))return null;
+  if(!closes.every((t,i)=>compare(t,order.trades[i])))return null;
   orders.push({...order,open,final,executions:closes});
  }
  return orders;

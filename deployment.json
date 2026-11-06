@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "48e2621c04083a2b00065eac842f8016d1721815",
-  "assetVersion": "48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717",
+  "sourceCommit": "dbe282e832afbc680c0a4ce70e9edbf550f0c34f",
+  "assetVersion": "dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -12,9 +12,9 @@
   "retainedHistory": null,
   "privatePrototypeExcluded": true,
   "startup": {
-    "appStaticModules": 363,
-    "appStaticBytes": 2772675,
-    "preloadCount": 105,
+    "appStaticModules": 365,
+    "appStaticBytes": 2806186,
+    "preloadCount": 107,
     "preloadPaths": [
       "pixel-bootstrap.js",
       "app.js",
@@ -70,7 +70,9 @@
       "historical-m15-aggregate.js",
       "historical-m15-engine-adapter.js",
       "historical-m15-from-ticks.js",
+      "historical-m15-multi.js",
       "historical-m15-path.js",
+      "historical-m15-reference-provider.js",
       "historical-m15-replay.js",
       "historical-m15-source.js",
       "historical-opening.js",
@@ -203,5 +205,11 @@
       "compatibilityOnly": true,
       "activeModuleFiles": 0
     }
+  },
+  "incrementalPublication": {
+    "baseRuntimeCommit": "b0019a130572f5b40e7ae12bc32b9d1d4c5b866c",
+    "site": "pages",
+    "preservedSiteOverlays": true,
+    "packageSha256": "3eadb26e6754bd82648903c839add78439e8ce490995e1515b9f2eda93d07aef"
   }
 }

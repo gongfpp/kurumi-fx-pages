@@ -1,7 +1,7 @@
-import {deriveM15SourceFromTicks} from './historical-m15-from-ticks.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {HistoricalM15Replay} from './historical-m15-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {M15_PATH_MODEL} from './historical-m15-path.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {aggregateCandles} from './candle-period.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {deriveM15SourceFromTicks} from './historical-m15-from-ticks.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {HistoricalM15Replay} from './historical-m15-replay.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {M15_PATH_MODEL} from './historical-m15-path.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {aggregateCandles} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 const feeds=new WeakMap(),HASH=/^[a-f0-9]{64}$/;
 const SOURCE_HASH='ce78872e7bbdf883c99b32d6d9854dc9f6f564b78d1d4d095a57bf5c8a3caf35';
 const BASIS='m15-mid-reference-simulated-path';
@@ -11,7 +11,7 @@ export const hasHistoricalM15Feed=s=>feeds.has(s);
 export const historicalM15Feed=s=>feeds.get(s)??null;
 export const releaseHistoricalM15Feed=s=>feeds.delete(s);
 export function eligibleHistoricalM15(manifest,dayData){return manifest?.id==='histdata-usdjpy-201402'&&manifest?.source?.sha256===SOURCE_HASH&&manifest.symbol==='USDJPY'&&manifest.quoteType==='bid-ask'&&manifest.chartPrice==='mid'&&dayData?.validated===true;}
-function syncDisplay(s,feed,{day=s.day,sleepHistory=false}={}){
+export function syncHistoricalM15Display(s,feed,{day=s.day,sleepHistory=false}={}){
  const h=s.historical,opening=h.dayOpeningGameDay===s.day?h.dayOpeningAt:null;
  const oldCandles=new Map((s.candles||[]).map(c=>[c.timestamp,c])),oldMinutes=new Map((s.displayMinutes||[]).map(c=>[c.timestamp,c]));
  const decorate=(c,old)=>({...c,day:old&&(old.closed||!Number.isFinite(opening)||c.timestamp<opening)?old.day:day,beat:Math.min(3,Math.floor(new Date(c.availableAt+32400000).getUTCHours()/6)),...(sleepHistory&&c.availableAt>=(feed.sleepFrom??Infinity)?{sleepHistory:true}:{})});
@@ -81,12 +81,12 @@ export function commitHistoricalM15(s,quote=null,displayOptions={}){
   // postponed; pending display options remain outside the serialised state.
   feed.pendingDisplayOptions={day:displayOptions.day??s.day,sleepHistory:displayOptions.sleepHistory===true};
   display={displayDeferred:true};
- }else{delete feed.pendingDisplayOptions;display=syncDisplay(s,feed,displayOptions);}
+ }else{delete feed.pendingDisplayOptions;display=syncHistoricalM15Display(s,feed,displayOptions);}
  return {sample,barCompleted:sample.step===24,sourceBar:feed.replay.completedSourceBar(sample),sourceSides:feed.replay.sourceSidesForCompletedBar(sample),...display};
 }
 export function flushHistoricalM15Display(s,displayOptions={}){
  const feed=feeds.get(s);if(!feed)fail('source not loaded');
- const display=syncDisplay(s,feed,{...feed.pendingDisplayOptions,...displayOptions});delete feed.pendingDisplayOptions;return display;
+ const display=syncHistoricalM15Display(s,feed,{...feed.pendingDisplayOptions,...displayOptions});delete feed.pendingDisplayOptions;return display;
 }
 export function skipElapsedHistoricalM15(s,until){
  const feed=feeds.get(s);if(!feed)return 0;let skipped=0,last;

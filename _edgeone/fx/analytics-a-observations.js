@@ -1,5 +1,5 @@
-import {marketSourceOf} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {MARKET_SOURCES} from './analytics-a-contract.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {marketSourceOf} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {MARKET_SOURCES} from './analytics-a-contract.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Analytics eligibility is deliberately separate from ranking/developer rules:
 // normal historical play is included; unreadable taint still fails closed.
 export const analyticsRunExcluded=({research=false,tainted}={})=>research||tainted!==false;

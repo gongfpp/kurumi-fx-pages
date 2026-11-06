@@ -1,0 +1,9 @@
+Kurumi FX 2014 reference market data
+
+AUD/JPY and GBP/JPY M15 OHLC: ejtraderLabs/historical-data, revision fbd29b3cd85c0eea4f6e8b81c053f98fb3de22fd.
+Source: https://github.com/ejtraderLabs/historical-data/tree/fbd29b3cd85c0eea4f6e8b81c053f98fb3de22fd
+The source repository includes the Apache License 2.0 (LICENSE.txt). The original quote provider and its downstream redistribution permission remain unverified. No verified Bid/Ask attribution is claimed.
+Changes: select 2014 labels; normalize source label clocks to UTC using verified four clock segments; divide original integer prices by 1000; retain source OHLC, volume and gaps. Intra-bar paths and 1/5 minute candles are simulated, seeded and reproducible.
+USD/JPY: existing approved Kurumi February 2014 midpoint-derived M15 game data, unchanged.
+
+Publication of this exact package with the existing public Kurumi game was explicitly authorized on 2026-11-06. This authorization does not establish upstream ownership or grant general redistribution rights. Original source provenance and its earlier local research classification are retained for identity and reproducibility; the publication wrapper records this later, bounded game publication authorization.

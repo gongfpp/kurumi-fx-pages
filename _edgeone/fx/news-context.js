@@ -1,5 +1,5 @@
-import {currentTradingTimestamp} from './trading-time.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {isLiveMarket} from './live-market-state.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isLiveMarket} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 const DAY=86400000,JST=9*3600000;
 export const NEWS_PAIRS=Object.freeze(['USDJPY','AUDJPY','GBPJPY']);
@@ -7,10 +7,10 @@ export const normalizeNewsPair=value=>typeof value==='string'?value.toUpperCase(
 const safeTimestamp=at=>typeof at==='number'&&Number.isFinite(at)&&Math.abs(at)<8e15;
 export const newsDate=at=>safeTimestamp(at)?new Date(at+JST).toISOString().slice(0,10):null;
 export function newsContext(state={}){
- const historical=[1,2,3,4].includes(state.historical?.version);
- // Version 3 uses the validated historical market book, not historical.symbol.
+ const historical=[1,2,3,4,5].includes(state.historical?.version);
+ // Multi-source versions use their validated historical market book.
  // Older USD-only packages must never borrow a simulated tab's active symbol.
- const historicalPair=state.historical?.version===3?(state.marketBook?.version===1&&state.marketBook.source==='historical'?state.marketBook.active:null):(state.historical?.symbol??'USDJPY');
+ const historicalPair=[3,5].includes(state.historical?.version)?(state.marketBook?.version===1&&state.marketBook.source===(state.historical.version===5?'historical-m15-reference':'historical')?state.marketBook.active:null):(state.historical?.symbol??'USDJPY');
  const pair=normalizeNewsPair(historical?historicalPair:(state.marketBook?.active??'USDJPY'));
  let at=null;
  try{at=historical?state.historical.lastQuote?.[0]:currentTradingTimestamp(state);}catch{/* Invalid old metadata is not a clock. */}

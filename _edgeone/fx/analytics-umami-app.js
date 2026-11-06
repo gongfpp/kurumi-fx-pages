@@ -1,5 +1,5 @@
-import {ANALYTICS_JOURNEY_RELEASE} from './analytics-journey-release.js?v=4e1bb4fd62a377ce983db7672852ed86d1f9ab5b-23f2a20b7717';
-import {validEvent} from './analytics-a-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {ANALYTICS_JOURNEY_RELEASE} from './analytics-journey-release.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {validEvent} from './analytics-a-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 const ORIGIN='https://fx.gongfpp.icu',SRC='https://stats.gongfpp.icu/script.js',WEBSITE='bb8f9140-45fa-4919-99f5-43da20ec6aaf',HOOK='kurumiUmamiBeforeSend';
 

@@ -1,6 +1,6 @@
-import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {eligibleHistoricalM15} from './historical-m15-engine-adapter.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {eligibleHistoricalM15} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 
 const modes={
  story:['每日收盘结算，可安排生活。','每日小剧场和剧情选择。','新局基础日耗体65，心理状态会影响交易。'],
@@ -18,13 +18,14 @@ const history={
 export const modeOptionLines=mode=>[...(modes[mode]||[])];
 export const marketOptionLines=({sourceFamily,historicalKind='m15'})=>[...(sourceFamily==='historical'?history[historicalKind]||history.m15:markets[sourceFamily]||[])];
 export function historicalKindForManifest(manifest){
+ if(manifest?.schemaVersion==='historical-multi-m15-reference-v1')return 'm15';
  if(['research-m1-close-v1','research-multi-m1-close-v1'].includes(manifest?.schemaVersion))return 'm1';
  // Preview the new-run adapter from verified provider metadata, without loading
  // any price rows. The provider still validates its day data before game creation.
  return eligibleHistoricalM15(manifest,{validated:true})?'m15':'ticks';
 }
 export function historicalKindForState(state){
- return ({1:'ticks',2:'m1',3:'m1',4:'m15'})[state?.historical?.version]??null;
+ return ({1:'ticks',2:'m1',3:'m1',4:'m15',5:'m15'})[state?.historical?.version]??null;
 }
 export function resumeRuleNote({state,readable=true}){
  if(!readable)return '原存档暂时无法读取，不能确认本局规则。';

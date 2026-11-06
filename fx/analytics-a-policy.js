@@ -1,5 +1,5 @@
-import {EVENTS,COMMON_KEYS,OPTIONAL_COMMON_KEYS,MARKET_SOURCES,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {experienceSource} from './experience-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {EVENTS,COMMON_KEYS,OPTIONAL_COMMON_KEYS,MARKET_SOURCES,MODES,PROFILE,LIMITS} from './analytics-a-contract.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {experienceSource} from './experience-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // The formal EdgeOne host is A-only. Do not broaden legacy experience-v1
 // attribution or accept arbitrary application paths on this origin.
 const formalEdgeOne=Object.freeze({origin:'https://fx.gongfpp.icu',host:'fx.gongfpp.icu',channel:'edgeone-pages',path:'/fx/',entries:Object.freeze(['/','/fx.html'])});

@@ -1,8 +1,8 @@
-import {historicalBillingDay} from './historical-replay.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {WATCH_POLICY} from './economy-plan-config.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
-import {staminaPolicyForState} from './trading-rule-policy.js?v=48e2621c04083a2b00065eac842f8016d1721815-23f2a20b7717';
+import {historicalBillingDay} from './historical-replay.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {energyCostForDuration,energyStageStatus} from './energy-stage.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {staminaUsageCounters,recordStaminaUsage} from './stamina-usage.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
 // Time is consumed market time, never render time. A simulated day observes
 // 16 x 15 minutes: the saved rule owns the calm daily cost. Historical/live source
 // minutes use the actual mode day boundary, never an assumed 24-hour day;
@@ -47,7 +47,7 @@ export function tradingDayDurationMinutes(state={}){
   const opening=state.liveMarket.openingAt;
   return Number.isFinite(opening)?(Math.floor(opening/60000)*60000+beats*4*60000-opening)/60000:beats*4;
  }
- if([1,2,3,4].includes(state.historical?.version)){
+ if([1,2,3,4,5].includes(state.historical?.version)){
   const clock=historicalBillingDay(state);
   return clock?(clock.to-clock.from)/60000:null;
  }
