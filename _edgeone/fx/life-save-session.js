@@ -1,6 +1,6 @@
-import {createSaveSession as createBaseSaveSession} from './save-session.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {validLifeActions} from './life-actions.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {createSaveSession as createBaseSaveSession} from './save-session.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {LIFE_SCENE_DIALOGUE_SOURCES} from './life-scene-dialogue-sources.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {validLifeActions} from './life-actions.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // This is the first scene-source compatibility boundary, not a rolling backup.
 function hasLifeSceneSource(state){
   if(!LIFE_SCENE_DIALOGUE_SOURCES.length||state?.mode!=='story'||state.version!==17||state.lifeActions?.version!==1)return false;

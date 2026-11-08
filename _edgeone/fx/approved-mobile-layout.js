@@ -1,4 +1,4 @@
-import {restoreFocus} from './focus-safety.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {restoreFocus} from './focus-safety.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Approved main-screen presentation only. The original controls, listeners,
 // quote clock and save session stay owned by the app. No financial state here.
 export const mobileTradingViewport=({innerWidth=0,innerHeight=0}={})=>innerWidth<=759||(innerWidth<=1024&&innerHeight<=600&&innerWidth>innerHeight);

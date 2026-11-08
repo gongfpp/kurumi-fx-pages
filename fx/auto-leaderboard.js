@@ -1,7 +1,8 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isPublicM15ReferenceRun,privateHistoricalRankingRun} from './leaderboard-source.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const ID=/^[a-zA-Z0-9_-]{8,80}$/;
 const ENDINGS=new Set(['million','walkaway','broke','crisis']);
 const receiptKey=run=>'fx-api-v1-finished-score-'+run;
@@ -15,7 +16,8 @@ export function automaticRankingStatusText(result={}){
  if(result.state==='retry-pending')return '成绩暂未确认，稍后会自动重试。';
  if(result.state==='unconfigured')return '名人堂暂未接通，请稍后再试。';
  if(reason==='developer')return '开发测试局不会进入正式名人堂。';
- if(['mixed-historical','private-research'].includes(reason))return '历史行情局不进入名人堂。';
+ if(reason==='mixed-historical')return '含模拟续盘的历史局不进入真实行情榜。';
+ if(reason==='private-research')return '私有研究局不进入公共排行榜。';
  if(reason==='no-trades')return '本局还没有可上榜的成交记录。';
  if(reason==='save-pending')return '本局进度尚未保存成功，请先重试保存。';
  if(reason==='storage-unavailable'||reason==='coordination')return '成绩提交凭证尚未保存成功，请稍后重试。';
@@ -29,8 +31,8 @@ export function automaticRankingStatusText(result={}){
 export function terminalRankingEligibility(state,report,storage){
  if(hasLotteryCheat(state))return {eligible:false,reason:'lottery-cheat'};
  if(isSharedReplay(state))return {eligible:false,reason:'shared-replay'};
- if(hasHistoricalSimulation(state))return {eligible:false,reason:'mixed-historical'};
- if([2,3,4,5].includes(state?.historical?.version))return {eligible:false,reason:'private-research'};
+ if(hasHistoricalSimulation(state)&&!isPublicM15ReferenceRun(state))return {eligible:false,reason:'mixed-historical'};
+ if(privateHistoricalRankingRun(state))return {eligible:false,reason:'private-research'};
  if(!ID.test(state?.runId||''))return {eligible:false,reason:'missing-run'};
  if(state.phase!=='ending'||!ENDINGS.has(state.ending?.id)||report?.gameFinished!==true||report?.completionReason!==state.ending.id||report?.eligibility?.gameFinished!==true)return {eligible:false,reason:'unfinished'};
  try{if(hasDevelopmentTaint(state,storage)||report.eligibility.developmentTaint!==false)return {eligible:false,reason:'developer'};}catch{return {eligible:false,reason:'storage-unavailable'};}

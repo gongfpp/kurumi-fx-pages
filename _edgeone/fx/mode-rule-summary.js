@@ -1,6 +1,6 @@
-import {staminaPolicyForState} from './trading-rule-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {eligibleHistoricalM15} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {eligibleHistoricalM15} from './historical-m15-engine-adapter.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasHistoricalSimulation,historicalSimulationActive} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 const modes={
  story:['每日收盘结算，可安排生活。','每日小剧场和剧情选择。','新局基础日耗体65，心理状态会影响交易。'],

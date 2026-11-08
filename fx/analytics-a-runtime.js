@@ -1,4 +1,4 @@
-import {durationBand} from './analytics-a-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {durationBand} from './analytics-a-policy.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Browser lifecycle only. No URL, input value, key, coordinates or error text
 // enter an event. Missing metrics remain missing, never zero-filled.
 export function mountAnalyticsARuntime({client,game,document=globalThis.document,window=globalThis.window,navigator=globalThis.navigator,performance=globalThis.performance,isActive=()=>false,isTradable=()=>false,autoTimer=true}){

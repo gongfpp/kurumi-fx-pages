@@ -1,4 +1,4 @@
-import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // New-run selection only. Providers retain the full validated source outside
 // save state; a chart preview never executes a quote or changes an account.
 // Sixteen complete 15-minute bars give the default chart useful context.

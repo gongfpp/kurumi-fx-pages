@@ -1,5 +1,5 @@
-import {VOICE_LINES} from './voice.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {mountVoiceLibrary} from './voice-library.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {VOICE_LINES} from './voice.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {mountVoiceLibrary} from './voice-library.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 // This existing PV line mentions family money without a fixed amount or consent.
 // Bind it only to the current, durably saved withdrawal receipt, never a mood.

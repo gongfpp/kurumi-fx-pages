@@ -1,4 +1,4 @@
-import {WATCH_POLICY} from './economy-plan-config.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {WATCH_POLICY} from './economy-plan-config.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 export const NEW_TRADING_RULES=Object.freeze({version:1,id:'story65-endless-free-v1'});
 // An absent marker is the legacy contract. Reading or restoring never opts in.

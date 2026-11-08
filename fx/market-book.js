@@ -1,10 +1,10 @@
-import {isMultiM15,switchMultiM15,validMultiM15Book} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isMultiHistory,switchMultiHistoryMarket,validMultiHistoryBook} from './multi-history-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isLiveMarket,LIVE_MARKET_VERSION,liveScript,liveTimestamp} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isMultiM15,switchMultiM15,validMultiM15Book} from './historical-m15-multi.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isMultiHistory,switchMultiHistoryMarket,validMultiHistoryBook} from './multi-history-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isLiveMarket,LIVE_MARKET_VERSION,liveScript,liveTimestamp} from './live-market-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Simulated JPY-quoted instruments. No historical or live data is implied.
-import {quoteSubstep,QUOTE_SUBSTEPS,hasCanonicalGrid,validQuoteGrid} from './quote-grid.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {recordDisplayQuote,validCandleDisplay} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {quoteSubstep,QUOTE_SUBSTEPS,hasCanonicalGrid,validQuoteGrid} from './quote-grid.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {recordDisplayQuote,validCandleDisplay} from './candle-period.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {stampCandleTime,stampQuoteTime,currentTradingTimestamp} from './trading-time.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 export const MULTI_MARKET_VERSION=15;
 export const MARKETS=Object.freeze([
  Object.freeze({symbol:'USD/JPY',base:'USD',name:'美元',label:'美元兑日元',startPrice:150,seed:0}),

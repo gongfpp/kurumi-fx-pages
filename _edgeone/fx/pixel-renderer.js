@@ -1,4 +1,4 @@
-import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {createApprovedMobileLayout} from './approved-mobile-layout.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 /**
  * Pixel presentation only. All game controls remain the original live DOM nodes.
@@ -23,18 +23,15 @@ export function createPixelRenderer({document:doc}) {
     if(!top||!right)return;
     const mode=native('mode-open');
     if(mode){mode.classList.add('pixel-mode-button');moveNode(mode,right);}
-    moveNode(native('ai-scene-toggle'),right);
     const source=make('span','pixel-source-status');source.setAttribute('aria-live','off');right.append(source);
     const exit=make('div','pixel-exit-region');exit.setAttribute('role','group');exit.setAttribute('aria-label','结束本局');right.append(exit);moveNode(native('retire'),exit);
     for(const id of ['leaderboard-open','achievements-open','share-open'])moveNode(native(id),right);
     const settings=drawer('设置','pixel-settings');settings.summary.prepend(icon('settings'));right.append(settings.node);
     const sound=make('section','settings-section');sound.setAttribute('aria-label','声音');sound.append(make('h3','','声音'));settings.content.append(sound);
     for(const id of ['sound','music-open'])moveNode(native(id),sound);
-    for(const id of ['settings-reading','settings-progress'])moveNode(native(id),settings.content);
+    for(const id of ['settings-reading'])moveNode(native(id),settings.content);
     const more=make('section','settings-section');more.setAttribute('aria-label','帮助与其他');more.append(make('h3','','帮助与其他'));settings.content.append(more);
-    for(const id of ['help','developer-open'])moveNode(native(id),more);
-    moveNode(q('.stock-game-link',top),more);
-    moveNode(native('saved'),more);
+    moveNode(native('help'),more);
   }
   function buildCharacter(container){
     move('character',container);
@@ -88,7 +85,8 @@ export function createPixelRenderer({document:doc}) {
     // Keep the actual fee node, not a copied number. Its original calculation is unchanged.
     moveNode(native('preview-fee'),fee);
     const debit=make('span','pixel-debit-label',' · 预计扣款 ');debit.setAttribute('aria-hidden','true');fee.append(debit);moveNode(native('preview-debit'),fee);
-    for(const selector of ['.order-estimate','.liquidation-estimate','.risk-line','.emotion-pressure-panel'])moveNode(q(selector,order),details.content);
+    moveNode(q('.risk-line',order),trade);
+    for(const selector of ['.order-estimate','.liquidation-estimate','.emotion-pressure-panel'])moveNode(q(selector,order),details.content);
     const percent=native('percent-slider-field');
     if(percent){originalPercent=native('percent-field');if(originalPercent){originalPercentHidden=originalPercent.hidden;originalPercent.hidden=true;}percent.hidden=false;}
     const amount=native('amount-field');

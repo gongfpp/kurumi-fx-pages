@@ -1,4 +1,4 @@
-import {voiceMixActive} from './bgm-scenes.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {voiceMixActive} from './bgm-scenes.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Production dialogue mix: leave the player's normal music preference intact.
 // The quietest retained clip needs more headroom at the maximum music volume.
 export const GAMEPLAY_BGM_DUCK_FACTOR=.1;

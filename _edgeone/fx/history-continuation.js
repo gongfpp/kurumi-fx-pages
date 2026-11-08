@@ -1,4 +1,4 @@
-import {simulationCalibration} from './quote-grid.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {simulationCalibration} from './quote-grid.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const MINUTE=60000,SYMBOLS=['USD/JPY','AUD/JPY','GBP/JPY'];
 const active=s=>s.marketBook?.active||'USD/JPY';
 const price=(s,symbol)=>symbol===active(s)?s.price:s.marketBook?.markets?.[symbol]?.price;

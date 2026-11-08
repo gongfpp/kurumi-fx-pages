@@ -1,4 +1,4 @@
-import {restoreFocus} from './focus-safety.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {restoreFocus} from './focus-safety.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // A local game animation, deliberately independent of media devices or identity services.
 export const LOAN_POSES = Object.freeze([
  {id:'blink',label:'眨眨眼',line:'眼睛还睁得开，问题不大！'},

@@ -1,12 +1,12 @@
-import {isMultiM15,multiM15Feed,peekMultiM15} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isMultiM15,multiM15Feed,peekMultiM15} from './historical-m15-multi.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const isM15=s=>isHistoricalM15(s)||isMultiM15(s);
 const hasM15=s=>isMultiM15(s)?!!multiM15Feed(s):hasHistoricalM15Feed(s);
 const peekM15=s=>isMultiM15(s)?peekMultiM15(s):peekHistoricalM15(s);
-import {isResearch} from './historical-replay.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {historicalSimulationActive} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {advanceHistoricalBatch} from './historical-market.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {currentTradingTimestamp} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isResearch} from './historical-replay.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {historicalSimulationActive} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {advanceHistoricalBatch} from './historical-market.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isHistoricalM15,hasHistoricalM15Feed,peekHistoricalM15} from './historical-m15-engine-adapter.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {currentTradingTimestamp} from './trading-time.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const multiplier=speed=>[1,2,4].includes(speed)?speed:1;
 // One observed minute every 400ms at 1x: 15 market minutes in six wall seconds.
 // This is independent of chart period and daily display rental.

@@ -1,6 +1,6 @@
 {
-  "sourceCommit": "dbe282e832afbc680c0a4ce70e9edbf550f0c34f",
-  "assetVersion": "dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717",
+  "sourceCommit": "7bd64276f68c37e12853b700dcba03d20dcb9a49",
+  "assetVersion": "7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717",
   "buildMode": "production",
   "productionReady": true,
   "backend": {
@@ -12,8 +12,8 @@
   "retainedHistory": null,
   "privatePrototypeExcluded": true,
   "startup": {
-    "appStaticModules": 369,
-    "appStaticBytes": 2824579,
+    "appStaticModules": 371,
+    "appStaticBytes": 2830679,
     "preloadCount": 107,
     "preloadPaths": [
       "pixel-bootstrap.js",
@@ -170,7 +170,7 @@
       "./fx/lottery.css",
       "./fx/approved-mobile-layout.css"
     ],
-    "stylesheetBytes": 418368
+    "stylesheetBytes": 421418
   },
   "manga": {
     "scope": "approved-panels-chapter-disabled",
@@ -207,9 +207,9 @@
     }
   },
   "incrementalPublication": {
-    "baseRuntimeCommit": "b0019a130572f5b40e7ae12bc32b9d1d4c5b866c",
+    "baseRuntimeCommit": "078d5c033027ce404a46f925177cc0e7617fa6d0",
     "site": "edgeone",
     "preservedSiteOverlays": true,
-    "packageSha256": "3eadb26e6754bd82648903c839add78439e8ce490995e1515b9f2eda93d07aef"
+    "uiSource": "7bd64276f68c37e12853b700dcba03d20dcb9a49"
   }
 }

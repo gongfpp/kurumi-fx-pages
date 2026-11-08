@@ -1,8 +1,9 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isSharedReplay} from './shared-replay-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasDevelopmentTaint} from './development-taint.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasHistoricalSimulation} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isPublicM15ReferenceRun,privateHistoricalRankingRun,leaderboardSourceLabel,LEADERBOARD_MARKET_SOURCES} from './leaderboard-source.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isSharedReplay} from './shared-replay-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {liveLeaderboardScore,hasLiveTradingActivity} from './finished-score.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasDevelopmentTaint} from './development-taint.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasHistoricalSimulation} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const RECEIPTS='fx-api-v1-live-ranking-receipts',LIMIT=16;
 const fingerprint=score=>Object.fromEntries(['closedTrades','day','totalProfit','daysSurvived','netAssets','openPositionCount'].map(key=>[key,score[key]]));
 // Retain the compact legacy receipt for older tabs, but compare every public
@@ -34,7 +35,7 @@ export class LiveRanking {
   Object.assign(this,{client,storage,getState,persist,report,isBlocked,enabled,visible,online,now,schedule,cancel,onSubmitted});this.interval=Math.max(90000,Math.min(120000,interval));this.timer=null;this.timerCampaign=null;this.pending=null;this.runs=new Map();
  }
  clear(){if(this.timer!==null)this.cancel(this.timer);this.timer=null;this.timerCampaign=null;}
- eligible(){try{const s=this.getState();return !hasLotteryCheat(s)&&!isSharedReplay(s)&&this.enabled()&&!this.isBlocked()&&this.online()&&!hasHistoricalSimulation(s)&&s?.phase!=='ending'&&![2,3,4,5].includes(s?.historical?.version)&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
+ eligible(){try{const s=this.getState();return !hasLotteryCheat(s)&&!isSharedReplay(s)&&this.enabled()&&!this.isBlocked()&&this.online()&&(!hasHistoricalSimulation(s)||isPublicM15ReferenceRun(s))&&s?.phase!=='ending'&&!privateHistoricalRankingRun(s)&&!!s?.runId&&this.client?.configuration?.configured&&hasLiveTradingActivity(s)&&!hasDevelopmentTaint(s,this.storage);}catch{return false;}}
  update(){if(!this.eligible()||!this.visible()){this.clear();return;}const campaign=this.getState().runId;if(this.timer!==null&&this.timerCampaign!==campaign)this.clear();const run=this.record();if(run.attempts>=3){this.clear();return;}if(this.timer!==null)return;this.timerCampaign=campaign;this.timer=this.schedule(()=>{this.timer=null;this.timerCampaign=null;void this.submit().finally(()=>this.update());},Math.max(1000,run.nextAt-this.now()));}
  record(){const id=this.getState().runId;if(!this.runs.has(id)){
   let r;try{r=receipts(this.storage).find(r=>r.id===id);}catch{r={attempts:3,storageBlocked:true};}
@@ -95,17 +96,19 @@ export class LiveRanking {
 export function achievementBroadcast(row){
  if(!row||!['story','endless'].includes(row.gameMode)||typeof row.name!=='string'||!Number.isFinite(row.totalProfit)||row.totalProfit<=0||row.closedTrades<1)return null;
  const name=[...row.name.normalize('NFKC').replace(/[\u0000-\u001f\u007f<>]/g,'')].slice(0,16).join('')||'匿名交易员';
- return `榜单播报 · ${name}已实现净交易盈利 ¥${Math.round(row.totalProfit).toLocaleString('zh-CN')} · ${row.gameMode==='endless'?'操盘':'剧情'}${row.gameFinished?'已结束':'进度成绩'}`;
+ const source=LEADERBOARD_MARKET_SOURCES.includes(row.marketSource)?leaderboardSourceLabel(row.marketSource):row.gameMode==='endless'?'操盘':'剧情';
+ return `榜单播报 · ${name}已实现净交易盈利 ¥${Math.round(row.totalProfit).toLocaleString('zh-CN')} · ${source}${row.gameFinished?'已结束':'进度成绩'}`;
 }
 // One noninteractive floating line, never a fabricated player quotation.
 export class LeaderboardBroadcast {
  constructor({client,root,enabled=()=>true,visible=()=>true,now=Date.now,schedule=(...args)=>globalThis.setTimeout(...args),cancel=id=>globalThis.clearTimeout(id)}={}){Object.assign(this,{client,root,enabled,visible,now,schedule,cancel});this.nextAt=0;this.pending=false;this.failures=0;this.seen=new Set();this.timer=null;}
  clear(){if(this.timer!==null)this.cancel(this.timer);this.timer=null;this.root?.replaceChildren();}
- async refresh(gameMode){
+ async refresh(selection){
   if(!this.enabled()||!this.visible()||this.pending||this.failures>=3||this.now()<this.nextAt)return;
   this.nextAt=this.now()+180000;this.pending=true;
   try{
-   const data=await this.client.read({mode:'total',gameMode,sort:'totalProfit',limit:10});this.failures=0;
+   const filter=typeof selection==='string'?{gameMode:selection}:{marketSource:selection?.marketSource};
+   const data=await this.client.read({mode:'total',...filter,sort:'totalProfit',limit:10});this.failures=0;
    if(!this.enabled()||!this.visible())return;
    for(const row of data.rows){const text=achievementBroadcast(row),key=JSON.stringify([row.name,row.created,row.totalProfit,row.closedTrades]);if(!text||this.seen.has(key))continue;this.seen.add(key);if(this.seen.size>100)this.seen.delete(this.seen.values().next().value);this.clear();this.root.textContent=text;this.timer=this.schedule(()=>this.clear(),10000);break;}
   }catch{this.failures++;this.nextAt=this.now()+180000*2**this.failures;}

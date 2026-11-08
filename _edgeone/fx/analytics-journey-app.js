@@ -1,5 +1,5 @@
-import {createAnalyticsJourney} from './analytics-journey.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {ANALYTICS_JOURNEY_RELEASE} from './analytics-journey-release.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {createAnalyticsJourney} from './analytics-journey.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {ANALYTICS_JOURNEY_RELEASE} from './analytics-journey-release.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 const ENDPOINT='https://stats.gongfpp.icu/api/journey/v1/events',ORIGIN='https://fx.gongfpp.icu';
 const dialogs=Object.freeze({'mode-dialog':'landing','privacy-dialog':'stats','help-dialog':'help','leaderboard-dialog':'leaderboard','comment-credits-dialog':'comments','save-restore-dialog':'save','save-conflict-dialog':'save','bgm-dialog':'settings','voice-library-dialog':'settings','achievements-dialog':'stats'});

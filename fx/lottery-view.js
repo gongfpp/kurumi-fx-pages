@@ -1,5 +1,5 @@
-import {LotteryPresentation} from './lottery-presentation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {bindTradeActivation} from './trade-activation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {LotteryPresentation} from './lottery-presentation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {bindTradeActivation} from './trade-activation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Candidate renderer only: no CSS or app mount is selected before visual review.
 // The host supplies its existing container and its durable settlement receipt.
 export function mountLotteryView(root,{ticket,saved=false,now,schedule=callback=>requestAnimationFrame(callback),cancel=id=>cancelAnimationFrame(id),onClose=()=>{},reducedMotion=false}={}){

@@ -1,9 +1,9 @@
-import {HistoricalM15Replay} from './historical-m15-replay.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {M15_PATH_MODEL} from './historical-m15-path.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {syncHistoricalM15Display} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {MULTI_M15_SCHEMA,M15_REFERENCE_SYMBOLS as SYMBOLS} from './historical-m15-reference-provider.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {startHistoricalContinuation,simulateHistoricalMarks,recordHistoricalSource,historicalMarkIsSimulated} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {HistoricalM15Replay} from './historical-m15-replay.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {M15_PATH_MODEL} from './historical-m15-path.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {syncHistoricalM15Display} from './historical-m15-engine-adapter.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {MULTI_M15_SCHEMA,M15_REFERENCE_SYMBOLS as SYMBOLS} from './historical-m15-reference-provider.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {startHistoricalContinuation,simulateHistoricalMarks,recordHistoricalSource,historicalMarkIsSimulated} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {recordDisplaySourceCandle,validCandleDisplay} from './candle-period.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 const feeds=new WeakMap(),HASH=/^[a-f0-9]{64}$/,fields=['price','script','candles','displayMinutes','displayMinutesPartial','lastEvent','swanSeen','dayOpeningPrice'];
 const fail=message=>{throw Error('Multi M15: '+message);};
 const clone=value=>JSON.parse(JSON.stringify(value));

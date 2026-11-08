@@ -1,5 +1,5 @@
-import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {staminaPolicyForState} from './trading-rule-policy.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {HOUSING_SLEEP_RECOVERY} from './economy-plan-config.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {staminaPolicyForState} from './trading-rule-policy.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 // Optional observations only. No balance, effect, migration, timer or RNG writes.
 // A legacy engine can ignore this field; counter mismatches then mark it partial.

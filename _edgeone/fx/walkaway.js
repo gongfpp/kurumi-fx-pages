@@ -1,4 +1,4 @@
-import {isLiveMarket,liveTradingReady} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isLiveMarket,liveTradingReady} from './live-market-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 export function canRequestWalkaway(state={}){return ['decision','playing','closing','day_end','resting','bankrupt'].includes(state.phase);}
 export function walkawayConfirmation(state={}){
  const openPositions=state.positions?.length||(state.position?1:0);

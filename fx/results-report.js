@@ -1,17 +1,18 @@
-import {hasLotteryCheat} from './lottery-ranking.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {lifeActionDefinition} from './life-actions.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {readHallMetrics} from './hall-metrics.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {classifyEnding} from './ending-classifier.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {runPerformance} from './performance.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {orderPerformance,readRunStatistics} from './run-statistics.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {accountingValues} from './accounting-journal.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {grossPnlAt} from './market.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {isPublicM15ReferenceRun} from './leaderboard-source.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasLotteryCheat} from './lottery-ranking.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {lifeActionDefinition} from './life-actions.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isLiveMarket,safeLiveTradeEvidence} from './live-market-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {historicalReportSource,safeHistoricalTradeEvidence,historicalTimeDefinition} from './historical-evidence.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {hasHistoricalSimulation,safeHistoricalSegmentEvidence} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {readHallMetrics} from './hall-metrics.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {MARKETS,marketPrice,positionMarket} from './market-book.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {classifyEnding} from './ending-classifier.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {runPerformance} from './performance.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {orderPerformance,readRunStatistics} from './run-statistics.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {accountingValues} from './accounting-journal.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {ACCOUNTING_POINT_LIMIT,retainAccountingPoints,accountingDayMissing,accountingDailyCoverage,accountingStart} from './accounting-retention.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {currentTradingTimestamp,GAME_TIME_ZONE} from './trading-time.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {grossPnlAt} from './market.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 
 export const RESULTS_SCHEMA_VERSION='1.0.0';
 const number=v=>Number.isFinite(v)?v:null;
@@ -61,7 +62,7 @@ export function buildResultsReport(state={},options={}){
  for(const trade of transactions)if(['liquidation','stop'].includes(trade.type))events.push({type:trade.type,positionId:trade.positionId,day:trade.day,timestamp:trade.timestamp,pnl:trade.pnl});
  const report={...(historical||{}),...(isLiveMarket(state)?{marketSource:state.liveMarket.version===2?'shared-replay':'live',...(state.liveMarket.version===2?{sourceMode:'shared-replay'}:{}),marketData:{provider:'biquote',priceBasis:'provider-indicative-mid',execution:'game-fees-applied-to-provider-mid',timeBasis:'provider-quote-UTC',dayProgress:'observed-ready-minute-boundaries'}}:{}),schemaVersion:RESULTS_SCHEMA_VERSION,version:1,game:'kurumi-fx',mode:state.mode==='endless'?'endless':'story',day:Number.isSafeInteger(state.day)?state.day:null,seed:Number.isSafeInteger(state.seed)?state.seed:null,currency:'JPY',gameTimeZone:GAME_TIME_ZONE,gameTimestamp:currentTradingTimestamp(state),gameFinished,completionReason:gameFinished?state.ending.id:null,
   ending:classifyEnding(state),
-  eligibility:{gameFinished,developmentTaint,...(state.lottery?{lotteryCheat}:{}),rankingEligible:gameFinished&&!developmentTaint&&!lotteryCheat&&!hasHistoricalSimulation(state)&&state.historical?.version!==5&&state.liveMarket?.version!==2},performance,
+  eligibility:{gameFinished,developmentTaint,...(state.lottery?{lotteryCheat}:{}),rankingEligible:gameFinished&&!developmentTaint&&!lotteryCheat&&(!hasHistoricalSimulation(state)||isPublicM15ReferenceRun(state))&&(state.historical?.version!==5||isPublicM15ReferenceRun(state))&&state.liveMarket?.version!==2},performance,
   daily:recap?{day:recap.day,tradingNetPartial:!!recap.daily?.tradingNetPartial,livingStatus:recap.daily?.livingStatus||null,tradingNet:money(recap.daily?.tradingNet),returnRate:number(recap.daily?.returnRate),returnDenominator:money(recap.daily?.returnDenominator),netResult:money(recap.daily?.netResult),nonTradingIncome:money(recap.daily?.nonTradingIncome??0),...(state.lottery?{lotteryIncome:money(recap.daily?.lotteryIncome??0),cheatLotteryIncome:money(recap.daily?.cheatLotteryIncome??0)}:{}),sealed:!!recap.sealed}:null,
   account:{nominalAssets:money(nominalAssets),netAssets:money(netAssets),fatherDebt:money(fatherDebt),networkDebt:money(networkDebt),totalDebt:money(totalDebt),cash:money(state.cash),reservedLivingCash:money(state.reserve),unrealized:money(unrealized),unallocatedOpenFees:money(unallocatedOpenFees),openPositions:currentPositions.map(pos=>({symbol:positionMarket(pos),positionId:positionId(pos.id),...pickNumbers(pos,['direction','entry','margin','leverage','openFeeRemaining']),unrealized:money(grossPnlAt(pos,marketPrice(state,positionMarket(pos))))}))},
   fees:{trading:money(state.feesPaid),interestPaid:money(interestPaid),interestAccrued:money(interestAccrued),interestTotal:money(interestTotal),living:money(living),consumption:money(consumption),nonTradingTotal:money(expenses)},
@@ -83,7 +84,7 @@ export function buildResultsReport(state={},options={}){
  if(developmentTaint)report.dataQuality.warnings.push('开发者测试局，不能用于真实排行榜比较。');
  return JSON.parse(JSON.stringify(report,(_k,value)=>typeof value==='number'&&!Number.isFinite(value)?null:value));
 }
-export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+export {AI_REVIEW_PROMPT} from './ai-roast-prompts.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 export function resultsFilename(report){return `kurumi-fx-${report?.mode==='endless'?'endless':'story'}-day-${Number.isSafeInteger(report?.day)&&report.day>0?report.day:1}-results-v1.json`;}
 export function serializeResults(report){return JSON.stringify(report,null,2)+'\n';}
 export function downloadResults(report,{document=globalThis.document,URL=globalThis.URL,Blob=globalThis.Blob,schedule=globalThis.setTimeout}={}){

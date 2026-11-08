@@ -1,12 +1,12 @@
-import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isMultiM15,multiM15Feed,initializeMultiM15,bindMultiM15,peekMultiM15,commitMultiM15,flushMultiM15,multiM15DayInfo,nextMultiM15Date,prepareNextMultiM15Day,validMultiM15Save} from './historical-m15-multi.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {historicalOpeningIndex} from './historical-opening.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {usesApprovedMarketRules} from './market-rules.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
-import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {MULTI_M15_SCHEMA} from './historical-m15-reference-provider.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isMultiM15,multiM15Feed,initializeMultiM15,bindMultiM15,peekMultiM15,commitMultiM15,flushMultiM15,multiM15DayInfo,nextMultiM15Date,prepareNextMultiM15Day,validMultiM15Save} from './historical-m15-multi.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {isMultiHistory,hasMultiHistoryFeed,initializeMultiHistory,bindMultiHistoryDay,peekMultiHistory,multiHistoryDayInfo,nextMultiHistoryDate,prepareNextMultiHistoryDay,validMultiHistorySave,skipElapsedMultiHistorySource,multiHistoryFeed,releaseMultiHistoryFeed,consumeMultiHistorySleepRow} from './multi-history-state.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {recordDisplayQuote,recordDisplaySourceCandle,aggregateCandles} from './candle-period.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {historicalOpeningIndex} from './historical-opening.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {historicalDayClock,lockHistoricalDayClock,validHistoricalDayClock} from './historical-day-clock.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {historicalSimulationActive,historicalEffectiveTime,historicalMarkIsSimulated,startHistoricalContinuation,recordHistoricalSource} from './history-continuation.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {usesApprovedMarketRules} from './market-rules.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
+import {eligibleHistoricalM15,isHistoricalM15,hasHistoricalM15Feed,initializeHistoricalM15,bindHistoricalM15,peekHistoricalM15,commitHistoricalM15,flushHistoricalM15Display,validHistoricalM15Save,historicalM15DayInfo,nextHistoricalM15Date,prepareNextHistoricalM15Day,skipElapsedHistoricalM15,historicalM15Feed,releaseHistoricalM15Feed} from './historical-m15-engine-adapter.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 // Replay identity/cursor only is persisted. Unseen quotes stay outside game state.
 const feeds=new WeakMap();
 const DAY=86400000,JST=9*3600000;

@@ -1,4 +1,4 @@
-import {validateHistoricalM15Source} from './historical-m15-source.js?v=dbe282e832afbc680c0a4ce70e9edbf550f0c34f-23f2a20b7717';
+import {validateHistoricalM15Source} from './historical-m15-source.js?v=7bd64276f68c37e12853b700dcba03d20dcb9a49-23f2a20b7717';
 export const MULTI_M15_SCHEMA='historical-multi-m15-reference-v1';
 export const M15_REFERENCE_SYMBOLS=Object.freeze(['USD/JPY','AUD/JPY','GBP/JPY']);
 const date=at=>new Date(at+32400000).toISOString().slice(0,10);
